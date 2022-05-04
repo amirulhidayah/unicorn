@@ -1,0 +1,52 @@
+<!-- Sidebar -->
+<div class="sidebar sidebar-style-2">
+    <div class="sidebar-wrapper scrollbar scrollbar-inner">
+        <div class="sidebar-content">
+            <ul class="nav nav-success">
+                <li class="nav-item">
+                    <a href="calendar.html">
+                        <i class="fas fa-home"></i>
+                        <p>Dashboard</p>
+                    </a>
+                </li>
+                <li class="nav-section">
+                    <span class="sidebar-mini-icon">
+                        <i class="fa fa-ellipsis-h"></i>
+                    </span>
+                    <h4 class="text-section">SPP</h4>
+                </li>
+                <li class="nav-item">
+                    <a href="calendar.html">
+                        <i class="fas fa-file"></i>
+                        <p>SPP PU</p>
+                    </a>
+                </li>
+                <li class="nav-section">
+                    <span class="sidebar-mini-icon">
+                        <i class="fa fa-ellipsis-h"></i>
+                    </span>
+                    <h4 class="text-section">Master</h4>
+                </li>
+                <li class="nav-item" id="master-dokumen-spp-up">
+                    <a href="{{ url('/master-data/dokumen-spp-up') }}">
+                        <i class="far fa-file-pdf"></i>
+                        <p>Dokumen SPP UP</p>
+                    </a>
+                </li>
+                <li class="nav-item" id="master-biro-organisasi">
+                    <a href="{{ url('/master-data/biro-organisasi') }}">
+                        <i class="fas fa-building"></i>
+                        <p>Biro Organisasi</p>
+                    </a>
+                </li>
+                <li class="nav-item" id="master-akun">
+                    <a href="{{ url('/master-data/akun') }}">
+                        <i class="fas fa-user-circle"></i>
+                        <p>Akun</p>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- End Sidebar -->
