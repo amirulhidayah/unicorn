@@ -15,10 +15,22 @@
                     </span>
                     <h4 class="text-section">SPP</h4>
                 </li>
-                <li class="nav-item">
-                    <a href="calendar.html">
+                <li class="nav-item" id="spp-up">
+                    <a href="{{ url('spp-up') }}">
                         <i class="fas fa-file"></i>
-                        <p>SPP PU</p>
+                        <p>SPP UP</p>
+                    </a>
+                </li>
+                <li class="nav-item" id="spp-tu">
+                    <a href="{{ url('spp-tu') }}">
+                        <i class="fas fa-file"></i>
+                        <p>SPP TU</p>
+                    </a>
+                </li>
+                <li class="nav-item" id="spp-ls">
+                    <a href="{{ url('spp-ls') }}">
+                        <i class="fas fa-file"></i>
+                        <p>SPP LS</p>
                     </a>
                 </li>
                 <li class="nav-section">
@@ -27,10 +39,22 @@
                     </span>
                     <h4 class="text-section">Master</h4>
                 </li>
-                <li class="nav-item" id="master-dokumen-spp-up">
-                    <a href="{{ url('/master-data/dokumen-spp-up') }}">
+                <li class="nav-item" id="master-daftar-dokumen-spp-up">
+                    <a href="{{ url('/master-data/daftar-dokumen-spp-up') }}">
                         <i class="far fa-file-pdf"></i>
                         <p>Dokumen SPP UP</p>
+                    </a>
+                </li>
+                <li class="nav-item" id="master-daftar-dokumen-spp-tu">
+                    <a href="{{ url('/master-data/daftar-dokumen-spp-tu') }}">
+                        <i class="far fa-file-pdf"></i>
+                        <p>Dokumen SPP TU</p>
+                    </a>
+                </li>
+                <li class="nav-item" id="master-daftar-dokumen-spp-ls">
+                    <a href="{{ url('/master-data/daftar-dokumen-spp-ls') }}">
+                        <i class="far fa-file-pdf"></i>
+                        <p>Dokumen SPP LS</p>
                     </a>
                 </li>
                 <li class="nav-item" id="master-biro-organisasi">

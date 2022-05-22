@@ -3,9 +3,10 @@
 
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>EVA | @yield('title')</title>
+    <title>E-VAku | @yield('title')</title>
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
     <link rel="icon" href="{{ asset('assets/dashboard') }}/img/icon.ico" type="image/x-icon" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Fonts and icons -->
     <script src="{{ asset('assets/dashboard') }}/js/plugin/webfont/webfont.min.js"></script>
@@ -264,6 +265,14 @@
     <script src="{{ asset('assets/dashboard') }}/datatables/buttons.html5.min.js"></script>
     <script src="{{ asset('assets/dashboard') }}/datatables/buttons.print.min.js"></script>
     <script src="{{ asset('assets/dashboard') }}/datatables/buttons.colVis.min.js"></script>
+    <script src="{{ asset('assets/dashboard') }}/js/jquery.mask.js"></script>
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
     <script>
         $('.select2').select2({
             placeholder: "- Pilih Salah Satu -",
@@ -285,6 +294,10 @@
 
         $('.numerik').on('input', function(e) {
             this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
+        });
+
+        $('.uang').mask('000.000.000', {
+            reverse: true
         });
     </script>
     @stack('script')

@@ -6,7 +6,7 @@
 
 @push('style')
     <style>
-        #blah {
+        .preview-img {
             max-height: 256px;
             height: auto;
             width: auto;

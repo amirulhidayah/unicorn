@@ -12,4 +12,9 @@ class Profil extends Model
     use HasFactory;
     use TraitUuid;
     protected $table = 'profil';
+
+    public function biroOrganisasi()
+    {
+        return $this->belongsTo(BiroOrganisasi::class, 'biro_organisasi_id', 'id');
+    }
 }

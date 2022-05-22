@@ -3,6 +3,13 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\dashboard\masterData\AkunController;
 use App\Http\Controllers\dashboard\masterData\BiroOrganisasiController;
+use App\Http\Controllers\dashboard\masterData\DokumenSppLsController;
+use App\Http\Controllers\dashboard\masterData\DokumenSppTuController;
+use App\Http\Controllers\dashboard\masterData\DokumenSppUpController;
+use App\Http\Controllers\dashboard\spp\SppTuController;
+use App\Http\Controllers\dashboard\spp\SppUpController;
+use App\Http\Controllers\UnduhController;
+use App\Models\DaftarDokumenSppUp;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,6 +30,28 @@ Route::get('/dashboard', function () {
 // Master Data
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('/master-data/biro-organisasi', BiroOrganisasiController::class);
+    Route::resource('/master-data/daftar-dokumen-spp-up', DokumenSppUpController::class);
+    Route::resource('/master-data/daftar-dokumen-spp-tu', DokumenSppTuController::class);
+    Route::resource('/master-data/daftar-dokumen-spp-ls', DokumenSppLsController::class)->parameters([
+        'daftar-dokumen-spp-ls' => 'daftar-dokumen-spp-ls'
+    ]);
+
+    // SPP UP
+    Route::resource('/spp-up', SppUpController::class)->except([
+        'edit'
+    ]);
+    Route::get('/spp-up/riwayat/{sppUp}', [SppUpController::class, 'riwayat']);
+    Route::put('/spp-up/verifikasi/{sppUp}', [SppUpController::class, 'verifikasi']);
+    Route::post('/spp-up/{spp_up}/edit', [SppUpController::class, 'edit']);
+    Route::get('/surat-penolakan/spp-up/{riwayatSppUp}', [UnduhController::class, 'suratPenolakanSppUp']);
+
+    Route::resource('/spp-tu', SppTuController::class)->except([
+        'edit'
+    ]);
+    Route::post('/spp-tu/{spp_tu}/edit', [SppTuController::class, 'edit']);
+    Route::put('/spp-tu/verifikasi/{sppTu}', [SppTuController::class, 'verifikasi']);
+    Route::get('/spp-tu/riwayat/{sppTu}', [SppTuController::class, 'riwayat']);
+    Route::get('/surat-penolakan/spp-tu/{riwayatSppTu}', [UnduhController::class, 'suratPenolakanSppTu']);
 
     Route::get('/logout', [AuthController::class, 'logout']);
 });

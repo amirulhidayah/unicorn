@@ -76,6 +76,7 @@ class AkunController extends Controller
                 'nip' => 'nullable',
                 'biro_organisasi' => 'required',
                 'foto' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:1024',
+                'tanda_tangan' => 'required|image|mimes:png|max:1024',
             ],
             [
                 'email.required' => 'Email tidak boleh kosong',
@@ -93,6 +94,10 @@ class AkunController extends Controller
                 'foto.image' => 'Foto harus berupa gambar',
                 'foto.mimes' => 'Foto harus berupa gambar',
                 'foto.max' => 'Foto tidak boleh lebih dari 1 MB',
+                'tanda_tangan.required' => 'Tanda Tangan tidak boleh kosong',
+                'tanda_tangan.image' => 'Tanda Tangan harus berupa gambar',
+                'tanda_tangan.mimes' => 'Tanda Tangan harus berupa gambar',
+                'tanda_tangan.max' => 'Tanda Tangan tidak boleh lebih dari 1 MB',
             ]
         );
 
@@ -102,6 +107,9 @@ class AkunController extends Controller
 
         $namaFoto = time() . '.' . $request->foto->extension();
         $request->foto->storeAs('profil', $namaFoto);
+
+        $namaTandaTangan = time() . '.' . $request->tanda_tangan->extension();
+        $request->tanda_tangan->storeAs('tanda_tangan', $namaTandaTangan);
 
         $user = new User();
         $user->email = $request->email;
@@ -118,6 +126,7 @@ class AkunController extends Controller
         $profil->nip = $request->nip;
         $profil->biro_organisasi_id = $request->biro_organisasi;
         $profil->foto = $namaFoto;
+        $profil->tanda_tangan = $namaTandaTangan;
         $profil->save();
 
         return response()->json([
