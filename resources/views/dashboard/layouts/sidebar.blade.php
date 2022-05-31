@@ -13,6 +13,18 @@
                     <span class="sidebar-mini-icon">
                         <i class="fa fa-ellipsis-h"></i>
                     </span>
+                    <h4 class="text-section">SPD</h4>
+                </li>
+                <li class="nav-item" id="spd">
+                    <a href="{{ url('spd') }}">
+                        <i class="fas fa-file"></i>
+                        <p>SPD</p>
+                    </a>
+                </li>
+                <li class="nav-section">
+                    <span class="sidebar-mini-icon">
+                        <i class="fa fa-ellipsis-h"></i>
+                    </span>
                     <h4 class="text-section">SPP</h4>
                 </li>
                 <li class="nav-item" id="spp-up">
@@ -61,6 +73,12 @@
                     <a href="{{ url('/master-data/biro-organisasi') }}">
                         <i class="fas fa-building"></i>
                         <p>Biro Organisasi</p>
+                    </a>
+                </li>
+                <li class="nav-item" id="master-tahun">
+                    <a href="{{ url('/master-data/tahun') }}">
+                        <i class="fas fa-calendar"></i>
+                        <p>Tahun</p>
                     </a>
                 </li>
                 <li class="nav-item" id="master-akun">

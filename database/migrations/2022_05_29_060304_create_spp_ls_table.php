@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSppTuTable extends Migration
+class CreateSppLsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,15 @@ class CreateSppTuTable extends Migration
      */
     public function up()
     {
-        Schema::create('spp_tu', function (Blueprint $table) {
+        Schema::create('spp_ls', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('nama');
+            $table->uuid('tahun_id');
+            $table->uuid('kegiatan_id');
+            $table->uuid('biro_organisasi_id');
+            $table->string('kategori');
+            $table->integer('tw');
+            $table->bigInteger('anggaran_digunakan');
             $table->string('nomor_surat');
-            $table->bigInteger('jumlah_nominal');
             $table->uuid('user_id');
             $table->integer('status_validasi_asn')->default(0);
             $table->text('alasan_validasi_asn')->nullable();
@@ -40,6 +44,6 @@ class CreateSppTuTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('spp_tu');
+        Schema::dropIfExists('spp_ls');
     }
 }

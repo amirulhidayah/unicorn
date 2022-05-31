@@ -296,9 +296,16 @@
             this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
         });
 
-        $('.uang').mask('000.000.000', {
+        $('.uang').mask('000.000.000.000.000.000.000', {
             reverse: true
         });
+
+        function formatRupiah(angka) {
+            var reverse = angka.toString().split('').reverse().join(''),
+                ribuan = reverse.match(/\d{1,3}/g);
+            ribuan = ribuan.join('.').split('').reverse().join('');
+            return ribuan;
+        }
     </script>
     @stack('script')
 </body>

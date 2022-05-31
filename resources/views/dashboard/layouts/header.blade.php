@@ -42,7 +42,8 @@
                                                     alt="image profile" class="avatar-img rounded"></div>
                                             <div class="u-text">
                                                 <h4>{{ Auth::user()->profil->nama }}</h4>
-                                                <p class="text-muted">{{ Auth::user()->email }}</p>
+                                                <p class="text-muted">
+                                                    {{ Auth::user()->profil->biroOrganisasi->nama }}</p>
                                             </div>
                                         </div>
                                     </li>
