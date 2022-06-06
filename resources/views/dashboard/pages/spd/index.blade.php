@@ -49,112 +49,60 @@
                     <div class="card-head-row">
                         <div class="card-title">SPD</div>
                         <div class="card-tools">
-                            @component('dashboard.components.buttons.import',
-                                [
-                                    'id' => 'btn-import',
-                                    'class' => '',
-                                    'label' => 'Import SPD',
-                                ])
-                            @endcomponent
+                            @if (Auth::user()->role == 'Admin')
+                                @component('dashboard.components.buttons.import',
+                                    [
+                                        'id' => 'btn-import',
+                                        'class' => '',
+                                        'label' => 'Import SPD',
+                                    ])
+                                @endcomponent
+                            @endif
                         </div>
                     </div>
                 </div>
                 <div class="card-body">
-                    @if (count($daftarBiroOrganisasi) > 0)
-                        <table class="table table-bordered table-responsive">
-                            <thead class="text-center">
-                                <tr>
-                                    <th scope="col">No.</th>
-                                    <th scope="col">NAMA SUB OPD, PROGRAM DAN KEGIATAN</th>
-                                    <th scope="col">NO. REK. KEG. SKPD</th>
-                                    <th scope="col">JUMLAH ANGGARAN TAHUN INI</th>
-                                    <th scope="col">TW 1</th>
-                                    <th scope="col">TW 2</th>
-                                    <th scope="col">TW 3</th>
-                                    <th scope="col">TW 4</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($daftarBiroOrganisasi as $biroOrganisasi)
-                                    <tr>
-                                        <td colspan="8" class="fw-bold">{{ $biroOrganisasi->nama }}</td>
-                                    </tr>
-                                    @php
-                                        $daftarProgram = \App\Models\Program::with('kegiatan')
-                                            ->whereHas('kegiatan', function ($query) use ($biroOrganisasi) {
-                                                $query->whereHas('spd', function ($query) use ($biroOrganisasi) {
-                                                    $query->where('biro_organisasi_id', $biroOrganisasi->id);
-                                                });
-                                            })
-                                            ->get();
-                                    @endphp
-                                    @foreach ($daftarProgram as $program)
-                                        <tr>
-                                            <td colspan="2">{{ $program->nama }}</td>
-                                            <td colspan="6">{{ $program->no_rek }}</td>
-                                        </tr>
-                                        @php
-                                            $daftarSpd = \App\Models\Spd::with(['biroOrganisasi', 'kegiatan', 'tahun'])
-                                                ->whereHas('kegiatan', function ($query) use ($program) {
-                                                    $query->where('program_id', $program->id);
-                                                })
-                                                ->where('biro_organisasi_id', $biroOrganisasi->id)
-                                                ->where('tahun_id', $tahunId)
-                                                ->get();
-
-                                            $totalJumlahAnggaran = 0;
-                                            $totalTw1 = 0;
-                                            $totalTw2 = 0;
-                                            $totalTw3 = 0;
-                                            $totalTw4 = 0;
-                                            $totalTw5 = 0;
-                                        @endphp
-                                        @foreach ($daftarSpd as $spd)
-                                            <tr>
-                                                <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $spd->kegiatan->nama }}</td>
-                                                <td>{{ $spd->kegiatan->no_rek }}</td>
-                                                <td>Rp.
-                                                    {{ number_format($spd->tw1 + $spd->tw2 + $spd->tw3 + $spd->tw4, 0, ',', '.') }}
-                                                </td>
-                                                <td>Rp. {{ number_format($spd->tw1, 0, ',', '.') }}</td>
-                                                <td>Rp. {{ number_format($spd->tw2, 0, ',', '.') }}</td>
-                                                <td>Rp. {{ number_format($spd->tw3, 0, ',', '.') }}</td>
-                                                <td>Rp. {{ number_format($spd->tw4, 0, ',', '.') }}</td>
-                                            </tr>
-                                            @php
-                                                $totalJumlahAnggaran = $totalJumlahAnggaran + $spd->tw1 + $spd->tw2 + $spd->tw3 + $spd->tw4;
-                                                $totalTw1 += $spd->tw1;
-                                                $totalTw2 += $spd->tw2;
-                                                $totalTw3 += $spd->tw3;
-                                                $totalTw4 += $spd->tw4;
-                                            @endphp
+                    <div class="row mb-4">
+                        @if (Auth::user()->role != 'Bendahara Pengeluaran')
+                            <div class="col">
+                                @component('dashboard.components.formElements.select',
+                                    [
+                                        'label' => 'Biro Organisasi',
+                                        'id' => 'biro_organisasi',
+                                        'name' => 'biro_organisasi',
+                                        'class' => 'select2',
+                                        'wajib' => '<sup class="text-danger">*</sup>',
+                                    ])
+                                    @slot('options')
+                                        <option value="Semua">Semua</option>
+                                        @foreach ($biroOrganisasi as $item)
+                                            <option value="{{ $item->id }}">{{ $item->nama }}</option>
                                         @endforeach
-                                        <tr>
-                                            <td></td>
-                                            <td>Jumlah</td>
-                                            <td></td>
-                                            <td>Rp.
-                                                {{ number_format($totalJumlahAnggaran, 0, ',', '.') }}
-                                            </td>
-                                            <td>Rp.
-                                                {{ number_format($totalTw1, 0, ',', '.') }}
-                                            </td>
-                                            <td>Rp.
-                                                {{ number_format($totalTw2, 0, ',', '.') }}
-                                            </td>
-                                            <td>Rp.
-                                                {{ number_format($totalTw3, 0, ',', '.') }}
-                                            </td>
-                                            <td>Rp.
-                                                {{ number_format($totalTw4, 0, ',', '.') }}
-                                            </td>
-                                        </tr>
+                                    @endslot
+                                @endcomponent
+                            </div>
+                        @endif
+
+                        <div class="col">
+                            @component('dashboard.components.formElements.select',
+                                [
+                                    'label' => 'Tahun',
+                                    'id' => 'tahun_filter',
+                                    'name' => 'tahun_filter',
+                                    'class' => 'select2',
+                                    'wajib' => '<sup class="text-danger">*</sup>',
+                                ])
+                                @slot('options')
+                                    @foreach ($tahun as $item)
+                                        <option value="{{ $item->id }}">{{ $item->tahun }}</option>
                                     @endforeach
-                                @endforeach
-                            </tbody>
-                        </table>
-                    @endif
+                                @endslot
+                            @endcomponent
+                        </div>
+                    </div>
+                    <div id="tabel-spd">
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -282,5 +230,29 @@
         $(document).ready(function() {
             $('#spd').addClass('active');
         })
+
+        $('#biro_organisasi').on('change', function() {
+            tabelSpd();
+        })
+
+        $('#tahun_filter').on('change', function() {
+            tabelSpd();
+        })
+
+        function tabelSpd() {
+            var tahun = $('#tahun_filter').val();
+            var biroOrganisasi = $('#biro_organisasi').val();
+            $.ajax({
+                url: "{{ url('spd/tabel-spd') }}",
+                type: 'POST',
+                data: {
+                    'tahun': tahun,
+                    'biro_organisasi': biroOrganisasi,
+                },
+                success: function(response) {
+                    $('#tabel-spd').html(response);
+                }
+            })
+        }
     </script>
 @endpush

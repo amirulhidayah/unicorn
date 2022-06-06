@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRiwayatSppLsTable extends Migration
+class CreateRiwayatSppGuTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class CreateRiwayatSppLsTable extends Migration
      */
     public function up()
     {
-        Schema::create('riwayat_spp_ls', function (Blueprint $table) {
+        Schema::create('riwayat_spp_gu', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('spp_ls_id');
+            $table->uuid('spp_gu_id');
             $table->uuid('user_id');
             $table->bigInteger('anggaran_digunakan')->nullable();
             $table->string('nomor_surat')->nullable();
@@ -33,6 +33,6 @@ class CreateRiwayatSppLsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('riwayat_spp_ls');
+        Schema::dropIfExists('riwayat_spp_gu');
     }
 }

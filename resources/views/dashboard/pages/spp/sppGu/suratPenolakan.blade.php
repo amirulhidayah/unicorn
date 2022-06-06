@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Surat Penolakan SPP-LS</title>
+    <title>Surat Penolakan SPP-GU</title>
     {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous"> --}}
     <style>
@@ -25,7 +25,7 @@
     <table width="100%">
         <tr>
             <td width="50%">
-                <p>Nomor : {{ $riwayatSppLs->nomor_surat }}</p>
+                <p>Nomor : {{ $riwayatSppGu->nomor_surat }}</p>
                 <p>Perihal : <b>Pengembalian SPJ/SPP</b></p>
             </td>
             <td width="50%">
@@ -49,13 +49,12 @@
 
         <tr>
             <td width="75%">
-                <p>- SPP-LS Nomor : {{ $riwayatSppLs->sppLs->nomor_surat }}</p>
-                <p>- SPJ Kegiatan : {{ $riwayatSppLs->sppLs->kegiatan->nama }}</p>
-                <p> - SPJ Kategori : {{ $riwayatSppLs->sppLs->kategori }}</p>
+                <p>- SPP-GU Nomor : {{ $riwayatSppGu->sppGu->nomor_surat }}</p>
+                <p>- SPJ Kegiatan : {{ $riwayatSppGu->sppGu->kegiatan->nama }}</p>
             </td>
             <td width="25%">
-                <p>Tanggal : {{ \Carbon\Carbon::parse($riwayatSppLs->created_at)->translatedFormat('d F Y') }}</p>
-                <p>Jumlah : {{ 'Rp. ' . number_format($riwayatSppLs->anggaran_digunakan, 0, ',', '.') }}</p>
+                <p>Tanggal : {{ \Carbon\Carbon::parse($riwayatSppGu->created_at)->translatedFormat('d F Y') }}</p>
+                <p>Jumlah : {{ 'Rp. ' . number_format($riwayatSppGu->anggaran_digunakan, 0, ',', '.') }}</p>
             </td>
         </tr>
     </table>
@@ -80,7 +79,7 @@
     <table style="border: 2px solid black;" width="100%">
         <tr>
             <td width="100%" style="padding: 20px">
-                <p>{{ $riwayatSppLs->alasan }}</p>
+                <p>{{ $riwayatSppGu->alasan }}</p>
             </td>
         </tr>
     </table>
@@ -93,10 +92,10 @@
             </td>
             <td width="30%" style="text-align: center">
                 <p>Palu, {{ $hariIni }}</p>
-                <img src="{{ Storage::url('tanda_tangan/' . $riwayatSppLs->profil->tanda_tangan) }}" alt=""
+                <img src="{{ Storage::url('tanda_tangan/' . $riwayatSppGu->profil->tanda_tangan) }}" alt=""
                     id="tanda-tangan">
-                <p class="fw-bold"><u>{{ $riwayatSppLs->profil->nama }}</u></p>
-                <p>{{ $riwayatSppLs->user->role }}</p>
+                <p class="fw-bold"><u>{{ $riwayatSppGu->profil->nama }}</u></p>
+                <p>{{ $riwayatSppGu->user->role }}</p>
             </td>
         </tr>
     </table>

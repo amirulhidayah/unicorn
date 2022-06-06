@@ -6,12 +6,12 @@ use App\Traits\TraitUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class RiwayatSppLs extends Model
+class RiwayatSppGu extends Model
 {
     use HasFactory;
     use TraitUuid;
 
-    protected $table = 'riwayat_spp_ls';
+    protected $table = 'riwayat_spp_gu';
 
     public function user()
     {
@@ -23,8 +23,8 @@ class RiwayatSppLs extends Model
         return $this->hasOne(Profil::class, 'user_id', 'user_id');
     }
 
-    public function sppLs()
+    public function sppGu()
     {
-        return $this->hasOne(SppLs::class, 'id', 'spp_ls_id');
+        return $this->hasOne(SppGu::class, 'id', 'spp_gu_id');
     }
 }

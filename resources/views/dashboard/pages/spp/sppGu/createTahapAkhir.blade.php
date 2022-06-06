@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.main')
 
 @section('title')
-    SPP LS
+    SPP GU
 @endsection
 
 @push('style')
@@ -61,21 +61,20 @@
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">SPP LS</a>
+            <a href="#">SPP GU</a>
         </li>
     </ul>
 @endsection
 
 @section('content')
-    <form id="form-tambah" enctype="multipart/form-data">
+    <form method="POST" id="form-tambah" enctype="multipart/form-data" action="{{ url('spp-gu') }}">
         {{ csrf_field() }}
-        @method('PUT')
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
                         <div class="card-head-row">
-                            <div class="card-title">Edit SPP LS</div>
+                            <div class="card-title">Tambah SPP GU</div>
                         </div>
                     </div>
                     <div class="card-body">
@@ -83,38 +82,38 @@
                             <div class="col-md-6">
                                 @component('dashboard.components.widgets.info',
                                     [
-                                        'judul' => 'Biro Organisasi',
-                                        'isi' => $sppLs->biroOrganisasi->nama,
+                                        'judul' => 'Tahap',
+                                        'isi' => '<span class="badge badge-success">Akhir</span>',
                                     ])
                                 @endcomponent
                                 @component('dashboard.components.widgets.info',
                                     [
-                                        'judul' => 'Kategori',
-                                        'isi' => $sppLs->kategori,
+                                        'judul' => 'Biro Organisasi',
+                                        'isi' => $sppGu->biroOrganisasi->nama,
                                     ])
                                 @endcomponent
                                 @component('dashboard.components.widgets.info',
                                     [
                                         'judul' => 'Tahun',
-                                        'isi' => $sppLs->tahun->tahun,
+                                        'isi' => $sppGu->tahun->tahun,
                                     ])
                                 @endcomponent
                                 @component('dashboard.components.widgets.info',
                                     [
                                         'judul' => 'Program',
-                                        'isi' => $sppLs->kegiatan->program->nama . ' (' . $sppLs->kegiatan->program->no_rek . ')',
+                                        'isi' => $sppGu->kegiatan->program->nama . ' (' . $sppGu->kegiatan->program->no_rek . ')',
                                     ])
                                 @endcomponent
                                 @component('dashboard.components.widgets.info',
                                     [
                                         'judul' => 'Kegiatan',
-                                        'isi' => $sppLs->kegiatan->nama . ' (' . $sppLs->kegiatan->no_rek . ')',
+                                        'isi' => $sppGu->kegiatan->nama . ' (' . $sppGu->kegiatan->no_rek . ')',
                                     ])
                                 @endcomponent
                                 @component('dashboard.components.widgets.info',
                                     [
                                         'judul' => 'TW',
-                                        'isi' => $sppLs->tw,
+                                        'isi' => $sppGu->tw,
                                     ])
                                 @endcomponent
                                 @component('dashboard.components.widgets.info',
@@ -131,7 +130,7 @@
                                             'id' => 'anggaran_digunakan',
                                             'name' => 'anggaran_digunakan',
                                             'class' => 'uang',
-                                            'value' => $sppLs->anggaran_digunakan,
+                                            'value' => $sppGu->anggaran_digunakan,
                                             'wajib' => '<sup class="text-danger">*</sup>',
                                             'placeholder' => 'Masukkan Anggaran Yang Digunakan',
                                         ])
@@ -139,26 +138,6 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                @if ($request->perbaiki == 'asn' && $sppLs->alasan_validasi_asn != null)
-                                    @component('dashboard.components.widgets.alert',
-                                        [
-                                            'classBg' => 'bg-danger text-light',
-                                            'judul' => 'Alasan Ditolak',
-                                            'isi' => $sppLs->alasan_validasi_asn,
-                                        ])
-                                    @endcomponent
-                                @endif
-
-                                @if ($request->perbaiki == 'ppk' && $sppLs->alasan_validasi_ppk != null)
-                                    @component('dashboard.components.widgets.alert',
-                                        [
-                                            'classBg' => 'bg-danger text-light',
-                                            'judul' => 'Alasan Ditolak',
-                                            'isi' => $sppLs->alasan_validasi_ppk,
-                                        ])
-                                    @endcomponent
-                                @endif
-
                                 <div class="card" id="card-keterangan-upload">
                                     <div class="card-body text-center">
                                         <i class="fas fa-file-upload" style="font-size: 75px"></i>
@@ -170,33 +149,7 @@
                                     </div>
                                 </div>
                                 <div id="list-upload">
-                                    <div class="card box-upload" class="box-upload">
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <!-- <div class="d-flex border rounded shadow shadow-lg p-2 "> -->
-                                                <div class="col-3 d-flex align-items-center justify-content-center">
-                                                    <img src="{{ asset('assets/dashboard/img/pdf.png') }}" alt=""
-                                                        width="70px">
-                                                </div>
-                                                <div class="col-9">
-                                                    <div class="mb-3 mt-2">
-                                                        <p class="fw-bold" style="font-size: 15px;">Surat Penolakan
-                                                        </p>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <input name="surat_penolakan" class="form-control" type="file"
-                                                            multiple="true">
-                                                        <p class="text-danger error-text surat_penolakan-error my-0">
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="fw-bold card-footer bg-primary text-light text-center p-0">
-                                            ! Wajib Dimasukan</div>
-                                    </div>
-                                    <hr>
-                                    @foreach ($sppLs->dokumenSppLs as $dokumen)
+                                    @foreach ($daftarDokumenSppGu as $dokumen)
                                         <div class="card box-upload" id="box-upload-{{ $loop->iteration }}"
                                             class="box-upload">
                                             <div class="card-body">
@@ -208,31 +161,22 @@
                                                     </div>
                                                     <div class="col-9">
                                                         <div class="mb-3 mt-2">
-                                                            <input type="text" class="form-control nama_file_update"
-                                                                id="nama_file" name="nama_file_update[]"
-                                                                placeholder="Masukkan Nama File"
-                                                                value="{{ $dokumen->nama_dokumen }}">
+                                                            <input type="text" class="form-control nama_file" id="nama_file"
+                                                                name="nama_file[]" placeholder="Masukkan Nama File"
+                                                                value="{{ $dokumen->nama }}">
                                                         </div>
                                                         <div class="mb-3">
-                                                            <input name="file_dokumen_update[]"
-                                                                class="form-control file_dokumen_update" type="file"
-                                                                multiple="true" data-id="{{ $dokumen->id }}">
-                                                            <span class="text-mute" style="font-size: 11px">Kosongkan
-                                                                Dokumen Jika Tidak Ingin
-                                                                Merubah Dokumen</span>
-                                                            <p class="text-danger error-text nama_file_update-error my-0">
-                                                            </p>
-                                                            <p
-                                                                class="text-danger error-text file_dokumen_update-error my-0">
-                                                            </p>
+                                                            <input name="file_dokumen[]" class="form-control file_dokumen"
+                                                                type="file" multiple="true">
+                                                            <p class="text-danger error-text nama_file-error my-0"></p>
+                                                            <p class="text-danger error-text file_dokumen-error my-0"></p>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <button type="button"
                                                 class="btn btn-danger fw-bold card-footer bg-danger text-center p-0"
-                                                onclick="hapusUpdate({{ $loop->iteration }},{{ $dokumen->id }})"><i
-                                                    class="fas fa-trash-alt"></i>
+                                                onclick="hapus({{ $loop->iteration }})"><i class="fas fa-trash-alt"></i>
                                                 Hapus</button>
                                         </div>
                                     @endforeach
@@ -260,39 +204,22 @@
 
 @push('script')
     <script>
-        var totalList = {{ count($sppLs->dokumenSppLs) }};
-        var arrayNamaFileUpdate = {{ json_encode($sppLs->dokumenSppLs->pluck('id')->toArray()) }};
-        var perbaiki = "{{ $request->perbaiki }}";
-        var arrayDokumenHapus = [];
-        var arrayDokumenUpdate = [];
-        var jumlahAnggaran = {{ $jumlahAnggaranHitung }};
+        var totalList = {{ count($daftarDokumenSppGu) }};
+        var jumlahAnggaran = 0;
 
         $(document).ready(function() {
-            $('#spp-ls').addClass('active');
-            $('#anggaran_digunakan').keyup();
+            $('#spp-gu').addClass('active');
         })
 
         function hapus(id) {
             $('#box-upload-' + id).fadeOut("slow", function() {
                 $("#box-upload-" + id).remove();
             });
-
-        }
-
-        function hapusUpdate(id, value) {
-            $('#box-upload-' + id).fadeOut("slow", function() {
-                $("#box-upload-" + id).remove();
-            });
-            arrayNamaFileUpdate = arrayNamaFileUpdate.filter(item => item !== value);
-            arrayDokumenHapus.push(value);
         }
 
         $('#card-tambah').click(function() {
             totalList++;
-            var cardUpload =
-                '<div class="card box-upload" id="box-upload-' + totalList +
-                '" style="display: none;"><div class="card-body"><div class="row"><div class="col-3 d-flex align-items-center justify-content-center"><img src="{{ asset('assets/dashboard/img/pdf.png') }}" alt=""width="70px"></div><div class="col-9"><div class="mb-3 mt-2"><input type="text" class="form-control nama_file" id="nama_file" name="nama_file[]" placeholder="Masukkan Nama File" value=""></div><div class="mb-3"><input name="file_dokumen[]" class="form-control file_dokumen" type="file" id="formFile"  multiple="true"><p class="text-danger error-text nama_file-error my-0"></p><p class="text-danger error-text file_dokumen-error my-0"></p></div></div></div></div><button type="button" class="btn btn-danger fw-bold card-footer bg-danger text-center p-0" onclick="hapus(' +
-                totalList + ')"><i class="fas fa-trash-alt"></i> Hapus</button>';
+            var cardUpload = tambahCardUpload(totalList, '');
             $('#list-upload').append(cardUpload);
             $('#box-upload-' + totalList).fadeIn("slow");
         })
@@ -303,18 +230,6 @@
             var totalNamaKosong = 0;
             var indexArray = 0;
             var totalDokumen = 0;
-            var totalDokumenUpdate = 0;
-            arrayDokumenUpdate = [];
-
-            $('.surat-penolakan_error').html('');
-
-            $(".file_dokumen_update-error").each(function() {
-                $(this).html('');
-            })
-
-            $(".nama_file_update-error").each(function() {
-                $(this).html('');
-            })
 
             $(".file_dokumen-error").each(function() {
                 $(this).html('');
@@ -325,9 +240,8 @@
             })
 
             totalDokumen = $('.file_dokumen').length;
-            totalDokumenUpdate = $('.file_dokumen_update').length;
 
-            if (totalDokumen == 0 && totalDokumenUpdate == 0) {
+            if (totalDokumen == 0) {
                 swal("Dokumen Kosong, Silahkan Tambahkan Dokumen Minimal 1", {
                     buttons: false,
                     timer: 1500,
@@ -350,12 +264,6 @@
                 indexArray++;
             })
 
-            $(".file_dokumen_update").each(function() {
-                if ($(this).val() != '') {
-                    arrayDokumenUpdate.push($(this).data('id'));
-                }
-            })
-
             if (totalDokumenKosong != 0 || totalNamaKosong != 0) {
                 swal("Periksa Kembali Data Anda", {
                     buttons: false,
@@ -366,12 +274,8 @@
             }
 
             var formData = new FormData($(this)[0]);
-            formData.append('arrayNamaFileUpdate', JSON.stringify(arrayNamaFileUpdate));
-            formData.append('arrayDokumenHapus', JSON.stringify(arrayDokumenHapus));
-            formData.append('arrayDokumenUpdate', JSON.stringify(arrayDokumenUpdate));
-            formData.append('perbaiki', perbaiki);
             $.ajax({
-                url: "{{ url('spp-ls/' . $sppLs->id) }}",
+                url: "{{ url('spp-gu/' . $sppGu->id) }}",
                 type: "POST",
                 data: formData,
                 async: false,
@@ -385,14 +289,9 @@
                             });
                         setTimeout(
                             function() {
-                                $(location).attr('href', "{{ url('spp-ls') }}");
+                                $(location).attr('href', "{{ url('spp-gu') }}");
                             }, 2000);
                     } else {
-                        swal("Periksa Kembali Data Anda", {
-                            buttons: false,
-                            timer: 1500,
-                            icon: "warning",
-                        });
                         printErrorMsg(response.error);
                     }
                 },
@@ -400,15 +299,6 @@
                 contentType: false,
                 processData: false
             });
-        })
-
-        $('#anggaran_digunakan').keyup(function() {
-            var anggaranDigunakan = $('#anggaran_digunakan').val().split('.').join('');
-            if (anggaranDigunakan > jumlahAnggaran) {
-                $('.anggaran_digunakan-error').html('Anggaran melebihi anggaran yang telah ditentukan');
-            } else {
-                $('.anggaran_digunakan-error').html('');
-            }
         })
 
         function printErrorMsg(msg) {
@@ -444,18 +334,109 @@
             $('#form-tambah')[0].reset();
         }
 
-        // function printErrorMsg(msg) {
-        //     $('.jawaban-error').each(function(i, o) {
-        //         $(o).text('');
-        //     })
-        //     var i = 0;
-        //     $.each(msg, function(key, value) {
-        //         $('.text-jawaban').each(function(i, o) {
-        //             if ($(o).val() == '') {
-        //                 $('.jawaban-error').eq(i).text(value);
-        //             };
-        //         })
-        //     });
-        // }
+        $('#tahun').on('change', function() {
+            var tahun = $(this).val();
+            $('#kegiatan').html('').attr('disabled', true);
+            $('#tw').val('').trigger('change').attr('disabled', true);
+            $('#jumlah_anggaran').val('0');
+            $('#anggaran_digunakan').val('0').attr('disabled', true);
+            $.ajax({
+                url: "{{ url('list/program') }}",
+                type: "POST",
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    tahun: tahun
+                },
+                success: function(response) {
+                    $('#program').removeAttr('disabled');
+                    if (response.length > 0) {
+                        $('#program').html('');
+                        $('#program').append('<option value="">Pilih Program</option>');
+                        $.each(response, function(key, value) {
+                            $('#program').append('<option value="' + value.id + '">' + value
+                                .nama + " (" + value.no_rek + ")" + '</option>');
+                        })
+                    } else {
+                        $('#program').html('');
+                    }
+                }
+            })
+        })
+
+        $('#program').on('change', function() {
+            var program = $('#program').val();
+            var tahun = $('#tahun').val();
+            $('#tw').val('').trigger('change').attr('disabled', true);
+            $('#jumlah_anggaran').val('0');
+            $('#anggaran_digunakan').val('0').attr('disabled', true);
+            $.ajax({
+                url: "{{ url('list/kegiatan') }}",
+                type: "POST",
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    tahun: tahun,
+                    program: program
+                },
+                success: function(response) {
+                    $('#kegiatan').removeAttr('disabled');
+                    if (response.length > 0) {
+                        $('#kegiatan').html('');
+                        $('#kegiatan').append('<option value="">Pilih kegiatan</option>');
+                        $.each(response, function(key, value) {
+                            $('#kegiatan').append('<option value="' + value.id + '">' + value
+                                .nama + " (" + value.no_rek + ")" + '</option>');
+                        })
+                    } else {
+                        $('#kegiatan').html('');
+                    }
+                }
+            })
+        })
+
+        $("#kegiatan").on('change', function() {
+            $('#tw').val('').trigger('change').attr('disabled', false);
+            $('#jumlah_anggaran').val('0');
+            $('#anggaran_digunakan').val('0').attr('disabled', true);
+        })
+
+        $('#tw').on('change', function() {
+            $('#anggaran_digunakan').val('0').attr('disabled', false);
+            var kegiatan = $('#kegiatan').val();
+            var tahun = $('#tahun').val();
+            var tw = $('#tw').val();
+            $.ajax({
+                url: "{{ url('spd/get-spd') }}",
+                type: "POST",
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    tahun: tahun,
+                    kegiatan: kegiatan,
+                    tw: tw
+                },
+                success: function(response) {
+                    jumlahAnggaran = response.jumlah_anggaran;
+                    $('#jumlah_anggaran').val(formatRupiah(response.jumlah_anggaran));
+                }
+            })
+        })
+
+        $('#anggaran_digunakan').keyup(function() {
+            var anggaranDigunakan = $('#anggaran_digunakan').val().split('.').join('');
+            if (anggaranDigunakan > jumlahAnggaran) {
+                $('.anggaran_digunakan-error').html('Anggaran melebihi anggaran yang telah ditentukan');
+            } else {
+                $('.anggaran_digunakan-error').html('');
+            }
+        })
+
+        function tambahCardUpload(totalList, nama_file) {
+            var cardUpload =
+                '<div class="card box-upload" id="box-upload-' + totalList +
+                '" style="display: none;"><div class="card-body"><div class="row"><div class="col-3 d-flex align-items-center justify-content-center"><img src="{{ asset('assets/dashboard/img/pdf.png') }}" alt=""width="70px"></div><div class="col-9"><div class="mb-3 mt-2"><input type="text" class="form-control nama_file" id="nama_file" name="nama_file[]" placeholder="Masukkan Nama File" value="' +
+                nama_file +
+                '"></div><div class="mb-3"><input name="file_dokumen[]" class="form-control file_dokumen" type="file" id="formFile"  multiple="true"><p class="text-danger error-text nama_file-error my-0"></p><p class="text-danger error-text file_dokumen-error my-0"></p></div></div></div></div><button type="button" class="btn btn-danger fw-bold card-footer bg-danger text-center p-0" onclick="hapus(' +
+                totalList + ')"><i class="fas fa-trash-alt"></i> Hapus</button>';
+            return cardUpload;
+        }
     </script>
 @endpush

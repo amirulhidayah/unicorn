@@ -21,6 +21,17 @@ class UsersTableSeeder extends Seeder
         \DB::table('users')->insert(array (
             0 => 
             array (
+                'id' => 'a87bc04e-a7f0-4bcd-9a1e-2c645aecd370',
+                'email' => 'bendaharapengeluaran@gmail.com',
+                'email_verified_at' => NULL,
+                'password' => '$2y$10$QOLVQZXuDGHeV6DaHuc9luCfDk.KR9IAwPEeJljiIG2lx1wZBYVTi',
+                'role' => 'Bendahara Pengeluaran',
+                'remember_token' => NULL,
+                'created_at' => '2022-06-04 13:00:07',
+                'updated_at' => '2022-06-04 13:00:07',
+            ),
+            1 => 
+            array (
                 'id' => 'd027ec6e-aa44-4b8f-b183-8d9a0af04322',
                 'email' => 'ppk@gmail.com',
                 'email_verified_at' => NULL,
@@ -30,7 +41,7 @@ class UsersTableSeeder extends Seeder
                 'created_at' => '2022-05-14 12:31:46',
                 'updated_at' => '2022-05-14 12:31:46',
             ),
-            1 => 
+            2 => 
             array (
                 'id' => 'd61f7c8d-03ca-4e4a-9fbc-f16d17dc95bd',
                 'email' => 'bendaharapembantu@gmail.com',
@@ -41,7 +52,7 @@ class UsersTableSeeder extends Seeder
                 'created_at' => '2022-05-14 12:30:40',
                 'updated_at' => '2022-05-14 12:30:40',
             ),
-            2 => 
+            3 => 
             array (
                 'id' => 'ddfa22a2-5590-4c51-aafa-a1e0e649041b',
                 'email' => 'asn@gmail.com',
@@ -52,7 +63,7 @@ class UsersTableSeeder extends Seeder
                 'created_at' => '2022-05-14 12:29:25',
                 'updated_at' => '2022-05-14 12:29:25',
             ),
-            3 => 
+            4 => 
             array (
                 'id' => 'ea50a24c-f284-4913-9a2c-9d6b675848e3',
                 'email' => 'admin@gmail.com',

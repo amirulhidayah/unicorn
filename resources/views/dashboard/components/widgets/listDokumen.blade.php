@@ -42,7 +42,7 @@
              <li class="media mb-3 d-flex align-items-center">
                  <img src="{{ asset('assets/dashboard/img/pdf.png') }}" alt="" width="35px">
                  <div class="media-body">
-                     <h5 class="font-16 mb-1 ml-2 my-0 fw-bold">{{ $dokumen->nama_dokumen }}<i
+                     <h5 class="font-16 mb-1 ml-2 my-0 mr-1 fw-bold">{{ $dokumen->nama_dokumen }}<i
                              class="feather icon-download-cloud float-right"></i></h5>
                  </div>
                  <a href="{{ Storage::url('dokumen_' . $tipe . '/' . $dokumen->dokumen) }}"

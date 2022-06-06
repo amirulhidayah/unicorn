@@ -66,6 +66,21 @@ class ProfilTableSeeder extends Seeder
             ),
             3 => 
             array (
+                'id' => '3bb96416-70ce-4787-b965-419f3fe2fdef',
+                'user_id' => 'a87bc04e-a7f0-4bcd-9a1e-2c645aecd370',
+                'nama' => 'Vinicius Junior',
+                'alamat' => 'Brazil',
+                'jenis_kelamin' => 'Laki-Laki',
+                'nomor_hp' => '08123456789',
+                'nip' => '1234567890',
+                'foto' => '1654347607.png',
+                'tanda_tangan' => '1654347607.png',
+                'biro_organisasi_id' => '68c37c05-84a4-493b-9419-35cb6d10a319',
+                'created_at' => '2022-06-04 13:00:07',
+                'updated_at' => '2022-06-04 13:00:07',
+            ),
+            4 => 
+            array (
                 'id' => 'a2f3dfad-ae9a-402b-a753-dce1ac905add',
                 'user_id' => 'd61f7c8d-03ca-4e4a-9fbc-f16d17dc95bd',
                 'nama' => 'Krewella',

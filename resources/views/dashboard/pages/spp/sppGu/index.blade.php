@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.main')
 
 @section('title')
-    SPP LS
+    SPP GU
 @endsection
 
 @push('style')
@@ -24,7 +24,7 @@
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">SPP LS</a>
+            <a href="#">SPP GU</a>
         </li>
     </ul>
 @endsection
@@ -35,14 +35,14 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-head-row">
-                        <div class="card-title">Data SPP LS</div>
+                        <div class="card-title">Data SPP GU</div>
                         <div class="card-tools">
                             @if (in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran']))
                                 @component('dashboard.components.buttons.add',
                                     [
                                         'id' => 'btn-tambah',
                                         'class' => '',
-                                        'url' => url('spp-ls/create'),
+                                        'url' => url('spp-gu/create'),
                                     ])
                                 @endcomponent
                             @endif
@@ -56,7 +56,7 @@
                                 @component('dashboard.components.dataTables.index',
                                     [
                                         'id' => 'table-data',
-                                        'th' => ['No', 'Tanggal', 'Kegiatan', 'Program', 'Biro Organisasi', 'Kategori', 'Periode', 'Jumlah Anggaran', 'Anggaran Digunakan', 'Verifikasi ASN Sub Bagian Keuangan', 'Verifikasi PPK', 'Status Verifikasi Akhir', 'Aksi'],
+                                        'th' => ['No', 'Tanggal', 'Kegiatan', 'Program', 'Biro Organisasi', 'Periode', 'Jumlah Anggaran', 'Anggaran Digunakan', 'Verifikasi ASN Sub Bagian Keuangan', 'Verifikasi PPK', 'Status Verifikasi Akhir', 'Tahap', 'Aksi'],
                                     ])
                                 @endcomponent
                             </div>
@@ -91,7 +91,7 @@
             }).then((Delete) => {
                 if (Delete) {
                     $.ajax({
-                        url: "{{ url('spp-ls') }}" + '/' + id,
+                        url: "{{ url('spp-gu') }}" + '/' + id,
                         type: 'DELETE',
                         data: {
                             '_token': '{{ csrf_token() }}'
@@ -139,7 +139,7 @@
             }).then((Delete) => {
                 if (Delete) {
                     $.ajax({
-                        url: "{{ url('spp-ls/verifikasi-akhir/') }}" + '/' + id,
+                        url: "{{ url('spp-gu/verifikasi-akhir/') }}" + '/' + id,
                         type: 'PUT',
                         data: {
                             '_token': '{{ csrf_token() }}'
@@ -194,7 +194,7 @@
                 [10, 25, 50, "All"]
             ],
             ajax: {
-                url: "{{ url('spp-ls') }}",
+                url: "{{ url('spp-gu') }}",
                 data: function(d) {
                     d.statusValidasi = $('#status-validasi').val();
                     d.kategori = $('#kategori').val();
@@ -229,11 +229,6 @@
                     className: 'text-center',
                 },
                 {
-                    data: 'kategori',
-                    name: 'kategori',
-                    className: 'text-center',
-                },
-                {
                     data: 'periode',
                     name: 'periode',
                     className: 'text-center',
@@ -264,6 +259,11 @@
                     className: 'text-center',
                 },
                 {
+                    data: 'tahap',
+                    name: 'tahap',
+                    className: 'text-center',
+                },
+                {
                     data: 'action',
                     name: 'action',
                     className: 'text-center',
@@ -284,7 +284,7 @@
 
     <script>
         $(document).ready(function() {
-            $('#spp-ls').addClass('active');
+            $('#spp-gu').addClass('active');
         })
 
         function printErrorMsg(msg) {

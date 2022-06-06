@@ -3,11 +3,13 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\dashboard\masterData\AkunController;
 use App\Http\Controllers\dashboard\masterData\BiroOrganisasiController;
+use App\Http\Controllers\dashboard\masterData\DokumenSppGuController;
 use App\Http\Controllers\dashboard\masterData\DokumenSppLsController;
 use App\Http\Controllers\dashboard\masterData\DokumenSppTuController;
 use App\Http\Controllers\dashboard\masterData\DokumenSppUpController;
 use App\Http\Controllers\dashboard\masterData\TahunController;
 use App\Http\Controllers\dashboard\spd\SpdController;
+use App\Http\Controllers\dashboard\spp\SppGuController;
 use App\Http\Controllers\dashboard\spp\SppLsController;
 use App\Http\Controllers\dashboard\spp\SppTuController;
 use App\Http\Controllers\dashboard\spp\SppUpController;
@@ -40,6 +42,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('/master-data/daftar-dokumen-spp-ls', DokumenSppLsController::class)->parameters([
         'daftar-dokumen-spp-ls' => 'daftar-dokumen-spp-ls'
     ]);
+    Route::resource('/master-data/daftar-dokumen-spp-gu', DokumenSppGuController::class);
 
     // SPP UP
     Route::resource('/spp-up', SppUpController::class)->except([
@@ -66,10 +69,24 @@ Route::group(['middleware' => ['auth']], function () {
         'spp-ls' => 'spp-ls'
     ]);
     Route::post('/spp-ls/{sppLs}/edit', [SppLsController::class, 'edit']);
+    Route::put('/spp-ls/verifikasi-akhir/{sppLs}', [SppLsController::class, 'verifikasiAkhir']);
     Route::put('/spp-ls/verifikasi/{sppLs}', [SppLsController::class, 'verifikasi']);
     Route::get('/spp-ls/riwayat/{sppLs}', [SppLsController::class, 'riwayat']);
-    Route::get('/surat-penolakan/spp-ls/{riwayatSppLs}', [UnduhController::class, 'suratPenolakanSppTu']);
+    Route::get('/surat-penolakan/spp-ls/{riwayatSppLs}', [UnduhController::class, 'suratPenolakanSppLs']);
 
+    // SPP GU
+    Route::get('/spp-gu/create/{sppGu}', [SppGuController::class, 'createTahapAkhir']);
+    Route::post('/spp-gu/{sppGu}', [SppGuController::class, 'storeTahapAkhir']);
+    Route::resource('/spp-gu', SppGuController::class)->except([
+        'edit'
+    ]);
+    Route::post('/spp-gu/{sppGu}/edit', [SppGuController::class, 'edit']);
+    Route::put('/spp-gu/verifikasi-akhir/{sppGu}', [SppGuController::class, 'verifikasiAkhir']);
+    Route::put('/spp-gu/verifikasi/{sppGu}', [SppGuController::class, 'verifikasi']);
+    Route::get('/spp-gu/riwayat/{sppGu}', [SppGuController::class, 'riwayat']);
+    Route::get('/surat-penolakan/spp-gu/{riwayatSppGu}', [UnduhController::class, 'suratPenolakanSppGu']);
+
+    Route::post('/spd/tabel-spd', [SpdController::class, 'tabelSpd']);
     Route::post('/spd/get-spd', [SpdController::class, 'getSpd']);
     Route::get('/spd/format-import', [SpdController::class, 'formatImport']);
     Route::post('/spd/import', [SpdController::class, 'importSpd']);

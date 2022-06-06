@@ -6,12 +6,12 @@ use App\Traits\TraitUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SppLs extends Model
+class SppGu extends Model
 {
     use HasFactory;
     use TraitUuid;
 
-    protected $table = 'spp_ls';
+    protected $table = 'spp_gu';
 
     public function kegiatan()
     {
@@ -28,13 +28,13 @@ class SppLs extends Model
         return $this->belongsTo(BiroOrganisasi::class);
     }
 
-    public function dokumenSppLs()
+    public function dokumenSppGu()
     {
-        return $this->hasMany(DokumenSppLs::class, 'spp_ls_id', 'id')->orderBy('created_at', 'asc');
+        return $this->hasMany(DokumenSppGu::class, 'spp_gu_id', 'id')->orderBy('created_at', 'asc');
     }
 
-    public function riwayatSppLs()
+    public function riwayatSppGu()
     {
-        return $this->hasMany(RiwayatSppLs::class, 'spp_ls_id', 'id')->orderBy('created_at', 'asc');
+        return $this->hasMany(RiwayatSppGu::class, 'spp_gu_id', 'id')->orderBy('created_at', 'asc');
     }
 }

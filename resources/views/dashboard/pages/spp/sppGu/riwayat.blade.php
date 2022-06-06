@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.main')
 
 @section('title')
-    Riwayat SPP LS
+    Riwayat SPP GU
 @endsection
 
 @push('style')
@@ -24,7 +24,7 @@
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">SPP LS</a>
+            <a href="#">SPP GU</a>
         </li>
     </ul>
 @endsection
@@ -35,7 +35,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-head-row">
-                        <div class="card-title">Riwayat : {{ $sppLs->nama }}</div>
+                        <div class="card-title">Riwayat : {{ $sppGu->nama }}</div>
                         <div class="card-tools">
                         </div>
                     </div>
@@ -43,7 +43,7 @@
                 <div class="card-body">
                     @component('dashboard.components.widgets.timeline',
                         [
-                            'daftarRiwayat' => $sppLs->riwayatSppLs,
+                            'daftarRiwayat' => $sppGu->riwayatSppGu,
                             'tipeSuratPenolakan' => $tipeSuratPenolakan,
                             'tipeSuratPengembalian' => $tipeSuratPengembalian,
                         ])
@@ -57,7 +57,7 @@
 @push('script')
     <script>
         $(document).ready(function() {
-            $('#spp-ls').addClass('active');
+            $('#spp-gu').addClass('active');
         })
     </script>
 @endpush

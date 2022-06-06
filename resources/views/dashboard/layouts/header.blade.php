@@ -1,6 +1,6 @@
         <div class="main-header">
             <!-- Logo Header -->
-            <div class="logo-header" data-background-color="green">
+            <div class="logo-header" data-background-color="green2">
 
                 <a href="index.html" class="logo">
                     <img src="{{ asset('assets/dashboard') }}/img/logo.svg" alt="navbar brand" class="navbar-brand">
@@ -21,7 +21,7 @@
             <!-- End Logo Header -->
 
             <!-- Navbar Header -->
-            <nav class="navbar navbar-header navbar-expand-lg" data-background-color="green">
+            <nav class="navbar navbar-header navbar-expand-lg" data-background-color="green2">
 
                 <div class="container-fluid">
                     <ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
@@ -43,7 +43,12 @@
                                             <div class="u-text">
                                                 <h4>{{ Auth::user()->profil->nama }}</h4>
                                                 <p class="text-muted">
-                                                    {{ Auth::user()->profil->biroOrganisasi->nama }}</p>
+                                                    @if (Auth::user()->role == 'Bendahara Pengeluaran')
+                                                        {{ Auth::user()->profil->biroOrganisasi->nama }}
+                                                    @else
+                                                        {{ Auth::user()->role }}
+                                                    @endif
+                                                </p>
                                             </div>
                                         </div>
                                     </li>

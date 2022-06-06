@@ -5,6 +5,7 @@ namespace App\Http\Controllers\dashboard\spd;
 use App\Exports\FormatImport;
 use App\Http\Controllers\Controller;
 use App\Imports\ImportSpd;
+use App\Models\BiroOrganisasi;
 use App\Models\Program;
 use App\Models\Spd;
 use App\Models\Tahun;
@@ -12,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
+use Svg\Tag\Rect;
 
 class SpdController extends Controller
 {
@@ -22,18 +24,15 @@ class SpdController extends Controller
      */
     public function index()
     {
-        $tahunId = '8fef08db-e1bf-4a1f-8bd2-9809d5e60426';
-        $daftarBiroOrganisasi = Spd::with('biroOrganisasi')->where('tahun_id', $tahunId)->whereHas('biroOrganisasi', function ($query) {
-            $query->orderBy('nama', 'asc');
-        })->groupBy('biro_organisasi_id')->get()->pluck('biroOrganisasi')->sortBy('nama');
         $tahun = Tahun::orderBy('tahun', 'asc')->get();
+        $biroOrganisasi = BiroOrganisasi::orderBY('nama', 'asc')->get();
         // $program = Program::with('kegiatan')->whereHas('kegiatan', function ($query) use ($biroOrganisasi) {
         //     $query->whereHas('spd', function ($query) use ($biroOrganisasi) {
         //         $query->where('biro_organisasi_id', $biroOrganisasi);
         //     });
         // })->get();
 
-        return view('dashboard.pages.spd.index', compact('tahun', 'daftarBiroOrganisasi', 'tahunId'));
+        return view('dashboard.pages.spd.index', compact('tahun', 'biroOrganisasi'));
     }
 
     /**
@@ -155,5 +154,22 @@ class SpdController extends Controller
         return response()->json([
             'jumlah_anggaran' => $jumlahAnggaran
         ]);
+    }
+
+    public function tabelSpd(Request $request)
+    {
+        $tahun = $request->tahun;
+        $biroOrganisasi = Auth::user()->role != "Bendahara Pengeluaran" ? $request->biro_organisasi : Auth::user()->profil->biro_organisasi_id;
+        $daftarBiroOrganisasi = Spd::with('biroOrganisasi')->where('tahun_id', $tahun)
+            ->where(function ($query) use ($biroOrganisasi) {
+                if ($biroOrganisasi != "Semua") {
+                    $query->where('biro_organisasi_id', $biroOrganisasi);
+                }
+            })
+            ->whereHas('biroOrganisasi', function ($query) {
+                $query->orderBy('nama', 'asc');
+            })->groupBy('biro_organisasi_id')->get()->pluck('biroOrganisasi')->sortBy('nama');
+
+        return view('dashboard.components.widgets.tabelSpd', compact(['daftarBiroOrganisasi', 'tahun']))->render();
     }
 }

@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.main')
 
 @section('title')
-    SPP LS
+    SPP GU
 @endsection
 
 @push('style')
@@ -61,7 +61,7 @@
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">SPP LS</a>
+            <a href="#">SPP GU</a>
         </li>
     </ul>
 @endsection
@@ -75,7 +75,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-head-row">
-                            <div class="card-title">Edit SPP LS</div>
+                            <div class="card-title">Edit SPP GU</div>
                         </div>
                     </div>
                     <div class="card-body">
@@ -83,38 +83,38 @@
                             <div class="col-md-6">
                                 @component('dashboard.components.widgets.info',
                                     [
-                                        'judul' => 'Biro Organisasi',
-                                        'isi' => $sppLs->biroOrganisasi->nama,
+                                        'judul' => 'Tahap',
+                                        'isi' => $tahap,
                                     ])
                                 @endcomponent
                                 @component('dashboard.components.widgets.info',
                                     [
-                                        'judul' => 'Kategori',
-                                        'isi' => $sppLs->kategori,
+                                        'judul' => 'Biro Organisasi',
+                                        'isi' => $sppGu->biroOrganisasi->nama,
                                     ])
                                 @endcomponent
                                 @component('dashboard.components.widgets.info',
                                     [
                                         'judul' => 'Tahun',
-                                        'isi' => $sppLs->tahun->tahun,
+                                        'isi' => $sppGu->tahun->tahun,
                                     ])
                                 @endcomponent
                                 @component('dashboard.components.widgets.info',
                                     [
                                         'judul' => 'Program',
-                                        'isi' => $sppLs->kegiatan->program->nama . ' (' . $sppLs->kegiatan->program->no_rek . ')',
+                                        'isi' => $sppGu->kegiatan->program->nama . ' (' . $sppGu->kegiatan->program->no_rek . ')',
                                     ])
                                 @endcomponent
                                 @component('dashboard.components.widgets.info',
                                     [
                                         'judul' => 'Kegiatan',
-                                        'isi' => $sppLs->kegiatan->nama . ' (' . $sppLs->kegiatan->no_rek . ')',
+                                        'isi' => $sppGu->kegiatan->nama . ' (' . $sppGu->kegiatan->no_rek . ')',
                                     ])
                                 @endcomponent
                                 @component('dashboard.components.widgets.info',
                                     [
                                         'judul' => 'TW',
-                                        'isi' => $sppLs->tw,
+                                        'isi' => $sppGu->tw,
                                     ])
                                 @endcomponent
                                 @component('dashboard.components.widgets.info',
@@ -131,7 +131,7 @@
                                             'id' => 'anggaran_digunakan',
                                             'name' => 'anggaran_digunakan',
                                             'class' => 'uang',
-                                            'value' => $sppLs->anggaran_digunakan,
+                                            'value' => $sppGu->anggaran_digunakan,
                                             'wajib' => '<sup class="text-danger">*</sup>',
                                             'placeholder' => 'Masukkan Anggaran Yang Digunakan',
                                         ])
@@ -139,22 +139,22 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                @if ($request->perbaiki == 'asn' && $sppLs->alasan_validasi_asn != null)
+                                @if ($request->perbaiki == 'asn' && $sppGu->alasan_validasi_asn != null)
                                     @component('dashboard.components.widgets.alert',
                                         [
                                             'classBg' => 'bg-danger text-light',
                                             'judul' => 'Alasan Ditolak',
-                                            'isi' => $sppLs->alasan_validasi_asn,
+                                            'isi' => $sppGu->alasan_validasi_asn,
                                         ])
                                     @endcomponent
                                 @endif
 
-                                @if ($request->perbaiki == 'ppk' && $sppLs->alasan_validasi_ppk != null)
+                                @if ($request->perbaiki == 'ppk' && $sppGu->alasan_validasi_ppk != null)
                                     @component('dashboard.components.widgets.alert',
                                         [
                                             'classBg' => 'bg-danger text-light',
                                             'judul' => 'Alasan Ditolak',
-                                            'isi' => $sppLs->alasan_validasi_ppk,
+                                            'isi' => $sppGu->alasan_validasi_ppk,
                                         ])
                                     @endcomponent
                                 @endif
@@ -196,7 +196,7 @@
                                             ! Wajib Dimasukan</div>
                                     </div>
                                     <hr>
-                                    @foreach ($sppLs->dokumenSppLs as $dokumen)
+                                    @foreach ($daftarDokumenSppGu as $dokumen)
                                         <div class="card box-upload" id="box-upload-{{ $loop->iteration }}"
                                             class="box-upload">
                                             <div class="card-body">
@@ -260,15 +260,15 @@
 
 @push('script')
     <script>
-        var totalList = {{ count($sppLs->dokumenSppLs) }};
-        var arrayNamaFileUpdate = {{ json_encode($sppLs->dokumenSppLs->pluck('id')->toArray()) }};
+        var totalList = {{ count($daftarDokumenSppGu) }};
+        var arrayNamaFileUpdate = {{ json_encode($daftarDokumenSppGu->pluck('id')->toArray()) }};
         var perbaiki = "{{ $request->perbaiki }}";
         var arrayDokumenHapus = [];
         var arrayDokumenUpdate = [];
         var jumlahAnggaran = {{ $jumlahAnggaranHitung }};
 
         $(document).ready(function() {
-            $('#spp-ls').addClass('active');
+            $('#spp-gu').addClass('active');
             $('#anggaran_digunakan').keyup();
         })
 
@@ -371,7 +371,7 @@
             formData.append('arrayDokumenUpdate', JSON.stringify(arrayDokumenUpdate));
             formData.append('perbaiki', perbaiki);
             $.ajax({
-                url: "{{ url('spp-ls/' . $sppLs->id) }}",
+                url: "{{ url('spp-gu/' . $sppGu->id) }}",
                 type: "POST",
                 data: formData,
                 async: false,
@@ -385,7 +385,7 @@
                             });
                         setTimeout(
                             function() {
-                                $(location).attr('href', "{{ url('spp-ls') }}");
+                                $(location).attr('href', "{{ url('spp-gu') }}");
                             }, 2000);
                     } else {
                         swal("Periksa Kembali Data Anda", {

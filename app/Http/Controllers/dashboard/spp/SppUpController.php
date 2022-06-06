@@ -75,7 +75,7 @@ class SppUpController extends Controller
                 ->addColumn('action', function ($row) {
                     $actionBtn = '';
 
-                    if (Auth::user()->role == "Bendahara Pembantu") {
+                    if (Auth::user()->role == "Bendahara Pengeluaran") {
                         $actionBtn .= '<button id="btn-delete" class="btn btn-danger btn-sm mr-1 mt-1" value="' . $row->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
                     }
 

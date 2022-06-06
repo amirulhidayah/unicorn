@@ -37,7 +37,7 @@
                     <div class="card-head-row">
                         <div class="card-title">Detail Dokumen</div>
                         <div class="card-tools">
-                            @if ((Auth::user()->role == 'PPK' || Auth::user()->role == 'ASN Sub Bagian Keuangan') && ($sppLs->status_validasi_asn == 0 || $sppLs->status_validasi_ppk == 0))
+                            @if ((Auth::user()->role == 'PPK' || Auth::user()->role == 'ASN Sub Bagian Keuangan') && ($sppGu->status_validasi_asn == 0 || $sppGu->status_validasi_ppk == 0))
                                 @component('dashboard.components.buttons.verifikasi',
                                     [
                                         'id' => 'btn-verifikasi',
@@ -55,38 +55,38 @@
                         <div class="col-lg-6">
                             @component('dashboard.components.widgets.info',
                                 [
-                                    'judul' => 'Biro Organisasi',
-                                    'isi' => $sppLs->biroOrganisasi->nama,
+                                    'judul' => 'Tahap',
+                                    'isi' => $tahap,
                                 ])
                             @endcomponent
                             @component('dashboard.components.widgets.info',
                                 [
-                                    'judul' => 'Kategori',
-                                    'isi' => $sppLs->kategori,
+                                    'judul' => 'Biro Organisasi',
+                                    'isi' => $sppGu->biroOrganisasi->nama,
                                 ])
                             @endcomponent
                             @component('dashboard.components.widgets.info',
                                 [
                                     'judul' => 'Tahun',
-                                    'isi' => $sppLs->tahun->tahun,
+                                    'isi' => $sppGu->tahun->tahun,
                                 ])
                             @endcomponent
                             @component('dashboard.components.widgets.info',
                                 [
                                     'judul' => 'Program',
-                                    'isi' => $sppLs->kegiatan->program->nama . ' (' . $sppLs->kegiatan->program->no_rek . ')',
+                                    'isi' => $sppGu->kegiatan->program->nama . ' (' . $sppGu->kegiatan->program->no_rek . ')',
                                 ])
                             @endcomponent
                             @component('dashboard.components.widgets.info',
                                 [
                                     'judul' => 'Kegiatan',
-                                    'isi' => $sppLs->kegiatan->nama . ' (' . $sppLs->kegiatan->no_rek . ')',
+                                    'isi' => $sppGu->kegiatan->nama . ' (' . $sppGu->kegiatan->no_rek . ')',
                                 ])
                             @endcomponent
                             @component('dashboard.components.widgets.info',
                                 [
                                     'judul' => 'TW',
-                                    'isi' => $sppLs->tw,
+                                    'isi' => $sppGu->tw,
                                 ])
                             @endcomponent
                             @component('dashboard.components.widgets.info',
@@ -105,8 +105,8 @@
                         <div class="col-lg-6">
                             @component('dashboard.components.widgets.listDokumen',
                                 [
-                                    'dokumenSpp' => $sppLs->dokumenSppLs,
-                                    'spp' => $sppLs,
+                                    'dokumenSpp' => $daftarDokumenSppGu,
+                                    'spp' => $sppGu,
                                     'tipe' => $tipe,
                                 ])
                             @endcomponent
@@ -146,7 +146,7 @@
             e.preventDefault();
             $.ajax({
                 type: 'PUT',
-                url: "{{ url('spp-ls/verifikasi/' . $sppLs->id) }}",
+                url: "{{ url('spp-gu/verifikasi/' . $sppGu->id) }}",
                 data: $(this).serialize(),
                 success: function(response) {
                     if (response.status == 'success') {
@@ -157,7 +157,7 @@
                             timer: 1000,
                         }).then(function() {
                             window.location.href =
-                                "{{ url('spp-ls') }}";
+                                "{{ url('spp-gu') }}";
                         })
                     } else {
                         printErrorMsg(response.error);
@@ -186,7 +186,7 @@
         }
 
         $(document).ready(function() {
-            $('#spp-ls').addClass('active');
+            $('#spp-gu').addClass('active');
         })
     </script>
 @endpush

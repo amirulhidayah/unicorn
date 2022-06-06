@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.main')
 
 @section('title')
-    Daftar Dokumen SPP LS
+    Daftar Dokumen SPP GU
 @endsection
 
 @push('style')
@@ -24,7 +24,7 @@
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">Daftar Dokumen SPP LS</a>
+            <a href="#">Daftar Dokumen SPP GU</a>
         </li>
     </ul>
 @endsection
@@ -35,7 +35,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-head-row">
-                        <div class="card-title">Data Daftar Dokumen SPP LS</div>
+                        <div class="card-title">Data Daftar Dokumen SPP GU</div>
                         <div class="card-tools">
                             @component('dashboard.components.buttons.add',
                                 [
@@ -71,7 +71,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modal-tambah-title">Tambah Daftar Dokumen SPP LS</h5>
+                        <h5 class="modal-title" id="modal-tambah-title">Tambah Daftar Dokumen SPP GU</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -83,8 +83,8 @@
                                     [
                                         'id' => 'nama',
                                         'type' => 'text',
-                                        'label' => 'Nama Daftar Dokumen SPP LS',
-                                        'placeholder' => 'Tambah Daftar Dokumen SPP LS',
+                                        'label' => 'Nama Daftar Dokumen SPP GU',
+                                        'placeholder' => 'Tambah Daftar Dokumen SPP GU',
                                         'name' => 'nama',
                                         'required' => true,
                                     ])
@@ -100,8 +100,8 @@
                                         'wajib' => '<sup class="text-danger">*</sup>',
                                     ])
                                     @slot('options')
-                                        <option value="Barang dan Jasa">Barang dan Jasa</option>
-                                        <option value="Belanja Hibah">Belanja Hibah</option>
+                                        <option value="Awal">Awal</option>
+                                        <option value="Akhir">Akhir</option>
                                     @endslot
                                 @endcomponent
                             </div>
@@ -130,7 +130,7 @@
         $('#btn-tambah').click(function() {
             aksiTambah = 'tambah';
             $('#modal-tambah').modal('show');
-            $('#modal-tambah-title').html('Tambah Daftar Dokumen SPP LS');
+            $('#modal-tambah-title').html('Tambah Daftar Dokumen SPP GU');
         })
 
         $(document).on('click', '#btn-edit', function() {
@@ -138,7 +138,7 @@
             idEdit = id;
 
             $.ajax({
-                url: "{{ url('master-data/daftar-dokumen-spp-ls') }}" + '/' + id + '/edit',
+                url: "{{ url('master-data/daftar-dokumen-spp-gu') }}" + '/' + id + '/edit',
                 type: "GET",
                 data: {
                     id: id
@@ -146,7 +146,7 @@
                 success: function(response) {
                     aksiTambah = 'ubah';
                     $('#modal-tambah').modal('show');
-                    $('#modal-tambah-title').html('Ubah Daftar Dokumen SPP LS');
+                    $('#modal-tambah-title').html('Ubah Daftar Dokumen SPP GU');
                     $('#nama').val(response.nama);
                     $('#kategori').val(response.kategori).change();
                 },
@@ -157,7 +157,7 @@
             e.preventDefault();
             if (aksiTambah == 'tambah') {
                 $.ajax({
-                    url: "{{ url('master-data/daftar-dokumen-spp-ls') }}",
+                    url: "{{ url('master-data/daftar-dokumen-spp-gu') }}",
                     type: 'POST',
                     data: $(this).serialize(),
                     success: function(response) {
@@ -184,7 +184,7 @@
                 })
             } else {
                 $.ajax({
-                    url: "{{ url('master-data/daftar-dokumen-spp-ls') }}" + '/' + idEdit,
+                    url: "{{ url('master-data/daftar-dokumen-spp-gu') }}" + '/' + idEdit,
                     type: 'PUT',
                     data: $(this).serialize(),
                     success: function(response) {
@@ -233,7 +233,7 @@
             }).then((Delete) => {
                 if (Delete) {
                     $.ajax({
-                        url: "{{ url('master-data/daftar-dokumen-spp-ls') }}" + '/' + id,
+                        url: "{{ url('master-data/daftar-dokumen-spp-gu') }}" + '/' + id,
                         type: 'DELETE',
                         data: {
                             '_token': '{{ csrf_token() }}'
@@ -288,7 +288,7 @@
                 [10, 25, 50, "All"]
             ],
             ajax: {
-                url: "{{ url('master-data/daftar-dokumen-spp-ls') }}",
+                url: "{{ url('master-data/daftar-dokumen-spp-gu') }}",
                 data: function(d) {
                     d.statusValidasi = $('#status-validasi').val();
                     d.kategori = $('#kategori').val();
@@ -333,7 +333,7 @@
 
     <script>
         $(document).ready(function() {
-            $('#master-daftar-dokumen-spp-ls').addClass('active');
+            $('#master-daftar-dokumen-spp-gu').addClass('active');
         })
 
         function printErrorMsg(msg) {
