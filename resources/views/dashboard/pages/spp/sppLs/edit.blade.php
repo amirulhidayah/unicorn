@@ -40,7 +40,6 @@
             padding-top: 30px;
             padding-bottom: 30px;
         }
-
     </style>
 @endpush
 
@@ -142,8 +141,8 @@
                                 @if ($request->perbaiki == 'asn' && $sppLs->alasan_validasi_asn != null)
                                     @component('dashboard.components.widgets.alert',
                                         [
-                                            'classBg' => 'bg-danger text-light',
-                                            'judul' => 'Alasan Ditolak',
+                                            'oleh' => $request->perbaiki,
+                                            'tanggal' => $sppLs->tanggal_validasi_asn,
                                             'isi' => $sppLs->alasan_validasi_asn,
                                         ])
                                     @endcomponent
@@ -152,8 +151,8 @@
                                 @if ($request->perbaiki == 'ppk' && $sppLs->alasan_validasi_ppk != null)
                                     @component('dashboard.components.widgets.alert',
                                         [
-                                            'classBg' => 'bg-danger text-light',
-                                            'judul' => 'Alasan Ditolak',
+                                            'oleh' => $request->perbaiki,
+                                            'tanggal' => $sppLs->tanggal_validasi_ppk,
                                             'isi' => $sppLs->alasan_validasi_ppk,
                                         ])
                                     @endcomponent
@@ -376,10 +375,9 @@
                 data: formData,
                 async: false,
                 success: function(response) {
-                    console.log(response);
                     if (response.status == "success") {
                         swal("Berhasil",
-                            "Dokumen berhasil ditambahkan", {
+                            "Dokumen berhasil diubah", {
                                 button: false,
                                 icon: "success",
                             });
@@ -395,6 +393,13 @@
                         });
                         printErrorMsg(response.error);
                     }
+                },
+                error: function(response) {
+                    swal("Terjadi Kesalahan", {
+                        buttons: false,
+                        timer: 1500,
+                        icon: "warning",
+                    });
                 },
                 cache: false,
                 contentType: false,

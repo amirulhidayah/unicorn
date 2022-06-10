@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
+    <title>Surat Penolakan SPP UP</title>
     {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous"> --}}
     <style>
@@ -17,7 +17,6 @@
             margin-bottom: -50px;
             margin-top: -50px;
         }
-
     </style>
 </head>
 
@@ -50,10 +49,13 @@
         <tr>
             <td width="50%">
                 <p>- SPP-UP Nomor : {{ $riwayatSppUp->sppUp->nomor_surat }}</p>
+                <p> - SPJ Kegiatan : {{ $riwayatSppUp->sppUp->kegiatan->nama }}</p>
+                <p>- Jumlah Anggaran : Rp. {{ number_format($riwayatSppUp->jumlah_anggaran, 0, ',', '.') }}</p>
 
             </td>
             <td width="50%">
                 <p>Tanggal : {{ \Carbon\Carbon::parse($riwayatSppUp->created_at)->translatedFormat('d F Y') }}</p>
+                <p>Tahun : {{ $riwayatSppUp->sppUp->tahun->tahun }}</p>
             </td>
         </tr>
     </table>
@@ -62,7 +64,6 @@
     <table>
         <tr>
             <td>
-                <p> - SPJ Kegiatan : {{ $riwayatSppUp->sppUp->nama }}</p>
                 <br>
                 <br>
                 <br>

@@ -1,12 +1,17 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\dashboard\dpa\TabelDpaController;
 use App\Http\Controllers\dashboard\masterData\AkunController;
 use App\Http\Controllers\dashboard\masterData\BiroOrganisasiController;
 use App\Http\Controllers\dashboard\masterData\DokumenSppGuController;
 use App\Http\Controllers\dashboard\masterData\DokumenSppLsController;
 use App\Http\Controllers\dashboard\masterData\DokumenSppTuController;
 use App\Http\Controllers\dashboard\masterData\DokumenSppUpController;
+use App\Http\Controllers\dashboard\masterData\KegiatanDpaController;
+use App\Http\Controllers\dashboard\masterData\KegiatanSppController;
+use App\Http\Controllers\dashboard\masterData\ProgramDpaController;
+use App\Http\Controllers\dashboard\masterData\ProgramSppController;
 use App\Http\Controllers\dashboard\masterData\TahunController;
 use App\Http\Controllers\dashboard\spd\SpdController;
 use App\Http\Controllers\dashboard\spp\SppGuController;
@@ -44,12 +49,29 @@ Route::group(['middleware' => ['auth']], function () {
     ]);
     Route::resource('/master-data/daftar-dokumen-spp-gu', DokumenSppGuController::class);
 
+    Route::resource('/master-data/program-dpa', ProgramDpaController::class)->parameters([
+        'program-dpa' => 'program'
+    ]);
+
+    Route::resource('/master-data/kegiatan-dpa/{program}', KegiatanDpaController::class)->parameters([
+        '{program}' => 'kegiatan'
+    ]);
+
+    Route::resource('/master-data/program-spp', ProgramSppController::class)->parameters([
+        'program-spp' => 'programSpp'
+    ]);
+
+    Route::resource('/master-data/kegiatan-spp/{programSpp}', KegiatanSppController::class)->parameters([
+        '{programSpp}' => 'kegiatanSpp'
+    ]);
+
     // SPP UP
     Route::resource('/spp-up', SppUpController::class)->except([
         'edit'
     ]);
     Route::get('/spp-up/riwayat/{sppUp}', [SppUpController::class, 'riwayat']);
     Route::put('/spp-up/verifikasi/{sppUp}', [SppUpController::class, 'verifikasi']);
+    Route::put('/spp-up/verifikasi-akhir/{sppUp}', [SppUpController::class, 'verifikasiAkhir']);
     Route::post('/spp-up/{spp_up}/edit', [SppUpController::class, 'edit']);
     Route::get('/surat-penolakan/spp-up/{riwayatSppUp}', [UnduhController::class, 'suratPenolakanSppUp']);
 
@@ -59,6 +81,7 @@ Route::group(['middleware' => ['auth']], function () {
     ]);
     Route::post('/spp-tu/{spp_tu}/edit', [SppTuController::class, 'edit']);
     Route::put('/spp-tu/verifikasi/{sppTu}', [SppTuController::class, 'verifikasi']);
+    Route::put('/spp-tu/verifikasi-akhir/{sppTu}', [SppTuController::class, 'verifikasiAkhir']);
     Route::get('/spp-tu/riwayat/{sppTu}', [SppTuController::class, 'riwayat']);
     Route::get('/surat-penolakan/spp-tu/{riwayatSppTu}', [UnduhController::class, 'suratPenolakanSppTu']);
 
@@ -86,11 +109,13 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/spp-gu/riwayat/{sppGu}', [SppGuController::class, 'riwayat']);
     Route::get('/surat-penolakan/spp-gu/{riwayatSppGu}', [UnduhController::class, 'suratPenolakanSppGu']);
 
-    Route::post('/spd/tabel-spd', [SpdController::class, 'tabelSpd']);
-    Route::post('/spd/get-spd', [SpdController::class, 'getSpd']);
-    Route::get('/spd/format-import', [SpdController::class, 'formatImport']);
-    Route::post('/spd/import', [SpdController::class, 'importSpd']);
-    Route::resource('/spd', SpdController::class);
+    Route::post('/tabel-dpa/tabel-dpa', [TabelDpaController::class, 'tabelDpa']);
+    Route::post('/tabel-dpa/get-spd', [TabelDpaController::class, 'getSpd']);
+    Route::get('/tabel-dpa/format-import', [TabelDpaController::class, 'formatImport']);
+    Route::post('/tabel-dpa/import', [TabelDpaController::class, 'importSpd']);
+    Route::resource('/tabel-dpa', TabelDpaController::class)->parameters([
+        'tabel-dpa' => 'spd'
+    ]);
 
     Route::get('/logout', [AuthController::class, 'logout']);
 
@@ -98,9 +123,13 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/list/dokumen-spp-ls', [ListController::class, 'dokumenSppLs']);
     Route::post('/list/program', [ListController::class, 'program']);
     Route::post('/list/kegiatan', [ListController::class, 'kegiatan']);
+    Route::post('/list/program-spp', [ListController::class, 'programSpp']);
+    Route::post('/list/kegiatan-spp', [ListController::class, 'kegiatanSpp']);
 });
 
-Route::resource('/master-data/akun', AkunController::class);
+Route::resource('/master-data/akun', AkunController::class)->parameters([
+    'akun' => 'user'
+]);
 // Auth
 Route::get('/login', [AuthController::class, 'index']);
 Route::post('/login', [AuthController::class, 'login']);

@@ -4,6 +4,10 @@
         @method('PUT')
     @endif
     <div class="row g-4">
+        <div class="col-12">
+            <small class="form-text text-muted mb-2">Kosongkan password / foto / tanda tangan jika tidak ingin merubah
+                datanya</small>
+        </div>
         <div class="col-sm-12 col-lg-4">
             @component('dashboard.components.formElements.input',
                 [

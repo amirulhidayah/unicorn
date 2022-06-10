@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
+    <title>Surat Penolakan SPP TU</title>
     {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous"> --}}
     <style>
@@ -17,7 +17,6 @@
             margin-bottom: -50px;
             margin-top: -50px;
         }
-
     </style>
 </head>
 
@@ -48,20 +47,15 @@
         </tr>
 
         <tr>
-            <td width="50%">
-                <p>- SPP-UP Nomor : {{ $riwayatSppTu->sppTu->nomor_surat }}</p>
-
+            <td width="5%">
+                <p>- SPP-TU Nomor : {{ $riwayatSppTu->sppTu->nomor_surat }}</p>
+                <p> - SPJ Kegiatan : {{ $riwayatSppTu->sppTu->kegiatan->nama }}</p>
+                <p>- Jumlah Anggaran : Rp. {{ number_format($riwayatSppTu->jumlah_anggaran, 0, ',', '.') }}</p>
             </td>
             <td width="50%">
                 <p>Tanggal : {{ \Carbon\Carbon::parse($riwayatSppTu->created_at)->translatedFormat('d F Y') }}</p>
-            </td>
-        </tr>
-        <tr>
-            <td width="50%">
-                <p> - SPJ Kegiatan : {{ $riwayatSppTu->sppTu->nama }}</p>
-            </td>
-            <td width="50%">
-                <p>Jumlah : {{ 'Rp. ' . number_format($riwayatSppTu->sppTu->jumlah_nominal, 0, ',', '.') }}</p>
+                <p>TW : {{ $riwayatSppTu->sppTu->tw }}</p>
+                <p>Tahun : {{ $riwayatSppTu->sppTu->tahun->tahun }}</p>
             </td>
         </tr>
     </table>

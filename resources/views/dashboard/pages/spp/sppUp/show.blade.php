@@ -37,7 +37,7 @@
                     <div class="card-head-row">
                         <div class="card-title">Daftar Dokumen</div>
                         <div class="card-tools">
-                            @if ((Auth::user()->role == 'PPK' || Auth::user()->role == 'ASN Sub Bagian Keuangan') && ($sppUp->status_validasi_asn == 0 || $sppUp->status_validasi_ppk == 0))
+                            @if ((Auth::user()->role == 'PPK' && $sppUp->status_validasi_ppk == 0) || ($sppUp->status_validasi_asn == 0 && Auth::user()->role == 'ASN Sub Bagian Keuangan'))
                                 @component('dashboard.components.buttons.verifikasi',
                                     [
                                         'id' => 'btn-verifikasi',
@@ -52,7 +52,39 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-lg-12">
+                        <div class="col-lg-6">
+                            @component('dashboard.components.widgets.info',
+                                [
+                                    'judul' => 'Biro Organisasi',
+                                    'isi' => $sppUp->biroOrganisasi->nama,
+                                ])
+                            @endcomponent
+                            @component('dashboard.components.widgets.info',
+                                [
+                                    'judul' => 'Tahun',
+                                    'isi' => $sppUp->tahun->tahun,
+                                ])
+                            @endcomponent
+                            @component('dashboard.components.widgets.info',
+                                [
+                                    'judul' => 'Program',
+                                    'isi' => $sppUp->kegiatan->program->nama . ' (' . $sppUp->kegiatan->program->no_rek . ')',
+                                ])
+                            @endcomponent
+                            @component('dashboard.components.widgets.info',
+                                [
+                                    'judul' => 'Kegiatan',
+                                    'isi' => $sppUp->kegiatan->nama . ' (' . $sppUp->kegiatan->no_rek . ')',
+                                ])
+                            @endcomponent
+                            @component('dashboard.components.widgets.info',
+                                [
+                                    'judul' => 'Jumlah Anggaran',
+                                    'isi' => $jumlahAnggaran,
+                                ])
+                            @endcomponent
+                        </div>
+                        <div class="col-lg-6">
 
                             @component('dashboard.components.widgets.listDokumen',
                                 [

@@ -40,7 +40,6 @@
             padding-top: 30px;
             padding-bottom: 30px;
         }
-
     </style>
 @endpush
 
@@ -80,13 +79,33 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="col-12">
-                                    <label for="exampleFormControlInput1">Biro Organisasi</label>
-                                    <br>
-                                    <label for="exampleFormControlInput1"
-                                        class="badge badge-primary text-light my-2">{{ Auth::user()->profil->biroOrganisasi->nama }}</label>
-                                    <br>
-                                </div>
+                                @if (Auth::user()->role == 'Admin')
+                                    <div class="col-12">
+                                        @component('dashboard.components.formElements.select',
+                                            [
+                                                'label' => 'Biro Organisasi',
+                                                'id' => 'biro_organisasi',
+                                                'name' => 'biro_organisasi',
+                                                'class' => 'select2',
+                                                'wajib' => '<sup class="text-danger">*</sup>',
+                                            ])
+                                            @slot('options')
+                                                @foreach ($daftarBiroOrganisasi as $biroOrganisasi)
+                                                    <option value="{{ $biroOrganisasi->id }}">{{ $biroOrganisasi->nama }}
+                                                    </option>
+                                                @endforeach
+                                            @endslot
+                                        @endcomponent
+                                    </div>
+                                @else
+                                    <div class="col-12">
+                                        <label for="exampleFormControlInput1">Biro Organisasi</label>
+                                        <br>
+                                        <label for="exampleFormControlInput1"
+                                            class="badge badge-primary text-light my-2">{{ Auth::user()->profil->biroOrganisasi->nama }}</label>
+                                        <br>
+                                    </div>
+                                @endif
                                 <div class="col-12">
                                     @component('dashboard.components.formElements.select',
                                         [
@@ -324,7 +343,6 @@
                 data: formData,
                 async: false,
                 success: function(response) {
-                    console.log(response);
                     if (response.status == "success") {
                         swal("Berhasil",
                             "Dokumen berhasil ditambahkan", {
@@ -338,6 +356,13 @@
                     } else {
                         printErrorMsg(response.error);
                     }
+                },
+                error: function(response) {
+                    swal("Gagal", "Terjadi Kesalahan", {
+                        icon: "error",
+                        buttons: false,
+                        timer: 1000,
+                    });
                 },
                 cache: false,
                 contentType: false,
@@ -380,6 +405,7 @@
 
         $('#tahun').on('change', function() {
             var tahun = $(this).val();
+            var biroOrganisasi = $('#biro_organisasi').val();
             $('#kegiatan').html('').attr('disabled', true);
             $('#tw').val('').trigger('change').attr('disabled', true);
             $('#jumlah_anggaran').val('0');
@@ -389,7 +415,8 @@
                 type: "POST",
                 data: {
                     '_token': '{{ csrf_token() }}',
-                    tahun: tahun
+                    tahun: tahun,
+                    biro_organisasi: biroOrganisasi
                 },
                 success: function(response) {
                     $('#program').removeAttr('disabled');
@@ -410,6 +437,7 @@
         $('#program').on('change', function() {
             var program = $('#program').val();
             var tahun = $('#tahun').val();
+            var biroOrganisasi = $('#biro_organisasi').val();
             $('#tw').val('').trigger('change').attr('disabled', true);
             $('#jumlah_anggaran').val('0');
             $('#anggaran_digunakan').val('0').attr('disabled', true);
@@ -419,7 +447,8 @@
                 data: {
                     '_token': '{{ csrf_token() }}',
                     tahun: tahun,
-                    program: program
+                    program: program,
+                    biro_organisasi: biroOrganisasi
                 },
                 success: function(response) {
                     $('#kegiatan').removeAttr('disabled');
@@ -448,14 +477,16 @@
             var kegiatan = $('#kegiatan').val();
             var tahun = $('#tahun').val();
             var tw = $('#tw').val();
+            var biroOrganisasi = $('#biro_organisasi').val();
             $.ajax({
-                url: "{{ url('spd/get-spd') }}",
+                url: "{{ url('tabel-dpa/get-spd') }}",
                 type: "POST",
                 data: {
                     '_token': '{{ csrf_token() }}',
                     tahun: tahun,
                     kegiatan: kegiatan,
-                    tw: tw
+                    tw: tw,
+                    biro_organisasi: biroOrganisasi
                 },
                 success: function(response) {
                     jumlahAnggaran = response.jumlah_anggaran;
@@ -471,6 +502,15 @@
             } else {
                 $('.anggaran_digunakan-error').html('');
             }
+        })
+
+        $('#biro_organisasi').on('change', function() {
+            $('#program').val('').trigger('change');
+            $('#tw').val('').trigger('change');
+            $('#tahun').val('').trigger('change');
+            $('#tw').val('').trigger('change');
+            $('#jumlah_anggaran').val('0');
+            $('#anggaran_digunakan').val('0');
         })
 
         function tambahCardUpload(totalList, nama_file) {

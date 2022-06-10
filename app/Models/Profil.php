@@ -15,6 +15,6 @@ class Profil extends Model
 
     public function biroOrganisasi()
     {
-        return $this->belongsTo(BiroOrganisasi::class, 'biro_organisasi_id', 'id');
+        return $this->belongsTo(BiroOrganisasi::class, 'biro_organisasi_id', 'id')->withTrashed();
     }
 }

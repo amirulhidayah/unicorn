@@ -17,6 +17,18 @@
             margin-top: 0px !important;
         }
 
+        .timeline>li>.timeline-panel::after {
+            position: absolute;
+            top: 27px;
+            right: -14px;
+            display: inline-block;
+            border-top: 0px solid transparent !important;
+            border-left: 0px solid transparent !important;
+            border-right: 0 solid transparent !important;
+            border-bottom: 0px solid transparent !important;
+            content: "";
+        }
+
         .timeline>li>.timeline-badge {
             color: #ffffff;
             width: 35px;

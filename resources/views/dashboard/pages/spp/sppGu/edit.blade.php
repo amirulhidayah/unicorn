@@ -40,7 +40,6 @@
             padding-top: 30px;
             padding-bottom: 30px;
         }
-
     </style>
 @endpush
 
@@ -142,8 +141,8 @@
                                 @if ($request->perbaiki == 'asn' && $sppGu->alasan_validasi_asn != null)
                                     @component('dashboard.components.widgets.alert',
                                         [
-                                            'classBg' => 'bg-danger text-light',
-                                            'judul' => 'Alasan Ditolak',
+                                            'oleh' => $request->perbaiki,
+                                            'tanggal' => $sppGu->tanggal_validasi_asn,
                                             'isi' => $sppGu->alasan_validasi_asn,
                                         ])
                                     @endcomponent
@@ -152,8 +151,8 @@
                                 @if ($request->perbaiki == 'ppk' && $sppGu->alasan_validasi_ppk != null)
                                     @component('dashboard.components.widgets.alert',
                                         [
-                                            'classBg' => 'bg-danger text-light',
-                                            'judul' => 'Alasan Ditolak',
+                                            'oleh' => $request->perbaiki,
+                                            'tanggal' => $sppGu->tanggal_validasi_ppk,
                                             'isi' => $sppGu->alasan_validasi_ppk,
                                         ])
                                     @endcomponent
@@ -376,10 +375,9 @@
                 data: formData,
                 async: false,
                 success: function(response) {
-                    console.log(response);
                     if (response.status == "success") {
                         swal("Berhasil",
-                            "Dokumen berhasil ditambahkan", {
+                            "Dokumen berhasil diubah", {
                                 button: false,
                                 icon: "success",
                             });
@@ -395,6 +393,13 @@
                         });
                         printErrorMsg(response.error);
                     }
+                },
+                error: function(response) {
+                    swal("Gagal", "Terjadi Kesalahan", {
+                        icon: "error",
+                        buttons: false,
+                        timer: 1000,
+                    });
                 },
                 cache: false,
                 contentType: false,

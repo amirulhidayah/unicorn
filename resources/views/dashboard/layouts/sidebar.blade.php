@@ -13,51 +13,59 @@
                     <span class="sidebar-mini-icon">
                         <i class="fa fa-ellipsis-h"></i>
                     </span>
-                    <h4 class="text-section">SPD</h4>
+                    <h4 class="text-section">Dokumen Pelaksana Anggaran (DPA)</h4>
+                </li>
+                <li class="nav-item" id="tabel-dpa">
+                    <a href="{{ url('tabel-dpa') }}">
+                        <i class="fas fa-table"></i>
+                        <p>Tabel</p>
+                    </a>
                 </li>
                 <li class="nav-item" id="spd">
                     <a href="{{ url('spd') }}">
-                        <i class="fas fa-file"></i>
-                        <p>SPD</p>
+                        <i class="fas fa-chart-bar"></i>
+                        <p>Statistik</p>
                     </a>
                 </li>
                 <li class="nav-section">
                     <span class="sidebar-mini-icon">
                         <i class="fa fa-ellipsis-h"></i>
                     </span>
-                    <h4 class="text-section">SPP</h4>
+                    <h4 class="text-section">Surat Perintah Pembayaran (SPP)</h4>
                 </li>
                 <li class="nav-item" id="spp-up">
                     <a href="{{ url('spp-up') }}">
-                        <i class="fas fa-file"></i>
+                        <i class="far fa-envelope"></i>
                         <p>SPP UP</p>
                     </a>
                 </li>
                 <li class="nav-item" id="spp-tu">
                     <a href="{{ url('spp-tu') }}">
-                        <i class="fas fa-file"></i>
+                        <i class="far fa-envelope"></i>
                         <p>SPP TU</p>
                     </a>
                 </li>
                 <li class="nav-item" id="spp-ls">
                     <a href="{{ url('spp-ls') }}">
-                        <i class="fas fa-file"></i>
+                        <i class="far fa-envelope"></i>
                         <p>SPP LS</p>
                     </a>
                 </li>
                 <li class="nav-item" id="spp-gu">
                     <a href="{{ url('spp-gu') }}">
-                        <i class="fas fa-file"></i>
+                        <i class="far fa-envelope"></i>
                         <p>SPP GU</p>
                     </a>
                 </li>
-                @if (Auth::user()->role == 'Admin')
+                @if (in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran']))
                     <li class="nav-section">
                         <span class="sidebar-mini-icon">
                             <i class="fa fa-ellipsis-h"></i>
                         </span>
-                        <h4 class="text-section">Master</h4>
+                        <h4 class="text-section">Master Data</h4>
                     </li>
+                @endif
+                @if (Auth::user()->role == 'Admin')
                     <li class="nav-item" id="master-daftar-dokumen-spp-up">
                         <a href="{{ url('/master-data/daftar-dokumen-spp-up') }}">
                             <i class="far fa-file-pdf"></i>
@@ -82,6 +90,23 @@
                             <p>Dokumen SPP GU</p>
                         </a>
                     </li>
+                    <li class="nav-item" id="master-program-dpa">
+                        <a href="{{ url('/master-data/program-dpa') }}">
+                            <i class="far fa-list-alt"></i>
+                            <p>Program (DPA)</p>
+                        </a>
+                    </li>
+                @endif
+                @if (in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran']))
+                    <li class="nav-item" id="master-program-spp">
+                        <a href="{{ url('/master-data/program-spp') }}">
+                            <i class="far fa-list-alt"></i>
+                            <p>Program (SPP)</p>
+                        </a>
+                    </li>
+                @endif
+
+                @if (Auth::user()->role == 'Admin')
                     <li class="nav-item" id="master-biro-organisasi">
                         <a href="{{ url('/master-data/biro-organisasi') }}">
                             <i class="fas fa-building"></i>

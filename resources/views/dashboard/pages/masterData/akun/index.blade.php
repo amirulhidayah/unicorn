@@ -37,10 +37,11 @@
                     <div class="card-head-row">
                         <div class="card-title">Data Akun</div>
                         <div class="card-tools">
-                            @component('dashboard.components.buttons.add', [
-                                'id' => 'btn-tambah',
-                                'class' => '',
-                                'url' => url('master-data/akun/create'),
+                            @component('dashboard.components.buttons.add',
+                                [
+                                    'id' => 'btn-tambah',
+                                    'class' => '',
+                                    'url' => url('master-data/akun/create'),
                                 ])
                             @endcomponent
                         </div>
@@ -50,9 +51,10 @@
                     <div class="row">
                         <div class="col">
                             <div class="card fieldset">
-                                @component('dashboard.components.dataTables.index', [
-                                    'id' => 'table-data',
-                                    'th' => ['No', 'Nama', 'Role', 'Foto', 'Aksi'],
+                                @component('dashboard.components.dataTables.index',
+                                    [
+                                        'id' => 'table-data',
+                                        'th' => ['No', 'Nama', 'Biro Organisasi', 'Role', 'Foto', 'Aksi'],
                                     ])
                                 @endcomponent
                             </div>
@@ -245,6 +247,11 @@
                 {
                     data: 'nama',
                     name: 'nama',
+                    className: 'text-center',
+                },
+                {
+                    data: 'biro_organisasi',
+                    name: 'biro_organisasi',
                     className: 'text-center',
                 },
                 {

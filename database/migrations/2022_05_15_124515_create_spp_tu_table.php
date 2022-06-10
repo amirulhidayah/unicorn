@@ -15,9 +15,12 @@ class CreateSppTuTable extends Migration
     {
         Schema::create('spp_tu', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('nama');
+            $table->uuid('tahun_id');
+            $table->uuid('kegiatan_spp_id');
+            $table->bigInteger('jumlah_anggaran');
+            $table->integer('tw');
+            $table->uuid('biro_organisasi_id');
             $table->string('nomor_surat');
-            $table->bigInteger('jumlah_nominal');
             $table->uuid('user_id');
             $table->integer('status_validasi_asn')->default(0);
             $table->text('alasan_validasi_asn')->nullable();

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\dashboard\spp;
 
 use App\Http\Controllers\Controller;
+use App\Models\BiroOrganisasi;
 use App\Models\DokumenSppLs;
 use App\Models\RiwayatSppLs;
 use App\Models\Spd;
@@ -66,9 +67,9 @@ class SppLsController extends Controller
                             $query->where('role', 'ASN Sub Bagian Keuangan');
                         })->orderBy('created_at', 'desc')->first();
 
-                        $actionBtn .= '<br><a href="' . url('/surat-penolakan/spp-ls/' . $riwayat->id) . '" class="btn badge badge-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> Surat Pengembalian</a>';
+                        $actionBtn .= '<div class="d-flex justify-content-center "><a href="' . url('/surat-penolakan/spp-ls/' . $riwayat->id) . '" class="btn badge badge-primary btn-sm mt-1 mr-1"><i class="fas fa-file-pdf"></i> Surat Pengembalian</a>';
 
-                        $actionBtn .= '<form action="' . url('spp-ls/' . $row->id . '/edit') . '" method="POST">' . csrf_field() . '<input type="hidden" value="asn" name="perbaiki"><button class="btn badge badge-primary text-light btn-sm mt-1" href="' . url('spp-ls/' . $row->id . '/edit') . '"><i class="fas fa-file-pdf"></i> Perbaiki</button></form>';
+                        $actionBtn .= '<form action="' . url('spp-ls/' . $row->id . '/edit') . '" method="POST">' . csrf_field() . '<input type="hidden" value="asn" name="perbaiki"><button class="btn badge badge-primary text-light btn-sm mt-1" href="' . url('spp-ls/' . $row->id . '/edit') . '"><i class="fas fa-file-pdf"></i> Perbaiki</button></form></div>';
                     }
                     return $actionBtn;
                 })
@@ -86,9 +87,9 @@ class SppLsController extends Controller
                             $query->where('role', 'PPK');
                         })->orderBy('created_at', 'desc')->first();
 
-                        $actionBtn .= '<br><a href="' . url('/surat-penolakan/spp-ls/' . $riwayat->id) . '" class="btn badge badge-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> Surat Pengembalian</a>';
+                        $actionBtn .= '<div class="d-flex justify-content-center "><a href="' . url('/surat-penolakan/spp-ls/' . $riwayat->id) . '" class="btn badge badge-primary btn-sm mt-1 mr-1"><i class="fas fa-file-pdf"></i> Surat Pengembalian</a>';
 
-                        $actionBtn .= '<form action="' . url('spp-ls/' . $row->id . '/edit') . '" method="POST">' . csrf_field() . '<input type="hidden" value="ppk" name="perbaiki"><button class="btn badge badge-primary text-light btn-sm mt-1" href="' . url('spp-ls/' . $row->id . '/edit') . '"><i class="fas fa-file-pdf"></i> Perbaiki</button></form>';
+                        $actionBtn .= '<form action="' . url('spp-ls/' . $row->id . '/edit') . '" method="POST">' . csrf_field() . '<input type="hidden" value="ppk" name="perbaiki"><button class="btn badge badge-primary text-light btn-sm mt-1" href="' . url('spp-ls/' . $row->id . '/edit') . '"><i class="fas fa-file-pdf"></i> Perbaiki</button></form></div>';
                     }
                     return $actionBtn;
                 })
@@ -111,8 +112,14 @@ class SppLsController extends Controller
                 ->addColumn('action', function ($row) {
                     $actionBtn = '';
 
-                    if (Auth::user()->role == "Bendahara Pengeluaran") {
-                        $actionBtn .= '<button id="btn-delete" class="btn btn-danger btn-sm mr-1" value="' . $row->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
+                    if ($row->status_validasi_akhir == 1) {
+                        $actionBtn .= '<a href="' . url('/surat-pernyataan/spp-tu/' . $row->id) . '" class="btn btn-success btn-sm mr-1"><i class="fas fa-envelope"></i> Surat Pernyataan</a>';
+                    }
+
+                    if (in_array(Auth::user()->role, ["Admin", "Bendahara Pengeluaran"])) {
+                        if (($row->status_validasi_akhir == 0 && Auth::user()->role == "Bendahara Pengeluaran") || Auth::user()->role == "Admin") {
+                            $actionBtn .= '<button id="btn-delete" class="btn btn-danger btn-sm mr-1" value="' . $row->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
+                        }
                     }
 
 
@@ -128,7 +135,7 @@ class SppLsController extends Controller
                         if ($row->status_validasi_ppk == 0) {
                             $actionBtn .= '<a class="btn btn-primary text-light btn-sm mr-1" href="' . url('spp-ls/' . $row->id) . '"><i class="far fa-check-circle"></i> Proses</a>';
                         } else {
-                            if (($row->status_validasi_ppk == 1) && ($row->status_validasi_akhir == 0)) {
+                            if (($row->status_validasi_ppk == 1) && ($row->status_validasi_akhir == 0) && ($row->status_validasi_asn == 1)) {
                                 $actionBtn .= '<button id="btn-verifikasi" class="btn btn-success btn-sm mr-1" value="' . $row->id . '" > <i class="far fa-check-circle"></i> Selesai</button>';
                             }
                             $actionBtn .= '<a class="btn btn-primary text-light btn-sm mr-1" href="' . url('spp-ls/' . $row->id) . '"><i class="fas fa-eye"></i> Lihat</a>';
@@ -161,7 +168,8 @@ class SppLsController extends Controller
     public function create()
     {
         $daftarTahun = Tahun::orderBy('tahun', 'asc')->get();
-        return view('dashboard.pages.spp.sppLs.create', compact(['daftarTahun']));
+        $daftarBiroOrganisasi = BiroOrganisasi::orderBy('nama', 'asc')->get();
+        return view('dashboard.pages.spp.sppLs.create', compact(['daftarTahun', 'daftarBiroOrganisasi']));
     }
 
     /**

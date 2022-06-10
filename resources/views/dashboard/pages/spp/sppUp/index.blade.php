@@ -37,13 +37,15 @@
                     <div class="card-head-row">
                         <div class="card-title">Data SPP UP</div>
                         <div class="card-tools">
-                            @component('dashboard.components.buttons.add',
-                                [
-                                    'id' => 'btn-tambah',
-                                    'class' => '',
-                                    'url' => url('spp-up/create'),
-                                ])
-                            @endcomponent
+                            @if (in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran']))
+                                @component('dashboard.components.buttons.add',
+                                    [
+                                        'id' => 'btn-tambah',
+                                        'class' => '',
+                                        'url' => url('spp-up/create'),
+                                    ])
+                                @endcomponent
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -54,7 +56,7 @@
                                 @component('dashboard.components.dataTables.index',
                                     [
                                         'id' => 'table-data',
-                                        'th' => ['No', 'Nama', 'Verifikasi ASN Sub Bagian Keuangan', 'Verifikasi PPK', 'Riwayat', 'Aksi'],
+                                        'th' => ['No', 'Tanggal', 'Kegiatan', 'Program', 'Biro Organisasi', 'Periode', 'Jumlah Anggaran', 'Verifikasi ASN Sub Bagian Keuangan', 'Verifikasi PPK', 'Verifikasi Akhir', 'Aksi'],
                                     ])
                                 @endcomponent
                             </div>
@@ -111,8 +113,33 @@
                     searchable: false
                 },
                 {
+                    data: 'tanggal_dibuat',
+                    name: 'tanggal_dibuat',
+                    className: 'text-center',
+                },
+                {
                     data: 'nama',
                     name: 'nama',
+                    className: 'text-center',
+                },
+                {
+                    data: 'program',
+                    name: 'program',
+                    className: 'text-center',
+                },
+                {
+                    data: 'biro_organisasi',
+                    name: 'biro_organisasi',
+                    className: 'text-center',
+                },
+                {
+                    data: 'periode',
+                    name: 'periode',
+                    className: 'text-center',
+                },
+                {
+                    data: 'jumlah_anggaran',
+                    name: 'jumlah_anggaran',
                     className: 'text-center',
                 },
                 {
@@ -126,8 +153,8 @@
                     className: 'text-center',
                 },
                 {
-                    data: 'riwayat',
-                    name: 'riwayat',
+                    data: 'status_verifikasi_akhir',
+                    name: 'status_verifikasi_akhir',
                     className: 'text-center',
                     orderable: true,
                     searchable: true
@@ -152,6 +179,54 @@
     </script>
 
     <script>
+        $(document).on('click', '#btn-verifikasi', function() {
+            let id = $(this).val();
+            swal({
+                title: 'Apakah Anda Yakin ?',
+                icon: 'info',
+                text: "Status Data Akan Dinyatakan Selesai Jika Anda Menekan Tombol Ya",
+                type: 'warning',
+                buttons: {
+                    confirm: {
+                        text: 'Ya',
+                        className: 'btn btn-success'
+                    },
+                    cancel: {
+                        visible: true,
+                        text: 'Batal',
+                        className: 'btn btn-danger'
+                    }
+                }
+            }).then((Delete) => {
+                if (Delete) {
+                    $.ajax({
+                        url: "{{ url('spp-up/verifikasi-akhir/') }}" + '/' + id,
+                        type: 'PUT',
+                        data: {
+                            '_token': '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            if (response.status == 'success') {
+                                swal("Berhasil", "Data Berhasil Diselesaikan", {
+                                    icon: "success",
+                                    buttons: false,
+                                    timer: 1000,
+                                }).then(function() {
+                                    table.draw();
+                                })
+                            } else {
+                                swal("Gagal", "Data Gagal Diselesaikan", {
+                                    icon: "error",
+                                    buttons: false,
+                                    timer: 1000,
+                                });
+                            }
+                        }
+                    })
+                }
+            });
+        })
+
         $(document).ready(function() {
             $('#spp-up').addClass('active');
         })

@@ -37,7 +37,7 @@
                     <div class="card-head-row">
                         <div class="card-title">Detail Dokumen</div>
                         <div class="card-tools">
-                            @if ((Auth::user()->role == 'PPK' || Auth::user()->role == 'ASN Sub Bagian Keuangan') && ($sppGu->status_validasi_asn == 0 || $sppGu->status_validasi_ppk == 0))
+                            @if ((Auth::user()->role == 'PPK' && $sppGu->status_validasi_ppk == 0) || ($sppGu->status_validasi_asn == 0 && Auth::user()->role == 'ASN Sub Bagian Keuangan'))
                                 @component('dashboard.components.buttons.verifikasi',
                                     [
                                         'id' => 'btn-verifikasi',

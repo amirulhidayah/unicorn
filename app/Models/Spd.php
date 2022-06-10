@@ -16,16 +16,16 @@ class Spd extends Model
 
     public function kegiatan()
     {
-        return $this->belongsTo(Kegiatan::class, 'kegiatan_id');
+        return $this->belongsTo(Kegiatan::class, 'kegiatan_id')->withTrashed();
     }
 
     public function biroOrganisasi()
     {
-        return $this->belongsTo(BiroOrganisasi::class, 'biro_organisasi_id');
+        return $this->belongsTo(BiroOrganisasi::class, 'biro_organisasi_id')->withTrashed();
     }
 
     public function tahun()
     {
-        return $this->belongsTo(Tahun::class, 'tahun_id');
+        return $this->belongsTo(Tahun::class, 'tahun_id')->withTrashed();
     }
 }

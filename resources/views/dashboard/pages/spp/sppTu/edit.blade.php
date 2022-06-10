@@ -6,14 +6,6 @@
 
 @push('style')
     <style>
-        #nama_file {
-            border: 0px;
-            font-weight: bold;
-            height: 23px;
-            padding-left: 5px;
-            font-size: 15px;
-        }
-
         .box-upload .card-body {
             padding-top: 0px !important;
             padding-bottom: 0px !important;
@@ -48,7 +40,6 @@
             padding-top: 30px;
             padding-bottom: 30px;
         }
-
     </style>
 @endpush
 
@@ -88,32 +79,58 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-5">
-                                <div class="card card-profile">
-                                    <div class="card-header">
-                                        <div class="profile-picture">
-                                            <div class="avatar avatar-xl">
-                                                <img src="{{ Storage::url('profil/' . Auth::user()->profil->foto) }}"
-                                                    alt="..." class="avatar-img rounded-circle">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="user-profile text-center">
-                                            <div class="name">{{ Auth::user()->profil->nama }}</div>
-                                            <div class="job">{{ Auth::user()->profil->biroOrganisasi->nama }}
-                                            </div>
-                                            <div class="job">{{ Auth::user()->email }}</div>
-                                        </div>
-                                    </div>
+                            <div class="col-md-6">
+                                @component('dashboard.components.widgets.info',
+                                    [
+                                        'judul' => 'Biro Organisasi',
+                                        'isi' => $sppTu->biroOrganisasi->nama,
+                                    ])
+                                @endcomponent
+                                @component('dashboard.components.widgets.info',
+                                    [
+                                        'judul' => 'Tahun',
+                                        'isi' => $sppTu->tahun->tahun,
+                                    ])
+                                @endcomponent
+                                @component('dashboard.components.widgets.info',
+                                    [
+                                        'judul' => 'TW',
+                                        'isi' => $sppTu->tw,
+                                    ])
+                                @endcomponent
+                                @component('dashboard.components.widgets.info',
+                                    [
+                                        'judul' => 'Program',
+                                        'isi' => $sppTu->kegiatan->program->nama . ' (' . $sppTu->kegiatan->program->no_rek . ')',
+                                    ])
+                                @endcomponent
+                                @component('dashboard.components.widgets.info',
+                                    [
+                                        'judul' => 'Kegiatan',
+                                        'isi' => $sppTu->kegiatan->nama . ' (' . $sppTu->kegiatan->no_rek . ')',
+                                    ])
+                                @endcomponent
+                                <div class="col-12">
+                                    @component('dashboard.components.formElements.input',
+                                        [
+                                            'label' => 'Jumlah Anggaran',
+                                            'type' => 'text',
+                                            'id' => 'jumlah_anggaran',
+                                            'name' => 'jumlah_anggaran',
+                                            'class' => 'uang',
+                                            'value' => $sppTu->jumlah_anggaran,
+                                            'wajib' => '<sup class="text-danger">*</sup>',
+                                            'placeholder' => 'Masukkan Jumlah Anggaran',
+                                        ])
+                                    @endcomponent
                                 </div>
                             </div>
-                            <div class="col-md-7">
+                            <div class="col-md-6">
                                 @if ($request->perbaiki == 'asn' && $sppTu->alasan_validasi_asn != null)
                                     @component('dashboard.components.widgets.alert',
                                         [
-                                            'classBg' => 'bg-danger text-light',
-                                            'judul' => 'Alasan Ditolak',
+                                            'oleh' => $request->perbaiki,
+                                            'tanggal' => $sppTu->tanggal_validasi_asn,
                                             'isi' => $sppTu->alasan_validasi_asn,
                                         ])
                                     @endcomponent
@@ -122,40 +139,12 @@
                                 @if ($request->perbaiki == 'ppk' && $sppTu->alasan_validasi_ppk != null)
                                     @component('dashboard.components.widgets.alert',
                                         [
-                                            'classBg' => 'bg-danger text-light',
-                                            'judul' => 'Alasan Ditolak',
+                                            'oleh' => $request->perbaiki,
+                                            'tanggal' => $sppTu->tanggal_validasi_ppk,
                                             'isi' => $sppTu->alasan_validasi_ppk,
                                         ])
                                     @endcomponent
                                 @endif
-
-                                <div class="card box-upload" class="box-upload">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="form-group col-lg-12">
-                                                <label for="exampleFormControlInput1">Nama Kegiatan</label>
-                                                <input type="text" name="nama_kegiatan" class="form-control"
-                                                    id="exampleFormControlInput1" placeholder="Masukkan Nama Kegiatan"
-                                                    value="{{ $sppTu->nama }}">
-                                                <p class="text-danger error-text nama_kegiatan-error my-0"></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="card box-upload" class="box-upload">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="form-group col-lg-12">
-                                                <label for="exampleFormControlInput1">Jumlah Nominal</label>
-                                                <input type="text" name="jumlah_nominal" class="form-control uang"
-                                                    id="exampleFormControlInput1" placeholder="Masukkan Jumlah Nominal"
-                                                    value="{{ $sppTu->jumlah_nominal }}">
-                                                <p class="text-danger error-text jumlah_nominal-error my-0"></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
 
                                 <div class="card" id="card-keterangan-upload">
                                     <div class="card-body text-center">
@@ -190,6 +179,8 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="fw-bold card-footer bg-primary text-light text-center p-0">
+                                            ! Wajib Dimasukan</div>
                                     </div>
                                     <hr>
                                     @foreach ($sppTu->dokumenSppTu as $dokumen)
@@ -296,6 +287,8 @@
             var totalDokumenKosong = 0;
             var totalNamaKosong = 0;
             var indexArray = 0;
+            var totalDokumen = 0;
+            var totalDokumenUpdate = 0;
             arrayDokumenUpdate = [];
 
             $('.surat-penolakan_error').html('');
@@ -315,6 +308,18 @@
             $(".nama_file-error").each(function() {
                 $(this).html('');
             })
+
+            totalDokumen = $('.file_dokumen').length;
+            totalDokumenUpdate = $('.file_dokumen_update').length;
+
+            if (totalDokumen == 0 && totalDokumenUpdate == 0) {
+                swal("Dokumen Kosong, Silahkan Tambahkan Dokumen Minimal 1", {
+                    buttons: false,
+                    timer: 1500,
+                    icon: "warning",
+                });
+                return false;
+            }
 
             $(".file_dokumen").each(function() {
                 if ($(this).val() == '') {
@@ -356,10 +361,9 @@
                 data: formData,
                 async: false,
                 success: function(response) {
-                    console.log(response);
                     if (response.status == "success") {
                         swal("Berhasil",
-                            "Dokumen berhasil ditambahkan", {
+                            "Dokumen berhasil diubah", {
                                 button: false,
                                 icon: "success",
                             });
@@ -368,13 +372,15 @@
                                 $(location).attr('href', "{{ url('spp-tu') }}");
                             }, 2000);
                     } else {
-                        swal("Periksa Kembali Data Anda", {
-                            buttons: false,
-                            timer: 1500,
-                            icon: "warning",
-                        });
                         printErrorMsg(response.error);
                     }
+                },
+                error: function(response) {
+                    swal("Gagal", "Terjadi Kesalahan", {
+                        icon: "error",
+                        buttons: false,
+                        timer: 1000,
+                    });
                 },
                 cache: false,
                 contentType: false,

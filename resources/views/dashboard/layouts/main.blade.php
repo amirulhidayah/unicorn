@@ -153,6 +153,15 @@
             margin-top: 10px !important;
         }
 
+        select+.select2-container {
+            width: 100% !important;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        .swal-modal .swal-text {
+            text-align: center;
+        }
     </style>
 
     @stack('style')
@@ -276,7 +285,7 @@
     <script>
         $('.select2').select2({
             placeholder: "- Pilih Salah Satu -",
-            theme: "bootstrap"
+            theme: "bootstrap",
         })
 
         $('.btn-close').click(function() {
@@ -293,7 +302,11 @@
             });
 
         $('.numerik').on('input', function(e) {
-            this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
+            var val = $(this).val();
+            if (isNaN(val)) {
+                val = val.replace(/[^0-9\.]/g, '');
+            }
+            $(this).val(val);
         });
 
         $('.uang').mask('000.000.000.000.000.000.000', {

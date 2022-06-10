@@ -405,7 +405,7 @@
             var tahun = $('#tahun').val();
             var tw = $('#tw').val();
             $.ajax({
-                url: "{{ url('spd/get-spd') }}",
+                url: "{{ url('tabel-dpa/get-spd') }}",
                 type: "POST",
                 data: {
                     '_token': '{{ csrf_token() }}',

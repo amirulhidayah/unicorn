@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\dashboard\spp;
 
 use App\Http\Controllers\Controller;
+use App\Models\BiroOrganisasi;
 use App\Models\DaftarDokumenSppGu;
 use App\Models\DokumenSppGu;
 use App\Models\RiwayatSppGu;
@@ -67,9 +68,9 @@ class SppGuController extends Controller
                             $query->where('role', 'ASN Sub Bagian Keuangan');
                         })->orderBy('created_at', 'desc')->first();
 
-                        $actionBtn .= '<br><a href="' . url('/surat-penolakan/spp-gu/' . $riwayat->id) . '" class="btn badge badge-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> Surat Pengembalian</a>';
+                        $actionBtn .= '<div class="d-flex justify-content-center "><a href="' . url('/surat-penolakan/spp-gu/' . $riwayat->id) . '" class="btn badge badge-primary btn-sm mt-1 mr-1"><i class="fas fa-file-pdf"></i> Surat Pengembalian</a>';
 
-                        $actionBtn .= '<form action="' . url('spp-gu/' . $row->id . '/edit') . '" method="POST">' . csrf_field() . '<input type="hidden" value="asn" name="perbaiki"><button class="btn badge badge-primary text-light btn-sm mt-1" href="' . url('spp-gu/' . $row->id . '/edit') . '"><i class="fas fa-file-pdf"></i> Perbaiki</button></form>';
+                        $actionBtn .= '<form action="' . url('spp-gu/' . $row->id . '/edit') . '" method="POST">' . csrf_field() . '<input type="hidden" value="asn" name="perbaiki"><button class="btn badge badge-primary text-light btn-sm mt-1" href="' . url('spp-gu/' . $row->id . '/edit') . '"><i class="fas fa-file-pdf"></i> Perbaiki</button></form></div>';
                     }
                     return $actionBtn;
                 })
@@ -87,9 +88,9 @@ class SppGuController extends Controller
                             $query->where('role', 'PPK');
                         })->orderBy('created_at', 'desc')->first();
 
-                        $actionBtn .= '<br><a href="' . url('/surat-penolakan/spp-gu/' . $riwayat->id) . '" class="btn badge badge-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> Surat Pengembalian</a>';
+                        $actionBtn .= '<div class="d-flex justify-content-center "><a href="' . url('/surat-penolakan/spp-gu/' . $riwayat->id) . '" class="btn badge badge-primary btn-sm mt-1 mr-1"><i class="fas fa-file-pdf"></i> Surat Pengembalian</a>';
 
-                        $actionBtn .= '<form action="' . url('spp-gu/' . $row->id . '/edit') . '" method="POST">' . csrf_field() . '<input type="hidden" value="ppk" name="perbaiki"><button class="btn badge badge-primary text-light btn-sm mt-1" href="' . url('spp-gu/' . $row->id . '/edit') . '"><i class="fas fa-file-pdf"></i> Perbaiki</button></form>';
+                        $actionBtn .= '<form action="' . url('spp-gu/' . $row->id . '/edit') . '" method="POST">' . csrf_field() . '<input type="hidden" value="ppk" name="perbaiki"><button class="btn badge badge-primary text-light btn-sm mt-1" href="' . url('spp-gu/' . $row->id . '/edit') . '"><i class="fas fa-file-pdf"></i> Perbaiki</button></form></div>';
                     }
                     return $actionBtn;
                 })
@@ -121,12 +122,18 @@ class SppGuController extends Controller
                 ->addColumn('action', function ($row) {
                     $actionBtn = '';
 
+                    if ($row->status_validasi_akhir == 1) {
+                        $actionBtn .= '<a href="' . url('/surat-pernyataan/spp-tu/' . $row->id) . '" class="btn btn-success btn-sm mr-1"><i class="fas fa-envelope"></i> Surat Pernyataan</a>';
+                    }
+
                     if (Auth::user()->role == "Bendahara Pengeluaran" && $row->status_validasi_asn == 1 && $row->status_validasi_ppk == 1 && $row->tahap == "Awal") {
                         $actionBtn .= '<a href="' . url('spp-gu/create/' . $row->id) . '" class="btn btn-primary btn-sm mr-1" value="' . $row->id . '" > <i class="fas fa-plus-circle"></i> Upload Tahap Akhir</a>';
                     }
 
-                    if (Auth::user()->role == "Bendahara Pengeluaran") {
-                        $actionBtn .= '<button id="btn-delete" class="btn btn-danger btn-sm mr-1" value="' . $row->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
+                    if (in_array(Auth::user()->role, ["Admin", "Bendahara Pengeluaran"])) {
+                        if (($row->status_validasi_akhir == 0 && Auth::user()->role == "Bendahara Pengeluaran") || Auth::user()->role == "Admin") {
+                            $actionBtn .= '<button id="btn-delete" class="btn btn-danger btn-sm mr-1" value="' . $row->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
+                        }
                     }
 
 
@@ -142,7 +149,7 @@ class SppGuController extends Controller
                         if ($row->status_validasi_ppk == 0) {
                             $actionBtn .= '<a class="btn btn-primary text-light btn-sm mr-1" href="' . url('spp-gu/' . $row->id) . '"><i class="far fa-check-circle"></i> Proses</a>';
                         } else {
-                            if (($row->status_validasi_ppk == 1) && ($row->status_validasi_akhir == 0) && ($row->tahap == "Akhir")) {
+                            if (($row->status_validasi_ppk == 1) && ($row->status_validasi_akhir == 0) && ($row->tahap == "Akhir") && ($row->status_validasi_asn == 1)) {
                                 $actionBtn .= '<button id="btn-verifikasi" class="btn btn-success btn-sm mr-1" value="' . $row->id . '" > <i class="far fa-check-circle"></i> Selesai</button>';
                             }
                             $actionBtn .= '<a class="btn btn-primary text-light btn-sm mr-1" href="' . url('spp-gu/' . $row->id) . '"><i class="fas fa-eye"></i> Lihat</a>';
@@ -176,7 +183,8 @@ class SppGuController extends Controller
     {
         $daftarTahun = Tahun::orderBy('tahun', 'asc')->get();
         $daftarDokumenSppGu = DaftarDokumenSppGu::where('kategori', 'Awal')->get();
-        return view('dashboard.pages.spp.sppGu.create', compact(['daftarTahun', 'daftarDokumenSppGu']));
+        $daftarBiroOrganisasi = BiroOrganisasi::orderBy('nama', 'asc')->get();
+        return view('dashboard.pages.spp.sppGu.create', compact(['daftarTahun', 'daftarDokumenSppGu', 'daftarBiroOrganisasi']));
     }
 
     public function createTahapAkhir(SppGu $sppGu)

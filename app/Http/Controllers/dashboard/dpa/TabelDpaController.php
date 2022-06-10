@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\dashboard\spd;
+namespace App\Http\Controllers\dashboard\dpa;
 
 use App\Exports\FormatImport;
 use App\Http\Controllers\Controller;
@@ -13,9 +13,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
-use Svg\Tag\Rect;
+use Illuminate\Validation\Rule;
+use Yajra\DataTables\Facades\DataTables;
 
-class SpdController extends Controller
+class TabelDpaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -32,7 +33,7 @@ class SpdController extends Controller
         //     });
         // })->get();
 
-        return view('dashboard.pages.spd.index', compact('tahun', 'biroOrganisasi'));
+        return view('dashboard.pages.dpa.tabel.index', compact('tahun', 'biroOrganisasi'));
     }
 
     /**
@@ -53,7 +54,45 @@ class SpdController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'tahun' => 'required',
+                'biro_organisasi' => 'required',
+                'program' => 'required',
+                'kegiatan' => 'required',
+                'tw1' => 'required',
+                'tw2' => 'required',
+                'tw3' => 'required',
+                'tw4' => 'required',
+            ],
+            [
+                'tahun.required' => 'Tahun tidak boleh kosong',
+                'biro_organisasi.required' => 'Biro Organisasi tidak boleh kosong',
+                'program.required' => 'Program tidak boleh kosong',
+                'kegiatan.required' => 'Kegiatan tidak boleh kosong',
+                'tw1.required' => 'TW1 tidak boleh kosong',
+                'tw2.required' => 'TW2 tidak boleh kosong',
+                'tw3.required' => 'TW3 tidak boleh kosong',
+                'tw4.required' => 'TW4 tidak boleh kosong',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()]);
+        }
+
+        $spd = new Spd();
+        $spd->kegiatan_id = $request->kegiatan;
+        $spd->tahun_id = $request->tahun;
+        $spd->biro_organisasi_id = $request->biro_organisasi;
+        $spd->tw1 = str_replace(".", "", $request->tw1);
+        $spd->tw2 = str_replace(".", "", $request->tw2);
+        $spd->tw3 = str_replace(".", "", $request->tw3);
+        $spd->tw4 = str_replace(".", "", $request->tw4);
+        $spd->save();
+
+        return response()->json(['status' => 'success']);
     }
 
     /**
@@ -73,9 +112,10 @@ class SpdController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Spd $spd)
     {
-        //
+        $spd->kegiatan;
+        return response()->json($spd);
     }
 
     /**
@@ -85,9 +125,46 @@ class SpdController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Spd $spd)
     {
-        //
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'tahun' => 'required',
+                'biro_organisasi' => 'required',
+                'program' => 'required',
+                'kegiatan' => 'required',
+                'tw1' => 'required',
+                'tw2' => 'required',
+                'tw3' => 'required',
+                'tw4' => 'required',
+            ],
+            [
+                'tahun.required' => 'Tahun tidak boleh kosong',
+                'biro_organisasi.required' => 'Biro Organisasi tidak boleh kosong',
+                'program.required' => 'Program tidak boleh kosong',
+                'kegiatan.required' => 'Kegiatan tidak boleh kosong',
+                'tw1.required' => 'TW1 tidak boleh kosong',
+                'tw2.required' => 'TW2 tidak boleh kosong',
+                'tw3.required' => 'TW3 tidak boleh kosong',
+                'tw4.required' => 'TW4 tidak boleh kosong',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()]);
+        }
+
+        $spd->kegiatan_id = $request->kegiatan;
+        $spd->tahun_id = $request->tahun;
+        $spd->biro_organisasi_id = $request->biro_organisasi;
+        $spd->tw1 = str_replace(".", "", $request->tw1);
+        $spd->tw2 = str_replace(".", "", $request->tw2);
+        $spd->tw3 = str_replace(".", "", $request->tw3);
+        $spd->tw4 = str_replace(".", "", $request->tw4);
+        $spd->save();
+
+        return response()->json(['status' => 'success']);
     }
 
     /**
@@ -96,9 +173,11 @@ class SpdController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Spd $spd)
     {
-        //
+        $spd->delete();
+
+        return response()->json(['status' => 'success']);
     }
 
     public function formatImport()
@@ -156,7 +235,7 @@ class SpdController extends Controller
         ]);
     }
 
-    public function tabelSpd(Request $request)
+    public function tabelDpa(Request $request)
     {
         $tahun = $request->tahun;
         $biroOrganisasi = Auth::user()->role != "Bendahara Pengeluaran" ? $request->biro_organisasi : Auth::user()->profil->biro_organisasi_id;

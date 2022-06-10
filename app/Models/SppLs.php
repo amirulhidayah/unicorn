@@ -15,17 +15,17 @@ class SppLs extends Model
 
     public function kegiatan()
     {
-        return $this->belongsTo(Kegiatan::class);
+        return $this->belongsTo(Kegiatan::class)->withTrashed();
     }
 
     public function tahun()
     {
-        return $this->belongsTo(Tahun::class);
+        return $this->belongsTo(Tahun::class)->withTrashed();
     }
 
     public function biroOrganisasi()
     {
-        return $this->belongsTo(BiroOrganisasi::class);
+        return $this->belongsTo(BiroOrganisasi::class)->withTrashed();
     }
 
     public function dokumenSppLs()

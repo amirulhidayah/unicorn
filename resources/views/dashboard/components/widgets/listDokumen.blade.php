@@ -6,7 +6,6 @@
                  border-radius: 10px;
                  padding: 15px;
              }
-
          </style>
      @endpush
 

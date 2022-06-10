@@ -18,6 +18,7 @@ class CreateRiwayatSppTuTable extends Migration
             $table->uuid('spp_tu_id');
             $table->uuid('user_id');
             $table->string('nomor_surat')->nullable();
+            $table->bigInteger('jumlah_anggaran')->nullable();
             $table->text('alasan')->nullable();
             $table->text('surat_penolakan')->nullable();
             $table->string('status');

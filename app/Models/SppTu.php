@@ -22,4 +22,19 @@ class SppTu extends Model
     {
         return $this->hasMany(DokumenSppTu::class, 'spp_tu_id', 'id')->orderBy('created_at', 'asc');
     }
+
+    public function kegiatan()
+    {
+        return $this->belongsTo(KegiatanSpp::class, 'kegiatan_spp_id', 'id')->withTrashed();
+    }
+
+    public function tahun()
+    {
+        return $this->belongsTo(Tahun::class, 'tahun_id', 'id');
+    }
+
+    public function biroOrganisasi()
+    {
+        return $this->belongsTo(BiroOrganisasi::class, 'biro_organisasi_id', 'id');
+    }
 }
