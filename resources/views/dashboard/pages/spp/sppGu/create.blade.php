@@ -83,7 +83,7 @@
                                     <div class="col-12">
                                         @component('dashboard.components.formElements.select',
                                             [
-                                                'label' => 'Biro Organisasi',
+                                                'label' => 'Sekretariat Daerah',
                                                 'id' => 'biro_organisasi',
                                                 'name' => 'biro_organisasi',
                                                 'class' => 'select2',
@@ -99,13 +99,26 @@
                                     </div>
                                 @else
                                     <div class="col-12">
-                                        <label for="exampleFormControlInput1">Biro Organisasi</label>
+                                        <label for="exampleFormControlInput1">Sekretariat Daerah</label>
                                         <br>
                                         <label for="exampleFormControlInput1"
                                             class="badge badge-primary text-light my-2">{{ Auth::user()->profil->biroOrganisasi->nama }}</label>
                                         <br>
                                     </div>
                                 @endif
+                                <div class="col-12">
+                                    @component('dashboard.components.formElements.input',
+                                        [
+                                            'label' => 'Nomor Surat',
+                                            'type' => 'text',
+                                            'id' => 'nomor_surat',
+                                            'class' => '',
+                                            'name' => 'nomor_surat',
+                                            'wajib' => '<sup class="text-danger">*</sup>',
+                                            'placeholder' => 'Masukkan Nomor Surat',
+                                        ])
+                                    @endcomponent
+                                </div>
                                 <div class="col-12">
                                     @component('dashboard.components.formElements.select',
                                         [
@@ -152,18 +165,26 @@
                                 <div class="col-12">
                                     @component('dashboard.components.formElements.select',
                                         [
-                                            'label' => 'TW',
-                                            'id' => 'tw',
-                                            'name' => 'tw',
+                                            'label' => 'Bulan',
+                                            'id' => 'bulan',
+                                            'name' => 'bulan',
                                             'class' => 'select2',
                                             'attribute' => 'disabled',
                                             'wajib' => '<sup class="text-danger">*</sup>',
                                         ])
                                         @slot('options')
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
-                                            <option value="4">4</option>
+                                            <option value="Januari">Januari</option>
+                                            <option value="Februari">Februari</option>
+                                            <option value="Maret">Maret</option>
+                                            <option value="April">April</option>
+                                            <option value="Mei">Mei</option>
+                                            <option value="Juni">Juni</option>
+                                            <option value="Juli">Juli</option>
+                                            <option value="Agustus">Agustus</option>
+                                            <option value="September">September</option>
+                                            <option value="Oktober">Oktober</option>
+                                            <option value="November">November</option>
+                                            <option value="Desember">Desember</option>
                                         @endslot
                                     @endcomponent
                                 </div>
@@ -407,7 +428,7 @@
             var tahun = $(this).val();
             var biroOrganisasi = $('#biro_organisasi').val();
             $('#kegiatan').html('').attr('disabled', true);
-            $('#tw').val('').trigger('change').attr('disabled', true);
+            $('#bulan').val('').trigger('change').attr('disabled', true);
             $('#jumlah_anggaran').val('0');
             $('#anggaran_digunakan').val('0').attr('disabled', true);
             $.ajax({
@@ -438,7 +459,7 @@
             var program = $('#program').val();
             var tahun = $('#tahun').val();
             var biroOrganisasi = $('#biro_organisasi').val();
-            $('#tw').val('').trigger('change').attr('disabled', true);
+            $('#bulan').val('').trigger('change').attr('disabled', true);
             $('#jumlah_anggaran').val('0');
             $('#anggaran_digunakan').val('0').attr('disabled', true);
             $.ajax({
@@ -467,16 +488,16 @@
         })
 
         $("#kegiatan").on('change', function() {
-            $('#tw').val('').trigger('change').attr('disabled', false);
+            $('#bulan').val('').trigger('change').attr('disabled', false);
             $('#jumlah_anggaran').val('0');
             $('#anggaran_digunakan').val('0').attr('disabled', true);
         })
 
-        $('#tw').on('change', function() {
+        $('#bulan').on('change', function() {
             $('#anggaran_digunakan').val('0').attr('disabled', false);
             var kegiatan = $('#kegiatan').val();
             var tahun = $('#tahun').val();
-            var tw = $('#tw').val();
+            var bulan = $('#bulan').val();
             var biroOrganisasi = $('#biro_organisasi').val();
             $.ajax({
                 url: "{{ url('tabel-dpa/get-spd') }}",
@@ -485,7 +506,7 @@
                     '_token': '{{ csrf_token() }}',
                     tahun: tahun,
                     kegiatan: kegiatan,
-                    tw: tw,
+                    bulan: bulan,
                     biro_organisasi: biroOrganisasi
                 },
                 success: function(response) {
@@ -506,9 +527,9 @@
 
         $('#biro_organisasi').on('change', function() {
             $('#program').val('').trigger('change');
-            $('#tw').val('').trigger('change');
+            $('#bulan').val('').trigger('change');
             $('#tahun').val('').trigger('change');
-            $('#tw').val('').trigger('change');
+            $('#bulan').val('').trigger('change');
             $('#jumlah_anggaran').val('0');
             $('#anggaran_digunakan').val('0');
         })

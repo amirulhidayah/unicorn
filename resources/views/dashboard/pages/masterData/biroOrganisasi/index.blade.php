@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.main')
 
 @section('title')
-    Biro Organisasi
+    Sekretariat Daerah
 @endsection
 
 @push('style')
@@ -24,7 +24,7 @@
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">Biro Organisasi</a>
+            <a href="#">Sekretariat Daerah</a>
         </li>
     </ul>
 @endsection
@@ -35,7 +35,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-head-row">
-                        <div class="card-title">Data Biro Organisasi</div>
+                        <div class="card-title">Data Sekretariat Daerah</div>
                         <div class="card-tools">
                             @component('dashboard.components.buttons.add',
                                 [
@@ -71,7 +71,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modal-tambah-title">Tambah Biro Organisasi</h5>
+                        <h5 class="modal-title" id="modal-tambah-title">Tambah Sekretariat Daerah</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -81,8 +81,8 @@
                             [
                                 'id' => 'nama',
                                 'type' => 'text',
-                                'label' => 'Nama Biro Organisasi',
-                                'placeholder' => 'Tambah Biro Organisasi',
+                                'label' => 'Nama Sekretariat Daerah',
+                                'placeholder' => 'Tambah Sekretariat Daerah',
                                 'name' => 'nama',
                                 'required' => true,
                             ])
@@ -110,7 +110,7 @@
         $('#btn-tambah').click(function() {
             aksiTambah = 'tambah';
             $('#modal-tambah').modal('show');
-            $('#modal-tambah-title').html('Tambah Biro Organisasi');
+            $('#modal-tambah-title').html('Tambah Sekretariat Daerah');
         })
 
         $(document).on('click', '#btn-edit', function() {
@@ -126,7 +126,7 @@
                 success: function(response) {
                     aksiTambah = 'ubah';
                     $('#modal-tambah').modal('show');
-                    $('#modal-tambah-title').html('Ubah Biro Organisasi');
+                    $('#modal-tambah-title').html('Ubah Sekretariat Daerah');
                     $('#nama').val(response.nama);
                 },
             })

@@ -55,8 +55,14 @@
                         <div class="col-lg-6">
                             @component('dashboard.components.widgets.info',
                                 [
-                                    'judul' => 'Biro Organisasi',
+                                    'judul' => 'Sekretariat Daerah',
                                     'isi' => $sppTu->biroOrganisasi->nama,
+                                ])
+                            @endcomponent
+                            @component('dashboard.components.widgets.info',
+                                [
+                                    'judul' => 'Nomor Surat',
+                                    'isi' => $sppTu->nomor_surat,
                                 ])
                             @endcomponent
                             @component('dashboard.components.widgets.info',
@@ -67,8 +73,8 @@
                             @endcomponent
                             @component('dashboard.components.widgets.info',
                                 [
-                                    'judul' => 'TW',
-                                    'isi' => $sppTu->tw,
+                                    'judul' => 'Bulan',
+                                    'isi' => $sppTu->bulan,
                                 ])
                             @endcomponent
                             @component('dashboard.components.widgets.info',

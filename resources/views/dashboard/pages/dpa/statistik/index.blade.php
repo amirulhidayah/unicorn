@@ -1,0 +1,419 @@
+@extends('dashboard.layouts.main')
+
+@section('title')
+    Statistik Dokumen Pelaksana Anggaran
+@endsection
+
+@push('style')
+    <style>
+        .table-bordered {
+            border: 1px solid black !important;
+        }
+
+        .table-bordered td,
+        .table-bordered th {
+            border: 1px solid black !important;
+            font-size: 13px !important;
+        }
+    </style>
+@endpush
+
+@section('breadcrumb')
+    <ul class="breadcrumbs">
+        <li class="nav-home">
+            <a href="#">
+                <i class="flaticon-home"></i>
+            </a>
+        </li>
+        <li class="separator">
+            <i class="flaticon-right-arrow"></i>
+        </li>
+        <li class="nav-item">
+            <a href="#">Statistik Dokumen Pelaksana Anggaran</a>
+        </li>
+        <li class="separator">
+            <i class="flaticon-right-arrow"></i>
+        </li>
+        <li class="nav-item">
+            <a href="#">Tabel</a>
+        </li>
+    </ul>
+@endsection
+
+@section('content')
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-head-row">
+                        <div class="card-title">Statistik Dokumen Pelaksana Anggaran</div>
+                        <div class="card-tools">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        @csrf
+                        @if (Auth::user()->role != 'Bendahara Pengeluaran')
+                            <div class="col-6">
+                                @component('dashboard.components.formElements.select',
+                                    [
+                                        'label' => 'Sekretariat Daerah',
+                                        'id' => 'biro_organisasi',
+                                        'name' => 'biro_organisasi',
+                                        'class' => 'select2',
+                                        'wajib' => '<sup class="text-danger">*</sup>',
+                                    ])
+                                    @slot('options')
+                                        @foreach ($biroOrganisasi as $item)
+                                            <option value="{{ $item->id }}">{{ $item->nama }}
+                                            </option>
+                                        @endforeach
+                                    @endslot
+                                @endcomponent
+                            </div>
+                        @endif
+                        <div class="col-6">
+                            @component('dashboard.components.formElements.select',
+                                [
+                                    'label' => 'Tahun',
+                                    'id' => 'tahun',
+                                    'name' => 'tahun',
+                                    'class' => 'select2',
+                                    'wajib' => '<sup class="text-danger">*</sup>',
+                                ])
+                                @slot('options')
+                                    @foreach ($tahun as $item)
+                                        <option value="{{ $item->id }}">{{ $item->tahun }}</option>
+                                    @endforeach
+                                @endslot
+                            @endcomponent
+                        </div>
+                        <div class="col-6">
+                            @component('dashboard.components.formElements.select',
+                                [
+                                    'label' => 'Program',
+                                    'id' => 'program',
+                                    'name' => 'program',
+                                    'class' => 'select2',
+                                    'attribute' => 'disabled',
+                                    'wajib' => '<sup class="text-danger">*</sup>',
+                                ])
+                            @endcomponent
+                        </div>
+
+                        <div class="col-6">
+                            @component('dashboard.components.formElements.select',
+                                [
+                                    'label' => 'Kegiatan',
+                                    'id' => 'kegiatan',
+                                    'name' => 'kegiatan',
+                                    'class' => 'select2',
+                                    'attribute' => 'disabled',
+                                    'wajib' => '<sup class="text-danger">*</sup>',
+                                ])
+                            @endcomponent
+                        </div>
+                        <div class="col-6">
+                            @component('dashboard.components.formElements.select',
+                                [
+                                    'label' => 'Model Statistik',
+                                    'id' => 'model',
+                                    'name' => 'model',
+                                    'class' => 'select2',
+                                    'wajib' => '<sup class="text-danger">*</sup>',
+                                ])
+                                @slot('options')
+                                    <option value="Bar Chart">Bar Chart</option>
+                                    <option value="Line Chart">Line Chart</option>
+                                    <option value="Pie Chart">Pie Chart</option>
+                                @endslot
+                            @endcomponent
+                        </div>
+                    </div>
+                    <canvas id="statistik" height="40px" width="100px" class="p-3">
+
+                    </canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@push('script')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js"
+        integrity="sha512-sW/w8s4RWTdFFSduOTGtk4isV1+190E/GghVffMA9XczdJ2MDzSzLEubKAs5h0wzgSJOQTRYyaz73L3d6RtJSg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2  "></script>
+
+    <script>
+        var role = "{{ Auth::user()->role }}";
+        const statistik = $('#statistik');
+
+        function setConfigStatistikBar(bulan, dataStatistik, judul) {
+            const configStatistik = new Chart(statistik, {
+                type: 'bar',
+                data: {
+                    labels: bulan,
+                    datasets: [{
+                        label: judul,
+                        data: dataStatistik,
+                        fill: false,
+                        backgroundColor: [
+                            '#C6DCE4',
+                            '#C3E5AE',
+                            '#68BDE1',
+                            '#28FFBF',
+                            '#FFE3B0',
+                            '#FFCBCB',
+                            '#A3E4DB',
+                            '#E4CDA7',
+                            '#A7C5EB',
+                            '#ADC2A9',
+                            '#6EBF8B',
+                            '#E8EAE6'
+                        ],
+                        tension: 0
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        datalabels: {
+                            formatter: function(value, context) {
+                                return "Rp." + formatNumber(value);
+                            },
+                            anchor: 'end',
+                            align: 'end',
+                            backgroundColor: 'white',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: {
+                                callback: function(value, index, ticks) {
+                                    return "Rp." + formatNumber(value);
+                                }
+                            }
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels],
+            });
+        }
+
+        function setConfigStatistikLine(bulan, dataStatistik, judul) {
+            const configStatistik = new Chart(statistik, {
+                type: 'line',
+                data: {
+                    labels: bulan,
+                    datasets: [{
+                        label: judul,
+                        data: dataStatistik,
+                        fill: false,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        datalabels: {
+                            formatter: function(value, context) {
+                                return "Rp." + formatNumber(value);
+                            },
+                            anchor: 'end',
+                            align: 'end',
+                            backgroundColor: 'white',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: {
+                                callback: function(value, index, ticks) {
+                                    return "Rp." + formatNumber(value);
+                                }
+                            }
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels],
+            });
+        }
+
+        function setConfigStatistikPie(bulan, dataStatistik, judul) {
+            const configStatistik = new Chart(statistik, {
+                type: 'pie',
+                data: {
+                    labels: bulan,
+                    datasets: [{
+                        label: judul,
+                        data: dataStatistik,
+                        backgroundColor: [
+                            '#C6DCE4',
+                            '#C3E5AE',
+                            '#68BDE1',
+                            '#28FFBF',
+                            '#FFE3B0',
+                            '#FFCBCB',
+                            '#A3E4DB',
+                            '#E4CDA7',
+                            '#F9F3DF',
+                            '#ADC2A9',
+                            '#6EBF8B',
+                            '#E8EAE6'
+                        ],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    plugins: {
+                        datalabels: {
+                            formatter: function(value, context) {
+                                return "Rp." + formatNumber(value);
+                            },
+                            rotation: function(ctx) {
+                                const valuesBefore = ctx.dataset.data.slice(0, ctx.dataIndex).reduce((a, b) =>
+                                    a + b, 0);
+                                const sum = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                const rotation = ((valuesBefore + ctx.dataset.data[ctx.dataIndex] / 2) / sum *
+                                    360);
+                                return rotation < 180 ? rotation - 90 : rotation + 90;
+                            },
+                            anchor: "center",
+                            backgroundColor: 'white',
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels],
+            });
+        }
+
+        function getDataStatistik() {
+            var tahun = $('#tahun').val();
+            var biroOrganisasi = role == "Admin" ? $('#biro_organisasi').val() :
+                "{{ Auth::user()->profil->biro_organisasi_id }}";
+            var kegiatan = $('#kegiatan').val();
+            var model = $('#model').val();
+
+            console.log("Tahun : " + tahun);
+            console.log("Biro : " + biroOrganisasi);
+            console.log("Kegiatan : " + kegiatan);
+            console.log("Model : " + model);
+
+            resetChart();
+
+            if ((tahun != '') && (biroOrganisasi != '') && (kegiatan != '') && (model != '')) {
+                $.ajax({
+                    url: "{{ url('statistik-dpa/get-data-statistik') }}",
+                    type: "POST",
+                    data: {
+                        '_token': '{{ csrf_token() }}',
+                        tahun_id: tahun,
+                        biro_organisasi_id: biroOrganisasi,
+                        kegiatan_id: kegiatan
+                    },
+                    success: function(response) {
+                        if (model == "Bar Chart") {
+                            setConfigStatistikBar(response.bulan, response.data, response.judul);
+                        } else if (model == "Line Chart") {
+                            setConfigStatistikLine(response.bulan, response.data, response.judul);
+                        } else {
+                            setConfigStatistikPie(response.bulan, response.data, response.judul);
+                        }
+                    }
+                })
+            };
+        }
+
+        function resetChart() {
+            if (Chart.getChart("statistik")) {
+                Chart.getChart("statistik").destroy();
+            }
+        }
+
+        function formatNumber(num) {
+            return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+        }
+    </script>
+
+    <script>
+        $('#tahun').on('change', function() {
+            var tahun = $(this).val();
+            var biroOrganisasi = $('#biro_organisasi').val();
+            $('#kegiatan').html('').attr('disabled', true);
+            getDataStatistik();
+            $.ajax({
+                url: "{{ url('list/program') }}",
+                type: "POST",
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    tahun: tahun,
+                    biro_organisasi: biroOrganisasi
+                },
+                success: function(response) {
+                    $('#program').removeAttr('disabled');
+                    if (response.length > 0) {
+                        $('#program').html('');
+                        $('#program').append('<option value="">Pilih Program</option>');
+                        $.each(response, function(key, value) {
+                            $('#program').append('<option value="' + value.id + '">' + value
+                                .nama + " (" + value.no_rek + ")" + '</option>');
+                        })
+                    } else {
+                        $('#program').html('');
+                    }
+                }
+            })
+        })
+
+        $('#program').on('change', function() {
+            var program = $('#program').val();
+            var tahun = $('#tahun').val();
+            var biroOrganisasi = $('#biro_organisasi').val();
+            getDataStatistik();
+            $.ajax({
+                url: "{{ url('list/kegiatan') }}",
+                type: "POST",
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    tahun: tahun,
+                    program: program,
+                    biro_organisasi: biroOrganisasi
+                },
+                success: function(response) {
+                    $('#kegiatan').removeAttr('disabled');
+                    if (response.length > 0) {
+                        $('#kegiatan').html('');
+                        $('#kegiatan').append('<option value="">Pilih kegiatan</option>');
+                        $.each(response, function(key, value) {
+                            $('#kegiatan').append('<option value="' + value.id + '">' + value
+                                .nama + " (" + value.no_rek + ")" + '</option>');
+                        })
+                    } else {
+                        $('#kegiatan').html('');
+                    }
+                }
+            })
+        })
+
+        $("#kegiatan").on('change', function() {
+            getDataStatistik();
+        })
+
+        $('#model').on('change', function() {
+            getDataStatistik();
+        })
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#statistik-dpa').addClass('active');
+        })
+    </script>
+@endpush

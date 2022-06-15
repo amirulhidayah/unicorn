@@ -70,44 +70,55 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="row mb-4">
-                        @if (Auth::user()->role != 'Bendahara Pengeluaran')
+                    <form action="{{ url('/tabel-dpa/export') }}" method="POST" enctype="multipart/form-data">
+                        <div class="row align-items-end mb-4">
+                            @csrf
+                            @if (Auth::user()->role != 'Bendahara Pengeluaran')
+                                <div class="col">
+                                    @component('dashboard.components.formElements.select',
+                                        [
+                                            'label' => 'Sekretariat Daerah',
+                                            'id' => 'biro_organisasi',
+                                            'class' => 'select2',
+                                            'name' => 'biro_organisasi',
+                                            'wajib' => '<sup class="text-danger">*</sup>',
+                                        ])
+                                        @slot('options')
+                                            <option value="Semua">Semua</option>
+                                            @foreach ($biroOrganisasi as $item)
+                                                <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                            @endforeach
+                                        @endslot
+                                    @endcomponent
+                                </div>
+                            @endif
+
                             <div class="col">
                                 @component('dashboard.components.formElements.select',
                                     [
-                                        'label' => 'Biro Organisasi',
-                                        'id' => 'biro_organisasi',
+                                        'label' => 'Tahun',
+                                        'id' => 'tahun_filter',
+                                        'name' => 'tahun',
                                         'class' => 'select2',
-                                        'name' => '',
                                         'wajib' => '<sup class="text-danger">*</sup>',
                                     ])
                                     @slot('options')
-                                        <option value="Semua">Semua</option>
-                                        @foreach ($biroOrganisasi as $item)
-                                            <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                        @foreach ($tahun as $item)
+                                            <option value="{{ $item->id }}">{{ $item->tahun }}</option>
                                         @endforeach
                                     @endslot
                                 @endcomponent
                             </div>
-                        @endif
-
-                        <div class="col">
-                            @component('dashboard.components.formElements.select',
-                                [
-                                    'label' => 'Tahun',
-                                    'id' => 'tahun_filter',
-                                    'name' => '',
-                                    'class' => 'select2',
-                                    'wajib' => '<sup class="text-danger">*</sup>',
-                                ])
-                                @slot('options')
-                                    @foreach ($tahun as $item)
-                                        <option value="{{ $item->id }}">{{ $item->tahun }}</option>
-                                    @endforeach
-                                @endslot
-                            @endcomponent
+                            <div class="col-2">
+                                @component('dashboard.components.buttons.submit',
+                                    [
+                                        'label' => 'Export',
+                                        'class' => 'col-12',
+                                    ])
+                                @endcomponent
+                            </div>
                         </div>
-                    </div>
+                    </form>
                     <div id="tabel-spd">
 
                     </div>
@@ -218,7 +229,7 @@
                             <div class="col-12">
                                 @component('dashboard.components.formElements.select',
                                     [
-                                        'label' => 'Biro Organisasi',
+                                        'label' => 'Sekretariat Daerah',
                                         'id' => 'biro_organisasi_tambah',
                                         'name' => 'biro_organisasi',
                                         'class' => 'select2',

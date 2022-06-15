@@ -21,8 +21,8 @@
                         <p>Tabel</p>
                     </a>
                 </li>
-                <li class="nav-item" id="spd">
-                    <a href="{{ url('spd') }}">
+                <li class="nav-item" id="statistik-dpa">
+                    <a href="{{ url('statistik-dpa') }}">
                         <i class="fas fa-chart-bar"></i>
                         <p>Statistik</p>
                     </a>
@@ -57,7 +57,7 @@
                         <p>SPP GU</p>
                     </a>
                 </li>
-                @if (in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran']))
+                @if (in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']))
                     <li class="nav-section">
                         <span class="sidebar-mini-icon">
                             <i class="fa fa-ellipsis-h"></i>
@@ -97,7 +97,7 @@
                         </a>
                     </li>
                 @endif
-                @if (in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran']))
+                @if (in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']))
                     <li class="nav-item" id="master-program-spp">
                         <a href="{{ url('/master-data/program-spp') }}">
                             <i class="far fa-list-alt"></i>
@@ -110,7 +110,7 @@
                     <li class="nav-item" id="master-biro-organisasi">
                         <a href="{{ url('/master-data/biro-organisasi') }}">
                             <i class="fas fa-building"></i>
-                            <p>Biro Organisasi</p>
+                            <p>Sekretariat Daerah</p>
                         </a>
                     </li>
                     <li class="nav-item" id="master-tahun">
@@ -120,10 +120,25 @@
                         </a>
                     </li>
                     <li class="nav-item" id="master-akun">
-                        <a href="{{ url('/master-data/akun') }}">
+                        <a data-toggle="collapse" href="#menu-akun">
                             <i class="fas fa-user-circle"></i>
                             <p>Akun</p>
+                            <span class="caret"></span>
                         </a>
+                        <div class="collapse" id="menu-akun">
+                            <ul class="nav nav-collapse">
+                                <li id="akun-sekretariat">
+                                    <a href="{{ url('master-data/akun') }}">
+                                        <span class="sub-item">Sekretariat</span>
+                                    </a>
+                                </li>
+                                <li id="akun-lainnya">
+                                    <a href="{{ url('master-data/akun-lainnya') }}">
+                                        <span class="sub-item">Lainnya</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </li>
                 @endif
             </ul>

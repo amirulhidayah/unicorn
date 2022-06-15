@@ -11,27 +11,14 @@
 
 
      <ul class="list-unstyled">
-         @if (Auth::user()->role == 'PPK' && $spp->surat_penolakan_ppk != null)
+         @if (in_array(Auth::user()->role, ['PPK', 'ASN Sub Bagian Keuangan']) && $spp->surat_penolakan != null && ($spp->status_validasi_ppk != 1 || $spp->status_validasi_asn != 1))
              <li class="media mb-3 d-flex align-items-center" style="background-color: yellow">
                  <img src="{{ asset('assets/dashboard/img/pdf.png') }}" alt="" width="35px">
                  <div class="media-body">
                      <h5 class="font-16 mb-1 ml-2 my-0 fw-bold">Surat Penolakan<i
                              class="feather icon-download-cloud float-right"></i></h5>
                  </div>
-                 <a href="{{ Storage::url('surat_penolakan_' . $tipe . '/' . $spp->surat_penolakan_ppk) }}"
-                     class="btn btn-primary btn-sm"><i class="fas fa-file-download"></i>
-                     Lihat</a>
-             </li>
-             <hr>
-         @endif
-         @if (Auth::user()->role == 'ASN Sub Bagian Keuangan' && $spp->surat_penolakan_asn != null)
-             <li class="media mb-3 d-flex align-items-center" style="background-color: yellow">
-                 <img src="{{ asset('assets/dashboard/img/pdf.png') }}" alt="" width="35px">
-                 <div class="media-body">
-                     <h5 class="font-16 mb-1 ml-2 my-0 fw-bold">Surat Penolakan<i
-                             class="feather icon-download-cloud float-right"></i></h5>
-                 </div>
-                 <a href="{{ Storage::url('surat_penolakan_' . $tipe . '/' . $spp->surat_penolakan_asn) }}"
+                 <a href="{{ Storage::url('surat_penolakan_' . $tipe . '/' . $spp->surat_penolakan) }}"
                      class="btn btn-primary btn-sm"><i class="fas fa-file-download"></i>
                      Lihat</a>
              </li>

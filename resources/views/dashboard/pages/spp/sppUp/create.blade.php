@@ -6,14 +6,6 @@
 
 @push('style')
     <style>
-        #nama_file {
-            border: 0px;
-            font-weight: bold;
-            height: 23px;
-            padding-left: 5px;
-            font-size: 15px;
-        }
-
         .box-upload .card-body {
             padding-top: 0px !important;
             padding-bottom: 0px !important;
@@ -91,7 +83,7 @@
                                     <div class="col-12">
                                         @component('dashboard.components.formElements.select',
                                             [
-                                                'label' => 'Biro Organisasi',
+                                                'label' => 'Sekretariat Daerah',
                                                 'id' => 'biro_organisasi',
                                                 'name' => 'biro_organisasi',
                                                 'class' => 'select2',
@@ -107,13 +99,27 @@
                                     </div>
                                 @else
                                     <div class="col-12">
-                                        <label for="exampleFormControlInput1">Biro Organisasi</label>
+                                        <label for="exampleFormControlInput1">Sekretariat Daerah</label>
                                         <br>
                                         <label for="exampleFormControlInput1"
                                             class="badge badge-primary text-light my-2">{{ Auth::user()->profil->biroOrganisasi->nama }}</label>
                                         <br>
                                     </div>
                                 @endif
+
+                                <div class="col-12">
+                                    @component('dashboard.components.formElements.input',
+                                        [
+                                            'label' => 'Nomor Surat',
+                                            'type' => 'text',
+                                            'id' => 'nomor_surat',
+                                            'class' => '',
+                                            'name' => 'nomor_surat',
+                                            'wajib' => '<sup class="text-danger">*</sup>',
+                                            'placeholder' => 'Masukkan Nomor Surat',
+                                        ])
+                                    @endcomponent
+                                </div>
 
                                 <div class="col-12">
                                     @component('dashboard.components.formElements.select',

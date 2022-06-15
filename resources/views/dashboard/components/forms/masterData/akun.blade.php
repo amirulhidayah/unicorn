@@ -42,11 +42,10 @@
                     'wajib' => '<sup class="text-danger">*</sup>',
                 ])
                 @slot('options')
-                    <option value="Admin">Admin</option>
-                    <option value="ASN Sub Bagian Keuangan">ASN Sub Bagian Keuangan</option>
-                    <option value="Bendahara Pembantu">Bendahara Pembantu</option>
                     <option value="Bendahara Pengeluaran">Bendahara Pengeluaran</option>
-                    <option value="PPK">PPK</option>
+                    <option value="Bendahara Pengeluaran Pembantu">Bendahara Pengeluaran Pembantu</option>
+                    <option value="Bendahara Pengeluaran Pembantu Belanja Hibah">Bendahara Pengeluaran Pembantu Belanja Hibah
+                    </option>
                 @endslot
             @endcomponent
         </div>
@@ -92,7 +91,7 @@
         <div class="col-sm-12 col-lg-6">
             @component('dashboard.components.formElements.select',
                 [
-                    'label' => 'Biro Organisasi',
+                    'label' => 'Sekretariat Daerah',
                     'id' => 'biro_organisasi',
                     'name' => 'biro_organisasi',
                     'class' => 'select2',

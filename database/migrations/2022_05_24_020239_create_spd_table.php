@@ -18,10 +18,11 @@ class CreateSpdTable extends Migration
             $table->uuid('kegiatan_id');
             $table->uuid('biro_organisasi_id');
             $table->uuid('tahun_id');
-            $table->bigInteger('tw1');
-            $table->bigInteger('tw2');
-            $table->bigInteger('tw3');
-            $table->bigInteger('tw4');
+            $table->bigInteger('jumlah_anggaran');
+            // $table->bigInteger('tw1');
+            // $table->bigInteger('tw2');
+            // $table->bigInteger('tw3');
+            // $table->bigInteger('tw4');
             $table->softDeletes();
             $table->timestamps();
         });

@@ -54,7 +54,7 @@
                                 @component('dashboard.components.dataTables.index',
                                     [
                                         'id' => 'table-data',
-                                        'th' => ['No', 'Nama', 'Biro Organisasi', 'Role', 'Foto', 'Aksi'],
+                                        'th' => ['No', 'Nama', 'Sekretariat Daerah', 'Role', 'Foto', 'Aksi'],
                                     ])
                                 @endcomponent
                             </div>
@@ -68,92 +68,6 @@
 
 @push('script')
     <script>
-        var idEdit = '';
-        var aksiTambah = 'tambah';
-        $('#btn-tambah').click(function() {
-            aksiTambah = 'tambah';
-            $('#modal-tambah').modal('show');
-            $('#modal-tambah-title').html('Tambah Biro Organisasi');
-        })
-
-        $(document).on('click', '#btn-edit', function() {
-            let id = $(this).val();
-            idEdit = id;
-
-            $.ajax({
-                url: "{{ url('master-data/biro-organisasi') }}" + '/' + id + '/edit',
-                type: "GET",
-                data: {
-                    id: id
-                },
-                success: function(response) {
-                    aksiTambah = 'ubah';
-                    $('#modal-tambah').modal('show');
-                    $('#modal-tambah-title').html('Ubah Biro Organisasi');
-                    $('#nama').val(response.nama);
-                },
-            })
-        })
-
-        $('#form-tambah').submit(function(e) {
-            e.preventDefault();
-            if (aksiTambah == 'tambah') {
-                $.ajax({
-                    url: "{{ url('master-data/biro-organisasi') }}",
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        if (response.status == 'success') {
-                            $('#modal-tambah').modal('hide');
-                            table.draw();
-                            swal("Berhasil", "Data Berhasil Tersimpan", {
-                                icon: "success",
-                                buttons: false,
-                                timer: 1000,
-                            });
-                            resetModal();
-                        } else {
-                            printErrorMsg(response.error);
-                        }
-                    },
-                    error: function(response) {
-                        swal("Gagal", "Data Gagal Ditambahkan", {
-                            icon: "error",
-                            buttons: false,
-                            timer: 1000,
-                        });
-                    }
-                })
-            } else {
-                $.ajax({
-                    url: "{{ url('master-data/biro-organisasi') }}" + '/' + idEdit,
-                    type: 'PUT',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        if (response.status == 'success') {
-                            $('#modal-tambah').modal('hide');
-                            table.draw();
-                            swal("Berhasil", "Data Berhasil Diubah", {
-                                icon: "success",
-                                buttons: false,
-                                timer: 1000,
-                            });
-                            resetModal();
-                        } else {
-                            printErrorMsg(response.error);
-                        }
-                    },
-                    error: function(response) {
-                        swal("Gagal", "Data Gagal Diubah", {
-                            icon: "error",
-                            buttons: false,
-                            timer: 1000,
-                        });
-                    }
-                })
-            }
-        })
-
         $(document).on('click', '#btn-delete', function() {
             let id = $(this).val();
             swal({
@@ -286,6 +200,8 @@
     <script>
         $(document).ready(function() {
             $('#master-akun').addClass('active');
+            $('#menu-akun').collapse('show');
+            $('#akun-sekretariat').addClass('active');
         })
 
         function printErrorMsg(msg) {

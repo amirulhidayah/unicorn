@@ -55,8 +55,14 @@
                         <div class="col-lg-6">
                             @component('dashboard.components.widgets.info',
                                 [
-                                    'judul' => 'Biro Organisasi',
+                                    'judul' => 'Sekretariat Daerah',
                                     'isi' => $sppLs->biroOrganisasi->nama,
+                                ])
+                            @endcomponent
+                            @component('dashboard.components.widgets.info',
+                                [
+                                    'judul' => 'Nomor Surat',
+                                    'isi' => $sppLs->nomor_surat,
                                 ])
                             @endcomponent
                             @component('dashboard.components.widgets.info',
@@ -73,6 +79,12 @@
                             @endcomponent
                             @component('dashboard.components.widgets.info',
                                 [
+                                    'judul' => 'Bulan',
+                                    'isi' => $sppLs->bulan,
+                                ])
+                            @endcomponent
+                            @component('dashboard.components.widgets.info',
+                                [
                                     'judul' => 'Program',
                                     'isi' => $sppLs->kegiatan->program->nama . ' (' . $sppLs->kegiatan->program->no_rek . ')',
                                 ])
@@ -81,18 +93,6 @@
                                 [
                                     'judul' => 'Kegiatan',
                                     'isi' => $sppLs->kegiatan->nama . ' (' . $sppLs->kegiatan->no_rek . ')',
-                                ])
-                            @endcomponent
-                            @component('dashboard.components.widgets.info',
-                                [
-                                    'judul' => 'TW',
-                                    'isi' => $sppLs->tw,
-                                ])
-                            @endcomponent
-                            @component('dashboard.components.widgets.info',
-                                [
-                                    'judul' => 'Jumlah Anggaran',
-                                    'isi' => $jumlahAnggaran,
                                 ])
                             @endcomponent
                             @component('dashboard.components.widgets.info',

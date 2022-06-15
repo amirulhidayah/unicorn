@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\dashboard\dpa\StatistikDpaController;
 use App\Http\Controllers\dashboard\dpa\TabelDpaController;
 use App\Http\Controllers\dashboard\masterData\AkunController;
+use App\Http\Controllers\dashboard\masterData\AkunLainnyaController;
 use App\Http\Controllers\dashboard\masterData\BiroOrganisasiController;
 use App\Http\Controllers\dashboard\masterData\DokumenSppGuController;
 use App\Http\Controllers\dashboard\masterData\DokumenSppLsController;
@@ -66,56 +68,52 @@ Route::group(['middleware' => ['auth']], function () {
     ]);
 
     // SPP UP
-    Route::resource('/spp-up', SppUpController::class)->except([
-        'edit'
-    ]);
+    Route::resource('/spp-up', SppUpController::class);
     Route::get('/spp-up/riwayat/{sppUp}', [SppUpController::class, 'riwayat']);
     Route::put('/spp-up/verifikasi/{sppUp}', [SppUpController::class, 'verifikasi']);
     Route::put('/spp-up/verifikasi-akhir/{sppUp}', [SppUpController::class, 'verifikasiAkhir']);
-    Route::post('/spp-up/{spp_up}/edit', [SppUpController::class, 'edit']);
-    Route::get('/surat-penolakan/spp-up/{riwayatSppUp}', [UnduhController::class, 'suratPenolakanSppUp']);
+    Route::get('/surat-penolakan/spp-up/{sppUp}/{tahapRiwayat}', [UnduhController::class, 'suratPenolakanSppUp']);
+    Route::get('/surat-pernyataan/spp-up/{sppUp}', [UnduhController::class, 'suratPernyataanSppUp']);
 
     // SPP TU
-    Route::resource('/spp-tu', SppTuController::class)->except([
-        'edit'
-    ]);
-    Route::post('/spp-tu/{spp_tu}/edit', [SppTuController::class, 'edit']);
+    Route::resource('/spp-tu', SppTuController::class);
     Route::put('/spp-tu/verifikasi/{sppTu}', [SppTuController::class, 'verifikasi']);
     Route::put('/spp-tu/verifikasi-akhir/{sppTu}', [SppTuController::class, 'verifikasiAkhir']);
     Route::get('/spp-tu/riwayat/{sppTu}', [SppTuController::class, 'riwayat']);
-    Route::get('/surat-penolakan/spp-tu/{riwayatSppTu}', [UnduhController::class, 'suratPenolakanSppTu']);
+    Route::get('/surat-penolakan/spp-tu/{sppTu}/{tahapRiwayat}', [UnduhController::class, 'suratPenolakanSppTu']);
+    Route::get('/surat-pernyataan/spp-tu/{sppTu}', [UnduhController::class, 'suratPernyataanSppTu']);
 
     // SPP LS
-    Route::resource('/spp-ls', SppLsController::class)->except([
-        'edit'
-    ])->parameters([
+    Route::resource('/spp-ls', SppLsController::class)->parameters([
         'spp-ls' => 'spp-ls'
     ]);
-    Route::post('/spp-ls/{sppLs}/edit', [SppLsController::class, 'edit']);
     Route::put('/spp-ls/verifikasi-akhir/{sppLs}', [SppLsController::class, 'verifikasiAkhir']);
     Route::put('/spp-ls/verifikasi/{sppLs}', [SppLsController::class, 'verifikasi']);
     Route::get('/spp-ls/riwayat/{sppLs}', [SppLsController::class, 'riwayat']);
-    Route::get('/surat-penolakan/spp-ls/{riwayatSppLs}', [UnduhController::class, 'suratPenolakanSppLs']);
+    Route::get('/surat-penolakan/spp-ls/{sppLs}/{tahapRiwayat}', [UnduhController::class, 'suratPenolakanSppLs']);
+    Route::get('/surat-pernyataan/spp-ls/{sppLs}', [UnduhController::class, 'suratPernyataanSppLs']);
 
     // SPP GU
     Route::get('/spp-gu/create/{sppGu}', [SppGuController::class, 'createTahapAkhir']);
     Route::post('/spp-gu/{sppGu}', [SppGuController::class, 'storeTahapAkhir']);
-    Route::resource('/spp-gu', SppGuController::class)->except([
-        'edit'
-    ]);
-    Route::post('/spp-gu/{sppGu}/edit', [SppGuController::class, 'edit']);
+    Route::resource('/spp-gu', SppGuController::class);
     Route::put('/spp-gu/verifikasi-akhir/{sppGu}', [SppGuController::class, 'verifikasiAkhir']);
     Route::put('/spp-gu/verifikasi/{sppGu}', [SppGuController::class, 'verifikasi']);
     Route::get('/spp-gu/riwayat/{sppGu}', [SppGuController::class, 'riwayat']);
-    Route::get('/surat-penolakan/spp-gu/{riwayatSppGu}', [UnduhController::class, 'suratPenolakanSppGu']);
+    Route::get('/surat-penolakan/spp-gu/{sppGu}/{tahapRiwayat}', [UnduhController::class, 'suratPenolakanSppGu']);
+    Route::get('/surat-pernyataan/spp-gu/{sppGu}', [UnduhController::class, 'suratPernyataanSppGu']);
 
     Route::post('/tabel-dpa/tabel-dpa', [TabelDpaController::class, 'tabelDpa']);
     Route::post('/tabel-dpa/get-spd', [TabelDpaController::class, 'getSpd']);
     Route::get('/tabel-dpa/format-import', [TabelDpaController::class, 'formatImport']);
     Route::post('/tabel-dpa/import', [TabelDpaController::class, 'importSpd']);
+    Route::post('/tabel-dpa/export', [TabelDpaController::class, 'exportSpd']);
     Route::resource('/tabel-dpa', TabelDpaController::class)->parameters([
         'tabel-dpa' => 'spd'
     ]);
+
+    Route::get('/statistik-dpa', [StatistikDpaController::class, 'index']);
+    Route::post('/statistik-dpa/get-data-statistik', [StatistikDpaController::class, 'getDataStatistik']);
 
     Route::get('/logout', [AuthController::class, 'logout']);
 
@@ -129,6 +127,9 @@ Route::group(['middleware' => ['auth']], function () {
 
 Route::resource('/master-data/akun', AkunController::class)->parameters([
     'akun' => 'user'
+]);
+Route::resource('/master-data/akun-lainnya', AkunLainnyaController::class)->parameters([
+    'akun-lainnya' => 'user'
 ]);
 // Auth
 Route::get('/login', [AuthController::class, 'index']);

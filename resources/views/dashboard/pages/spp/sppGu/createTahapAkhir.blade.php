@@ -40,7 +40,6 @@
             padding-top: 30px;
             padding-bottom: 30px;
         }
-
     </style>
 @endpush
 
@@ -88,14 +87,26 @@
                                 @endcomponent
                                 @component('dashboard.components.widgets.info',
                                     [
-                                        'judul' => 'Biro Organisasi',
+                                        'judul' => 'Sekretariat Daerah',
                                         'isi' => $sppGu->biroOrganisasi->nama,
+                                    ])
+                                @endcomponent
+                                @component('dashboard.components.widgets.info',
+                                    [
+                                        'judul' => 'Nomor Surat',
+                                        'isi' => $sppGu->nomor_surat,
                                     ])
                                 @endcomponent
                                 @component('dashboard.components.widgets.info',
                                     [
                                         'judul' => 'Tahun',
                                         'isi' => $sppGu->tahun->tahun,
+                                    ])
+                                @endcomponent
+                                @component('dashboard.components.widgets.info',
+                                    [
+                                        'judul' => 'Bulan',
+                                        'isi' => $sppGu->bulan,
                                     ])
                                 @endcomponent
                                 @component('dashboard.components.widgets.info',
@@ -108,18 +119,6 @@
                                     [
                                         'judul' => 'Kegiatan',
                                         'isi' => $sppGu->kegiatan->nama . ' (' . $sppGu->kegiatan->no_rek . ')',
-                                    ])
-                                @endcomponent
-                                @component('dashboard.components.widgets.info',
-                                    [
-                                        'judul' => 'TW',
-                                        'isi' => $sppGu->tw,
-                                    ])
-                                @endcomponent
-                                @component('dashboard.components.widgets.info',
-                                    [
-                                        'judul' => 'Jumlah Anggaran',
-                                        'isi' => $jumlahAnggaran,
                                     ])
                                 @endcomponent
                                 <div class="col-12">

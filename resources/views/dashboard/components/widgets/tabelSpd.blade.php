@@ -1,20 +1,102 @@
     <table class="table table-bordered table-responsive table-hover text-nowrap">
         <thead class="text-center">
             <tr>
-                <th scope="col">No.</th>
-                <th scope="col">NAMA SUB OPD, PROGRAM DAN KEGIATAN</th>
-                <th scope="col">NO. REK. KEG. SKPD</th>
-                <th scope="col">JUMLAH ANGGARAN TAHUN INI</th>
-                <th scope="col">TW 1</th>
-                <th scope="col">Anggaran Yang Digunakan</th>
-                <th scope="col">TW 2</th>
-                <th scope="col">Anggaran Yang Digunakan</th>
-                <th scope="col">TW 3</th>
-                <th scope="col">Anggaran Yang Digunakan</th>
-                <th scope="col">TW 4</th>
-                <th scope="col">Anggaran Yang Digunakan</th>
+                <th scope="col" rowspan="2">No.</th>
+                <th scope="col" rowspan="2">NAMA SUB OPD, PROGRAM DAN KEGIATAN</th>
+                <th scope="col" rowspan="2">NO. REK. KEG. SKPD</th>
+                <th scope="col" rowspan="2">Jumlah Anggaran</th>
+                <th scope="col" colspan="2">Januari</th>
+                <th scope="col" colspan="2">Februari</th>
+                <th scope="col" colspan="2">Maret</th>
+                <th scope="col" colspan="2">April</th>
+                <th scope="col" colspan="2">Mei</th>
+                <th scope="col" colspan="2">Juni</th>
+                <th scope="col" colspan="2">Juli</th>
+                <th scope="col" colspan="2">Agustus</th>
+                <th scope="col" colspan="2">September</th>
+                <th scope="col" colspan="2">Oktober</th>
+                <th scope="col" colspan="2">November</th>
+                <th scope="col" colspan="2">Desember</th>
+
                 @if (Auth::user()->role == 'Admin')
                     <th scope="col">Aksi</th>
+                @endif
+            </tr>
+            <tr>
+                <td>
+                    Anggaran Digunakan
+                </td>
+                <td>
+                    Sisa Anggaran
+                </td>
+                <td>
+                    Anggaran Digunakan
+                </td>
+                <td>
+                    Sisa Anggaran
+                </td>
+                <td>
+                    Anggaran Digunakan
+                </td>
+                <td>
+                    Sisa Anggaran
+                </td>
+                <td>
+                    Anggaran Digunakan
+                </td>
+                <td>
+                    Sisa Anggaran
+                </td>
+                <td>
+                    Anggaran Digunakan
+                </td>
+                <td>
+                    Sisa Anggaran
+                </td>
+                <td>
+                    Anggaran Digunakan
+                </td>
+                <td>
+                    Sisa Anggaran
+                </td>
+                <td>
+                    Anggaran Digunakan
+                </td>
+                <td>
+                    Sisa Anggaran
+                </td>
+                <td>
+                    Anggaran Digunakan
+                </td>
+                <td>
+                    Sisa Anggaran
+                </td>
+                <td>
+                    Anggaran Digunakan
+                </td>
+                <td>
+                    Sisa Anggaran
+                </td>
+                <td>
+                    Anggaran Digunakan
+                </td>
+                <td>
+                    Sisa Anggaran
+                </td>
+                <td>
+                    Anggaran Digunakan
+                </td>
+                <td>
+                    Sisa Anggaran
+                </td>
+                <td>
+                    Anggaran Digunakan
+                </td>
+                <td>
+                    Sisa Anggaran
+                </td>
+                @if (Auth::user()->role == 'Admin')
+                    <td></td>
                 @endif
             </tr>
         </thead>
@@ -22,7 +104,7 @@
             <tbody>
                 @foreach ($daftarBiroOrganisasi as $biroOrganisasi)
                     <tr>
-                        <td colspan="{{ Auth::user()->role == 'Admin' ? 13 : 12 }}" class="fw-bold">
+                        <td colspan="{{ Auth::user()->role == 'Admin' ? 28 : 28 }}" class="fw-bold">
                             {{ $biroOrganisasi->nama }}</td>
                     </tr>
                     @php
@@ -41,7 +123,7 @@
                     @foreach ($daftarProgram as $program)
                         <tr>
                             <td colspan="2">{{ $program->nama }}</td>
-                            <td colspan="{{ Auth::user()->role == 'Admin' ? 11 : 10 }}">{{ $program->no_rek }}</td>
+                            <td colspan="{{ Auth::user()->role == 'Admin' ? 27 : 26 }}">{{ $program->no_rek }}</td>
                         </tr>
                         @php
                             $daftarSpd = \App\Models\Spd::with(['biroOrganisasi', 'kegiatan', 'tahun'])
@@ -53,15 +135,6 @@
                                 ->get();
 
                             $totalJumlahAnggaran = 0;
-                            $totalTw1 = 0;
-                            $totalTw2 = 0;
-                            $totalTw3 = 0;
-                            $totalTw4 = 0;
-
-                            $totalAnggaranDigunakanTw1 = 0;
-                            $totalAnggaranDigunakanTw2 = 0;
-                            $totalAnggaranDigunakanTw3 = 0;
-                            $totalAnggaranDigunakanTw4 = 0;
                         @endphp
                         @foreach ($daftarSpd as $spd)
                             <tr>
@@ -69,172 +142,371 @@
                                 <td>{{ $spd->kegiatan->nama }}</td>
                                 <td>{{ $spd->kegiatan->no_rek }}</td>
                                 <td>Rp.
-                                    {{ number_format($spd->tw1 + $spd->tw2 + $spd->tw3 + $spd->tw4, 0, ',', '.') }}
+                                    {{ number_format($spd->jumlah_anggaran, 0, ',', '.') }}
                                 </td>
-                                <td>Rp. {{ number_format($spd->tw1, 0, ',', '.') }}</td>
                                 @php
-                                    $sppLs = \App\Models\SppLs::where('biro_organisasi_id', $spd->biro_organisasi_id)
-                                        ->orderBy('created_at', 'asc')
-                                        ->where('tahun_id', $spd->tahun_id)
-                                        ->where('kegiatan_id', $spd->kegiatan_id)
-                                        ->where('status_validasi_akhir', 1)
-                                        ->where('tw', 1)
-                                        ->get();
-
-                                    $sppGu = \App\Models\SppGu::where('biro_organisasi_id', $spd->biro_organisasi_id)
-                                        ->orderBy('created_at', 'asc')
-                                        ->where('tahun_id', $spd->tahun_id)
-                                        ->where('kegiatan_id', $spd->kegiatan_id)
-                                        ->where('status_validasi_akhir', 1)
-                                        ->where('tw', 1)
-                                        ->first();
+                                    $totalJumlahAnggaran = $spd->jumlah_anggaran + $totalJumlahAnggaran;
                                 @endphp
+                                {{-- Januari --}}
                                 <td>
-                                    @if (count($sppLs) > 0)
-                                        @foreach ($sppLs as $item)
-                                            @php
-                                                $anggaranDigunakan = $sppLs ? 'Rp. ' . number_format($item->anggaran_digunakan, 0, ',', '.') : '-';
-                                                echo $anggaranDigunakan . ' (' . $item->kategori . ', SPP-LS)' . '<br>';
-                                                $totalAnggaranDigunakanTw1 += $item->anggaran_digunakan;
-                                            @endphp
-                                        @endforeach
-                                    @endif
+                                    @php
+                                        $sppLs = \App\Models\SppLs::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'Januari')
+                                            ->sum('anggaran_digunakan');
 
-                                    @if ($sppGu)
-                                        @php
-                                            $anggaranDigunakan = $sppGu ? 'Rp. ' . number_format($sppGu->anggaran_digunakan, 0, ',', '.') : '-';
-                                            echo $anggaranDigunakan . ' (SPP-GU)' . '<br>';
-                                            $totalAnggaranDigunakanTw1 += $sppGu->anggaran_digunakan;
-                                        @endphp
-                                    @endif
+                                        $sppGu = \App\Models\SppGu::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'Januari')
+                                            ->sum('anggaran_digunakan');
 
-                                    @if (!$sppGu && count($sppLs) == 0)
-                                        -
-                                    @endif
+                                        $totalJanuari = $sppLs + $sppGu;
+                                        echo 'Rp. ' . number_format($totalJanuari, 0, ',', '.');
+                                    @endphp
                                 </td>
-                                <td>Rp. {{ number_format($spd->tw2, 0, ',', '.') }}</td>
-                                @php
-                                    $sppLs = \App\Models\SppLs::where('biro_organisasi_id', $spd->biro_organisasi_id)
-                                        ->orderBy('created_at', 'asc')
-                                        ->where('tahun_id', $spd->tahun_id)
-                                        ->where('kegiatan_id', $spd->kegiatan_id)
-                                        ->where('status_validasi_akhir', 1)
-                                        ->where('tw', 2)
-                                        ->get();
-
-                                    $sppGu = \App\Models\SppGu::where('biro_organisasi_id', $spd->biro_organisasi_id)
-                                        ->orderBy('created_at', 'asc')
-                                        ->where('tahun_id', $spd->tahun_id)
-                                        ->where('kegiatan_id', $spd->kegiatan_id)
-                                        ->where('status_validasi_akhir', 1)
-                                        ->where('tw', 2)
-                                        ->first();
-                                @endphp
                                 <td>
-                                    @if (count($sppLs) > 0)
-                                        @foreach ($sppLs as $item)
-                                            @php
-                                                $anggaranDigunakan = $sppLs ? 'Rp. ' . number_format($item->anggaran_digunakan, 0, ',', '.') : '-';
-                                                echo $anggaranDigunakan . ' (' . $item->kategori . ', SPP-LS)' . '<br>';
-                                                $totalAnggaranDigunakanTw2 += $item->anggaran_digunakan;
-                                            @endphp
-                                        @endforeach
-                                    @endif
-
-                                    @if ($sppGu)
-                                        @php
-                                            $anggaranDigunakan = $sppGu ? 'Rp. ' . number_format($sppGu->anggaran_digunakan, 0, ',', '.') : '-';
-                                            echo $anggaranDigunakan . ' (SPP-GU)' . '<br>';
-                                            $totalAnggaranDigunakanTw2 += $sppGu->anggaran_digunakan;
-                                        @endphp
-                                    @endif
-
-                                    @if (!$sppGu && count($sppLs) == 0)
-                                        -
-                                    @endif
+                                    @php
+                                        $sisaAnggaranJanuari = $spd->jumlah_anggaran - $totalJanuari;
+                                        echo 'Rp. ' . number_format($sisaAnggaranJanuari, 0, ',', '.');
+                                    @endphp
                                 </td>
-                                <td>Rp. {{ number_format($spd->tw3, 0, ',', '.') }}</td>
-                                @php
-                                    $sppLs = \App\Models\SppLs::where('biro_organisasi_id', $spd->biro_organisasi_id)
-                                        ->orderBy('created_at', 'asc')
-                                        ->where('tahun_id', $spd->tahun_id)
-                                        ->where('kegiatan_id', $spd->kegiatan_id)
-                                        ->where('status_validasi_akhir', 1)
-                                        ->where('tw', 3)
-                                        ->get();
-
-                                    $sppGu = \App\Models\SppGu::where('biro_organisasi_id', $spd->biro_organisasi_id)
-                                        ->orderBy('created_at', 'asc')
-                                        ->where('tahun_id', $spd->tahun_id)
-                                        ->where('kegiatan_id', $spd->kegiatan_id)
-                                        ->where('status_validasi_akhir', 1)
-                                        ->where('tw', 3)
-                                        ->first();
-                                @endphp
+                                {{-- End Januari --}}
+                                {{-- Februari --}}
                                 <td>
-                                    @if (count($sppLs) > 0)
-                                        @foreach ($sppLs as $item)
-                                            @php
-                                                $anggaranDigunakan = $sppLs ? 'Rp. ' . number_format($item->anggaran_digunakan, 0, ',', '.') : '-';
-                                                echo $anggaranDigunakan . ' (' . $item->kategori . ', SPP-LS)' . '<br>';
-                                                $totalAnggaranDigunakanTw3 += $item->anggaran_digunakan;
-                                            @endphp
-                                        @endforeach
-                                    @endif
+                                    @php
+                                        $sppLs = \App\Models\SppLs::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'Februari')
+                                            ->sum('anggaran_digunakan');
 
-                                    @if ($sppGu)
-                                        @php
-                                            $anggaranDigunakan = $sppGu ? 'Rp. ' . number_format($sppGu->anggaran_digunakan, 0, ',', '.') : '-';
-                                            echo $anggaranDigunakan . ' (SPP-GU)' . '<br>';
-                                            $totalAnggaranDigunakanTw3 += $sppGu->anggaran_digunakan;
-                                        @endphp
-                                    @endif
+                                        $sppGu = \App\Models\SppGu::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'Februari')
+                                            ->sum('anggaran_digunakan');
 
-                                    @if (!$sppGu && count($sppLs) == 0)
-                                        -
-                                    @endif
+                                        $totalFebruari = $sppLs + $sppGu;
+                                        echo 'Rp. ' . number_format($totalFebruari, 0, ',', '.');
+                                    @endphp
                                 </td>
-                                <td>Rp. {{ number_format($spd->tw4, 0, ',', '.') }}</td>
-                                @php
-                                    $sppLs = \App\Models\SppLs::where('biro_organisasi_id', $spd->biro_organisasi_id)
-                                        ->orderBy('created_at', 'asc')
-                                        ->where('tahun_id', $spd->tahun_id)
-                                        ->where('kegiatan_id', $spd->kegiatan_id)
-                                        ->where('status_validasi_akhir', 1)
-                                        ->where('tw', 4)
-                                        ->get();
-
-                                    $sppGu = \App\Models\SppGu::where('biro_organisasi_id', $spd->biro_organisasi_id)
-                                        ->orderBy('created_at', 'asc')
-                                        ->where('tahun_id', $spd->tahun_id)
-                                        ->where('kegiatan_id', $spd->kegiatan_id)
-                                        ->where('status_validasi_akhir', 1)
-                                        ->where('tw', 4)
-                                        ->first();
-                                @endphp
                                 <td>
-                                    @if (count($sppLs) > 0)
-                                        @foreach ($sppLs as $item)
-                                            @php
-                                                $anggaranDigunakan = $sppLs ? 'Rp. ' . number_format($item->anggaran_digunakan, 0, ',', '.') : '-';
-                                                echo $anggaranDigunakan . ' (' . $item->kategori . ', SPP-LS)' . '<br>';
-                                                $totalAnggaranDigunakanTw4 += $item->anggaran_digunakan;
-                                            @endphp
-                                        @endforeach
-                                    @endif
-
-                                    @if ($sppGu)
-                                        @php
-                                            $anggaranDigunakan = $sppGu ? 'Rp. ' . number_format($sppGu->anggaran_digunakan, 0, ',', '.') : '-';
-                                            echo $anggaranDigunakan . ' (SPP-GU)' . '<br>';
-                                            $totalAnggaranDigunakanTw4 += $sppGu->anggaran_digunakan;
-                                        @endphp
-                                    @endif
-
-                                    @if (!$sppGu && count($sppLs) == 0)
-                                        -
-                                    @endif
+                                    @php
+                                        $sisaAnggaranFebruari = $sisaAnggaranJanuari - $totalFebruari;
+                                        echo 'Rp. ' . number_format($sisaAnggaranFebruari, 0, ',', '.');
+                                    @endphp
                                 </td>
+                                {{-- End Februari --}}
+                                {{-- Maret --}}
+                                <td>
+                                    @php
+                                        $sppLs = \App\Models\SppLs::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'Maret')
+                                            ->sum('anggaran_digunakan');
+
+                                        $sppGu = \App\Models\SppGu::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'Maret')
+                                            ->sum('anggaran_digunakan');
+
+                                        $totalMaret = $sppLs + $sppGu;
+                                        echo 'Rp. ' . number_format($totalMaret, 0, ',', '.');
+                                    @endphp
+                                </td>
+                                <td>
+                                    @php
+                                        $sisaAnggaranMaret = $sisaAnggaranFebruari - $totalMaret;
+                                        echo 'Rp. ' . number_format($sisaAnggaranMaret, 0, ',', '.');
+                                    @endphp
+                                </td>
+                                {{-- End Maret --}}
+                                {{-- April --}}
+                                <td>
+                                    @php
+                                        $sppLs = \App\Models\SppLs::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'April')
+                                            ->sum('anggaran_digunakan');
+
+                                        $sppGu = \App\Models\SppGu::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'April')
+                                            ->sum('anggaran_digunakan');
+
+                                        $totalApril = $sppLs + $sppGu;
+                                        echo 'Rp. ' . number_format($totalApril, 0, ',', '.');
+                                    @endphp
+                                </td>
+                                <td>
+                                    @php
+                                        $sisaAnggaranApril = $sisaAnggaranMaret - $totalApril;
+                                        echo 'Rp. ' . number_format($sisaAnggaranApril, 0, ',', '.');
+                                    @endphp
+                                </td>
+                                {{-- End April --}}
+                                {{-- Mei --}}
+                                <td>
+                                    @php
+                                        $sppLs = \App\Models\SppLs::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'Mei')
+                                            ->sum('anggaran_digunakan');
+
+                                        $sppGu = \App\Models\SppGu::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'Mei')
+                                            ->sum('anggaran_digunakan');
+
+                                        $totalMei = $sppLs + $sppGu;
+                                        echo 'Rp. ' . number_format($totalMei, 0, ',', '.');
+                                    @endphp
+                                </td>
+                                <td>
+                                    @php
+                                        $sisaAnggaranMei = $sisaAnggaranApril - $totalMei;
+                                        echo 'Rp. ' . number_format($sisaAnggaranMei, 0, ',', '.');
+                                    @endphp
+                                </td>
+                                {{-- End Mei --}}
+                                {{-- Juni --}}
+                                <td>
+                                    @php
+                                        $sppLs = \App\Models\SppLs::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'Juni')
+                                            ->sum('anggaran_digunakan');
+
+                                        $sppGu = \App\Models\SppGu::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'Juni')
+                                            ->sum('anggaran_digunakan');
+
+                                        $totalJuni = $sppLs + $sppGu;
+                                        echo 'Rp. ' . number_format($totalJuni, 0, ',', '.');
+                                    @endphp
+                                </td>
+                                <td>
+                                    @php
+                                        $sisaAnggaranJuni = $sisaAnggaranMei - $totalJuni;
+                                        echo 'Rp. ' . number_format($sisaAnggaranJuni, 0, ',', '.');
+                                    @endphp
+                                </td>
+                                {{-- End Juni --}}
+                                {{-- Juli --}}
+                                <td>
+                                    @php
+                                        $sppLs = \App\Models\SppLs::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'Juli')
+                                            ->sum('anggaran_digunakan');
+
+                                        $sppGu = \App\Models\SppGu::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'Juli')
+                                            ->sum('anggaran_digunakan');
+
+                                        $totalJuli = $sppLs + $sppGu;
+                                        echo 'Rp. ' . number_format($totalJuli, 0, ',', '.');
+                                    @endphp
+                                </td>
+                                <td>
+                                    @php
+                                        $sisaAnggaranJuli = $sisaAnggaranJuni - $totalJuli;
+                                        echo 'Rp. ' . number_format($sisaAnggaranJuli, 0, ',', '.');
+                                    @endphp
+                                </td>
+                                {{-- End Juli --}}
+                                {{-- Agustus --}}
+                                <td>
+                                    @php
+                                        $sppLs = \App\Models\SppLs::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'Agustus')
+                                            ->sum('anggaran_digunakan');
+
+                                        $sppGu = \App\Models\SppGu::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'Agustus')
+                                            ->sum('anggaran_digunakan');
+
+                                        $totalAgustus = $sppLs + $sppGu;
+                                        echo 'Rp. ' . number_format($totalAgustus, 0, ',', '.');
+                                    @endphp
+                                </td>
+                                <td>
+                                    @php
+                                        $sisaAnggaranAgustus = $sisaAnggaranJuli - $totalAgustus;
+                                        echo 'Rp. ' . number_format($sisaAnggaranAgustus, 0, ',', '.');
+                                    @endphp
+                                </td>
+                                {{-- End Agustus --}}
+                                {{-- September --}}
+                                <td>
+                                    @php
+                                        $sppLs = \App\Models\SppLs::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'September')
+                                            ->sum('anggaran_digunakan');
+
+                                        $sppGu = \App\Models\SppGu::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'September')
+                                            ->sum('anggaran_digunakan');
+
+                                        $totalSeptember = $sppLs + $sppGu;
+                                        echo 'Rp. ' . number_format($totalSeptember, 0, ',', '.');
+                                    @endphp
+                                </td>
+                                <td>
+                                    @php
+                                        $sisaAnggaranSeptember = $sisaAnggaranAgustus - $totalSeptember;
+                                        echo 'Rp. ' . number_format($sisaAnggaranSeptember, 0, ',', '.');
+                                    @endphp
+                                </td>
+                                {{-- End September --}}
+                                {{-- Oktober --}}
+                                <td>
+                                    @php
+                                        $sppLs = \App\Models\SppLs::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'Oktober')
+                                            ->sum('anggaran_digunakan');
+
+                                        $sppGu = \App\Models\SppGu::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'Oktober')
+                                            ->sum('anggaran_digunakan');
+
+                                        $totalOktober = $sppLs + $sppGu;
+                                        echo 'Rp. ' . number_format($totalOktober, 0, ',', '.');
+                                    @endphp
+                                </td>
+                                <td>
+                                    @php
+                                        $sisaAnggaranOktober = $sisaAnggaranSeptember - $totalOktober;
+                                        echo 'Rp. ' . number_format($sisaAnggaranOktober, 0, ',', '.');
+                                    @endphp
+                                </td>
+                                {{-- End Oktober --}}
+                                {{-- November --}}
+                                <td>
+                                    @php
+                                        $sppLs = \App\Models\SppLs::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'November')
+                                            ->sum('anggaran_digunakan');
+
+                                        $sppGu = \App\Models\SppGu::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'November')
+                                            ->sum('anggaran_digunakan');
+
+                                        $totalNovember = $sppLs + $sppGu;
+                                        echo 'Rp. ' . number_format($totalNovember, 0, ',', '.');
+                                    @endphp
+                                </td>
+                                <td>
+                                    @php
+                                        $sisaAnggaranNovember = $sisaAnggaranOktober - $totalNovember;
+                                        echo 'Rp. ' . number_format($sisaAnggaranNovember, 0, ',', '.');
+                                    @endphp
+                                </td>
+                                {{-- End November --}}
+                                {{-- Desember --}}
+                                <td>
+                                    @php
+                                        $sppLs = \App\Models\SppLs::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'Desember')
+                                            ->sum('anggaran_digunakan');
+
+                                        $sppGu = \App\Models\SppGu::where('biro_organisasi_id', $spd->biro_organisasi_id)
+                                            ->orderBy('created_at', 'asc')
+                                            ->where('tahun_id', $spd->tahun_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
+                                            ->where('status_validasi_akhir', 1)
+                                            ->where('bulan', 'Desember')
+                                            ->sum('anggaran_digunakan');
+
+                                        $totalDesember = $sppLs + $sppGu;
+                                        echo 'Rp. ' . number_format($totalDesember, 0, ',', '.');
+                                    @endphp
+                                </td>
+                                <td>
+                                    @php
+                                        $sisaAnggaranDesember = $sisaAnggaranNovember - $totalDesember;
+                                        echo 'Rp. ' . number_format($sisaAnggaranDesember, 0, ',', '.');
+                                    @endphp
+                                </td>
+                                {{-- End Desember --}}
                                 @if (Auth::user()->role == 'Admin')
                                     <td>
                                         <button id="btn-edit" class="btn btn-warning btn-sm mr-1"
@@ -245,43 +517,36 @@
                                 @endif
 
                             </tr>
-                            @php
-                                $totalJumlahAnggaran = $totalJumlahAnggaran + $spd->tw1 + $spd->tw2 + $spd->tw3 + $spd->tw4;
-                                $totalTw1 += $spd->tw1;
-                                $totalTw2 += $spd->tw2;
-                                $totalTw3 += $spd->tw3;
-                                $totalTw4 += $spd->tw4;
-                            @endphp
                         @endforeach
                         <tr>
                             <td colspan="3" class="text-center">Jumlah</td>
                             <td>Rp.
                                 {{ number_format($totalJumlahAnggaran, 0, ',', '.') }}
                             </td>
-                            <td>Rp.
-                                {{ number_format($totalTw1, 0, ',', '.') }}
-                            </td>
-                            <td>Rp.
-                                {{ number_format($totalAnggaranDigunakanTw1, 0, ',', '.') }}
-                            </td>
-                            <td>Rp.
-                                {{ number_format($totalTw2, 0, ',', '.') }}
-                            </td>
-                            <td>Rp.
-                                {{ number_format($totalAnggaranDigunakanTw2, 0, ',', '.') }}
-                            </td>
-                            <td>Rp.
-                                {{ number_format($totalTw3, 0, ',', '.') }}
-                            </td>
-                            <td>Rp.
-                                {{ number_format($totalAnggaranDigunakanTw3, 0, ',', '.') }}
-                            </td>
-                            <td>Rp.
-                                {{ number_format($totalTw4, 0, ',', '.') }}
-                            </td>
-                            <td>Rp.
-                                {{ number_format($totalAnggaranDigunakanTw4, 0, ',', '.') }}
-                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                             @if (Auth::user()->role == 'Admin')
                                 <td></td>
                             @endif
@@ -292,7 +557,7 @@
         @else
             <tbody>
                 <tr>
-                    <td colspan="{{ Auth::user()->role == 'Admin' ? 13 : 12 }}" class="fw-bold text-center">Data
+                    <td colspan="{{ Auth::user()->role == 'Admin' ? 29 : 28 }}" class="fw-bold text-center">Data
                         Tidak Ada</td>
                 </tr>
             </tbody>

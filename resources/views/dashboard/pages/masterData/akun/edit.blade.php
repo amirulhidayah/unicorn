@@ -107,6 +107,8 @@
     <script>
         $(document).ready(function() {
             $('#master-akun').addClass('active');
+            $('#menu-akun').collapse('show');
+            $('#akun-sekretariat').addClass('active');
             $('#email').val('{{ $user->email }}');
             $('#role').val('{{ $user->role }}').trigger('change');
             $('#biro_organisasi').val('{{ $user->profil->biro_organisasi_id }}').trigger('change');

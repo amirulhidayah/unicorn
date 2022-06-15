@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\dashboard\dpa;
 
 use App\Exports\FormatImport;
+use App\Exports\TabelDpaExport;
 use App\Http\Controllers\Controller;
 use App\Imports\ImportSpd;
 use App\Models\BiroOrganisasi;
 use App\Models\Program;
 use App\Models\Spd;
+use App\Models\SppGu;
+use App\Models\SppLs;
 use App\Models\Tahun;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
@@ -216,19 +220,67 @@ class TabelDpaController extends Controller
         $role = Auth::user()->role;
         $tahun = $request->tahun;
         $kegiatan = $request->kegiatan;
-        $tw = $request->tw;
+        $bulan = $request->bulan;
         $biroOrganisasi = $role == "Admin" ? $request->biro_organisasi : Auth::user()->profil->biro_organisasi_id;
 
         $spd = Spd::where('kegiatan_id', $kegiatan)->where('biro_organisasi_id', $biroOrganisasi)->where('tahun_id', $tahun)->first();
-        if ($tw == 1) {
-            $jumlahAnggaran = $spd->tw1;
-        } else if ($tw == 2) {
-            $jumlahAnggaran = $spd->tw2;
-        } else if ($tw == 3) {
-            $jumlahAnggaran = $spd->tw3;
-        } else if ($tw == 4) {
-            $jumlahAnggaran = $spd->tw4;
+        $jumlahAnggaran = $spd->jumlah_anggaran;
+
+        $sppLs = SppLs::where('biro_organisasi_id', $biroOrganisasi)
+            ->orderBy('created_at', 'asc')
+            ->where('tahun_id', $tahun)
+            ->where('kegiatan_id', $kegiatan)
+            ->where('status_validasi_akhir', 1);
+
+        $sppGu = SppGu::where('biro_organisasi_id', $biroOrganisasi)
+            ->orderBy('created_at', 'asc')
+            ->where('tahun_id', $tahun)
+            ->where('kegiatan_id', $kegiatan)
+            ->where('status_validasi_akhir', 1);
+
+        if ($bulan == 'Januari') {
+            $sppLs = $sppLs->where('bulan', 'Januari');
+            $sppGu = $sppGu->where('bulan', 'Januari');
+        } else if ($bulan == 'Februari') {
+            $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari']);
+            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari']);
+        } else if ($bulan == 'Maret') {
+            $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret']);
+            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret']);
+        } else if ($bulan == 'April') {
+            $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April']);
+            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April']);
+        } else if ($bulan == 'Mei') {
+            $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei']);
+            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei']);
+        } else if ($bulan == 'Juni') {
+            $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni']);
+            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni']);
+        } else if ($bulan == 'Juli') {
+            $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli']);
+            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli']);
+        } else if ($bulan == 'Agustus') {
+            $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus']);
+            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus']);
+        } else if ($bulan == 'September') {
+            $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September']);
+            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September']);
+        } else if ($bulan == 'Oktober') {
+            $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober']);
+            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober']);
+        } else if ($bulan == 'November') {
+            $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November']);
+            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November']);
+        } else if ($bulan == 'Desember') {
+            $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']);
+            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']);
         }
+
+        $sppLs = $sppLs->sum('anggaran_digunakan');
+        $sppGu = $sppGu->sum('anggaran_digunakan');
+
+        $totalSpp = ($sppLs + $sppGu);
+        $jumlahAnggaran = ($spd->jumlah_anggaran - $totalSpp);
 
         return response()->json([
             'jumlah_anggaran' => $jumlahAnggaran
@@ -250,5 +302,26 @@ class TabelDpaController extends Controller
             })->groupBy('biro_organisasi_id')->get()->pluck('biroOrganisasi')->sortBy('nama');
 
         return view('dashboard.components.widgets.tabelSpd', compact(['daftarBiroOrganisasi', 'tahun']))->render();
+    }
+
+    public function exportSpd(Request $request)
+    {
+        $tahun = $request->tahun;
+        $biroOrganisasi = Auth::user()->role != "Bendahara Pengeluaran" ? $request->biro_organisasi : Auth::user()->profil->biro_organisasi_id;
+        $daftarBiroOrganisasi = Spd::with('biroOrganisasi')->where('tahun_id', $tahun)
+            ->where(function ($query) use ($biroOrganisasi) {
+                if ($biroOrganisasi != "Semua") {
+                    $query->where('biro_organisasi_id', $biroOrganisasi);
+                }
+            })
+            ->whereHas('biroOrganisasi', function ($query) {
+                $query->orderBy('nama', 'asc');
+            })->groupBy('biro_organisasi_id')->get()->pluck('biroOrganisasi')->sortBy('nama');
+
+        $tanggal = Carbon::parse(Carbon::now())->translatedFormat('d F Y');
+
+        return Excel::download(new TabelDpaExport($daftarBiroOrganisasi, $tahun), "Export" . "-" . $tanggal . "-" . rand(1, 9999) . '.xlsx');
+
+        // return view('dashboard.components.widgets.tabelSpd', compact(['daftarBiroOrganisasi', 'tahun']))->render();
     }
 }

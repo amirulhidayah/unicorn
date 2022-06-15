@@ -88,14 +88,26 @@
                                 @endcomponent
                                 @component('dashboard.components.widgets.info',
                                     [
-                                        'judul' => 'Biro Organisasi',
+                                        'judul' => 'Sekretariat Daerah',
                                         'isi' => $sppGu->biroOrganisasi->nama,
+                                    ])
+                                @endcomponent
+                                @component('dashboard.components.widgets.info',
+                                    [
+                                        'judul' => 'Nomor Surat',
+                                        'isi' => $sppGu->nomor_surat,
                                     ])
                                 @endcomponent
                                 @component('dashboard.components.widgets.info',
                                     [
                                         'judul' => 'Tahun',
                                         'isi' => $sppGu->tahun->tahun,
+                                    ])
+                                @endcomponent
+                                @component('dashboard.components.widgets.info',
+                                    [
+                                        'judul' => 'Bulan',
+                                        'isi' => $sppGu->bulan,
                                     ])
                                 @endcomponent
                                 @component('dashboard.components.widgets.info',
@@ -108,12 +120,6 @@
                                     [
                                         'judul' => 'Kegiatan',
                                         'isi' => $sppGu->kegiatan->nama . ' (' . $sppGu->kegiatan->no_rek . ')',
-                                    ])
-                                @endcomponent
-                                @component('dashboard.components.widgets.info',
-                                    [
-                                        'judul' => 'TW',
-                                        'isi' => $sppGu->tw,
                                     ])
                                 @endcomponent
                                 @component('dashboard.components.widgets.info',
@@ -138,20 +144,20 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                @if ($request->perbaiki == 'asn' && $sppGu->alasan_validasi_asn != null)
+                                @if ($sppGu->alasan_validasi_asn != null)
                                     @component('dashboard.components.widgets.alert',
                                         [
-                                            'oleh' => $request->perbaiki,
+                                            'oleh' => 'asn',
                                             'tanggal' => $sppGu->tanggal_validasi_asn,
                                             'isi' => $sppGu->alasan_validasi_asn,
                                         ])
                                     @endcomponent
                                 @endif
 
-                                @if ($request->perbaiki == 'ppk' && $sppGu->alasan_validasi_ppk != null)
+                                @if ($sppGu->alasan_validasi_ppk != null)
                                     @component('dashboard.components.widgets.alert',
                                         [
-                                            'oleh' => $request->perbaiki,
+                                            'oleh' => 'ppk',
                                             'tanggal' => $sppGu->tanggal_validasi_ppk,
                                             'isi' => $sppGu->alasan_validasi_ppk,
                                         ])

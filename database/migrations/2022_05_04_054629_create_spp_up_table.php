@@ -20,13 +20,13 @@ class CreateSppUpTable extends Migration
             $table->bigInteger('jumlah_anggaran');
             $table->uuid('biro_organisasi_id');
             $table->string('nomor_surat');
+            $table->integer('tahap_riwayat')->default(1);
             $table->uuid('user_id');
+            $table->text('surat_penolakan')->nullable();
             $table->integer('status_validasi_asn')->default(0);
             $table->text('alasan_validasi_asn')->nullable();
-            $table->text('surat_penolakan_asn')->nullable();
             $table->integer('status_validasi_ppk')->default(0);
             $table->text('alasan_validasi_ppk')->nullable();
-            $table->text('surat_penolakan_ppk')->nullable();
             $table->date('tanggal_validasi_asn')->nullable();
             $table->date('tanggal_validasi_ppk')->nullable();
             $table->integer('status_validasi_akhir')->default(0);

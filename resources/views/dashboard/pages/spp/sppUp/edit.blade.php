@@ -82,8 +82,14 @@
                             <div class="col-md-6">
                                 @component('dashboard.components.widgets.info',
                                     [
-                                        'judul' => 'Biro Organisasi',
+                                        'judul' => 'Sekretariat Daerah',
                                         'isi' => $sppUp->biroOrganisasi->nama,
+                                    ])
+                                @endcomponent
+                                @component('dashboard.components.widgets.info',
+                                    [
+                                        'judul' => 'Nomor Surat',
+                                        'isi' => $sppUp->nomor_surat,
                                     ])
                                 @endcomponent
                                 @component('dashboard.components.widgets.info',
@@ -120,20 +126,20 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                @if ($request->perbaiki == 'asn' && $sppUp->alasan_validasi_asn != null)
+                                @if ($sppUp->alasan_validasi_asn != null)
                                     @component('dashboard.components.widgets.alert',
                                         [
-                                            'oleh' => $request->perbaiki,
+                                            'oleh' => 'asn',
                                             'tanggal' => $sppUp->tanggal_validasi_asn,
                                             'isi' => $sppUp->alasan_validasi_asn,
                                         ])
                                     @endcomponent
                                 @endif
 
-                                @if ($request->perbaiki == 'ppk' && $sppUp->alasan_validasi_ppk != null)
+                                @if ($sppUp->alasan_validasi_ppk != null)
                                     @component('dashboard.components.widgets.alert',
                                         [
-                                            'oleh' => $request->perbaiki,
+                                            'oleh' => 'ppk',
                                             'tanggal' => $sppUp->tanggal_validasi_ppk,
                                             'isi' => $sppUp->alasan_validasi_ppk,
                                         ])

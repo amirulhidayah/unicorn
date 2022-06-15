@@ -82,8 +82,14 @@
                             <div class="col-md-6">
                                 @component('dashboard.components.widgets.info',
                                     [
-                                        'judul' => 'Biro Organisasi',
+                                        'judul' => 'Sekretariat Daerah',
                                         'isi' => $sppLs->biroOrganisasi->nama,
+                                    ])
+                                @endcomponent
+                                @component('dashboard.components.widgets.info',
+                                    [
+                                        'judul' => 'Nomor Surat',
+                                        'isi' => $sppLs->nomor_surat,
                                     ])
                                 @endcomponent
                                 @component('dashboard.components.widgets.info',
@@ -112,8 +118,8 @@
                                 @endcomponent
                                 @component('dashboard.components.widgets.info',
                                     [
-                                        'judul' => 'TW',
-                                        'isi' => $sppLs->tw,
+                                        'judul' => 'Bulan',
+                                        'isi' => $sppLs->bulan,
                                     ])
                                 @endcomponent
                                 @component('dashboard.components.widgets.info',
@@ -138,20 +144,20 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                @if ($request->perbaiki == 'asn' && $sppLs->alasan_validasi_asn != null)
+                                @if ($sppLs->alasan_validasi_asn != null)
                                     @component('dashboard.components.widgets.alert',
                                         [
-                                            'oleh' => $request->perbaiki,
+                                            'oleh' => 'asn',
                                             'tanggal' => $sppLs->tanggal_validasi_asn,
                                             'isi' => $sppLs->alasan_validasi_asn,
                                         ])
                                     @endcomponent
                                 @endif
 
-                                @if ($request->perbaiki == 'ppk' && $sppLs->alasan_validasi_ppk != null)
+                                @if ($sppLs->alasan_validasi_ppk != null)
                                     @component('dashboard.components.widgets.alert',
                                         [
-                                            'oleh' => $request->perbaiki,
+                                            'oleh' => 'ppk',
                                             'tanggal' => $sppLs->tanggal_validasi_ppk,
                                             'isi' => $sppLs->alasan_validasi_ppk,
                                         ])

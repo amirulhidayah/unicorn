@@ -51,7 +51,6 @@
         .custom-file-label {
             cursor: pointer;
         }
-
     </style>
 @endpush
 
@@ -108,6 +107,8 @@
     <script>
         $(document).ready(function() {
             $('#master-akun').addClass('active');
+            $('#menu-akun').collapse('show');
+            $('#akun-sekretariat').addClass('active');
         })
     </script>
 @endpush

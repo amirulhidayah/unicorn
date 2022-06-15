@@ -12,6 +12,7 @@ use App\Models\Tahun;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
@@ -42,7 +43,7 @@ class SppLsController extends Controller
                     return $nama;
                 })
                 ->addColumn('periode', function ($row) {
-                    $periode = "TW " . $row->tw . " (" . $row->tahun->tahun . ")";
+                    $periode = $row->bulan . ", " . $row->tahun->tahun;
                     return $periode;
                 })
                 ->addColumn('riwayat', function ($row) {
@@ -53,23 +54,18 @@ class SppLsController extends Controller
                     $biroOrganisasi = $row->biroOrganisasi->nama;
                     return $biroOrganisasi;
                 })
-                ->addColumn('verifikasi_asn', function ($row) {
+                ->addColumn('anggaran_digunakan', function ($row) {
+                    return 'Rp. ' . number_format($row->anggaran_digunakan, 0, ',', '.');
+                })
+                ->addColumn('anggaran_digunakan', function ($row) {
+                    return 'Rp. ' . number_format($row->anggaran_digunakan, 0, ',', '.');
+                })->addColumn('verifikasi_asn', function ($row) {
                     if ($row->status_validasi_asn == 0) {
                         $actionBtn = '<span class="badge badge-primary text-light">Belum Di Proses</span>';
                     } else if ($row->status_validasi_asn == 1) {
-                        $actionBtn = '<span class="badge badge-success">Diverifikasi</span>';
+                        $actionBtn = '<span class="badge badge-success">Diterima</span>';
                     } else if ($row->status_validasi_asn == 2) {
                         $actionBtn = '<span class="badge badge-danger">Ditolak</span>';
-                    }
-
-                    if ($row->user_id == Auth::user()->id && $row->status_validasi_asn == 2) {
-                        $riwayat = RiwayatSppLs::where('spp_ls_id', $row->id)->whereHas('user', function ($query) {
-                            $query->where('role', 'ASN Sub Bagian Keuangan');
-                        })->orderBy('created_at', 'desc')->first();
-
-                        $actionBtn .= '<div class="d-flex justify-content-center "><a href="' . url('/surat-penolakan/spp-ls/' . $riwayat->id) . '" class="btn badge badge-primary btn-sm mt-1 mr-1"><i class="fas fa-file-pdf"></i> Surat Pengembalian</a>';
-
-                        $actionBtn .= '<form action="' . url('spp-ls/' . $row->id . '/edit') . '" method="POST">' . csrf_field() . '<input type="hidden" value="asn" name="perbaiki"><button class="btn badge badge-primary text-light btn-sm mt-1" href="' . url('spp-ls/' . $row->id . '/edit') . '"><i class="fas fa-file-pdf"></i> Perbaiki</button></form></div>';
                     }
                     return $actionBtn;
                 })
@@ -77,46 +73,31 @@ class SppLsController extends Controller
                     if ($row->status_validasi_ppk == 0) {
                         $actionBtn = '<span class="badge badge-primary text-light">Belum Di Proses</span>';
                     } else if ($row->status_validasi_ppk == 1) {
-                        $actionBtn = '<span class="badge badge-success">Diverifikasi</span>';
+                        $actionBtn = '<span class="badge badge-success">Diterima</span>';
                     } else if ($row->status_validasi_ppk == 2) {
                         $actionBtn = '<span class="badge badge-danger">Ditolak</span>';
                     }
-
-                    if ($row->user_id == Auth::user()->id && $row->status_validasi_ppk == 2) {
-                        $riwayat = RiwayatSppLs::where('spp_ls_id', $row->id)->whereHas('user', function ($query) {
-                            $query->where('role', 'PPK');
-                        })->orderBy('created_at', 'desc')->first();
-
-                        $actionBtn .= '<div class="d-flex justify-content-center "><a href="' . url('/surat-penolakan/spp-ls/' . $riwayat->id) . '" class="btn badge badge-primary btn-sm mt-1 mr-1"><i class="fas fa-file-pdf"></i> Surat Pengembalian</a>';
-
-                        $actionBtn .= '<form action="' . url('spp-ls/' . $row->id . '/edit') . '" method="POST">' . csrf_field() . '<input type="hidden" value="ppk" name="perbaiki"><button class="btn badge badge-primary text-light btn-sm mt-1" href="' . url('spp-ls/' . $row->id . '/edit') . '"><i class="fas fa-file-pdf"></i> Perbaiki</button></form></div>';
-                    }
                     return $actionBtn;
-                })
-                ->addColumn('jumlah_anggaran', function ($row) {
-                    $jumlah_anggaran = Spd::where('kegiatan_id', $row->kegiatan_id)->where('biro_organisasi_id', $row->biro_organisasi_id)->where('tahun_id', $row->tahun_id)->first();
-                    if ($row->tw == 1) {
-                        $jumlah_anggaran = $jumlah_anggaran->tw1;
-                    } else if ($row->tw == 2) {
-                        $jumlah_anggaran = $jumlah_anggaran->tw2;
-                    } else if ($row->tw == 3) {
-                        $jumlah_anggaran = $jumlah_anggaran->tw3;
-                    } else if ($row->tw == 4) {
-                        $jumlah_anggaran = $jumlah_anggaran->tw4;
-                    }
-                    return 'Rp. ' . number_format($jumlah_anggaran, 0, ',', '.');
-                })
-                ->addColumn('anggaran_digunakan', function ($row) {
-                    return 'Rp. ' . number_format($row->anggaran_digunakan, 0, ',', '.');
                 })
                 ->addColumn('action', function ($row) {
                     $actionBtn = '';
 
+                    if ($row->biro_organisasi_id == Auth::user()->profil->biro_organisasi_id  || in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
+
+                        if (($row->status_validasi_asn != 0 && $row->status_validasi_ppk != 0) && (($row->status_validasi_asn == 2 || $row->status_validasi_ppk == 2))) {
+                            $actionBtn .= '<div class="d-flex justify-content-center mb-1"><a href="' . url('/surat-penolakan/spp-ls/' . $row->id . '/' . $row->tahap_riwayat) . '" class="btn btn-primary btn-sm mt-1 mr-1"><i class="fas fa-envelope"></i> Surat Pengembalian</a>';
+
+                            $actionBtn .= '<a href="' . url('spp-ls/' . $row->id . '/edit') . '" class="btn btn-primary btn-sm mt-1 mr-1"><i class="fas fa-file-pdf"></i> Perbaiki</a></div>';
+                        }
+                    }
+
+
                     if ($row->status_validasi_akhir == 1) {
-                        $actionBtn .= '<a href="' . url('/surat-pernyataan/spp-tu/' . $row->id) . '" class="btn btn-success btn-sm mr-1"><i class="fas fa-envelope"></i> Surat Pernyataan</a>';
+                        $actionBtn .= '<a href="' . url('/surat-pernyataan/spp-ls/' . $row->id) . '" class="btn btn-success btn-sm mr-1"><i class="fas fa-envelope"></i> Surat Pernyataan</a>';
                     }
 
                     if (in_array(Auth::user()->role, ["Admin", "Bendahara Pengeluaran"])) {
+                        $actionBtn .= '<a class="btn btn-primary text-light btn-sm mr-1" href="' . url('spp-ls/' . $row->id) . '"><i class="far fa-check-circle"></i> Lihat</a>';
                         if (($row->status_validasi_akhir == 0 && Auth::user()->role == "Bendahara Pengeluaran") || Auth::user()->role == "Admin") {
                             $actionBtn .= '<button id="btn-delete" class="btn btn-danger btn-sm mr-1" value="' . $row->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
                         }
@@ -193,7 +174,7 @@ class SppLsController extends Controller
                 'tahun' => 'required',
                 'program' => 'required',
                 'kegiatan' => 'required',
-                'tw' => 'required',
+                'bulan' => 'required',
                 'anggaran_digunakan' => 'required',
             ],
             [
@@ -206,7 +187,7 @@ class SppLsController extends Controller
                 'tahun.required' => 'Tahun Tidak Boleh Kosong',
                 'program.required' => 'Program Tidak Boleh Kosong',
                 'kegiatan.required' => 'Kegiatan Tidak Boleh Kosong',
-                'tw.required' => 'TW Tidak Boleh Kosong',
+                'bulan.required' => 'Bulan Tidak Boleh Kosong',
                 'anggaran_digunakan.required' => 'Anggaran Digunakan Tidak Boleh Kosong',
             ]
         );
@@ -215,23 +196,15 @@ class SppLsController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $sppLs = SppLs::count();
-
-        if ($sppLs == 0) {
-            $nomor_surat = 'SPP-LS/' . date('Y') . '/' . '1';
-        } else {
-            $nomor_surat = 'SPP-LS/' . date('Y') . '/' . ($sppLs + 1);
-        }
-
         $sppLs = new SppLs();
         $sppLs->user_id = Auth::user()->id;
         $sppLs->biro_organisasi_id = $role == "Admin" ? $request->biro_organisasi : Auth::user()->profil->biro_organisasi_id;
         $sppLs->tahun_id = $request->tahun;
         $sppLs->kegiatan_id = $request->kegiatan;
-        $sppLs->tw = $request->tw;
+        $sppLs->bulan = $request->bulan;
         $sppLs->kategori = $request->kategori;
         $sppLs->anggaran_digunakan = str_replace(".", "", $request->anggaran_digunakan);
-        $sppLs->nomor_surat = $nomor_surat;
+        $sppLs->nomor_surat = $request->nomor_surat;
         $sppLs->save();
 
         $lengthBerkas = count($request->nama_file);
@@ -268,20 +241,9 @@ class SppLsController extends Controller
     public function show(SppLs $sppLs)
     {
         $tipe = 'spp_ls';
-        $jumlahAnggaran = Spd::where('kegiatan_id', $sppLs->kegiatan_id)->where('biro_organisasi_id', $sppLs->biro_organisasi_id)->where('tahun_id', $sppLs->tahun_id)->first();
-        if ($sppLs->tw == 1) {
-            $jumlahAnggaran = $jumlahAnggaran->tw1;
-        } else if ($sppLs->tw == 2) {
-            $jumlahAnggaran = $jumlahAnggaran->tw2;
-        } else if ($sppLs->tw == 3) {
-            $jumlahAnggaran = $jumlahAnggaran->tw3;
-        } else if ($sppLs->tw == 4) {
-            $jumlahAnggaran = $jumlahAnggaran->tw4;
-        }
-        $jumlahAnggaran = 'Rp. ' . number_format($jumlahAnggaran, 0, ',', '.');
 
         $anggaranDigunakan = 'Rp. ' . number_format($sppLs->anggaran_digunakan, 0, ',', '.');
-        return view('dashboard.pages.spp.sppLs.show', compact(['sppLs', 'tipe', 'jumlahAnggaran', 'anggaranDigunakan']));
+        return view('dashboard.pages.spp.sppLs.show', compact(['sppLs', 'tipe', 'anggaranDigunakan']));
     }
 
     /**
@@ -292,18 +254,9 @@ class SppLsController extends Controller
      */
     public function edit(SppLs $sppLs, Request $request)
     {
-        $jumlahAnggaran = Spd::where('kegiatan_id', $sppLs->kegiatan_id)->where('biro_organisasi_id', $sppLs->biro_organisasi_id)->where('tahun_id', $sppLs->tahun_id)->first();
-        if ($sppLs->tw == 1) {
-            $jumlahAnggaran = $jumlahAnggaran->tw1;
-        } else if ($sppLs->tw == 2) {
-            $jumlahAnggaran = $jumlahAnggaran->tw2;
-        } else if ($sppLs->tw == 3) {
-            $jumlahAnggaran = $jumlahAnggaran->tw3;
-        } else if ($sppLs->tw == 4) {
-            $jumlahAnggaran = $jumlahAnggaran->tw4;
-        }
-        $jumlahAnggaranHitung = $jumlahAnggaran;
-        $jumlahAnggaran = 'Rp. ' . number_format($jumlahAnggaran, 0, ',', '.');
+        $spd = Spd::where('kegiatan_id', $sppLs->kegiatan_id)->where('biro_organisasi_id', $sppLs->biro_organisasi_id)->where('tahun_id', $sppLs->tahun_id)->first();
+        $jumlahAnggaranHitung = $spd->jumlah_anggaran;
+        $jumlahAnggaran = 'Rp. ' . number_format($jumlahAnggaranHitung, 0, ',', '.');
         $anggaranDigunakan = 'Rp. ' . number_format($sppLs->anggaran_digunakan, 0, ',', '.');
         return view('dashboard.pages.spp.sppLs.edit', compact(['sppLs', 'request', 'jumlahAnggaran', 'anggaranDigunakan', 'jumlahAnggaranHitung']));
     }
@@ -414,20 +367,19 @@ class SppLsController extends Controller
                 $namaFileBerkas
             );
             $riwayatSppLs->surat_penolakan = $namaFileBerkas;
-            if ($request->perbaiki == 'ppk') {
-                $sppLs->surat_penolakan_ppk = $namaFileBerkas;
-            } else {
-                $sppLs->surat_penolakan_asn = $namaFileBerkas;
-            }
+            $sppLs->surat_penolakan = $namaFileBerkas;
         }
 
-        if ($request->perbaiki == 'ppk') {
+        if ($sppLs->status_validasi_ppk == 2) {
             $sppLs->status_validasi_ppk = 0;
             $sppLs->alasan_validasi_ppk = null;
-        } else {
+        }
+
+        if ($sppLs->status_validasi_asn == 2) {
             $sppLs->status_validasi_asn = 0;
             $sppLs->alasan_validasi_asn = null;
         }
+        $sppLs->tahap_riwayat = $sppLs->tahap_riwayat + 1;
         $sppLs->anggaran_digunakan = str_replace(".", "", $request->anggaran_digunakan);
         $sppLs->save();
 
@@ -490,25 +442,32 @@ class SppLsController extends Controller
         if (Auth::user()->role == "ASN Sub Bagian Keuangan") {
             $sppLs->status_validasi_asn = $request->verifikasi;
             $sppLs->alasan_validasi_asn = $request->alasan;
-            $sppLs->surat_penolakan_asn = null;
             $sppLs->tanggal_validasi_asn = Carbon::now();
         } else {
             $sppLs->status_validasi_ppk = $request->verifikasi;
             $sppLs->alasan_validasi_ppk = $request->alasan;
-            $sppLs->surat_penolakan_ppk = null;
             $sppLs->tanggal_validasi_ppk = Carbon::now();
         }
         $sppLs->save();
 
+        $riwayatTerakhir = RiwayatSppLs::whereNotNull('nomor_surat')->where('spp_ls_id', $sppLs->id)->where('tahap_riwayat', $sppLs->tahap_riwayat)->first();
+
         $riwayatSppLs = new RiwayatSppLs();
         $riwayatSppLs->spp_ls_id = $sppLs->id;
         $riwayatSppLs->anggaran_digunakan = $sppLs->anggaran_digunakan;
+        $riwayatSppLs->tahap_riwayat = $sppLs->tahap_riwayat;
         $riwayatSppLs->user_id = Auth::user()->id;
         $riwayatSppLs->status = $request->verifikasi == '1' ? 'Disetujui' : 'Ditolak';
         if ($request->verifikasi == 2) {
-            $nomorSurat = RiwayatSppLs::whereNotNull('nomor_surat')->count();
-            $riwayatSppLs->nomor_surat = "SPP-LS/P/" . Carbon::now()->format('Y') . "/" . ($nomorSurat + 1);
+            $nomorSurat = DB::table('riwayat_spp_ls')
+                ->select(['spp_ls_id', 'tahap_riwayat'], DB::raw('count(*) as total'))
+                ->groupBy(['spp_ls_id', 'tahap_riwayat'])
+                ->whereNotNull('nomor_surat')
+                ->get()
+                ->count();
+            $riwayatSppLs->nomor_surat = $riwayatTerakhir ? $riwayatTerakhir->nomor_surat : ($nomorSurat + 1) . "/SPP-LS/P/" . Carbon::now()->format('m') . "/" . Carbon::now()->format('Y');
         }
+        $riwayatSppLs->role = Auth::user()->role;
         $riwayatSppLs->alasan = $request->alasan;
         $riwayatSppLs->save();
 

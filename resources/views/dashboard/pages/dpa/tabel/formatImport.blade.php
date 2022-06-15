@@ -29,22 +29,7 @@
             <th align="center"
                 style="vertical-align: center;border: 1px solid black;font-weight : bold;background-color : #C8C8C8"
                 width="30">
-                TW 1
-            </th>
-            <th align="center"
-                style="vertical-align: center;border: 1px solid black;font-weight : bold;background-color : #C8C8C8"
-                width="30">
-                TW 2
-            </th>
-            <th align="center"
-                style="vertical-align: center;border: 1px solid black;font-weight : bold;background-color : #C8C8C8"
-                width="30">
-                TW 3
-            </th>
-            <th align="center"
-                style="vertical-align: center;border: 1px solid black;font-weight : bold;background-color : #C8C8C8"
-                width="30">
-                TW 4
+                Jumlah Anggaran
             </th>
         </tr>
     </thead>
@@ -67,15 +52,6 @@
                     <td align="center"
                         style="vertical-align: center;border: 1px solid black;background-color : #f67777">
                         {{ $item->nama }}
-                    </td>
-                    <td align="center" style="vertical-align: center;border: 1px solid black">
-
-                    </td>
-                    <td align="center" style="vertical-align: center;border: 1px solid black">
-
-                    </td>
-                    <td align="center" style="vertical-align: center;border: 1px solid black">
-
                     </td>
                     <td align="center" style="vertical-align: center;border: 1px solid black">
 

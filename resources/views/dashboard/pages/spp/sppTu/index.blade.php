@@ -56,7 +56,7 @@
                                 @component('dashboard.components.dataTables.index',
                                     [
                                         'id' => 'table-data',
-                                        'th' => ['No', 'Tanggal', 'Kegiatan', 'Program', 'Biro Organisasi', 'Periode', 'Jumlah Anggaran', 'Verifikasi ASN Sub Bagian Keuangan', 'Verifikasi PPK', 'Verifikasi Akhir', 'Aksi'],
+                                        'th' => ['No', 'Tanggal', 'Kegiatan', 'Program', 'Sekretariat Daerah', 'Periode', 'Jumlah Anggaran', 'Verifikasi ASN Sub Bagian Keuangan', 'Verifikasi PPK', 'Verifikasi Akhir', 'Aksi'],
                                     ])
                                 @endcomponent
                             </div>

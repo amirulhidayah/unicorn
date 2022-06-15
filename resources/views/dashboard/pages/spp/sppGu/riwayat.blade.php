@@ -43,6 +43,7 @@
                 <div class="card-body">
                     @component('dashboard.components.widgets.timeline',
                         [
+                            'spp' => $sppGu,
                             'daftarRiwayat' => $sppGu->riwayatSppGu,
                             'tipeSuratPenolakan' => $tipeSuratPenolakan,
                             'tipeSuratPengembalian' => $tipeSuratPengembalian,

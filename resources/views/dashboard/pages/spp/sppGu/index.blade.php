@@ -56,7 +56,7 @@
                                 @component('dashboard.components.dataTables.index',
                                     [
                                         'id' => 'table-data',
-                                        'th' => ['No', 'Tanggal', 'Kegiatan', 'Program', 'Biro Organisasi', 'Periode', 'Jumlah Anggaran', 'Anggaran Digunakan', 'Verifikasi ASN Sub Bagian Keuangan', 'Verifikasi PPK', 'Status Verifikasi Akhir', 'Tahap', 'Aksi'],
+                                        'th' => ['No', 'Tanggal', 'Kegiatan', 'Program', 'Sekretariat Daerah', 'Periode', 'Anggaran Digunakan', 'Verifikasi ASN Sub Bagian Keuangan', 'Verifikasi PPK', 'Status Verifikasi Akhir', 'Tahap', 'Aksi'],
                                     ])
                                 @endcomponent
                             </div>
@@ -231,11 +231,6 @@
                 {
                     data: 'periode',
                     name: 'periode',
-                    className: 'text-center',
-                },
-                {
-                    data: 'jumlah_anggaran',
-                    name: 'jumlah_anggaran',
                     className: 'text-center',
                 },
                 {

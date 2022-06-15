@@ -55,8 +55,14 @@
                         <div class="col-lg-6">
                             @component('dashboard.components.widgets.info',
                                 [
-                                    'judul' => 'Biro Organisasi',
+                                    'judul' => 'Sekretariat Daerah',
                                     'isi' => $sppUp->biroOrganisasi->nama,
+                                ])
+                            @endcomponent
+                            @component('dashboard.components.widgets.info',
+                                [
+                                    'judul' => 'Nomor Surat',
+                                    'isi' => $sppUp->nomor_surat,
                                 ])
                             @endcomponent
                             @component('dashboard.components.widgets.info',

@@ -22,7 +22,7 @@ class AkunController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = User::orderBy('id', 'desc')->get();
+            $data = User::orderBy('id', 'desc')->whereIn('role', ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('nama', function ($row) {

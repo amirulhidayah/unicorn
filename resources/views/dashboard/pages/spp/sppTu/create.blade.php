@@ -6,14 +6,6 @@
 
 @push('style')
     <style>
-        #nama_file {
-            border: 0px;
-            font-weight: bold;
-            height: 23px;
-            padding-left: 5px;
-            font-size: 15px;
-        }
-
         .box-upload .card-body {
             padding-top: 0px !important;
             padding-bottom: 0px !important;
@@ -91,7 +83,7 @@
                                     <div class="col-12">
                                         @component('dashboard.components.formElements.select',
                                             [
-                                                'label' => 'Biro Organisasi',
+                                                'label' => 'Sekretariat Daerah',
                                                 'id' => 'biro_organisasi',
                                                 'name' => 'biro_organisasi',
                                                 'class' => 'select2',
@@ -107,13 +99,27 @@
                                     </div>
                                 @else
                                     <div class="col-12">
-                                        <label for="exampleFormControlInput1">Biro Organisasi</label>
+                                        <label for="exampleFormControlInput1">Sekretariat Daerah</label>
                                         <br>
                                         <label for="exampleFormControlInput1"
                                             class="badge badge-primary text-light my-2">{{ Auth::user()->profil->biroOrganisasi->nama }}</label>
                                         <br>
                                     </div>
                                 @endif
+
+                                <div class="col-12">
+                                    @component('dashboard.components.formElements.input',
+                                        [
+                                            'label' => 'Nomor Surat',
+                                            'type' => 'text',
+                                            'id' => 'nomor_surat',
+                                            'class' => '',
+                                            'name' => 'nomor_surat',
+                                            'wajib' => '<sup class="text-danger">*</sup>',
+                                            'placeholder' => 'Masukkan Nomor Surat',
+                                        ])
+                                    @endcomponent
+                                </div>
                                 <div class="col-12">
                                     @component('dashboard.components.formElements.select',
                                         [
@@ -134,18 +140,26 @@
                                 <div class="col-12">
                                     @component('dashboard.components.formElements.select',
                                         [
-                                            'label' => 'TW',
-                                            'id' => 'tw',
-                                            'name' => 'tw',
+                                            'label' => 'Bulan',
+                                            'id' => 'bulan',
+                                            'name' => 'bulan',
                                             'class' => 'select2',
                                             'attribute' => 'disabled',
                                             'wajib' => '<sup class="text-danger">*</sup>',
                                         ])
                                         @slot('options')
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
-                                            <option value="4">4</option>
+                                            <option value="Januari">Januari</option>
+                                            <option value="Februari">Februari</option>
+                                            <option value="Maret">Maret</option>
+                                            <option value="April">April</option>
+                                            <option value="Mei">Mei</option>
+                                            <option value="Juni">Juni</option>
+                                            <option value="Juli">Juli</option>
+                                            <option value="Agustus">Agustus</option>
+                                            <option value="September">September</option>
+                                            <option value="Oktober">Oktober</option>
+                                            <option value="November">November</option>
+                                            <option value="Desember">Desember</option>
                                         @endslot
                                     @endcomponent
                                 </div>
@@ -571,7 +585,7 @@
                         $('.program').append('<option value="">Pilih Program</option>');
                         $.each(response, function(key, value) {
                             $('.program').append('<option value="' + value.id + '">' + value
-                                .nama + '</option>');
+                                .nama + " (" + value.no_rek + ")" + '</option>');
                         })
                     } else {
                         $('.program').html('');
@@ -615,10 +629,10 @@
 
         $('#tahun').on('change', function() {
             var tahun = $(this).val();
-            $('#tw').attr('disabled', false);
+            $('#bulan').attr('disabled', false);
         })
 
-        $('#tw').on('change', function() {
+        $('#bulan').on('change', function() {
             $('#program').attr('disabled', false);
         })
 
@@ -642,7 +656,7 @@
                         $('#kegiatan').append('<option value="">Pilih kegiatan</option>');
                         $.each(response, function(key, value) {
                             $('#kegiatan').append('<option value="' + value.id + '">' + value
-                                .nama + '</option>');
+                                .nama + " (" + value.no_rek + ")" + '</option>');
                         })
                     } else {
                         $('#kegiatan').html('');

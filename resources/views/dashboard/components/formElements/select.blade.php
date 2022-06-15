@@ -9,7 +9,7 @@
 
 <div class="d-flex">
     <select class="form-select {{ $class ?? '' }} col-12" id="{{ $id ?? '' }}" aria-hidden="true"
-        {{ $attribute ?? '' }} name="{{ $name ?? '' }}">
+        {{ $attribute ?? '' }} name="{{ $name ?? '' }}" autocomplete="off">
         @if ($class == 'filter')
             <option value="">Semua</option>
         @else

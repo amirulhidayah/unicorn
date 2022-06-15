@@ -51,7 +51,6 @@
         .fa-2xs {
             font-size: 15px !important;
         }
-
     </style>
 @endpush
 
@@ -68,6 +67,7 @@
                     $timelineBadgeIcon = '';
                     $timelineMode = ''; //timeline-badge dan timeline-inverted
                     $surat = '';
+                    $catatan = '';
 
                     if ($riwayat->user->role == 'Bendahara Pengeluaran') {
                         $timelineMode = '';
@@ -100,13 +100,16 @@
                         $timelineBody = $riwayat->profil->nama . ' (' . $riwayat->user->role . ') ' . ' menyelesaikan dokumen';
                         $timelineBadgeBgColor = 'bg-success';
                         $timelineBadgeIcon = 'fas fa-check';
-                        $surat = '<a href="' . url('/surat-penolakan' . '/' . $tipeSuratPenolakan . '/' . $riwayat->id) . '" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i>  Surat Pernyataan</a>';
+                        $surat = '<a href="' . url('/surat-pernyataan' . '/' . $tipeSuratPenolakan . '/' . $spp->id) . '" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i>  Surat Pernyataan</a>';
                     } elseif ($riwayat->status == 'Ditolak') {
                         $timelineTitle = 'Ditolak';
                         $timelineBody = $riwayat->profil->nama . ' (' . $riwayat->user->role . ') ' . ' menolak dokumen';
                         $timelineBadgeBgColor = 'bg-danger';
                         $timelineBadgeIcon = 'fas fa-times';
-                        $surat = '<a href="' . url('/surat-penolakan' . '/' . $tipeSuratPenolakan . '/' . $riwayat->id) . '" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> Surat Penolakan</a>';
+                        if ($riwayat->tahap_riwayat != $spp->tahap_riwayat || ($spp->status_validasi_asn != null && $spp->status_validasi_ppk != null)) {
+                            $surat = '<a href="' . url('/surat-penolakan' . '/' . $tipeSuratPenolakan . '/' . $spp->id . '/' . $riwayat->tahap_riwayat) . '" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> Surat Penolakan</a>';
+                        }
+                        $catatan = $riwayat->alasan;
                     } elseif ($riwayat->status == 'Diperbaiki') {
                         $timelineTitle = 'Diperbaiki';
                         $timelineBody = $riwayat->profil->nama . ' (' . $riwayat->user->role . ') ' . ' memperbaiki dokumen';
@@ -128,7 +131,11 @@
                                     oleh {{ $riwayat->profil->nama }}</small></p>
                         </div>
                         <div class="timeline-body">
-                            <p>{{ $timelineBody }}</p>
+                            <p class="my-3">{{ $timelineBody }}</p>
+                            @if ($catatan)
+                                <hr>
+                                <p class="mt-0 mb-3">Catatan : {!! $catatan !!}</p>
+                            @endif
                             {!! $surat !!}
                         </div>
                     </div>
