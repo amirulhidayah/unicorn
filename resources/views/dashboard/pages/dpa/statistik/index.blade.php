@@ -55,7 +55,7 @@
                 <div class="card-body">
                     <div class="row mb-4">
                         @csrf
-                        @if (Auth::user()->role != 'Bendahara Pengeluaran')
+                        @if (!in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']))
                             <div class="col-6">
                                 @component('dashboard.components.formElements.select',
                                     [
@@ -132,7 +132,7 @@
                             @endcomponent
                         </div>
                     </div>
-                    <canvas id="statistik" height="40px" width="100px" class="p-3">
+                    <canvas id="statistik" height="50px" width="100px">
 
                     </canvas>
                 </div>
@@ -149,9 +149,10 @@
 
     <script>
         var role = "{{ Auth::user()->role }}";
+        var roleAdmin = ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'];
         const statistik = $('#statistik');
 
-        function setConfigStatistikBar(bulan, dataStatistik, judul) {
+        function setConfigStatistikBar(bulan, dataStatistik, judul, jumlahAnggaran) {
             const configStatistik = new Chart(statistik, {
                 type: 'bar',
                 data: {
@@ -172,23 +173,51 @@
                             '#A7C5EB',
                             '#ADC2A9',
                             '#6EBF8B',
-                            '#E8EAE6'
+                            '#C7D36F'
                         ],
                         tension: 0
                     }]
                 },
                 options: {
+                    layout: {
+                        padding: 20
+                    },
                     plugins: {
                         legend: {
                             display: false
                         },
                         datalabels: {
-                            formatter: function(value, context) {
-                                return "Rp." + formatNumber(value);
-                            },
-                            anchor: 'end',
-                            align: 'end',
-                            backgroundColor: 'white',
+                            labels: {
+                                title: {
+                                    formatter: function(value, context) {
+                                        return "Rp." + formatNumber(value);
+                                    },
+                                    anchor: 'end',
+                                    align: 'end',
+                                    textAlign: 'center',
+                                    backgroundColor: 'white',
+                                },
+                                value: {
+                                    formatter: function(value, context) {
+                                        return (value * 100 / jumlahAnggaran)
+                                            .toFixed(2) + "%";
+                                    },
+                                    font: {
+                                        weight: 'bold'
+                                    },
+                                    textAlign: 'center',
+                                    // backgroundColor: 'white',
+                                }
+                            }
+                        },
+                        subtitle: {
+                            display: true,
+                            text: 'Anggaran Digunakan Perbulan'
+                        },
+                        title: {
+                            display: true,
+                            text: "Jumlah Anggaran : Rp." + formatNumber(jumlahAnggaran),
+                            position: 'bottom',
                         }
                     },
                     scales: {
@@ -205,7 +234,7 @@
             });
         }
 
-        function setConfigStatistikLine(bulan, dataStatistik, judul) {
+        function setConfigStatistikLine(bulan, dataStatistik, judul, jumlahAnggaran) {
             const configStatistik = new Chart(statistik, {
                 type: 'line',
                 data: {
@@ -219,17 +248,38 @@
                     }]
                 },
                 options: {
+                    layout: {
+                        padding: {
+                            top: 20,
+                            right: 50,
+                        }
+                    },
                     plugins: {
                         legend: {
                             display: false
                         },
                         datalabels: {
                             formatter: function(value, context) {
-                                return "Rp." + formatNumber(value);
+                                return [(value * 100 / jumlahAnggaran)
+                                    .toFixed(2) + "%", "( Rp." + formatNumber(value) + " )"
+                                ];
                             },
                             anchor: 'end',
                             align: 'end',
+                            textAlign: 'center',
+                            font: {
+                                weight: 'bold'
+                            },
                             backgroundColor: 'white',
+                        },
+                        subtitle: {
+                            display: true,
+                            text: 'Anggaran Digunakan Perbulan'
+                        },
+                        title: {
+                            display: true,
+                            text: "Jumlah Anggaran : Rp." + formatNumber(jumlahAnggaran),
+                            position: 'bottom',
                         }
                     },
                     scales: {
@@ -246,7 +296,7 @@
             });
         }
 
-        function setConfigStatistikPie(bulan, dataStatistik, judul) {
+        function setConfigStatistikPie(bulan, dataStatistik, judul, jumlahAnggaran) {
             const configStatistik = new Chart(statistik, {
                 type: 'pie',
                 data: {
@@ -266,27 +316,60 @@
                             '#F9F3DF',
                             '#ADC2A9',
                             '#6EBF8B',
-                            '#E8EAE6'
+                            '#C7D36F'
                         ],
                         hoverOffset: 4
                     }]
                 },
                 options: {
+                    layout: {
+                        padding: 50
+                    },
                     plugins: {
                         datalabels: {
-                            formatter: function(value, context) {
-                                return "Rp." + formatNumber(value);
+                            labels: {
+                                title: {
+                                    formatter: function(value, context) {
+                                        return "( Rp." + formatNumber(value) + " )";
+                                    },
+                                    rotation: function(ctx) {
+                                        const valuesBefore = ctx.dataset.data.slice(0, ctx.dataIndex).reduce((a,
+                                                b) =>
+                                            a + b, 0);
+                                        const sum = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                        const rotation = ((valuesBefore + ctx.dataset.data[ctx.dataIndex] / 2) /
+                                            sum *
+                                            360);
+                                        return rotation < 180 ? rotation - 90 : rotation + 90;
+                                    },
+                                    anchor: "center",
+                                    backgroundColor: 'white',
+                                },
+                                value: {
+                                    formatter: function(value, context) {
+                                        return (value * 100 / jumlahAnggaran)
+                                            .toFixed(2) + "%";
+                                    },
+                                    font: {
+                                        weight: 'bold'
+                                    },
+                                    anchor: 'end',
+                                    align: 'end',
+                                    offset: 20,
+                                    textAlign: 'center',
+                                    // backgroundColor: 'white',
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: "Jumlah Anggaran : Rp." + formatNumber(jumlahAnggaran),
+                            position: 'top',
+                            layout: {
+                                padding: {
+                                    bottom: 100
+                                }
                             },
-                            rotation: function(ctx) {
-                                const valuesBefore = ctx.dataset.data.slice(0, ctx.dataIndex).reduce((a, b) =>
-                                    a + b, 0);
-                                const sum = ctx.dataset.data.reduce((a, b) => a + b, 0);
-                                const rotation = ((valuesBefore + ctx.dataset.data[ctx.dataIndex] / 2) / sum *
-                                    360);
-                                return rotation < 180 ? rotation - 90 : rotation + 90;
-                            },
-                            anchor: "center",
-                            backgroundColor: 'white',
                         }
                     }
                 },
@@ -296,15 +379,10 @@
 
         function getDataStatistik() {
             var tahun = $('#tahun').val();
-            var biroOrganisasi = role == "Admin" ? $('#biro_organisasi').val() :
+            var biroOrganisasi = roleAdmin.includes(role) ? $('#biro_organisasi').val() :
                 "{{ Auth::user()->profil->biro_organisasi_id }}";
             var kegiatan = $('#kegiatan').val();
             var model = $('#model').val();
-
-            console.log("Tahun : " + tahun);
-            console.log("Biro : " + biroOrganisasi);
-            console.log("Kegiatan : " + kegiatan);
-            console.log("Model : " + model);
 
             resetChart();
 
@@ -320,11 +398,14 @@
                     },
                     success: function(response) {
                         if (model == "Bar Chart") {
-                            setConfigStatistikBar(response.bulan, response.data, response.judul);
+                            setConfigStatistikBar(response.bulan, response.data, response.judul, response
+                                .jumlah_anggaran);
                         } else if (model == "Line Chart") {
-                            setConfigStatistikLine(response.bulan, response.data, response.judul);
+                            setConfigStatistikLine(response.bulan, response.data, response.judul, response
+                                .jumlah_anggaran);
                         } else {
-                            setConfigStatistikPie(response.bulan, response.data, response.judul);
+                            setConfigStatistikPie(response.bulan, response.data, response.judul, response
+                                .jumlah_anggaran);
                         }
                     }
                 })
@@ -403,6 +484,10 @@
         })
 
         $("#kegiatan").on('change', function() {
+            getDataStatistik();
+        })
+
+        $('#biro_organisasi').on('change', function() {
             getDataStatistik();
         })
 

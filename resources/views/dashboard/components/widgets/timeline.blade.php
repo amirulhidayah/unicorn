@@ -69,7 +69,7 @@
                     $surat = '';
                     $catatan = '';
 
-                    if ($riwayat->user->role == 'Bendahara Pengeluaran') {
+                    if (in_array($riwayat->user->role, ['Admin', 'Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
                         $timelineMode = '';
                     } else {
                         $timelineMode = 'timeline-inverted';

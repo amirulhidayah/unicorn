@@ -3,9 +3,9 @@
 
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Login</title>
+    <title>E-VAKU | Login</title>
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
-    <link rel="icon" href="{{ asset('assets/dashboard') }}/img/icon.ico" type="image/x-icon" />
+    <link rel="icon" href="{{ asset('assets/dashboard') }}/img/favicon.ico" type="image/x-icon" />
 
     <!-- Fonts and icons -->
     <script src="{{ asset('assets/dashboard') }}/js/plugin/webfont/webfont.min.js"></script>
@@ -221,6 +221,13 @@
                             <button type="submit" class="btn btn-success mt-4 col-12 "><i
                                     class="fas fa-sign-in-alt"></i> Masuk</button>
                         </div>
+                        <div class="mb-3 text-center">
+                            <a href="{{ url('') }}" class="text-muted text-center"> <i
+                                    class="far fa-arrow-alt-circle-left"></i>
+                                Kembali Ke
+                                Halaman Utama</a>
+                        </div>
+
                     </div>
                 </form>
             </div>

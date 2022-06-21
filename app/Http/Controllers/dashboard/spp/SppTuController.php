@@ -28,8 +28,52 @@ class SppTuController extends Controller
      */
     public function index(Request $request)
     {
+        $role = Auth::user()->role;
+        $biroOrganisasi = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->biro_organisasi_id : Auth::user()->profil->biro_organisasi_id;
         if ($request->ajax()) {
-            $data = SppTu::orderBy('created_at', 'desc')->get();
+            $data = SppTu::where(function ($query) use ($request, $biroOrganisasi, $role) {
+                if ($request->biro_organisasi_id && $request->biro_organisasi_id != 'Semua') {
+                    $query->where('biro_organisasi_id', $biroOrganisasi);
+                }
+
+                if ($request->tahun && $request->tahun != 'Semua') {
+                    $query->where('tahun_id', $request->tahun);
+                }
+
+                if ($request->status && $request->status != 'Semua') {
+                    if ($request->status == "Belum Diproses") {
+                        if ($role == "ASN Sub Bagian Keuangan") {
+                            $query->where('status_validasi_asn', 0);
+                        } else if ($role == "PPK") {
+                            $query->where('status_validasi_ppk', 0);
+                        } else {
+                            $query->where('status_validasi_asn', 0)->where('status_validasi_ppk', 0);
+                        }
+                    } else if ($request->status == "Ditolak") {
+                        if ($role == "ASN Sub Bagian Keuangan") {
+                            $query->where('status_validasi_asn', 2);
+                        } else if ($role == "PPK") {
+                            $query->where('status_validasi_ppk', 2);
+                        } else {
+                            $query->where('status_validasi_asn', 2);
+                            $query->orWhere('status_validasi_ppk', 2);
+                        }
+                    } else {
+                        $query->where('status_validasi_akhir', 1);
+                    }
+                }
+
+                if ($request->search) {
+                    $query->whereHas('kegiatan', function ($query) use ($request) {
+                        $query->where('nama', 'like', "%" . $request->search . "%");
+                        $query->orWhere('no_rek', 'like', "%" . $request->search . "%");
+                        $query->orWhereHas('program', function ($query) use ($request) {
+                            $query->where('nama', 'like', "%" .  $request->search . "%");
+                            $query->orWhere('no_rek', 'like', "%" . $request->search . "%");
+                        });
+                    });
+                }
+            })->orderBy('created_at', 'desc')->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('tanggal_dibuat', function ($row) {
@@ -134,7 +178,10 @@ class SppTuController extends Controller
                 ->rawColumns(['action', 'riwayat', 'verifikasi_asn', 'verifikasi_ppk', 'biro_organisasi', 'periode', 'program', 'nama', 'jumlah_anggaran', 'status_verifikasi_akhir'])
                 ->make(true);
         }
-        return view('dashboard.pages.spp.sppTu.index');
+        $daftarBiroOrganisasi = BiroOrganisasi::orderBy('nama', 'asc')->get();
+        $daftarTahun = Tahun::orderBy('tahun', 'asc')->get();
+
+        return view('dashboard.pages.spp.sppTu.index', compact('daftarBiroOrganisasi', 'daftarTahun'));
     }
 
     /**
@@ -320,18 +367,24 @@ class SppTuController extends Controller
         }
 
         if ($arrayDokumenUpdate) {
+            $file_dokumen_update = array_values($request->file('file_dokumen_update'));
             for ($i = 0; $i < count($arrayDokumenUpdate); $i++) {
-                $dokumenSppTu = DokumenSppTu::find($arrayDokumenUpdate[$i]);
 
+                $indexNamaFileUpdate = array_search($arrayDokumenUpdate[$i], $arrayNamaFileUpdate);
+
+                $dokumenSppTu = DokumenSppTu::where('id', $arrayDokumenUpdate[$i])->first();
                 if (Storage::exists('dokumen_spp_tu/' . $dokumenSppTu->dokumen)) {
                     Storage::delete('dokumen_spp_tu/' . $dokumenSppTu->dokumen);
                 }
-                $namaFileBerkas = Str::slug($request->nama_file_update[$i], '-') . "-" . $i . Carbon::now()->format('YmdHs') . rand(1, 9999) . ".pdf";
-                $request->file('file_dokumen_update')[$i]->storeAs(
+
+                $namaFileBerkas = Str::slug($request->nama_file_update[$indexNamaFileUpdate], '-') . "-" . $i . Carbon::now()->format('YmdHs') . rand(1, 9999) . ".pdf";
+                $file_dokumen_update[$i]->storeAs(
                     'dokumen_spp_tu',
                     $namaFileBerkas
                 );
+
                 $dokumenSppTu->dokumen = $namaFileBerkas;
+
                 $dokumenSppTu->save();
             }
         }

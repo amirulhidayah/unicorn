@@ -221,9 +221,11 @@ class TabelDpaController extends Controller
         $tahun = $request->tahun;
         $kegiatan = $request->kegiatan;
         $bulan = $request->bulan;
-        $biroOrganisasi = $role == "Admin" ? $request->biro_organisasi : Auth::user()->profil->biro_organisasi_id;
+
+        $biroOrganisasi = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->biro_organisasi_id : Auth::user()->profil->biro_organisasi_id;
 
         $spd = Spd::where('kegiatan_id', $kegiatan)->where('biro_organisasi_id', $biroOrganisasi)->where('tahun_id', $tahun)->first();
+
         $jumlahAnggaran = $spd->jumlah_anggaran;
 
         $sppLs = SppLs::where('biro_organisasi_id', $biroOrganisasi)
@@ -289,8 +291,9 @@ class TabelDpaController extends Controller
 
     public function tabelDpa(Request $request)
     {
+        $role = Auth::user()->role;
         $tahun = $request->tahun;
-        $biroOrganisasi = Auth::user()->role != "Bendahara Pengeluaran" ? $request->biro_organisasi : Auth::user()->profil->biro_organisasi_id;
+        $biroOrganisasi = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->biro_organisasi : Auth::user()->profil->biro_organisasi_id;
         $daftarBiroOrganisasi = Spd::with('biroOrganisasi')->where('tahun_id', $tahun)
             ->where(function ($query) use ($biroOrganisasi) {
                 if ($biroOrganisasi != "Semua") {

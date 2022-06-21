@@ -2,8 +2,9 @@
             <!-- Logo Header -->
             <div class="logo-header" data-background-color="green2">
 
-                <a href="index.html" class="logo">
-                    <img src="{{ asset('assets/dashboard') }}/img/logo.svg" alt="navbar brand" class="navbar-brand">
+                <a href="{{ url('') }}" class="logo">
+                    <img src="{{ asset('assets/dashboard') }}/img/logoo.png" alt="navbar brand"
+                        class="navbar-brand img-fluid" width="170px">
                 </a>
                 <button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse"
                     data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,8 +30,8 @@
                             <a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#"
                                 aria-expanded="false">
                                 <div class="avatar-sm">
-                                    <img src="{{ Storage::url('profil/' . Auth::user()->profil->foto) }}" alt="..."
-                                        class="avatar-img rounded-circle">
+                                    <img src="{{ Storage::url('profil/' . Auth::user()->profil->foto) }}"
+                                        alt="..." class="avatar-img rounded-circle">
                                 </div>
                             </a>
                             <ul class="dropdown-menu dropdown-user animated fadeIn">
@@ -43,7 +44,7 @@
                                             <div class="u-text">
                                                 <h4>{{ Auth::user()->profil->nama }}</h4>
                                                 <p class="text-muted">
-                                                    @if (Auth::user()->role == 'Bendahara Pengeluaran')
+                                                    @if (!in_array(Auth::user()->role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']))
                                                         {{ Auth::user()->profil->biroOrganisasi->nama }}
                                                     @else
                                                         {{ Auth::user()->role }}
@@ -54,7 +55,7 @@
                                     </li>
                                     <li>
                                         <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="#">Profil</a>
+                                        <a class="dropdown-item" href="{{ url('/profil') }}">Profil</a>
                                         <div class="dropdown-divider"></div>
                                         <a class="dropdown-item" href="{{ url('/logout') }}">Keluar</a>
                                     </li>

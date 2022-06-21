@@ -37,7 +37,7 @@
                     <div class="card-head-row">
                         <div class="card-title">Data SPP UP</div>
                         <div class="card-tools">
-                            @if (in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran']))
+                            @if (in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']))
                                 @component('dashboard.components.buttons.add',
                                     [
                                         'id' => 'btn-tambah',
@@ -53,6 +53,10 @@
                     <div class="row">
                         <div class="col">
                             <div class="card fieldset">
+                                @component('dashboard.components.widgets.filter')
+                                    @slot('daftarBiroOrganisasi', $daftarBiroOrganisasi)
+                                    @slot('daftarTahun', $daftarTahun)
+                                @endcomponent
                                 @component('dashboard.components.dataTables.index',
                                     [
                                         'id' => 'table-data',
@@ -100,8 +104,9 @@
             ajax: {
                 url: "{{ url('spp-up') }}",
                 data: function(d) {
-                    d.statusValidasi = $('#status-validasi').val();
-                    d.kategori = $('#kategori').val();
+                    d.biro_organisasi_id = $('#biro_organisasi').val();
+                    d.tahun = $('#tahun').val();
+                    d.status = $('#status').val();
                     d.search = $('input[type="search"]').val();
                 }
             },

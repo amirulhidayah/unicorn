@@ -73,7 +73,7 @@
                     <form action="{{ url('/tabel-dpa/export') }}" method="POST" enctype="multipart/form-data">
                         <div class="row align-items-end mb-4">
                             @csrf
-                            @if (Auth::user()->role != 'Bendahara Pengeluaran')
+                            @if (!in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']))
                                 <div class="col">
                                     @component('dashboard.components.formElements.select',
                                         [

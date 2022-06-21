@@ -27,5 +27,11 @@ class DatabaseSeeder extends Seeder
         $this->call(ProgramTableSeeder::class);
         $this->call(KegiatanSppTableSeeder::class);
         $this->call(ProgramSppTableSeeder::class);
+        $this->call(SppUpTableSeeder::class);
+        $this->call(RiwayatSppUpTableSeeder::class);
+        $this->call(DokumenSppUpTableSeeder::class);
+        $this->call(SppTuTableSeeder::class);
+        $this->call(RiwayatSppTuTableSeeder::class);
+        $this->call(DokumenSppTuTableSeeder::class);
     }
 }

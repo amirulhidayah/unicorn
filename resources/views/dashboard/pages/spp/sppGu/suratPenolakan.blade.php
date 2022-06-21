@@ -76,12 +76,12 @@
             </td>
             <td width="5%">
                 <p>&nbsp;</p>
-                <p>&nbsp;</p>
+                <p>Jumlah</p>
                 <p>Jumlah</p>
             </td>
             <td width="25%">
                 <p>&nbsp;</p>
-                <p>&nbsp;</p>
+                <p> : Rp. {{ number_format($spd->jumlah_anggaran, 0, ',', '.') }}</p>
                 <p> : Rp. {{ number_format($riwayatSppGu->anggaran_digunakan, 0, ',', '.') }}</p>
             </td>
         </tr>
@@ -127,8 +127,8 @@
             <td width="50%" style="text-align: center">
                 <p>Palu, {{ $hariIni }}</p>
                 <p>Kuasa Pengguna Anggaran</p>
-                <img src="{{ Storage::url('tanda_tangan/' . $kuasaPenggunaAnggaran->profil->tanda_tangan) }}" alt=""
-                    class="tanda-tangan">
+                <img src="{{ Storage::url('tanda_tangan/' . $kuasaPenggunaAnggaran->profil->tanda_tangan) }}"
+                    alt="" class="tanda-tangan">
                 <p class="nama-ttd"><u>{{ $kuasaPenggunaAnggaran->profil->nama }}</u></p>
                 <p class="nip-ttd">NIP. {{ $kuasaPenggunaAnggaran->profil->nip }}</p>
             </td>

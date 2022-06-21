@@ -111,6 +111,7 @@
                     'type' => 'text',
                     'id' => 'nomor_hp',
                     'name' => 'nomor_hp',
+                    'class' => 'numerik',
                     'wajib' => '<sup class="text-danger">*</sup>',
                     'placeholder' => 'Masukkan Nomor Hp',
                 ])
@@ -123,6 +124,7 @@
                     'type' => 'text',
                     'id' => 'nip',
                     'name' => 'nip',
+                    'class' => 'numerik',
                     'wajib' => '',
                     'placeholder' => 'Masukkan NIP',
                 ])

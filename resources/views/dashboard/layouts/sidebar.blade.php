@@ -3,8 +3,8 @@
     <div class="sidebar-wrapper scrollbar scrollbar-inner">
         <div class="sidebar-content">
             <ul class="nav nav-success">
-                <li class="nav-item">
-                    <a href="calendar.html">
+                <li class="nav-item" id="dashboard">
+                    <a href="{{ url('/dashboard') }}">
                         <i class="fas fa-home"></i>
                         <p>Dashboard</p>
                     </a>

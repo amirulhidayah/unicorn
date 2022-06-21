@@ -5,6 +5,7 @@ namespace App\Http\Controllers\dashboard\dpa;
 use App\Http\Controllers\Controller;
 use App\Models\BiroOrganisasi;
 use App\Models\Kegiatan;
+use App\Models\Spd;
 use App\Models\SppGu;
 use App\Models\SppLs;
 use App\Models\Tahun;
@@ -25,11 +26,13 @@ class StatistikDpaController extends Controller
         $role = Auth::user()->role;
         $tahun_id = $request->tahun_id;
         $kegiatan_id = $request->kegiatan_id;
-        $biro_organisasi_id = $role == "Admin" ? $request->biro_organisasi : Auth::user()->profil->biro_organisasi_id;
+        $biro_organisasi_id = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->biro_organisasi_id : Auth::user()->profil->biro_organisasi_id;
 
         $kegiatan = Kegiatan::where('id', $kegiatan_id)->first();
 
         $judul = $kegiatan ? $kegiatan->nama : 'Kegiatan Belum Dipilih';
+
+        $spd = Spd::where('kegiatan_id', $kegiatan_id)->where('biro_organisasi_id', $biro_organisasi_id)->where('tahun_id', $tahun_id)->first();
 
         $bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
@@ -50,6 +53,7 @@ class StatistikDpaController extends Controller
         return response()->json([
             'judul' => $judul,
             'bulan' => $bulan,
+            'jumlah_anggaran' => $spd->jumlah_anggaran,
             'data' => $anggaranDigunakan
         ]);
     }

@@ -25,7 +25,7 @@ class ListController extends Controller
         $tahun = $request->tahun;
         $tipe = $request->tipe;
         $id = $request->id;
-        $biroOrganisasi = $role == "Admin" ? $request->biro_organisasi : Auth::user()->profil->biro_organisasi_id;
+        $biroOrganisasi = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->biro_organisasi : Auth::user()->profil->biro_organisasi_id;
 
         $program = Program::with(['kegiatan'])->whereHas('kegiatan', function ($query) use ($tahun, $biroOrganisasi) {
             $query->whereHas('spd', function ($query) use ($tahun, $biroOrganisasi) {
@@ -55,7 +55,7 @@ class ListController extends Controller
         $program = $request->program;
         $tipe = $request->tipe;
         $id = $request->id;
-        $biroOrganisasi = $role == "Admin" ? $request->biro_organisasi : Auth::user()->profil->biro_organisasi_id;
+        $biroOrganisasi = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->biro_organisasi : Auth::user()->profil->biro_organisasi_id;
 
         $kegiatan = Kegiatan::with(['spd'])->whereHas('spd', function ($query) use ($tahun, $biroOrganisasi) {
             if ($tahun) {

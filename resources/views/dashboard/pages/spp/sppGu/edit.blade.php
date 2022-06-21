@@ -208,8 +208,8 @@
                                                 <div class="row">
                                                     <!-- <div class="d-flex border rounded shadow shadow-lg p-2 "> -->
                                                     <div class="col-3 d-flex align-items-center justify-content-center">
-                                                        <img src="{{ asset('assets/dashboard/img/pdf.png') }}" alt=""
-                                                            width="70px">
+                                                        <img src="{{ asset('assets/dashboard/img/pdf.png') }}"
+                                                            alt="" width="70px">
                                                     </div>
                                                     <div class="col-9">
                                                         <div class="mb-3 mt-2">
