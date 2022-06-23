@@ -33,9 +33,10 @@ class SppUpController extends Controller
 
         if ($request->ajax()) {
             $data = SppUp::where(function ($query) use ($request, $biroOrganisasi, $role) {
-                if ($request->biro_organisasi_id && $request->biro_organisasi_id != 'Semua') {
+                if ($biroOrganisasi && $biroOrganisasi != 'Semua') {
                     $query->where('biro_organisasi_id', $biroOrganisasi);
                 }
+
 
                 if ($request->tahun && $request->tahun != 'Semua') {
                     $query->where('tahun_id', $request->tahun);
@@ -142,9 +143,10 @@ class SppUpController extends Controller
                         $actionBtn .= '<a href="' . url('/surat-pernyataan/spp-up/' . $row->id) . '" class="btn btn-success btn-sm mr-1"><i class="fas fa-envelope"></i> Surat Pernyataan</a>';
                     }
 
-                    if (in_array(Auth::user()->role, ["Admin", "Bendahara Pengeluaran"])) {
+                    if (in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
                         $actionBtn .= '<a class="btn btn-primary text-light btn-sm mr-1" href="' . url('spp-up/' . $row->id) . '"><i class="far fa-check-circle"></i> Lihat</a>';
-                        if (($row->status_validasi_akhir == 0 && Auth::user()->role == "Bendahara Pengeluaran") || Auth::user()->role == "Admin") {
+
+                        if (($row->status_validasi_akhir == 0 && in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']) && $row->biro_organisasi_id == Auth::user()->profil->biro_organisasi_id) || Auth::user()->role == "Admin") {
                             $actionBtn .= '<button id="btn-delete" class="btn btn-danger btn-sm mr-1" value="' . $row->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
                         }
                     }
@@ -290,7 +292,13 @@ class SppUpController extends Controller
     {
         $tipe = 'spp_up';
         $jumlahAnggaran = 'Rp. ' . number_format($sppUp->jumlah_anggaran, 0, ',', '.');
-        return view('dashboard.pages.spp.sppUp.show', compact(['sppUp', 'tipe', 'jumlahAnggaran']));
+
+        $role = Auth::user()->role;
+        if ((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) || Auth::user()->profil->biro_organisasi_id == $sppUp->biro_organisasi_id) {
+            return view('dashboard.pages.spp.sppUp.show', compact(['sppUp', 'tipe', 'jumlahAnggaran']));
+        } else {
+            abort(403, 'Anda tidak memiliki akses halaman tersebut!');
+        }
     }
 
     /**
@@ -301,7 +309,12 @@ class SppUpController extends Controller
      */
     public function edit(SppUp $sppUp, Request $request)
     {
-        return view('dashboard.pages.spp.sppUp.edit', compact(['sppUp', 'request']));
+        $role = Auth::user()->role;
+        if (($role == "Admin" || Auth::user()->profil->biro_organisasi_id == $sppUp->biro_organisasi_id) && ($sppUp->status_validasi_asn == 2 || $sppUp->status_validasi_ppk == 2)) {
+            return view('dashboard.pages.spp.sppUp.edit', compact(['sppUp', 'request']));
+        } else {
+            abort(403, 'Anda tidak memiliki akses halaman tersebut!');
+        }
     }
 
     /**
@@ -452,13 +465,23 @@ class SppUpController extends Controller
     {
         $sppUp->delete();
 
+        $riwayatSppUp = RiwayatSppUp::where('spp_up_id', $sppUp->id)->whereNotNull('surat_penolakan')->get();
+        if (count($riwayatSppUp) > 0) {
+            foreach ($riwayatSppUp as $riwayat) {
+                Storage::delete('surat_penolakan_spp_up/' . $riwayat->surat_penolakan);
+            }
+        }
+
         RiwayatSppUp::where('spp_up_id', $sppUp->id)->delete();
 
         $dokumenSppUp = DokumenSppUp::where('spp_up_id', $sppUp->id)->get();
-        foreach ($dokumenSppUp as $dokumen) {
-            Storage::delete('dokumen_spp_up/' . $dokumen->dokumen);
-            $dokumen->delete();
+        if (count($dokumenSppUp) > 0) {
+            foreach ($dokumenSppUp as $dokumen) {
+                Storage::delete('dokumen_spp_up/' . $dokumen->dokumen);
+                $dokumen->delete();
+            }
         }
+
 
         return response()->json(['status' => 'success']);
     }
@@ -467,7 +490,13 @@ class SppUpController extends Controller
     {
         $tipeSuratPenolakan = 'spp-up';
         $tipeSuratPengembalian = 'spp_up';
-        return view('dashboard.pages.spp.sppUp.riwayat', compact(['sppUp', 'tipeSuratPenolakan', 'tipeSuratPengembalian']));
+
+        $role = Auth::user()->role;
+        if ((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) || Auth::user()->profil->biro_organisasi_id == $sppUp->biro_organisasi_id) {
+            return view('dashboard.pages.spp.sppUp.riwayat', compact(['sppUp', 'tipeSuratPenolakan', 'tipeSuratPengembalian']));
+        } else {
+            abort(403, 'Anda tidak memiliki akses halaman tersebut!');
+        }
     }
 
     public function verifikasi(Request $request, SppUp $sppUp)

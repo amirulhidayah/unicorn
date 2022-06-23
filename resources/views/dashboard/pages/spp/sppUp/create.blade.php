@@ -193,20 +193,21 @@
                                     </div>
                                 </div>
                                 <div id="list-upload">
-                                    @foreach ($daftarDokumenSppUp as $dokumen)
+                                    @forelse ($daftarDokumenSppUp as $dokumen)
                                         <div class="card box-upload" id="box-upload-{{ $loop->iteration }}"
                                             class="box-upload">
                                             <div class="card-body">
                                                 <div class="row">
                                                     <!-- <div class="d-flex border rounded shadow shadow-lg p-2 "> -->
                                                     <div class="col-3 d-flex align-items-center justify-content-center">
-                                                        <img src="{{ asset('assets/dashboard/img/pdf.png') }}" alt=""
-                                                            width="70px">
+                                                        <img src="{{ asset('assets/dashboard/img/pdf.png') }}"
+                                                            alt="" width="70px">
                                                     </div>
                                                     <div class="col-9">
                                                         <div class="mb-3 mt-2">
-                                                            <input type="text" class="form-control nama_file" id="nama_file"
-                                                                name="nama_file[]" placeholder="Masukkan Nama File"
+                                                            <input type="text" class="form-control nama_file"
+                                                                id="nama_file" name="nama_file[]"
+                                                                placeholder="Masukkan Nama File"
                                                                 value="{{ $dokumen->nama }}">
                                                         </div>
                                                         <div class="mb-3">
@@ -223,7 +224,36 @@
                                                 onclick="hapus({{ $loop->iteration }})"><i class="fas fa-trash-alt"></i>
                                                 Hapus</button>
                                         </div>
-                                    @endforeach
+                                    @empty
+                                        <div class="card box-upload" id="box-upload-1" class="box-upload">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <!-- <div class="d-flex border rounded shadow shadow-lg p-2 "> -->
+                                                    <div class="col-3 d-flex align-items-center justify-content-center">
+                                                        <img src="{{ asset('assets/dashboard/img/pdf.png') }}"
+                                                            alt="" width="70px">
+                                                    </div>
+                                                    <div class="col-9">
+                                                        <div class="mb-3 mt-2">
+                                                            <input type="text" class="form-control nama_file"
+                                                                id="nama_file" name="nama_file[]"
+                                                                placeholder="Masukkan Nama File" value="">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <input name="file_dokumen[]" class="form-control file_dokumen"
+                                                                type="file" multiple="true">
+                                                            <p class="text-danger error-text nama_file-error my-0"></p>
+                                                            <p class="text-danger error-text file_dokumen-error my-0"></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button type="button"
+                                                class="btn btn-danger fw-bold card-footer bg-danger text-center p-0"
+                                                onclick="hapus(1)"><i class="fas fa-trash-alt"></i>
+                                                Hapus</button>
+                                        </div>
+                                    @endforelse
                                 </div>
 
                                 <div class="card bg-primary" id="card-tambah">
@@ -371,8 +401,9 @@
 
 @push('script')
     <script>
-        var totalList = {{ count($daftarDokumenSppUp) }};
+        var totalList = "{{ count($daftarDokumenSppUp) == 0 ? 1 : count($daftarDokumenSppUp) }}";
         var idProgram = '';
+        console.log(totalList);
 
         $(document).ready(function() {
             $('#spp-up').addClass('active');
@@ -462,6 +493,11 @@
                                 $(location).attr('href', "{{ url('spp-up') }}");
                             }, 2000);
                     } else {
+                        swal("Periksa Kembali Data Anda", {
+                            buttons: false,
+                            timer: 1500,
+                            icon: "warning",
+                        });
                         printErrorMsg(response.error);
                     }
                 },

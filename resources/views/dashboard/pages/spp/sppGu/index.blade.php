@@ -173,29 +173,10 @@
         var table = $('#table-data').DataTable({
             processing: true,
             serverSide: true,
-            dom: 'lBfrtip',
-            buttons: [{
-                    extend: 'excel',
-                    className: 'btn btn-sm btn-light-success px-2 btn-export-table d-inline ml-3 font-weight',
-                    text: '<i class="bi bi-file-earmark-arrow-down"></i> Ekspor Data',
-                    exportOptions: {
-                        modifier: {
-                            order: 'index', // 'current', 'applied', 'index',  'original'
-                            page: 'all', // 'all',     'current'
-                            search: 'applied' // 'none',    'applied', 'removed'
-                        },
-                        columns: ':visible'
-                    }
-                },
-                {
-                    extend: 'colvis',
-                    className: 'btn btn-sm btn-light-success px-2 btn-export-table d-inline ml-3 font-weight',
-                    text: '<i class="bi bi-eye-fill"></i> Tampil/Sembunyi Kolom',
-                }
-            ],
+            dom: 'lfrtip',
             lengthMenu: [
-                [10, 25, 50, -1],
-                [10, 25, 50, "All"]
+                [20, 25, 50, -1],
+                [20, 25, 50, "All"]
             ],
             ajax: {
                 url: "{{ url('spp-gu') }}",

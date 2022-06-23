@@ -71,22 +71,22 @@ class ImportSpd implements ToCollection, WithHeadingRow
             // $tw2 = str_replace(['Rp', ','], '', $row['TW 2']);
             // $tw3 = str_replace(['Rp', ','], '', $row['TW 3']);
             // $tw4 = str_replace(['Rp', ','], '', $row['TW 4']);
+            $jumlah_anggaran = preg_replace("/[^0-9]/", "", $row['Jumlah Anggaran']);
 
-            $jumlah_anggaran = str_replace(['Rp', ','], '', $row['Jumlah Anggaran']);
-
-            $cekSpd = Spd::where('kegiatan_id', $kegiatan->id)->where('biro_organisasi_id', $biroOrganisasi->id)->where('tahun_id', $tahun)->first();
-
-            if (!$cekSpd) {
-                $spd = new Spd();
-                $spd->kegiatan_id = $kegiatan->id;
-                $spd->biro_organisasi_id = $biroOrganisasi->id;
-                $spd->tahun_id = $tahun;
-                $spd->jumlah_anggaran = $jumlah_anggaran;
-                // $spd->tw1 = $tw1 == '-' ? 0 : $tw1;
-                // $spd->tw2 = $tw2 == '-' ? 0 : $tw2;
-                // $spd->tw3 = $tw3 == '-' ? 0 : $tw3;
-                // $spd->tw4 = $tw4 == '-' ? 0 : $tw4;
-                $spd->save();
+            if ($biroOrganisasi) {
+                $cekSpd = Spd::where('kegiatan_id', $kegiatan->id)->where('biro_organisasi_id', $biroOrganisasi->id)->where('tahun_id', $tahun)->first();
+                if (!$cekSpd) {
+                    $spd = new Spd();
+                    $spd->kegiatan_id = $kegiatan->id;
+                    $spd->biro_organisasi_id = $biroOrganisasi->id;
+                    $spd->tahun_id = $tahun;
+                    $spd->jumlah_anggaran = $jumlah_anggaran;
+                    // $spd->tw1 = $tw1 == '-' ? 0 : $tw1;
+                    // $spd->tw2 = $tw2 == '-' ? 0 : $tw2;
+                    // $spd->tw3 = $tw3 == '-' ? 0 : $tw3;
+                    // $spd->tw4 = $tw4 == '-' ? 0 : $tw4;
+                    $spd->save();
+                }
             }
         }
     }

@@ -1,6 +1,6 @@
 <div class="row mb-4 mx-1">
 
-    @if (Auth::user()->role == 'Admin')
+    @if (in_array(Auth::user()->role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']))
         <div class="col">
             @component('dashboard.components.formElements.select',
                 [

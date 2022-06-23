@@ -260,7 +260,8 @@
                                                 <div class="col-9">
                                                     <div class="mb-3 mt-2">
                                                         <input type="text" class="form-control nama_file" id="nama_file"
-                                                            name="nama_file[]" placeholder="Masukkan Nama File" value="">
+                                                            name="nama_file[]" placeholder="Masukkan Nama File"
+                                                            value="">
                                                     </div>
                                                     <div class="mb-3">
                                                         <input name="file_dokumen[]" class="form-control file_dokumen"
@@ -387,6 +388,11 @@
                                 $(location).attr('href', "{{ url('spp-ls') }}");
                             }, 2000);
                     } else {
+                        swal("Periksa Kembali Data Anda", {
+                            buttons: false,
+                            timer: 1500,
+                            icon: "warning",
+                        });
                         printErrorMsg(response.error);
                     }
                 },

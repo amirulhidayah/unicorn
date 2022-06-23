@@ -77,29 +77,10 @@
         var table = $('#table-data').DataTable({
             processing: true,
             serverSide: true,
-            dom: 'lBfrtip',
-            buttons: [{
-                    extend: 'excel',
-                    className: 'btn btn-sm btn-light-success px-2 btn-export-table d-inline ml-3 font-weight',
-                    text: '<i class="bi bi-file-earmark-arrow-down"></i> Ekspor Data',
-                    exportOptions: {
-                        modifier: {
-                            order: 'index', // 'current', 'applied', 'index',  'original'
-                            page: 'all', // 'all',     'current'
-                            search: 'applied' // 'none',    'applied', 'removed'
-                        },
-                        columns: ':visible'
-                    }
-                },
-                {
-                    extend: 'colvis',
-                    className: 'btn btn-sm btn-light-success px-2 btn-export-table d-inline ml-3 font-weight',
-                    text: '<i class="bi bi-eye-fill"></i> Tampil/Sembunyi Kolom',
-                }
-            ],
+            dom: 'lfrtip',
             lengthMenu: [
-                [10, 25, 50, -1],
-                [10, 25, 50, "All"]
+                [20, 25, 50, -1],
+                [20, 25, 50, "All"]
             ],
             ajax: {
                 url: "{{ url('spp-tu') }}",
@@ -184,6 +165,54 @@
     </script>
 
     <script>
+        $(document).on('click', '#btn-delete', function() {
+            let id = $(this).val();
+            swal({
+                title: 'Apakah Anda Yakin ?',
+                icon: 'error',
+                text: "Data yang sudah dihapus tidak dapat dikembalikan lagi !",
+                type: 'warning',
+                buttons: {
+                    confirm: {
+                        text: 'Hapus',
+                        className: 'btn btn-success'
+                    },
+                    cancel: {
+                        visible: true,
+                        text: 'Batal',
+                        className: 'btn btn-danger'
+                    }
+                }
+            }).then((Delete) => {
+                if (Delete) {
+                    $.ajax({
+                        url: "{{ url('spp-tu') }}" + '/' + id,
+                        type: 'DELETE',
+                        data: {
+                            '_token': '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            if (response.status == 'success') {
+                                swal("Berhasil", "Data Berhasil Dihapus", {
+                                    icon: "success",
+                                    buttons: false,
+                                    timer: 1000,
+                                }).then(function() {
+                                    table.draw();
+                                })
+                            } else {
+                                swal("Gagal", "Data Gagal Dihapus", {
+                                    icon: "error",
+                                    buttons: false,
+                                    timer: 1000,
+                                });
+                            }
+                        }
+                    })
+                }
+            });
+        })
+
         $(document).on('click', '#btn-verifikasi', function() {
             let id = $(this).val();
             swal({

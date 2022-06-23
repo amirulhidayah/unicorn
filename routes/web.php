@@ -21,6 +21,7 @@ use App\Http\Controllers\dashboard\spp\SppLsController;
 use App\Http\Controllers\dashboard\spp\SppTuController;
 use App\Http\Controllers\dashboard\spp\SppUpController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ListController;
 use App\Http\Controllers\ProfilController;
@@ -207,6 +208,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::put('/profil/{user}', [ProfilController::class, 'update']);
 
     Route::get('/dashboard', [DashboardController::class, 'index']);
+
+    // Route::get('/dokumen_spp_gu/{dokumen}', [FileController::class, 'dokumenSppGu']);
 });
 
 

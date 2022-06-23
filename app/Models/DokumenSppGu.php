@@ -9,4 +9,9 @@ class DokumenSppGu extends Model
 {
     use HasFactory;
     protected $table = 'dokumen_spp_gu';
+
+    public function sppGu()
+    {
+        return $this->belongsTo(SppGu::class);
+    }
 }
