@@ -269,52 +269,13 @@
                             <div class="col-12">
                                 @component('dashboard.components.formElements.input',
                                     [
-                                        'label' => 'Jumlah Anggaran (TW 1)',
+                                        'label' => 'Jumlah Anggaran',
                                         'type' => 'text',
-                                        'id' => 'tw1',
-                                        'name' => 'tw1',
+                                        'id' => 'jumlah_anggaran',
+                                        'name' => 'jumlah_anggaran',
                                         'class' => 'uang',
                                         'wajib' => '<sup class="text-danger">*</sup>',
-                                        'placeholder' => 'Masukkan Jumlah Anggaran TW 1',
-                                    ])
-                                @endcomponent
-                            </div>
-                            <div class="col-12">
-                                @component('dashboard.components.formElements.input',
-                                    [
-                                        'label' => 'Jumlah Anggaran (TW 2)',
-                                        'type' => 'text',
-                                        'id' => 'tw2',
-                                        'name' => 'tw2',
-                                        'class' => 'uang',
-                                        'wajib' => '<sup class="text-danger">*</sup>',
-                                        'placeholder' => 'Masukkan Jumlah Anggaran TW 2',
-                                    ])
-                                @endcomponent
-                            </div>
-                            <div class="col-12">
-                                @component('dashboard.components.formElements.input',
-                                    [
-                                        'label' => 'Jumlah Anggaran (TW 3)',
-                                        'type' => 'text',
-                                        'id' => 'tw3',
-                                        'name' => 'tw3',
-                                        'class' => 'uang',
-                                        'wajib' => '<sup class="text-danger">*</sup>',
-                                        'placeholder' => 'Masukkan Jumlah Anggaran TW 3',
-                                    ])
-                                @endcomponent
-                            </div>
-                            <div class="col-12">
-                                @component('dashboard.components.formElements.input',
-                                    [
-                                        'label' => 'Jumlah Anggaran (TW 4)',
-                                        'type' => 'text',
-                                        'id' => 'tw4',
-                                        'name' => 'tw4',
-                                        'class' => 'uang',
-                                        'wajib' => '<sup class="text-danger">*</sup>',
-                                        'placeholder' => 'Masukkan Jumlah Anggaran TW 4',
+                                        'placeholder' => 'Masukkan Jumlah Anggaran',
                                     ])
                                 @endcomponent
                             </div>
@@ -408,6 +369,12 @@
                                 buttons: false,
                                 timer: 1000,
                             });
+                        } else if (response.status == 'unique') {
+                            swal("Gagal", "Data DPA Sudah Ada", {
+                                icon: "error",
+                                buttons: false,
+                                timer: 1000,
+                            });
                         } else {
                             printErrorMsg(response.error);
                         }
@@ -431,6 +398,12 @@
                             tabelSpd();
                             swal("Berhasil", "Data Berhasil Diubah", {
                                 icon: "success",
+                                buttons: false,
+                                timer: 1000,
+                            });
+                        } else if (response.status == 'unique') {
+                            swal("Gagal", "Data DPA Sudah Ada", {
+                                icon: "error",
                                 buttons: false,
                                 timer: 1000,
                             });
@@ -587,10 +560,7 @@
                     $('#modal-tambah-title').html('Ubah Dokumen Pelaksana Anggaran');
                     $('#biro_organisasi_tambah').val(response.biro_organisasi_id).trigger('change');
                     $('#tahun_tambah').val(response.tahun_id).trigger('change');
-                    $('#tw1').val(response.tw1).trigger("input");
-                    $('#tw2').val(response.tw2).trigger("input");
-                    $('#tw3').val(response.tw3).trigger("input");
-                    $('#tw4').val(response.tw4).trigger("input");
+                    $('#jumlah_anggaran').val(response.jumlah_anggaran).trigger("input");
                     getProgram(tipe, response.kegiatan.program_id);
                     setTimeout(function() {
                         $('#program').val(response.kegiatan.program_id).trigger('change');

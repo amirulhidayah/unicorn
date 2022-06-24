@@ -65,20 +65,14 @@ class TabelDpaController extends Controller
                 'biro_organisasi' => 'required',
                 'program' => 'required',
                 'kegiatan' => 'required',
-                'tw1' => 'required',
-                'tw2' => 'required',
-                'tw3' => 'required',
-                'tw4' => 'required',
+                'jumlah_anggaran' => 'required',
             ],
             [
                 'tahun.required' => 'Tahun tidak boleh kosong',
                 'biro_organisasi.required' => 'Biro Organisasi tidak boleh kosong',
                 'program.required' => 'Program tidak boleh kosong',
                 'kegiatan.required' => 'Kegiatan tidak boleh kosong',
-                'tw1.required' => 'TW1 tidak boleh kosong',
-                'tw2.required' => 'TW2 tidak boleh kosong',
-                'tw3.required' => 'TW3 tidak boleh kosong',
-                'tw4.required' => 'TW4 tidak boleh kosong',
+                'jumlah_anggaran.required' => 'Jumlah anggaran tidak boleh kosong',
             ]
         );
 
@@ -86,14 +80,17 @@ class TabelDpaController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
+        $cekSpd = Spd::where('kegiatan_id', $request->kegiatan)->where('biro_organisasi_id', $request->biro_organisasi)->where('tahun_id', $request->tahun)->first();
+
+        if ($cekSpd) {
+            return response()->json(['status' => 'unique']);
+        }
+
         $spd = new Spd();
         $spd->kegiatan_id = $request->kegiatan;
         $spd->tahun_id = $request->tahun;
         $spd->biro_organisasi_id = $request->biro_organisasi;
-        $spd->tw1 = str_replace(".", "", $request->tw1);
-        $spd->tw2 = str_replace(".", "", $request->tw2);
-        $spd->tw3 = str_replace(".", "", $request->tw3);
-        $spd->tw4 = str_replace(".", "", $request->tw4);
+        $spd->jumlah_anggaran = preg_replace("/[^0-9]/", "", $request->jumlah_anggaran);
         $spd->save();
 
         return response()->json(['status' => 'success']);
@@ -138,20 +135,14 @@ class TabelDpaController extends Controller
                 'biro_organisasi' => 'required',
                 'program' => 'required',
                 'kegiatan' => 'required',
-                'tw1' => 'required',
-                'tw2' => 'required',
-                'tw3' => 'required',
-                'tw4' => 'required',
+                'jumlah_anggaran' => 'required',
             ],
             [
                 'tahun.required' => 'Tahun tidak boleh kosong',
                 'biro_organisasi.required' => 'Biro Organisasi tidak boleh kosong',
                 'program.required' => 'Program tidak boleh kosong',
                 'kegiatan.required' => 'Kegiatan tidak boleh kosong',
-                'tw1.required' => 'TW1 tidak boleh kosong',
-                'tw2.required' => 'TW2 tidak boleh kosong',
-                'tw3.required' => 'TW3 tidak boleh kosong',
-                'tw4.required' => 'TW4 tidak boleh kosong',
+                'jumlah_anggaran.required' => 'TW1 tidak boleh kosong',
             ]
         );
 
@@ -159,13 +150,16 @@ class TabelDpaController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
+        $cekSpd = Spd::where('kegiatan_id', $request->kegiatan)->where('biro_organisasi_id', $request->biro_organisasi)->where('tahun_id', $request->tahun)->where('id', '!=', $spd->id)->first();
+
+        if ($cekSpd) {
+            return response()->json(['status' => 'unique']);
+        }
+
         $spd->kegiatan_id = $request->kegiatan;
         $spd->tahun_id = $request->tahun;
         $spd->biro_organisasi_id = $request->biro_organisasi;
-        $spd->tw1 = str_replace(".", "", $request->tw1);
-        $spd->tw2 = str_replace(".", "", $request->tw2);
-        $spd->tw3 = str_replace(".", "", $request->tw3);
-        $spd->tw4 = str_replace(".", "", $request->tw4);
+        $spd->jumlah_anggaran = preg_replace("/[^0-9]/", "", $request->jumlah_anggaran);
         $spd->save();
 
         return response()->json(['status' => 'success']);
