@@ -19,7 +19,7 @@ class DokumenSppUpController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = DaftarDokumenSppUp::orderBy('created_at', 'asc')->get();
+            $data = DaftarDokumenSppUp::orderBy('created_at', 'desc')->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {

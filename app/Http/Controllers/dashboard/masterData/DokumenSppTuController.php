@@ -19,7 +19,7 @@ class DokumenSppTuController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = DaftarDokumenSppTu::orderBy('created_at', 'asc')->get();
+            $data = DaftarDokumenSppTu::orderBy('created_at', 'desc')->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {

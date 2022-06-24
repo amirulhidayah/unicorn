@@ -40,7 +40,7 @@ class ListController extends Controller
 
         if ($tipe == 'ubah') {
             $programHapus = Program::where('id', $id)->withTrashed()->first();
-            if ($programHapus) {
+            if ($programHapus->trashed()) {
                 $program->push($programHapus);
             }
         }
@@ -69,7 +69,7 @@ class ListController extends Controller
 
         if ($tipe == 'ubah') {
             $kegiatanHapus = Kegiatan::where('id', $id)->where('program_id', $program)->withTrashed()->first();
-            if ($kegiatanHapus) {
+            if ($kegiatanHapus->trashed()) {
                 $kegiatan->push($kegiatanHapus);
             }
         }

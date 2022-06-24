@@ -19,7 +19,7 @@ class DokumenSppLsController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = DaftarDokumenSppLs::orderBy('created_at', 'asc')->get();
+            $data = DaftarDokumenSppLs::orderBy('created_at', 'desc')->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {

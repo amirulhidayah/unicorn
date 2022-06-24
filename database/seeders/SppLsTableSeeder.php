@@ -14,13 +14,13 @@ class SppLsTableSeeder extends Seeder
      */
     public function run()
     {
-        
+
 
         \DB::table('spp_ls')->delete();
-        
-        \DB::table('spp_ls')->insert(array (
-            0 => 
-            array (
+
+        \DB::table('spp_ls')->insert(array(
+            0 =>
+            array(
                 'id' => '1f16ad29-6e7d-42e8-a790-e642fb6abeaa',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => '35d37341-1b52-41ca-811d-1eb53d045837',
@@ -43,8 +43,8 @@ class SppLsTableSeeder extends Seeder
                 'created_at' => '2022-06-21 13:37:10',
                 'updated_at' => '2022-06-21 13:46:08',
             ),
-            1 => 
-            array (
+            1 =>
+            array(
                 'id' => '2594aad1-8ec0-4944-90b0-40b355c83075',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => '35d37341-1b52-41ca-811d-1eb53d045837',
@@ -67,8 +67,8 @@ class SppLsTableSeeder extends Seeder
                 'created_at' => '2022-06-21 13:33:03',
                 'updated_at' => '2022-06-21 13:46:17',
             ),
-            2 => 
-            array (
+            2 =>
+            array(
                 'id' => '2eaa2353-18e5-464f-a792-4f1b2d0c74bc',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => '35d37341-1b52-41ca-811d-1eb53d045837',
@@ -91,8 +91,8 @@ class SppLsTableSeeder extends Seeder
                 'created_at' => '2022-06-21 13:38:27',
                 'updated_at' => '2022-06-21 13:46:05',
             ),
-            3 => 
-            array (
+            3 =>
+            array(
                 'id' => '4482f1c2-1635-4cdb-ac61-afbc8eb98b17',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => '35d37341-1b52-41ca-811d-1eb53d045837',
@@ -100,7 +100,7 @@ class SppLsTableSeeder extends Seeder
                 'tahap_riwayat' => 1,
                 'kategori' => 'Belanja Hibah',
                 'bulan' => 'November',
-                'anggaran_digunakan' => 15231313,
+                'anggaran_digunakan' => 9231313,
                 'nomor_surat' => '11/SPP-LS/06/2022',
                 'user_id' => 'b45916f6-02aa-4285-a51e-1c2280f5a3d0',
                 'surat_penolakan' => NULL,
@@ -115,8 +115,8 @@ class SppLsTableSeeder extends Seeder
                 'created_at' => '2022-06-21 13:40:32',
                 'updated_at' => '2022-06-21 13:45:59',
             ),
-            4 => 
-            array (
+            4 =>
+            array(
                 'id' => '6055b9db-bcd8-4805-8dd4-9cbb782b8c7f',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => '35d37341-1b52-41ca-811d-1eb53d045837',
@@ -124,7 +124,7 @@ class SppLsTableSeeder extends Seeder
                 'tahap_riwayat' => 1,
                 'kategori' => 'Belanja Hibah',
                 'bulan' => 'Desember',
-                'anggaran_digunakan' => 19213132,
+                'anggaran_digunakan' => 9213132,
                 'nomor_surat' => '12/SPP-LS/06/2022',
                 'user_id' => 'b45916f6-02aa-4285-a51e-1c2280f5a3d0',
                 'surat_penolakan' => NULL,
@@ -139,8 +139,8 @@ class SppLsTableSeeder extends Seeder
                 'created_at' => '2022-06-21 13:41:14',
                 'updated_at' => '2022-06-21 13:45:54',
             ),
-            5 => 
-            array (
+            5 =>
+            array(
                 'id' => '6bed8151-7643-41e0-9161-ce3c17b88ab6',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => '35d37341-1b52-41ca-811d-1eb53d045837',
@@ -148,7 +148,7 @@ class SppLsTableSeeder extends Seeder
                 'tahap_riwayat' => 1,
                 'kategori' => 'Belanja Hibah',
                 'bulan' => 'Juli',
-                'anggaran_digunakan' => 23122131,
+                'anggaran_digunakan' => 9122131,
                 'nomor_surat' => '7/SPP-LS/06/2022',
                 'user_id' => 'b45916f6-02aa-4285-a51e-1c2280f5a3d0',
                 'surat_penolakan' => NULL,
@@ -163,8 +163,8 @@ class SppLsTableSeeder extends Seeder
                 'created_at' => '2022-06-21 13:36:21',
                 'updated_at' => '2022-06-21 13:46:11',
             ),
-            6 => 
-            array (
+            6 =>
+            array(
                 'id' => '787f1da4-c936-4019-aa5f-21c9182d3f3b',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => '35d37341-1b52-41ca-811d-1eb53d045837',
@@ -187,8 +187,8 @@ class SppLsTableSeeder extends Seeder
                 'created_at' => '2022-06-21 13:26:15',
                 'updated_at' => '2022-06-21 13:46:37',
             ),
-            7 => 
-            array (
+            7 =>
+            array(
                 'id' => '98b92e4d-08c0-4f84-90fc-6230f6ff4fbf',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => '35d37341-1b52-41ca-811d-1eb53d045837',
@@ -196,7 +196,7 @@ class SppLsTableSeeder extends Seeder
                 'tahap_riwayat' => 1,
                 'kategori' => 'Belanja Hibah',
                 'bulan' => 'Maret',
-                'anggaran_digunakan' => 11232322,
+                'anggaran_digunakan' => 9232322,
                 'nomor_surat' => '3/SPP-LS/06/2022',
                 'user_id' => 'b45916f6-02aa-4285-a51e-1c2280f5a3d0',
                 'surat_penolakan' => NULL,
@@ -211,8 +211,8 @@ class SppLsTableSeeder extends Seeder
                 'created_at' => '2022-06-21 13:29:22',
                 'updated_at' => '2022-06-21 13:46:22',
             ),
-            8 => 
-            array (
+            8 =>
+            array(
                 'id' => 'ef55c0f5-d2ec-40cb-b80b-e59352570179',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => '35d37341-1b52-41ca-811d-1eb53d045837',
@@ -220,7 +220,7 @@ class SppLsTableSeeder extends Seeder
                 'tahap_riwayat' => 1,
                 'kategori' => 'Belanja Hibah',
                 'bulan' => 'Oktober',
-                'anggaran_digunakan' => 14231231,
+                'anggaran_digunakan' => 9231231,
                 'nomor_surat' => '10/SPP-LS/06/2022',
                 'user_id' => 'b45916f6-02aa-4285-a51e-1c2280f5a3d0',
                 'surat_penolakan' => NULL,
@@ -235,8 +235,8 @@ class SppLsTableSeeder extends Seeder
                 'created_at' => '2022-06-21 13:39:29',
                 'updated_at' => '2022-06-21 13:46:02',
             ),
-            9 => 
-            array (
+            9 =>
+            array(
                 'id' => 'f1e222f6-36ac-4fd2-84dc-74879438e9a8',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => '35d37341-1b52-41ca-811d-1eb53d045837',
@@ -259,8 +259,8 @@ class SppLsTableSeeder extends Seeder
                 'created_at' => '2022-06-21 13:30:48',
                 'updated_at' => '2022-06-21 13:46:20',
             ),
-            10 => 
-            array (
+            10 =>
+            array(
                 'id' => 'f56c4607-f7cd-47de-a788-739d63188fc5',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => '35d37341-1b52-41ca-811d-1eb53d045837',
@@ -283,8 +283,8 @@ class SppLsTableSeeder extends Seeder
                 'created_at' => '2022-06-21 13:34:28',
                 'updated_at' => '2022-06-21 13:46:14',
             ),
-            11 => 
-            array (
+            11 =>
+            array(
                 'id' => 'f78ea3c1-0cbb-4039-b580-ef53b4da0ae9',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => '35d37341-1b52-41ca-811d-1eb53d045837',
@@ -308,7 +308,5 @@ class SppLsTableSeeder extends Seeder
                 'updated_at' => '2022-06-21 13:46:29',
             ),
         ));
-        
-        
     }
 }

@@ -14,13 +14,13 @@ class SppGuTableSeeder extends Seeder
      */
     public function run()
     {
-        
+
 
         \DB::table('spp_gu')->delete();
-        
-        \DB::table('spp_gu')->insert(array (
-            0 => 
-            array (
+
+        \DB::table('spp_gu')->insert(array(
+            0 =>
+            array(
                 'id' => '1a9073f4-1730-4b65-a464-7d182c0105e7',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => 'b51519c5-d276-4fe2-a25c-644bf96205a9',
@@ -43,8 +43,8 @@ class SppGuTableSeeder extends Seeder
                 'created_at' => '2022-06-21 14:08:23',
                 'updated_at' => '2022-06-22 00:12:21',
             ),
-            1 => 
-            array (
+            1 =>
+            array(
                 'id' => '34aaab8c-7bdd-4d89-bf89-604b4bd2b966',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => 'b51519c5-d276-4fe2-a25c-644bf96205a9',
@@ -67,8 +67,8 @@ class SppGuTableSeeder extends Seeder
                 'created_at' => '2022-06-21 14:09:45',
                 'updated_at' => '2022-06-22 00:12:13',
             ),
-            2 => 
-            array (
+            2 =>
+            array(
                 'id' => '82d809a8-2655-4e90-87b1-15524001e902',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => 'b51519c5-d276-4fe2-a25c-644bf96205a9',
@@ -91,8 +91,8 @@ class SppGuTableSeeder extends Seeder
                 'created_at' => '2022-06-21 14:07:53',
                 'updated_at' => '2022-06-22 00:12:29',
             ),
-            3 => 
-            array (
+            3 =>
+            array(
                 'id' => '8f0f7187-a2dc-40bf-aa4b-b345fe0b2edd',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => 'b51519c5-d276-4fe2-a25c-644bf96205a9',
@@ -115,8 +115,8 @@ class SppGuTableSeeder extends Seeder
                 'created_at' => '2022-06-21 14:13:06',
                 'updated_at' => '2022-06-22 00:12:00',
             ),
-            4 => 
-            array (
+            4 =>
+            array(
                 'id' => '93ed1231-dd20-406a-99aa-88d511bbcfc3',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => 'b51519c5-d276-4fe2-a25c-644bf96205a9',
@@ -139,8 +139,8 @@ class SppGuTableSeeder extends Seeder
                 'created_at' => '2022-06-21 14:09:00',
                 'updated_at' => '2022-06-22 00:12:15',
             ),
-            5 => 
-            array (
+            5 =>
+            array(
                 'id' => '9659e288-f3a2-49c9-9d39-dcb1ef51dd22',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => 'b51519c5-d276-4fe2-a25c-644bf96205a9',
@@ -163,8 +163,8 @@ class SppGuTableSeeder extends Seeder
                 'created_at' => '2022-06-21 23:46:20',
                 'updated_at' => '2022-06-22 00:11:51',
             ),
-            6 => 
-            array (
+            6 =>
+            array(
                 'id' => 'a150b243-bf2b-4159-ac49-9e9034c13586',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => 'b51519c5-d276-4fe2-a25c-644bf96205a9',
@@ -187,8 +187,8 @@ class SppGuTableSeeder extends Seeder
                 'created_at' => '2022-06-21 14:10:51',
                 'updated_at' => '2022-06-22 00:12:10',
             ),
-            7 => 
-            array (
+            7 =>
+            array(
                 'id' => 'b8012402-9ebd-4956-a811-e3e038517a97',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => 'b51519c5-d276-4fe2-a25c-644bf96205a9',
@@ -211,15 +211,15 @@ class SppGuTableSeeder extends Seeder
                 'created_at' => '2022-06-21 14:11:42',
                 'updated_at' => '2022-06-22 00:12:07',
             ),
-            8 => 
-            array (
+            8 =>
+            array(
                 'id' => 'c5824fc2-134d-4dc6-9588-05d35f80383b',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => 'b51519c5-d276-4fe2-a25c-644bf96205a9',
                 'biro_organisasi_id' => '68c37c05-84a4-493b-9419-35cb6d10a319',
                 'tahap_riwayat' => 2,
                 'bulan' => 'Oktober',
-                'anggaran_digunakan' => 11000002122,
+                'anggaran_digunakan' => 8000002122,
                 'nomor_surat' => '10/SPP-GU/06/2022',
                 'user_id' => 'b45916f6-02aa-4285-a51e-1c2280f5a3d0',
                 'tahap' => 'Akhir',
@@ -235,15 +235,15 @@ class SppGuTableSeeder extends Seeder
                 'created_at' => '2022-06-21 23:44:55',
                 'updated_at' => '2022-06-22 00:11:54',
             ),
-            9 => 
-            array (
+            9 =>
+            array(
                 'id' => 'dc0e14bb-4a80-413e-a381-88f11df58112',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => 'b51519c5-d276-4fe2-a25c-644bf96205a9',
                 'biro_organisasi_id' => '68c37c05-84a4-493b-9419-35cb6d10a319',
                 'tahap_riwayat' => 2,
                 'bulan' => 'Desember',
-                'anggaran_digunakan' => 21560890870,
+                'anggaran_digunakan' => 11560890870,
                 'nomor_surat' => '12/SPP-GU/06/2022',
                 'user_id' => 'b45916f6-02aa-4285-a51e-1c2280f5a3d0',
                 'tahap' => 'Akhir',
@@ -259,8 +259,8 @@ class SppGuTableSeeder extends Seeder
                 'created_at' => '2022-06-21 23:47:09',
                 'updated_at' => '2022-06-22 00:11:49',
             ),
-            10 => 
-            array (
+            10 =>
+            array(
                 'id' => 'df6e1383-0ffd-423c-9e9b-af40616061c4',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => 'b51519c5-d276-4fe2-a25c-644bf96205a9',
@@ -283,8 +283,8 @@ class SppGuTableSeeder extends Seeder
                 'created_at' => '2022-06-21 14:12:17',
                 'updated_at' => '2022-06-22 00:12:05',
             ),
-            11 => 
-            array (
+            11 =>
+            array(
                 'id' => 'f2af10b1-bbf1-4618-a82a-bd4712fe0e62',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_id' => 'b51519c5-d276-4fe2-a25c-644bf96205a9',
@@ -308,7 +308,5 @@ class SppGuTableSeeder extends Seeder
                 'updated_at' => '2022-06-22 00:11:57',
             ),
         ));
-        
-        
     }
 }

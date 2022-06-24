@@ -19,7 +19,7 @@ class BiroOrganisasiController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = BiroOrganisasi::orderBy('created_at', 'asc')->get();
+            $data = BiroOrganisasi::orderBy('created_at', 'desc')->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
