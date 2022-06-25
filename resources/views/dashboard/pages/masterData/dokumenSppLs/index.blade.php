@@ -155,61 +155,81 @@
 
         $('#form-tambah').submit(function(e) {
             e.preventDefault();
-            if (aksiTambah == 'tambah') {
-                $.ajax({
-                    url: "{{ url('master-data/daftar-dokumen-spp-ls') }}",
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        if (response.status == 'success') {
-                            $('#modal-tambah').modal('hide');
-                            table.draw();
-                            swal("Berhasil", "Data Berhasil Tersimpan", {
-                                icon: "success",
-                                buttons: false,
-                                timer: 1000,
-                            });
-                            resetModal();
-                        } else {
-                            printErrorMsg(response.error);
-                        }
+            swal({
+                title: 'Apakah Anda Yakin ?',
+                icon: 'warning',
+                text: "Apakah Anda Yakin ?",
+                type: 'warning',
+                buttons: {
+                    confirm: {
+                        text: 'Ya',
+                        className: 'btn btn-success'
                     },
-                    error: function(response) {
-                        swal("Gagal", "Data Gagal Ditambahkan", {
-                            icon: "error",
-                            buttons: false,
-                            timer: 1000,
-                        });
+                    cancel: {
+                        visible: true,
+                        text: 'Batal',
+                        className: 'btn btn-danger'
                     }
-                })
-            } else {
-                $.ajax({
-                    url: "{{ url('master-data/daftar-dokumen-spp-ls') }}" + '/' + idEdit,
-                    type: 'PUT',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        if (response.status == 'success') {
-                            $('#modal-tambah').modal('hide');
-                            table.draw();
-                            swal("Berhasil", "Data Berhasil Diubah", {
-                                icon: "success",
-                                buttons: false,
-                                timer: 1000,
-                            });
-                            resetModal();
-                        } else {
-                            printErrorMsg(response.error);
-                        }
-                    },
-                    error: function(response) {
-                        swal("Gagal", "Data Gagal Diubah", {
-                            icon: "error",
-                            buttons: false,
-                            timer: 1000,
-                        });
+                }
+            }).then((Update) => {
+                if (Update) {
+                    if (aksiTambah == 'tambah') {
+                        $.ajax({
+                            url: "{{ url('master-data/daftar-dokumen-spp-ls') }}",
+                            type: 'POST',
+                            data: $(this).serialize(),
+                            success: function(response) {
+                                if (response.status == 'success') {
+                                    $('#modal-tambah').modal('hide');
+                                    table.draw();
+                                    swal("Berhasil", "Data Berhasil Tersimpan", {
+                                        icon: "success",
+                                        buttons: false,
+                                        timer: 1000,
+                                    });
+                                    resetModal();
+                                } else {
+                                    printErrorMsg(response.error);
+                                }
+                            },
+                            error: function(response) {
+                                swal("Gagal", "Data Gagal Ditambahkan", {
+                                    icon: "error",
+                                    buttons: false,
+                                    timer: 1000,
+                                });
+                            }
+                        })
+                    } else {
+                        $.ajax({
+                            url: "{{ url('master-data/daftar-dokumen-spp-ls') }}" + '/' + idEdit,
+                            type: 'PUT',
+                            data: $(this).serialize(),
+                            success: function(response) {
+                                if (response.status == 'success') {
+                                    $('#modal-tambah').modal('hide');
+                                    table.draw();
+                                    swal("Berhasil", "Data Berhasil Diubah", {
+                                        icon: "success",
+                                        buttons: false,
+                                        timer: 1000,
+                                    });
+                                    resetModal();
+                                } else {
+                                    printErrorMsg(response.error);
+                                }
+                            },
+                            error: function(response) {
+                                swal("Gagal", "Data Gagal Diubah", {
+                                    icon: "error",
+                                    buttons: false,
+                                    timer: 1000,
+                                });
+                            }
+                        })
                     }
-                })
-            }
+                }
+            });
         })
 
         $(document).on('click', '#btn-delete', function() {

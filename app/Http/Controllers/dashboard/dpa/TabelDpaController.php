@@ -192,8 +192,8 @@ class TabelDpaController extends Controller
                 'tahun' => 'required',
             ],
             [
-                'file_spd.required' => 'File SPD tidak boleh kosong',
-                'file_spd.mimes' => 'File SPD harus berformat .xlsx atau .xls',
+                'file_spd.required' => 'File DPA tidak boleh kosong',
+                'file_spd.mimes' => 'File DPA harus berformat .xlsx atau .xls',
                 'tahun.required' => 'Tahun tidak boleh kosong',
             ]
         );

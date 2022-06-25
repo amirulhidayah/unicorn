@@ -208,8 +208,8 @@
                                                 <div class="row">
                                                     <!-- <div class="d-flex border rounded shadow shadow-lg p-2 "> -->
                                                     <div class="col-3 d-flex align-items-center justify-content-center">
-                                                        <img src="{{ asset('assets/dashboard/img/pdf.png') }}" alt=""
-                                                            width="70px">
+                                                        <img src="{{ asset('assets/dashboard/img/pdf.png') }}"
+                                                            alt="" width="70px">
                                                     </div>
                                                     <div class="col-9">
                                                         <div class="mb-3 mt-2">
@@ -375,42 +375,64 @@
             formData.append('arrayDokumenHapus', JSON.stringify(arrayDokumenHapus));
             formData.append('arrayDokumenUpdate', JSON.stringify(arrayDokumenUpdate));
             formData.append('perbaiki', perbaiki);
-            $.ajax({
-                url: "{{ url('spp-ls/' . $sppLs->id) }}",
-                type: "POST",
-                data: formData,
-                async: false,
-                success: function(response) {
-                    if (response.status == "success") {
-                        swal("Berhasil",
-                            "Dokumen berhasil diubah", {
-                                button: false,
-                                icon: "success",
-                            });
-                        setTimeout(
-                            function() {
-                                $(location).attr('href', "{{ url('spp-ls') }}");
-                            }, 2000);
-                    } else {
-                        swal("Periksa Kembali Data Anda", {
-                            buttons: false,
-                            timer: 1500,
-                            icon: "warning",
-                        });
-                        printErrorMsg(response.error);
+
+            swal({
+                title: 'Apakah Anda Yakin ?',
+                icon: 'warning',
+                text: "Apakah Anda Yakin ?",
+                type: 'warning',
+                buttons: {
+                    confirm: {
+                        text: 'Ya',
+                        className: 'btn btn-success'
+                    },
+                    cancel: {
+                        visible: true,
+                        text: 'Batal',
+                        className: 'btn btn-danger'
                     }
-                },
-                error: function(response) {
-                    swal("Terjadi Kesalahan", {
-                        buttons: false,
-                        timer: 1500,
-                        icon: "warning",
+                }
+            }).then((Update) => {
+                if (Update) {
+                    $.ajax({
+                        url: "{{ url('spp-ls/' . $sppLs->id) }}",
+                        type: "POST",
+                        data: formData,
+                        async: false,
+                        success: function(response) {
+                            if (response.status == "success") {
+                                swal("Berhasil",
+                                    "Dokumen berhasil diubah", {
+                                        button: false,
+                                        icon: "success",
+                                    });
+                                setTimeout(
+                                    function() {
+                                        $(location).attr('href', "{{ url('spp-ls') }}");
+                                    }, 2000);
+                            } else {
+                                swal("Periksa Kembali Data Anda", {
+                                    buttons: false,
+                                    timer: 1500,
+                                    icon: "warning",
+                                });
+                                printErrorMsg(response.error);
+                            }
+                        },
+                        error: function(response) {
+                            swal("Terjadi Kesalahan", {
+                                buttons: false,
+                                timer: 1500,
+                                icon: "warning",
+                            });
+                        },
+                        cache: false,
+                        contentType: false,
+                        processData: false
                     });
-                },
-                cache: false,
-                contentType: false,
-                processData: false
+                }
             });
+
         })
 
         $('#anggaran_digunakan').keyup(function() {

@@ -323,103 +323,146 @@
         $('#form-import').submit(function(e) {
             e.preventDefault();
             var formData = new FormData(this);
-            $.ajax({
-                url: "{{ url('tabel-dpa/import') }}",
-                type: 'POST',
-                data: formData,
-                cache: false,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    if (response.status == 'success') {
-                        $('#modal-import').modal('hide');
-                        swal("Berhasil", "Data Berhasil Diimport", {
-                            icon: "success",
-                            buttons: false,
-                            timer: 1000,
-                        });
-                        window.location.replace("{{ url('/tabel-dpa') }}");
-                    } else {
-                        printErrorMsg(response.error);
+
+            swal({
+                title: 'Apakah Anda Yakin ?',
+                icon: 'warning',
+                text: "Apakah Anda Yakin ?",
+                type: 'warning',
+                buttons: {
+                    confirm: {
+                        text: 'Ya',
+                        className: 'btn btn-success'
+                    },
+                    cancel: {
+                        visible: true,
+                        text: 'Batal',
+                        className: 'btn btn-danger'
                     }
-                },
-                error: function(response) {
-                    swal("Gagal", "Data Gagal Ditambahkan", {
-                        icon: "error",
-                        buttons: false,
-                        timer: 1000,
-                    });
                 }
-            })
+            }).then((Update) => {
+                if (Update) {
+                    $.ajax({
+                        url: "{{ url('tabel-dpa/import') }}",
+                        type: 'POST',
+                        data: formData,
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            if (response.status == 'success') {
+                                $('#modal-import').modal('hide');
+                                swal("Berhasil", "Data Berhasil Di import", {
+                                    icon: "success",
+                                    buttons: false,
+                                    timer: 1000,
+                                });
+                                window.location.replace("{{ url('/tabel-dpa') }}");
+                            } else {
+                                printErrorMsg(response.error);
+                            }
+                        },
+                        error: function(response) {
+                            swal("Gagal", "Data Gagal Ditambahkan", {
+                                icon: "error",
+                                buttons: false,
+                                timer: 1000,
+                            });
+                        }
+                    })
+                }
+            });
         })
 
         $('#form-tambah').submit(function(e) {
             e.preventDefault();
-            if (aksiTambah == 'tambah') {
-                $.ajax({
-                    url: "{{ url('/tabel-dpa') }}",
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        if (response.status == 'success') {
-                            $('#modal-tambah').modal('hide');
-                            tabelSpd();
-                            swal("Berhasil", "Data Berhasil Tersimpan", {
-                                icon: "success",
-                                buttons: false,
-                                timer: 1000,
-                            });
-                        } else if (response.status == 'unique') {
-                            swal("Gagal", "Data DPA Sudah Ada", {
-                                icon: "error",
-                                buttons: false,
-                                timer: 1000,
-                            });
-                        } else {
-                            printErrorMsg(response.error);
-                        }
+            swal({
+                title: 'Apakah Anda Yakin ?',
+                icon: 'warning',
+                text: "Apakah Anda Yakin ?",
+                type: 'warning',
+                buttons: {
+                    confirm: {
+                        text: 'Ya',
+                        className: 'btn btn-success'
                     },
-                    error: function(response) {
-                        swal("Gagal", "Data Gagal Ditambahkan", {
-                            icon: "error",
-                            buttons: false,
-                            timer: 1000,
-                        });
+                    cancel: {
+                        visible: true,
+                        text: 'Batal',
+                        className: 'btn btn-danger'
                     }
-                })
-            } else {
-                $.ajax({
-                    url: "{{ url('/tabel-dpa') }}" + '/' + idEdit,
-                    type: 'PUT',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        if (response.status == 'success') {
-                            $('#modal-tambah').modal('hide');
-                            tabelSpd();
-                            swal("Berhasil", "Data Berhasil Diubah", {
-                                icon: "success",
-                                buttons: false,
-                                timer: 1000,
-                            });
-                        } else if (response.status == 'unique') {
-                            swal("Gagal", "Data DPA Sudah Ada", {
-                                icon: "error",
-                                buttons: false,
-                                timer: 1000,
-                            });
-                        } else {
-                            printErrorMsg(response.error);
-                        }
-                    },
-                    error: function(response) {
-                        swal("Gagal", "Data Gagal Diubah", {
-                            icon: "error",
-                            buttons: false,
-                            timer: 1000,
-                        });
+                }
+            }).then((Update) => {
+                if (Update) {
+                    if (aksiTambah == 'tambah') {
+                        $.ajax({
+                            url: "{{ url('/tabel-dpa') }}",
+                            type: 'POST',
+                            data: $(this).serialize(),
+                            success: function(response) {
+                                if (response.status == 'success') {
+                                    $('#modal-tambah').modal('hide');
+                                    tabelSpd();
+                                    swal("Berhasil", "Data Berhasil Tersimpan", {
+                                        icon: "success",
+                                        buttons: false,
+                                        timer: 1000,
+                                    });
+                                } else if (response.status == 'unique') {
+                                    swal("Gagal", "Data DPA Sudah Ada", {
+                                        icon: "error",
+                                        buttons: false,
+                                        timer: 1000,
+                                    });
+                                } else {
+                                    printErrorMsg(response.error);
+                                }
+                            },
+                            error: function(response) {
+                                swal("Gagal", "Data Gagal Ditambahkan", {
+                                    icon: "error",
+                                    buttons: false,
+                                    timer: 1000,
+                                });
+                            }
+                        })
+                    } else {
+                        $.ajax({
+                            url: "{{ url('/tabel-dpa') }}" + '/' + idEdit,
+                            type: 'PUT',
+                            data: $(this).serialize(),
+                            success: function(response) {
+                                if (response.status == 'success') {
+                                    $('#modal-tambah').modal('hide');
+                                    tabelSpd();
+                                    swal("Berhasil", "Data Berhasil Diubah", {
+                                        icon: "success",
+                                        buttons: false,
+                                        timer: 1000,
+                                    });
+                                } else if (response.status == 'unique') {
+                                    swal("Gagal", "Data DPA Sudah Ada", {
+                                        icon: "error",
+                                        buttons: false,
+                                        timer: 1000,
+                                    });
+                                } else {
+                                    printErrorMsg(response.error);
+                                }
+                            },
+                            error: function(response) {
+                                swal("Gagal", "Data Gagal Diubah", {
+                                    icon: "error",
+                                    buttons: false,
+                                    timer: 1000,
+                                });
+                            }
+                        })
                     }
-                })
-            }
+                }
+            });
+
+
         })
     </script>
 

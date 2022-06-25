@@ -211,34 +211,66 @@
         $('#form-ubah').submit(function(e) {
             e.preventDefault();
             var formData = new FormData(this);
-            $.ajax({
-                type: "POST",
-                url: "{{ url('/profil/' . Auth::user()->id) }}",
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                data: formData,
-                cache: false,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    if (response.status == 'success') {
-                        swal("Berhasil", "Profil Berhasil Disimpan", {
-                            icon: "success",
-                            buttons: false,
-                            timer: 1000,
-                        }).then(function() {
-                            window.location.href =
-                                "{{ url('/logout') }}";
-                        })
-                    } else {
-                        printErrorMsg(response.error);
+
+            swal({
+                title: 'Apakah Anda Yakin ?',
+                icon: 'warning',
+                text: "Apakah Anda Yakin ?",
+                type: 'warning',
+                buttons: {
+                    confirm: {
+                        text: 'Ya',
+                        className: 'btn btn-success'
+                    },
+                    cancel: {
+                        visible: true,
+                        text: 'Batal',
+                        className: 'btn btn-danger'
                     }
-                },
-                error: function(response) {
-                    alert(response.responseJSON.message)
-                },
+                }
+            }).then((Update) => {
+                if (Update) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('/profil/' . Auth::user()->id) }}",
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        data: formData,
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            if (response.status == 'success') {
+                                swal("Berhasil", "Profil Berhasil Disimpan", {
+                                    icon: "success",
+                                    buttons: false,
+                                    timer: 1000,
+                                }).then(function() {
+                                    window.location.href =
+                                        "{{ url('/logout') }}";
+                                })
+                            } else {
+                                swal("Periksa Kembali Data Anda", {
+                                    buttons: false,
+                                    timer: 1500,
+                                    icon: "warning",
+                                });
+                                printErrorMsg(response.error);
+                            }
+                        },
+                        error: function(response) {
+                            swal("Gagal", "Terjadi Kesalahan", {
+                                icon: "error",
+                                buttons: false,
+                                timer: 1000,
+                            });
+                            alert(response.responseJSON.message)
+                        },
+                    });
+                }
             });
+
         });
 
         $("#foto").change(function(event) {

@@ -149,7 +149,7 @@ class SppGuController extends Controller
 
 
                     if (Auth::user()->role == "ASN Sub Bagian Keuangan") {
-                        if ((Auth::user()->role == "ASN Sub Bagian Keuangan" && $row->status_validasi_asn == 0)) {
+                        if ((Auth::user()->role == "ASN Sub Bagian Keuangan" && $row->status_validasi_asn == 0 && Auth::user()->is_aktif  == 1)) {
                             $actionBtn .= '<a class="btn btn-primary text-light btn-sm mr-1" href="' . url('spp-gu/' . $row->id) . '"><i class="far fa-check-circle"></i> Proses</a>';
                         } else {
                             $actionBtn .= '<a class="btn btn-primary text-light btn-sm mr-1 " href="' . url('spp-gu/' . $row->id) . '"><i class="fas fa-eye"></i> Lihat</a>';
@@ -157,10 +157,10 @@ class SppGuController extends Controller
                     }
 
                     if ((Auth::user()->role == "PPK")) {
-                        if ($row->status_validasi_ppk == 0) {
+                        if ($row->status_validasi_ppk == 0 && Auth::user()->is_aktif  == 1) {
                             $actionBtn .= '<a class="btn btn-primary text-light btn-sm mr-1" href="' . url('spp-gu/' . $row->id) . '"><i class="far fa-check-circle"></i> Proses</a>';
                         } else {
-                            if (($row->status_validasi_ppk == 1) && ($row->status_validasi_akhir == 0) && ($row->tahap == "Akhir") && ($row->status_validasi_asn == 1)) {
+                            if (($row->status_validasi_ppk == 1) && ($row->status_validasi_akhir == 0) && ($row->tahap == "Akhir") && ($row->status_validasi_asn == 1) && (Auth::user()->is_aktif  == 1)) {
                                 $actionBtn .= '<button id="btn-verifikasi" class="btn btn-success btn-sm mr-1" value="' . $row->id . '" > <i class="far fa-check-circle"></i> Selesai</button>';
                             }
                             $actionBtn .= '<a class="btn btn-primary text-light btn-sm mr-1" href="' . url('spp-gu/' . $row->id) . '"><i class="fas fa-eye"></i> Lihat</a>';

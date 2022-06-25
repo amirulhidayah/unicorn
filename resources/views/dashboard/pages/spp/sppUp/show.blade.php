@@ -37,7 +37,7 @@
                     <div class="card-head-row">
                         <div class="card-title">Daftar Dokumen</div>
                         <div class="card-tools">
-                            @if ((Auth::user()->role == 'PPK' && $sppUp->status_validasi_ppk == 0) || ($sppUp->status_validasi_asn == 0 && Auth::user()->role == 'ASN Sub Bagian Keuangan'))
+                            @if ((Auth::user()->role == 'PPK' && $sppUp->status_validasi_ppk == 0 && Auth::user()->is_aktif == 1) || ($sppUp->status_validasi_asn == 0 && Auth::user()->role == 'ASN Sub Bagian Keuangan' && Auth::user()->is_aktif == 1))
                                 @component('dashboard.components.buttons.verifikasi',
                                     [
                                         'id' => 'btn-verifikasi',
@@ -131,39 +131,62 @@
             }
         })
 
+
         $('#form-validasi').submit(function(e) {
             e.preventDefault();
-            $.ajax({
-                type: 'PUT',
-                url: "{{ url('spp-up/verifikasi/' . $sppUp->id) }}",
-                data: $(this).serialize(),
-                success: function(response) {
-                    if (response.status == 'success') {
-                        $('#modal-verifikasi').modal('hide');
-                        swal("Berhasil", "Data Berhasil Disimpan", {
-                            icon: "success",
-                            buttons: false,
-                            timer: 1000,
-                        }).then(function() {
-                            window.location.href =
-                                "{{ url('spp-up') }}";
-                        })
-                    } else {
-                        printErrorMsg(response.error);
+
+            swal({
+                title: 'Apakah Anda Yakin ?',
+                icon: 'warning',
+                text: "Apakah Anda Yakin ?",
+                type: 'warning',
+                buttons: {
+                    confirm: {
+                        text: 'Ya',
+                        className: 'btn btn-success'
+                    },
+                    cancel: {
+                        visible: true,
+                        text: 'Batal',
+                        className: 'btn btn-danger'
                     }
-                },
-                error: function(response) {
-                    swal({
-                        title: 'Gagal',
-                        text: 'Terjadi kesalahan saat memproses data',
-                        type: 'error',
-                        showCancelButton: false,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'OK'
+                }
+            }).then((Update) => {
+                if (Update) {
+                    $.ajax({
+                        type: 'PUT',
+                        url: "{{ url('spp-up/verifikasi/' . $sppUp->id) }}",
+                        data: $(this).serialize(),
+                        success: function(response) {
+                            if (response.status == 'success') {
+                                $('#modal-verifikasi').modal('hide');
+                                swal("Berhasil", "Data Berhasil Disimpan", {
+                                    icon: "success",
+                                    buttons: false,
+                                    timer: 1000,
+                                }).then(function() {
+                                    window.location.href =
+                                        "{{ url('spp-up') }}";
+                                })
+                            } else {
+                                printErrorMsg(response.error);
+                            }
+                        },
+                        error: function(response) {
+                            swal({
+                                title: 'Gagal',
+                                text: 'Terjadi kesalahan saat memproses data',
+                                type: 'error',
+                                showCancelButton: false,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'OK'
+                            })
+                        }
                     })
                 }
-            })
+            });
+
         })
     </script>
 

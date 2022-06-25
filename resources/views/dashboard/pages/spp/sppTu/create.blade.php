@@ -501,41 +501,61 @@
             }
 
             var formData = new FormData($(this)[0]);
-            $.ajax({
-                url: "{{ url('spp-tu') }}",
-                type: "POST",
-                data: formData,
-                async: false,
-                success: function(response) {
-                    if (response.status == "success") {
-                        swal("Berhasil",
-                            "Dokumen berhasil ditambahkan", {
-                                button: false,
-                                icon: "success",
-                            });
-                        setTimeout(
-                            function() {
-                                $(location).attr('href', "{{ url('spp-tu') }}");
-                            }, 2000);
-                    } else {
-                        swal("Periksa Kembali Data Anda", {
-                            buttons: false,
-                            timer: 1500,
-                            icon: "warning",
-                        });
-                        printErrorMsg(response.error);
+            swal({
+                title: 'Apakah Anda Yakin ?',
+                icon: 'warning',
+                text: "Apakah Anda Yakin ?",
+                type: 'warning',
+                buttons: {
+                    confirm: {
+                        text: 'Ya',
+                        className: 'btn btn-success'
+                    },
+                    cancel: {
+                        visible: true,
+                        text: 'Batal',
+                        className: 'btn btn-danger'
                     }
-                },
-                error: function(response) {
-                    swal("Gagal", "Terjadi Kesalahan", {
-                        icon: "error",
-                        buttons: false,
-                        timer: 1000,
+                }
+            }).then((Update) => {
+                if (Update) {
+                    $.ajax({
+                        url: "{{ url('spp-tu') }}",
+                        type: "POST",
+                        data: formData,
+                        async: false,
+                        success: function(response) {
+                            if (response.status == "success") {
+                                swal("Berhasil",
+                                    "Dokumen berhasil ditambahkan", {
+                                        button: false,
+                                        icon: "success",
+                                    });
+                                setTimeout(
+                                    function() {
+                                        $(location).attr('href', "{{ url('spp-tu') }}");
+                                    }, 2000);
+                            } else {
+                                swal("Periksa Kembali Data Anda", {
+                                    buttons: false,
+                                    timer: 1500,
+                                    icon: "warning",
+                                });
+                                printErrorMsg(response.error);
+                            }
+                        },
+                        error: function(response) {
+                            swal("Gagal", "Terjadi Kesalahan", {
+                                icon: "error",
+                                buttons: false,
+                                timer: 1000,
+                            });
+                        },
+                        cache: false,
+                        contentType: false,
+                        processData: false
                     });
-                },
-                cache: false,
-                contentType: false,
-                processData: false
+                }
             });
         })
 

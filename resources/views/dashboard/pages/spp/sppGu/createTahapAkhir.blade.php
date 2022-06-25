@@ -304,34 +304,55 @@
             }
 
             var formData = new FormData($(this)[0]);
-            $.ajax({
-                url: "{{ url('spp-gu/' . $sppGu->id) }}",
-                type: "POST",
-                data: formData,
-                async: false,
-                success: function(response) {
-                    if (response.status == "success") {
-                        swal("Berhasil",
-                            "Dokumen berhasil ditambahkan", {
-                                button: false,
-                                icon: "success",
-                            });
-                        setTimeout(
-                            function() {
-                                $(location).attr('href', "{{ url('spp-gu') }}");
-                            }, 2000);
-                    } else {
-                        swal("Periksa Kembali Data Anda", {
-                            buttons: false,
-                            timer: 1500,
-                            icon: "warning",
-                        });
-                        printErrorMsg(response.error);
+
+            swal({
+                title: 'Apakah Anda Yakin ?',
+                icon: 'warning',
+                text: "Apakah Anda Yakin ?",
+                type: 'warning',
+                buttons: {
+                    confirm: {
+                        text: 'Ya',
+                        className: 'btn btn-success'
+                    },
+                    cancel: {
+                        visible: true,
+                        text: 'Batal',
+                        className: 'btn btn-danger'
                     }
-                },
-                cache: false,
-                contentType: false,
-                processData: false
+                }
+            }).then((Update) => {
+                if (Update) {
+                    $.ajax({
+                        url: "{{ url('spp-gu/' . $sppGu->id) }}",
+                        type: "POST",
+                        data: formData,
+                        async: false,
+                        success: function(response) {
+                            if (response.status == "success") {
+                                swal("Berhasil",
+                                    "Dokumen berhasil ditambahkan", {
+                                        button: false,
+                                        icon: "success",
+                                    });
+                                setTimeout(
+                                    function() {
+                                        $(location).attr('href', "{{ url('spp-gu') }}");
+                                    }, 2000);
+                            } else {
+                                swal("Periksa Kembali Data Anda", {
+                                    buttons: false,
+                                    timer: 1500,
+                                    icon: "warning",
+                                });
+                                printErrorMsg(response.error);
+                            }
+                        },
+                        cache: false,
+                        contentType: false,
+                        processData: false
+                    });
+                }
             });
         })
 
