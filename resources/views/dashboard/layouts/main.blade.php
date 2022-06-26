@@ -270,7 +270,7 @@
 
     <script src="{{ asset('assets/dashboard') }}/datatables/dataTables.buttons.min.js"></script>
     <script src="{{ asset('assets/dashboard') }}/datatables/jszip.min.js"></script>
-    <script src="{{ asset('assets/dashboard') }}/datatables/vfs_fonts.js"></script>
+    {{-- <script src="{{ asset('assets/dashboard') }}/datatables/vfs_fonts.js"></script> --}}
     <script src="{{ asset('assets/dashboard') }}/datatables/buttons.html5.min.js"></script>
     <script src="{{ asset('assets/dashboard') }}/datatables/buttons.print.min.js"></script>
     <script src="{{ asset('assets/dashboard') }}/datatables/buttons.colVis.min.js"></script>
