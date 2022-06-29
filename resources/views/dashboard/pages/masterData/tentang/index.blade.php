@@ -44,9 +44,10 @@
                     <form id="form-tambah" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
-                        <textarea id="summernote" name="isi">{!! $tentang->isi !!}</textarea>
+                        <textarea id="editor" name="isi">{!! $tentang->isi !!}</textarea>
                         <span class="text-danger error-text isi-error"></span>
-                        <button type="submit" class="btn btn-success col-12"><i class="fas fa-save"></i> Simpan</button>
+                        <button type="submit" class="btn btn-success col-12 mt-3"><i class="fas fa-save"></i>
+                            Simpan</button>
                     </form>
                 </div>
             </div>
@@ -55,26 +56,24 @@
 @endsection
 
 @push('script')
+    <script src="//cdn.ckeditor.com/4.6.2/standard/ckeditor.js"></script>
     <script>
-        $('#summernote').summernote({
-            placeholder: 'Masukkan Tentang',
-            fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
-            tabsize: 2,
-            height: 400,
-            toolbar: [
-                // [groupName, [list of button]]
-                ['style', ['style', 'bold', 'italic', 'underline', 'clear']],
-                ['font', ['strikethrough', 'superscript', 'subscript']],
-                ['fontsize', ['fontsize']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['height', ['height']],
-                ['media', ['picture', 'link']]
-            ]
-        });
-
+        var options = {
+            filebrowserImageBrowseUrl: '/laravel-filemanager?type=Images',
+            filebrowserImageUploadUrl: '/laravel-filemanager/upload?type=Images&_token=',
+            filebrowserBrowseUrl: '/laravel-filemanager?type=Files',
+            filebrowserUploadUrl: '/laravel-filemanager/upload?type=Files&_token=',
+            height: 500,
+            // extraPlugins: 'justify',
+        };
+    </script>
+    <script>
+        CKEDITOR.replace('editor', options);
+    </script>
+    <script>
         $('#form-tambah').submit(function(e) {
             e.preventDefault();
+            submitCkEditor();
             swal({
                 title: 'Apakah Anda Yakin ?',
                 icon: 'warning',
@@ -131,5 +130,11 @@
         $(document).ready(function() {
             $('#master-tentang').addClass('active');
         })
+
+        function submitCkEditor() {
+            for (var i in CKEDITOR.instances) {
+                CKEDITOR.instances[i].updateElement();
+            }
+        }
     </script>
 @endpush

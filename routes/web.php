@@ -215,6 +215,10 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/master-data/tentang', [TentangController::class, 'index']);
     Route::put('/master-data/tentang/{tentang}', [TentangController::class, 'update']);
+
+    Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {
+        \UniSharp\LaravelFilemanager\Lfm::routes();
+    });
 });
 
 

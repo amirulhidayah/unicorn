@@ -24,6 +24,13 @@
         #isi_tentang {
             font-family: 'Nunito', sans-serif;
         }
+
+        #isi_tentang img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 50%;
+        }
     </style>
     <!-- Title -->
     <title>E-VAKU</title>
