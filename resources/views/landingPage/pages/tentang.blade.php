@@ -105,6 +105,9 @@
     </footer>
 
     <!-- JAVASCRIPT -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <!-- Map JS -->
     <script src='https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.js'></script>
 
@@ -113,6 +116,10 @@
 
     <!-- Theme JS -->
     <script src="{{ asset('assets/landingPage') }}/js/theme.bundle.js"></script>
+
+    <script>
+        $("#isi_tentang img").addClass("img-fluid");
+    </script>
 
 </body>
 
