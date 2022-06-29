@@ -45,12 +45,15 @@
                     <i class="fe fe-x"></i>
                 </button>
                 <!-- Button -->
+                <a href="{{ url('/tentang') }}" class="navbar-btn btn btn-sm btn-secondary ms-auto me-2">
+                    <span class="fe fe-info d-none d-md-inline p-0 m-0"></span> Tentang
+                </a>
                 @auth
-                    <a href="{{ url('/dashboard') }}" class="navbar-btn btn btn-sm btn-success lift ms-auto">
-                        <span class="fe fe-monitor d-none d-md-inline p-0 m-0"></span> Beranda
+                    <a href="{{ url('/dashboard') }}" class="navbar-btn btn btn-sm btn-success lift">
+                        <span class="fe fe-monitor d-none d-md-inline p-0 m-0"></span> Dashboard
                     </a>
                 @else
-                    <a href="{{ url('/login') }}" class="navbar-btn btn btn-sm btn-success lift ms-auto">
+                    <a href="{{ url('/login') }}" class="navbar-btn btn btn-sm btn-success lift">
                         <span class="fe fe-log-in d-none d-md-inline p-0 m-0"></span> Masuk
                     </a>
                 @endauth
@@ -87,13 +90,13 @@
                     <h1 class="display-3 text-center text-md-start mb-2">
                         Selamat Datang di Aplikasi <span class="text-success">E-VAKU</span>
                     </h1>
-                    <span class="text-success mb-5" style="font-size: 22px">(Elektronik Verifikasi Pertanggung Jawaban
+                    <span class="text-success mb-5" style="font-size: 22px">(Elektronik Verifikasi Pertanggungjawaban
                         Keuangan)</span>
 
                     <div class="text-center text-md-start mt-4">
                         @auth
                             <a href="{{ url('/dashboard') }}" class="btn btn-success shadow lift me-1">
-                                <span class="fe fe-monitor d-none d-md-inline p-0 m-0"></span> Beranda
+                                <span class="fe fe-monitor d-none d-md-inline p-0 m-0"></span> Dashboard
                             </a>
                         @else
                             <a href="{{ url('login') }}" class="btn btn-success shadow lift me-1">

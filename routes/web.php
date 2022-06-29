@@ -15,6 +15,7 @@ use App\Http\Controllers\dashboard\masterData\KegiatanSppController;
 use App\Http\Controllers\dashboard\masterData\ProgramDpaController;
 use App\Http\Controllers\dashboard\masterData\ProgramSppController;
 use App\Http\Controllers\dashboard\masterData\TahunController;
+use App\Http\Controllers\dashboard\masterData\TentangController;
 use App\Http\Controllers\dashboard\spd\SpdController;
 use App\Http\Controllers\dashboard\spp\SppGuController;
 use App\Http\Controllers\dashboard\spp\SppLsController;
@@ -41,6 +42,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [LandingController::class, 'index']);
+Route::get('/tentang', [LandingController::class, 'tentang']);
 // Master Data
 Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['role:Admin']], function () {
@@ -210,6 +212,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
     // Route::get('/dokumen_spp_gu/{dokumen}', [FileController::class, 'dokumenSppGu']);
+
+    Route::get('/master-data/tentang', [TentangController::class, 'index']);
+    Route::put('/master-data/tentang/{tentang}', [TentangController::class, 'update']);
 });
 
 

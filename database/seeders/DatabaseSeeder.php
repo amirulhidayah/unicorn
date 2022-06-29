@@ -68,5 +68,6 @@ class DatabaseSeeder extends Seeder
         $this->call(SppGuTableSeeder::class);
         $this->call(RiwayatSppGuTableSeeder::class);
         $this->call(DokumenSppGuTableSeeder::class);
+        $this->call(TentangSeeder::class);
     }
 }

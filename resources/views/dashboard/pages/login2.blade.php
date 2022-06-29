@@ -197,7 +197,7 @@
                 <form action="{{ url('/login') }}" method="POST">
                     @csrf
                     <h3 class="text-center mb-2">Masuk Ke E-VAKU</h3>
-                    <p class="mt-0 text-center">Elektronik Verifikasi Pertanggung Jawaban Keuangan</p>
+                    <p class="mt-0 text-center">Elektronik Verifikasi Pertanggungjawaban Keuangan</p>
                     @if (session('error'))
                         <div class="ml-2 span text-danger">
                             {{ session('error') }}

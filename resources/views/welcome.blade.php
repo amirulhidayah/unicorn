@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.main')
 
 @section('title')
-    Dashboard
+    Tentang
 @endsection
 
 @push('style')
@@ -18,13 +18,13 @@
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">Pages</a>
+            <p>Master Data</p>
         </li>
         <li class="separator">
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">Starter Page</a>
+            <p>Tentang</p>
         </li>
     </ul>
 @endsection
@@ -37,10 +37,11 @@
                     <div class="card-head-row">
                         <div class="card-title">User Statistics</div>
                         <div class="card-tools">
-                            @component('dashboard.components.buttons.add', [
-                                'id' => 'catatan-anc',
-                                'class' => '',
-                                'url' => '/anc/create',
+                            @component('dashboard.components.buttons.add',
+                                [
+                                    'id' => 'catatan-anc',
+                                    'class' => '',
+                                    'url' => '/anc/create',
                                 ])
                             @endcomponent
                         </div>
@@ -58,19 +59,22 @@
 
 
 
-    @component('dashboard.components.buttons.submit', [
-        'label' => 'Simpan',
+    @component('dashboard.components.buttons.submit',
+        [
+            'label' => 'Simpan',
         ])
     @endcomponent
 
-    @component('dashboard.components.buttons.process', [
-        'id' => 'proses-anc',
-        'type' => 'submit',
+    @component('dashboard.components.buttons.process',
+        [
+            'id' => 'proses-anc',
+            'type' => 'submit',
         ])
     @endcomponent
 
-    @component('dashboard.components.buttons.edit', [
-        'id' => 'modal-btn-ubah',
+    @component('dashboard.components.buttons.edit',
+        [
+            'id' => 'modal-btn-ubah',
         ])
     @endcomponent
 @endsection

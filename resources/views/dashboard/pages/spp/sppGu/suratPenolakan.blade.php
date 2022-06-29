@@ -76,12 +76,12 @@
             </td>
             <td width="5%">
                 <p>&nbsp;</p>
-                <p>Jumlah</p>
+                <p>&nbsp;</p>
                 <p>Jumlah</p>
             </td>
             <td width="25%">
                 <p>&nbsp;</p>
-                <p> : Rp. {{ number_format($spd->jumlah_anggaran, 0, ',', '.') }}</p>
+                <p>&nbsp;</p>
                 <p> : Rp. {{ number_format($riwayatSppGu->anggaran_digunakan, 0, ',', '.') }}</p>
             </td>
         </tr>

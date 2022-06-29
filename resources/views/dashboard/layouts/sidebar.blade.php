@@ -140,6 +140,12 @@
                             </ul>
                         </div>
                     </li>
+                    <li class="nav-item" id="master-tentang">
+                        <a href="{{ url('/master-data/tentang') }}">
+                            <i class="fas fa-info-circle"></i>
+                            <p>Tentang</p>
+                        </a>
+                    </li>
                 @endif
             </ul>
         </div>
