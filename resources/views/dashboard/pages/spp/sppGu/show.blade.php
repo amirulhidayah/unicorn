@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.main')
 
 @section('title')
-    SPP LS
+    SPP GU
 @endsection
 
 @push('style')
@@ -24,7 +24,7 @@
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">SPP LS</a>
+            <a href="#">SPP GU</a>
         </li>
     </ul>
 @endsection
