@@ -69,7 +69,7 @@ class AkunController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'email' => 'email|required|unique:users',
+                'email' => ['email', 'required', Rule::unique('users')->withoutTrashed()],
                 'password' => 'required|min:6',
                 'role' => 'required',
                 'nama' => 'required',
@@ -172,7 +172,7 @@ class AkunController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
+                'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)->withoutTrashed()],
                 'password' => $request->password ? 'required|min:6' : 'nullable',
                 'role' => 'required',
                 'nama' => 'required',
@@ -267,6 +267,10 @@ class AkunController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        $user->delete();
+
+        Profil::where('user_id', $user->id)->delete();
+
+        return response()->json(['status' => 'success']);
     }
 }

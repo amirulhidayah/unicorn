@@ -25,6 +25,7 @@ class CreateProfilTable extends Migration
             $table->text('tanda_tangan');
             $table->uuid('biro_organisasi_id')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

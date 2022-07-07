@@ -11,6 +11,7 @@ class Profil extends Model
 {
     use HasFactory;
     use TraitUuid;
+    use SoftDeletes;
     protected $table = 'profil';
 
     public function biroOrganisasi()
