@@ -216,7 +216,7 @@ class TabelDpaController extends Controller
         $kegiatan = $request->kegiatan;
         $bulan = $request->bulan;
 
-        $biroOrganisasi = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->biro_organisasi_id : Auth::user()->profil->biro_organisasi_id;
+        $biroOrganisasi = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->biro_organisasi : Auth::user()->profil->biro_organisasi_id;
 
         $spd = Spd::where('kegiatan_id', $kegiatan)->where('biro_organisasi_id', $biroOrganisasi)->where('tahun_id', $tahun)->first();
 
@@ -279,7 +279,7 @@ class TabelDpaController extends Controller
         $jumlahAnggaran = ($spd->jumlah_anggaran - $totalSpp);
 
         return response()->json([
-            'jumlah_anggaran' => $jumlahAnggaran
+            'jumlah_anggaran' => $jumlahAnggaran,
         ]);
     }
 
