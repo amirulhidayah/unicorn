@@ -17,6 +17,6 @@ class KegiatanSpp extends Model
 
     public function program()
     {
-        return $this->belongsTo(ProgramSpp::class, 'program_spp_id', 'id');
+        return $this->belongsTo(ProgramSpp::class, 'program_spp_id', 'id')->withTrashed();
     }
 }

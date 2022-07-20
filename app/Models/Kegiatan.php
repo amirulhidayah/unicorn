@@ -17,11 +17,11 @@ class Kegiatan extends Model
 
     public function spd()
     {
-        return $this->hasMany(Spd::class, 'kegiatan_id');
+        return $this->hasMany(Spd::class, 'kegiatan_id')->withTrashed();
     }
 
     public function program()
     {
-        return $this->belongsTo(Program::class, 'program_id');
+        return $this->belongsTo(Program::class, 'program_id')->withTrashed();
     }
 }
