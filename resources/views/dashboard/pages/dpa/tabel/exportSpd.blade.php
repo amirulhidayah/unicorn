@@ -4,14 +4,17 @@
                 <th scope="col" rowspan="2" align="center"
                     style="vertical-align: center;border: 1px solid black;font-weight : bold">No.</th>
                 <th scope="col" rowspan="2" align="center"
-                    style="vertical-align: center;border: 1px solid black;font-weight : bold" width="60">NAMA SUB OPD,
+                    style="vertical-align: center;border: 1px solid black;font-weight : bold" width="60">NAMA SUB
+                    OPD,
                     PROGRAM DAN
                     KEGIATAN</th>
                 <th scope="col" rowspan="2" align="center"
-                    style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">NO. REK. KEG.
+                    style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">NO. REK.
+                    KEG.
                     SKPD</th>
                 <th scope="col" rowspan="2" align="center"
-                    style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">Jumlah Anggaran
+                    style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">Jumlah
+                    Anggaran
                 </th>
                 <th scope="col" colspan="2" align="center"
                     style="vertical-align: center;border: 1px solid black;font-weight : bold">Januari</th>
@@ -39,76 +42,100 @@
                     style="vertical-align: center;border: 1px solid black;font-weight : bold">Desember</th>
             </tr>
             <tr align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold">
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Anggaran Digunakan
                 </td>
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Sisa Anggaran
                 </td>
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Anggaran Digunakan
                 </td>
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Sisa Anggaran
                 </td>
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Anggaran Digunakan
                 </td>
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Sisa Anggaran
                 </td>
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Anggaran Digunakan
                 </td>
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Sisa Anggaran
                 </td>
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Anggaran Digunakan
                 </td>
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Sisa Anggaran
                 </td>
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Anggaran Digunakan
                 </td>
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Sisa Anggaran
                 </td>
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Anggaran Digunakan
                 </td>
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Sisa Anggaran
                 </td>
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Anggaran Digunakan
                 </td>
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Sisa Anggaran
                 </td>
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Anggaran Digunakan
                 </td>
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Sisa Anggaran
                 </td>
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Anggaran Digunakan
                 </td>
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Sisa Anggaran
                 </td>
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Anggaran Digunakan
                 </td>
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Sisa Anggaran
                 </td>
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Anggaran Digunakan
                 </td>
-                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold" width="30">
+                <td align="center" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                    width="30">
                     Sisa Anggaran
                 </td>
             </tr>
@@ -136,7 +163,8 @@
                     @endphp
                     @foreach ($daftarProgram as $program)
                         <tr style="vertical-align: center;border: 1px solid black;font-weight : bold">
-                            <td colspan="2" style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                            <td colspan="2"
+                                style="vertical-align: center;border: 1px solid black;font-weight : bold"
                                 height="30">
                                 {{ $program->nama }}</td>
                             <td colspan="26" style="vertical-align: center;border: 1px solid black;">
@@ -157,10 +185,12 @@
                             <tr style="vertical-align: center;border: 1px solid black;">
                                 <td style="vertical-align: center;border: 1px solid black;" align="center">
                                     {{ $loop->iteration }}</td>
-                                <td style="vertical-align: center;border: 1px solid black;">{{ $spd->kegiatan->nama }}
+                                <td style="vertical-align: center;border: 1px solid black;">
+                                    {{ $spd->kegiatan->nama }}
                                 </td>
                                 <td style="vertical-align: center;border: 1px solid black;">
-                                    {{ $spd->kegiatan->no_rek }}</td>
+                                    {{ htmlspecialchars($spd->kegiatan->no_rek) }}
+                                </td>
                                 <td style="vertical-align: center;border: 1px solid black;">Rp.
                                     {{ number_format($spd->jumlah_anggaran, 0, ',', '.') }}
                                 </td>
@@ -532,8 +562,8 @@
                             </tr>
                         @endforeach
                         <tr>
-                            <td style="vertical-align: center;border: 1px solid black;font-weight : bold" colspan="3"
-                                align="center">Jumlah</td>
+                            <td style="vertical-align: center;border: 1px solid black;font-weight : bold"
+                                colspan="3" align="center">Jumlah</td>
                             <td style="vertical-align: center;border: 1px solid black;">Rp.
                                 {{ number_format($totalJumlahAnggaran, 0, ',', '.') }}
                             </td>

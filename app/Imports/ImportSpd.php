@@ -34,8 +34,8 @@ class ImportSpd implements ToCollection, WithHeadingRow
             $program = Program::where('no_rek', $row['No.Rek'])->first();
             if (!$program) {
                 $program = new Program();
-                $program->nama = $row['Program'];
-                $program->no_rek = $row['No.Rek'];
+                $program->nama = preg_replace("/[^A-Za-z0-9.,`~!@#$%^&*)(-_+=}{\;:? ]/", " ", $row['Program']);
+                $program->no_rek = preg_replace("/[^A-Za-z0-9.,`~!@#$%^&*)(-_+=}{\;:? ]/", " ", $row['No.Rek']);
                 $program->save();
             }
 
@@ -43,16 +43,16 @@ class ImportSpd implements ToCollection, WithHeadingRow
             if (!$kegiatan) {
                 $kegiatan = new Kegiatan();
                 $kegiatan->program_id = $program->id;
-                $kegiatan->nama = $row['Kegiatan'];
-                $kegiatan->no_rek = $row['No.Rek. Keg.SKPD'];
+                $kegiatan->nama = preg_replace("/[^A-Za-z0-9.,`~!@#$%^&*)(-_+=}{\;:? ]/", " ", $row['Kegiatan']);
+                $kegiatan->no_rek = preg_replace("/[^A-Za-z0-9.,`~!@#$%^&*)(-_+=}{\;:? ]/", " ", $row['No.Rek. Keg.SKPD']);
                 $kegiatan->save();
             }
 
             $programSpp = ProgramSpp::where('no_rek', $row['No.Rek'])->first();
             if (!$programSpp) {
                 $programSpp = new ProgramSpp();
-                $programSpp->nama = $row['Program'];
-                $programSpp->no_rek = $row['No.Rek'];
+                $programSpp->nama = preg_replace("/[^A-Za-z0-9.,`~!@#$%^&*)(-_+=}{\;:? ]/", " ", $row['Program']);
+                $programSpp->no_rek = preg_replace("/[^A-Za-z0-9.,`~!@#$%^&*)(-_+=}{\;:? ]/", " ", $row['No.Rek']);
                 $programSpp->save();
             }
 
@@ -60,8 +60,8 @@ class ImportSpd implements ToCollection, WithHeadingRow
             if (!$kegiatanSpp) {
                 $kegiatanSpp = new KegiatanSpp();
                 $kegiatanSpp->program_spp_id = $programSpp->id;
-                $kegiatanSpp->nama = $row['Kegiatan'];
-                $kegiatanSpp->no_rek = $row['No.Rek. Keg.SKPD'];
+                $kegiatanSpp->nama = preg_replace("/[^A-Za-z0-9.,`~!@#$%^&*)(-_+=}{\;:? ]/", " ", $row['Kegiatan']);
+                $kegiatanSpp->no_rek = preg_replace("/[^A-Za-z0-9.,`~!@#$%^&*)(-_+=}{\;:? ]/", " ", $row['No.Rek. Keg.SKPD']);
                 $kegiatanSpp->save();
             }
 
