@@ -31,7 +31,7 @@ class ImportSpd implements ToCollection, WithHeadingRow
         $tahun = $this->tahun;
 
         foreach ($rows as $row) {
-            $program = Program::where('no_rek', $row['No.Rek'])->first();
+            $program = Program::where('no_rek', preg_replace("/[^A-Za-z0-9.,`~!@#$%^&*)(-_+=}{\;:? ]/", " ", $row['No.Rek']))->first();
             if (!$program) {
                 $program = new Program();
                 $program->nama = preg_replace("/[^A-Za-z0-9.,`~!@#$%^&*)(-_+=}{\;:? ]/", " ", $row['Program']);
@@ -39,7 +39,7 @@ class ImportSpd implements ToCollection, WithHeadingRow
                 $program->save();
             }
 
-            $kegiatan = Kegiatan::where('no_rek', $row['No.Rek. Keg.SKPD'])->first();
+            $kegiatan = Kegiatan::where('no_rek', preg_replace("/[^A-Za-z0-9.,`~!@#$%^&*)(-_+=}{\;:? ]/", " ", $row['No.Rek. Keg.SKPD']))->first();
             if (!$kegiatan) {
                 $kegiatan = new Kegiatan();
                 $kegiatan->program_id = $program->id;
@@ -48,7 +48,7 @@ class ImportSpd implements ToCollection, WithHeadingRow
                 $kegiatan->save();
             }
 
-            $programSpp = ProgramSpp::where('no_rek', $row['No.Rek'])->first();
+            $programSpp = ProgramSpp::where('no_rek', preg_replace("/[^A-Za-z0-9.,`~!@#$%^&*)(-_+=}{\;:? ]/", " ", $row['No.Rek']))->first();
             if (!$programSpp) {
                 $programSpp = new ProgramSpp();
                 $programSpp->nama = preg_replace("/[^A-Za-z0-9.,`~!@#$%^&*)(-_+=}{\;:? ]/", " ", $row['Program']);
@@ -56,7 +56,7 @@ class ImportSpd implements ToCollection, WithHeadingRow
                 $programSpp->save();
             }
 
-            $kegiatanSpp = KegiatanSpp::where('no_rek', $row['No.Rek. Keg.SKPD'])->first();
+            $kegiatanSpp = KegiatanSpp::where('no_rek', preg_replace("/[^A-Za-z0-9.,`~!@#$%^&*)(-_+=}{\;:? ]/", " ", $row['No.Rek. Keg.SKPD']))->first();
             if (!$kegiatanSpp) {
                 $kegiatanSpp = new KegiatanSpp();
                 $kegiatanSpp->program_spp_id = $programSpp->id;
