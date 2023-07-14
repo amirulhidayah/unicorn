@@ -33,6 +33,7 @@
 
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link rel="stylesheet" href="{{ asset('assets/dashboard') }}/css/demo.css">
+    @livewireStyles
     <style>
         #overlay {
             position: fixed;
@@ -275,6 +276,7 @@
     <script src="{{ asset('assets/dashboard') }}/datatables/buttons.print.min.js"></script>
     <script src="{{ asset('assets/dashboard') }}/datatables/buttons.colVis.min.js"></script>
     <script src="{{ asset('assets/dashboard') }}/js/jquery.mask.js"></script>
+    @livewireScripts
     <script>
         $.ajaxSetup({
             headers: {

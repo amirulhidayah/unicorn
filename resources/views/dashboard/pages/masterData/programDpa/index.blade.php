@@ -37,12 +37,11 @@
                     <div class="card-head-row">
                         <div class="card-title">Data Daftar Program DPA</div>
                         <div class="card-tools">
-                            @component('dashboard.components.buttons.add',
-                                [
-                                    'id' => 'btn-tambah',
-                                    'class' => '',
-                                    'url' => '#',
-                                ])
+                            @component('dashboard.components.buttons.add', [
+                                'id' => 'btn-tambah',
+                                'class' => '',
+                                'url' => '#',
+                            ])
                             @endcomponent
                         </div>
                     </div>
@@ -51,12 +50,7 @@
                     <div class="row">
                         <div class="col">
                             <div class="card fieldset">
-                                @component('dashboard.components.dataTables.index',
-                                    [
-                                        'id' => 'table-data',
-                                        'th' => ['No', 'Nama', 'No. Rek', 'Aksi'],
-                                    ])
-                                @endcomponent
+                                @livewire('dashboard.master-data.program-dpa.table')
                             </div>
                         </div>
                     </div>
@@ -79,28 +73,26 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-lg-12">
-                                @component('dashboard.components.formElements.input',
-                                    [
-                                        'id' => 'nama',
-                                        'type' => 'text',
-                                        'label' => 'Nama Daftar Program DPA',
-                                        'placeholder' => 'Tambah Daftar Program DPA',
-                                        'name' => 'nama',
-                                        'required' => true,
-                                    ])
+                                @component('dashboard.components.formElements.input', [
+                                    'id' => 'nama',
+                                    'type' => 'text',
+                                    'label' => 'Nama Daftar Program DPA',
+                                    'placeholder' => 'Tambah Daftar Program DPA',
+                                    'name' => 'nama',
+                                    'required' => true,
+                                ])
                                 @endcomponent
                             </div>
                             <div class="col-lg-12">
-                                @component('dashboard.components.formElements.input',
-                                    [
-                                        'id' => 'no_rek',
-                                        'type' => 'text',
-                                        'label' => 'No. Rekening',
-                                        'placeholder' => 'Tambah Nomor Rekening',
-                                        'class' => 'numerik',
-                                        'name' => 'no_rek',
-                                        'required' => true,
-                                    ])
+                                @component('dashboard.components.formElements.input', [
+                                    'id' => 'no_rek',
+                                    'type' => 'text',
+                                    'label' => 'No. Rekening',
+                                    'placeholder' => 'Tambah Nomor Rekening',
+                                    'class' => 'numerik',
+                                    'name' => 'no_rek',
+                                    'required' => true,
+                                ])
                                 @endcomponent
                             </div>
                         </div>
@@ -109,10 +101,9 @@
                     <div class="modal-footer">
                         @component('dashboard.components.buttons.close')
                         @endcomponent
-                        @component('dashboard.components.buttons.submit',
-                            [
-                                'label' => 'Simpan',
-                            ])
+                        @component('dashboard.components.buttons.submit', [
+                            'label' => 'Simpan',
+                        ])
                         @endcomponent
                     </div>
                 </div>
@@ -127,12 +118,14 @@
         var aksiTambah = 'tambah';
         $('#btn-tambah').click(function() {
             aksiTambah = 'tambah';
+            $('#nama').val('');
+            $('#no_rek').val('');
             $('#modal-tambah').modal('show');
             $('#modal-tambah-title').html('Tambah Daftar Program DPA');
         })
 
         $(document).on('click', '#btn-edit', function() {
-            let id = $(this).val();
+            let id = $(this).data('value');
             idEdit = id;
 
             $.ajax({
@@ -179,7 +172,7 @@
                             success: function(response) {
                                 if (response.status == 'success') {
                                     $('#modal-tambah').modal('hide');
-                                    table.draw();
+                                    Livewire.emit('refreshTable');
                                     swal("Berhasil", "Data Berhasil Tersimpan", {
                                         icon: "success",
                                         buttons: false,
@@ -206,7 +199,7 @@
                             success: function(response) {
                                 if (response.status == 'success') {
                                     $('#modal-tambah').modal('hide');
-                                    table.draw();
+                                    Livewire.emit('refreshTable');
                                     swal("Berhasil", "Data Berhasil Diubah", {
                                         icon: "success",
                                         buttons: false,
@@ -232,7 +225,7 @@
         })
 
         $(document).on('click', '#btn-delete', function() {
-            let id = $(this).val();
+            let id = $(this).data('value');
             swal({
                 title: 'Apakah Anda Yakin ?',
                 icon: 'error',
@@ -264,7 +257,7 @@
                                     buttons: false,
                                     timer: 1000,
                                 }).then(function() {
-                                    table.draw();
+                                    Livewire.emit('refreshTable');
                                 })
                             } else {
                                 swal("Gagal", "Data Gagal Dihapus", {

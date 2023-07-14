@@ -56,7 +56,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('/master-data/daftar-dokumen-spp-gu', DokumenSppGuController::class);
 
         Route::resource('/master-data/program-dpa', ProgramDpaController::class)->parameters([
-            'program-dpa' => 'program'
+            'program-dpa' => 'program_dpa'
         ]);
 
         Route::resource('/master-data/kegiatan-dpa/{program}', KegiatanDpaController::class)->parameters([

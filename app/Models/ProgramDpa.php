@@ -7,13 +7,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Program extends Model
+class ProgramDpa extends Model
 {
     use HasFactory;
     use TraitUuid;
     use SoftDeletes;
 
-    protected $table = 'program';
+    protected $table = 'program_dpa';
 
     public function kegiatan()
     {

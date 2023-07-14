@@ -15,32 +15,32 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // Storage::deleteDirectory('/dokumen_spp_gu');
-        // Storage::deleteDirectory('/dokumen_spp_ls');
-        // Storage::deleteDirectory('/dokumen_spp_tu');
-        // Storage::deleteDirectory('/dokumen_spp_up');
-        // Storage::deleteDirectory('/profil');
-        // Storage::deleteDirectory('/surat_penolakan_spp_gu');
-        // Storage::deleteDirectory('/surat_penolakan_spp_ls');
-        // Storage::deleteDirectory('/surat_penolakan_spp_tu');
-        // Storage::deleteDirectory('/surat_penolakan_spp_up');
-        // Storage::deleteDirectory('/tanda_tangan');
+        Storage::deleteDirectory('/dokumen_spp_gu');
+        Storage::deleteDirectory('/dokumen_spp_ls');
+        Storage::deleteDirectory('/dokumen_spp_tu');
+        Storage::deleteDirectory('/dokumen_spp_up');
+        Storage::deleteDirectory('/profil');
+        Storage::deleteDirectory('/surat_penolakan_spp_gu');
+        Storage::deleteDirectory('/surat_penolakan_spp_ls');
+        Storage::deleteDirectory('/surat_penolakan_spp_tu');
+        Storage::deleteDirectory('/surat_penolakan_spp_up');
+        Storage::deleteDirectory('/tanda_tangan');
 
-        // Storage::makeDirectory('/dokumen_spp_gu');
-        // Storage::makeDirectory('/dokumen_spp_ls');
-        // Storage::makeDirectory('/dokumen_spp_tu');
-        // Storage::makeDirectory('/dokumen_spp_up');
-        // Storage::makeDirectory('/profil');
-        // Storage::makeDirectory('/surat_penolakan_spp_gu');
-        // Storage::makeDirectory('/surat_penolakan_spp_ls');
-        // Storage::makeDirectory('/surat_penolakan_spp_tu');
-        // Storage::makeDirectory('/surat_penolakan_spp_up');
-        // Storage::makeDirectory('/tanda_tangan');
+        Storage::makeDirectory('/dokumen_spp_gu');
+        Storage::makeDirectory('/dokumen_spp_ls');
+        Storage::makeDirectory('/dokumen_spp_tu');
+        Storage::makeDirectory('/dokumen_spp_up');
+        Storage::makeDirectory('/profil');
+        Storage::makeDirectory('/surat_penolakan_spp_gu');
+        Storage::makeDirectory('/surat_penolakan_spp_ls');
+        Storage::makeDirectory('/surat_penolakan_spp_tu');
+        Storage::makeDirectory('/surat_penolakan_spp_up');
+        Storage::makeDirectory('/tanda_tangan');
 
-        // File::copyDirectory(
-        //     public_path('file_dummy'),
-        //     storage_path('app/public/')
-        // );
+        File::copyDirectory(
+            public_path('file_dummy'),
+            storage_path('app/public/')
+        );
 
         // \App\Models\User::factory(10)->create();
         $this->call(BiroOrganisasiTableSeeder::class);
@@ -53,7 +53,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ProfilTableSeeder::class);
         $this->call(SpdTableSeeder::class);
         $this->call(KegiatanTableSeeder::class);
-        $this->call(ProgramTableSeeder::class);
+        $this->call(ProgramDpaTableSeeder::class);
         $this->call(KegiatanSppTableSeeder::class);
         $this->call(ProgramSppTableSeeder::class);
         $this->call(SppUpTableSeeder::class);

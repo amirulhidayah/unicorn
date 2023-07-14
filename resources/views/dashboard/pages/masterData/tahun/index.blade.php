@@ -37,12 +37,11 @@
                     <div class="card-head-row">
                         <div class="card-title">Data Tahun</div>
                         <div class="card-tools">
-                            @component('dashboard.components.buttons.add',
-                                [
-                                    'id' => 'btn-tambah',
-                                    'class' => '',
-                                    'url' => '#',
-                                ])
+                            @component('dashboard.components.buttons.add', [
+                                'id' => 'btn-tambah',
+                                'class' => '',
+                                'url' => '#',
+                            ])
                             @endcomponent
                         </div>
                     </div>
@@ -51,11 +50,10 @@
                     <div class="row">
                         <div class="col">
                             <div class="card fieldset">
-                                @component('dashboard.components.dataTables.index',
-                                    [
-                                        'id' => 'table-data',
-                                        'th' => ['No', 'Tahun', 'Aksi'],
-                                    ])
+                                @component('dashboard.components.dataTables.index', [
+                                    'id' => 'table-data',
+                                    'th' => ['No', 'Tahun', 'Aksi'],
+                                ])
                                 @endcomponent
                             </div>
                         </div>
@@ -77,25 +75,23 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        @component('dashboard.components.formElements.input',
-                            [
-                                'id' => 'tahun',
-                                'type' => 'text',
-                                'label' => 'Tahun',
-                                'placeholder' => 'Tambah Tahun',
-                                'name' => 'tahun',
-                                'class' => 'numerik',
-                                'required' => true,
-                            ])
+                        @component('dashboard.components.formElements.input', [
+                            'id' => 'tahun',
+                            'type' => 'text',
+                            'label' => 'Tahun',
+                            'placeholder' => 'Tambah Tahun',
+                            'name' => 'tahun',
+                            'class' => 'numerik',
+                            'required' => true,
+                        ])
                         @endcomponent
                     </div>
                     <div class="modal-footer">
                         @component('dashboard.components.buttons.close')
                         @endcomponent
-                        @component('dashboard.components.buttons.submit',
-                            [
-                                'label' => 'Simpan',
-                            ])
+                        @component('dashboard.components.buttons.submit', [
+                            'label' => 'Simpan',
+                        ])
                         @endcomponent
                     </div>
                 </div>
@@ -161,7 +157,7 @@
                             success: function(response) {
                                 if (response.status == 'success') {
                                     $('#modal-tambah').modal('hide');
-                                    table.draw();
+                                    Livewire.emit('refreshTable');
                                     swal("Berhasil", "Data Berhasil Tersimpan", {
                                         icon: "success",
                                         buttons: false,
@@ -188,7 +184,7 @@
                             success: function(response) {
                                 if (response.status == 'success') {
                                     $('#modal-tambah').modal('hide');
-                                    table.draw();
+                                    Livewire.emit('refreshTable');
                                     swal("Berhasil", "Data Berhasil Diubah", {
                                         icon: "success",
                                         buttons: false,
@@ -246,7 +242,7 @@
                                     buttons: false,
                                     timer: 1000,
                                 }).then(function() {
-                                    table.draw();
+                                    Livewire.emit('refreshTable');
                                 })
                             } else {
                                 swal("Gagal", "Data Gagal Dihapus", {

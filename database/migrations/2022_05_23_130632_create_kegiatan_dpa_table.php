@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateKegiatanTable extends Migration
+class CreateKegiatanDpaTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateKegiatanTable extends Migration
      */
     public function up()
     {
-        Schema::create('kegiatan', function (Blueprint $table) {
+        Schema::create('kegiatan_dpa', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('program_id');
             $table->string('nama');

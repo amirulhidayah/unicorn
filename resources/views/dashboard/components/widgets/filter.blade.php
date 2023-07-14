@@ -2,14 +2,13 @@
 
     @if (in_array(Auth::user()->role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']))
         <div class="col">
-            @component('dashboard.components.formElements.select',
-                [
-                    'label' => 'Sekretariat Daerah',
-                    'id' => 'biro_organisasi',
-                    'name' => 'biro_organisasi',
-                    'class' => 'select2 filter',
-                    'wajib' => '<sup class="text-danger">*</sup>',
-                ])
+            @component('dashboard.components.formElements.select', [
+                'label' => 'Sekretariat Daerah',
+                'id' => 'biro_organisasi',
+                'name' => 'biro_organisasi',
+                'class' => 'select2 filter',
+                'wajib' => '<sup class="text-danger">*</sup>',
+            ])
                 @slot('options')
                     <option value="Semua">
                         Semua
@@ -24,14 +23,13 @@
         </div>
     @endif
     <div class="col">
-        @component('dashboard.components.formElements.select',
-            [
-                'label' => 'Status Verifikasi',
-                'id' => 'status',
-                'name' => 'status',
-                'class' => 'select2 filter',
-                'wajib' => '<sup class="text-danger">*</sup>',
-            ])
+        @component('dashboard.components.formElements.select', [
+            'label' => 'Status Verifikasi',
+            'id' => 'status',
+            'name' => 'status',
+            'class' => 'select2 filter',
+            'wajib' => '<sup class="text-danger">*</sup>',
+        ])
             @slot('options')
                 <option value="Semua">
                     Semua
@@ -49,14 +47,13 @@
         @endcomponent
     </div>
     <div class="col">
-        @component('dashboard.components.formElements.select',
-            [
-                'label' => 'Tahun',
-                'id' => 'tahun',
-                'name' => 'tahun',
-                'class' => 'select2 filter',
-                'wajib' => '<sup class="text-danger">*</sup>',
-            ])
+        @component('dashboard.components.formElements.select', [
+            'label' => 'Tahun',
+            'id' => 'tahun',
+            'name' => 'tahun',
+            'class' => 'select2 filter',
+            'wajib' => '<sup class="text-danger">*</sup>',
+        ])
             @slot('options')
                 <option value="Semua">
                     Semua
@@ -73,7 +70,7 @@
 @push('script')
     <script>
         $('.filter').on('change', function() {
-            table.draw();
+            Livewire.emit('refreshTable');
         })
     </script>
 @endpush

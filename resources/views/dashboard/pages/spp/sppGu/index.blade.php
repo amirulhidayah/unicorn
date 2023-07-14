@@ -37,13 +37,17 @@
                     <div class="card-head-row">
                         <div class="card-title">Data SPP GU</div>
                         <div class="card-tools">
-                            @if (in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']))
-                                @component('dashboard.components.buttons.add',
-                                    [
-                                        'id' => 'btn-tambah',
-                                        'class' => '',
-                                        'url' => url('spp-gu/create'),
-                                    ])
+                            @if (in_array(Auth::user()->role, [
+                                    'Admin',
+                                    'Bendahara Pengeluaran',
+                                    'Bendahara Pengeluaran Pembantu',
+                                    'Bendahara Pengeluaran Pembantu Belanja Hibah',
+                                ]))
+                                @component('dashboard.components.buttons.add', [
+                                    'id' => 'btn-tambah',
+                                    'class' => '',
+                                    'url' => url('spp-gu/create'),
+                                ])
                                 @endcomponent
                             @endif
                         </div>
@@ -57,11 +61,23 @@
                                     @slot('daftarBiroOrganisasi', $daftarBiroOrganisasi)
                                     @slot('daftarTahun', $daftarTahun)
                                 @endcomponent
-                                @component('dashboard.components.dataTables.index',
-                                    [
-                                        'id' => 'table-data',
-                                        'th' => ['No', 'Tanggal', 'Kegiatan', 'Program', 'Sekretariat Daerah', 'Periode', 'Anggaran Digunakan', 'Verifikasi ASN Sub Bagian Keuangan', 'Verifikasi PPK', 'Status Verifikasi Akhir', 'Tahap', 'Aksi'],
-                                    ])
+                                @component('dashboard.components.dataTables.index', [
+                                    'id' => 'table-data',
+                                    'th' => [
+                                        'No',
+                                        'Tanggal',
+                                        'Kegiatan',
+                                        'Program',
+                                        'Sekretariat Daerah',
+                                        'Periode',
+                                        'Anggaran Digunakan',
+                                        'Verifikasi ASN Sub Bagian Keuangan',
+                                        'Verifikasi PPK',
+                                        'Status Verifikasi Akhir',
+                                        'Tahap',
+                                        'Aksi',
+                                    ],
+                                ])
                                 @endcomponent
                             </div>
                         </div>
@@ -107,7 +123,7 @@
                                     buttons: false,
                                     timer: 1000,
                                 }).then(function() {
-                                    table.draw();
+                                    Livewire.emit('refreshTable');
                                 })
                             } else {
                                 swal("Gagal", "Data Gagal Dihapus", {
@@ -155,7 +171,7 @@
                                     buttons: false,
                                     timer: 1000,
                                 }).then(function() {
-                                    table.draw();
+                                    Livewire.emit('refreshTable');
                                 })
                             } else {
                                 swal("Gagal", "Data Gagal Diselesaikan", {

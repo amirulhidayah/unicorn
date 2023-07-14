@@ -4,7 +4,7 @@ namespace App\Http\Controllers\dashboard\masterData;
 
 use App\Http\Controllers\Controller;
 use App\Models\Kegiatan;
-use App\Models\Program;
+use App\Models\ProgramDpa;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -20,7 +20,7 @@ class ProgramDpaController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Program::orderBy('no_rek', 'asc')->get();
+            $data = ProgramDpa::orderBy('no_rek', 'asc')->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
@@ -68,10 +68,10 @@ class ProgramDpaController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $program = new Program();
-        $program->nama = $request->nama;
-        $program->no_rek = $request->no_rek;
-        $program->save();
+        $programDpa = new ProgramDpa();
+        $programDpa->nama = $request->nama;
+        $programDpa->no_rek = $request->no_rek;
+        $programDpa->save();
 
         return response()->json(['status' => 'success']);
     }
@@ -79,38 +79,38 @@ class ProgramDpaController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Program  $program
+     * @param  \App\Models\ProgramDpa  $programDpa
      * @return \Illuminate\Http\Response
      */
-    public function show(Program $program)
+    public function show(ProgramDpa $programDpa)
     {
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Program  $program
+     * @param  \App\Models\ProgramDpa  $programDpa
      * @return \Illuminate\Http\Response
      */
-    public function edit(Program $program)
+    public function edit(ProgramDpa $programDpa)
     {
-        return response()->json($program);
+        return response()->json($programDpa);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Program  $program
+     * @param  \App\Models\ProgramDpa  $programDpa
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Program $program)
+    public function update(Request $request, ProgramDpa $programDpa)
     {
         $validator = Validator::make(
             $request->all(),
             [
                 'nama' => 'required',
-                'no_rek' => ['required', Rule::unique('program')->ignore($program->id)->withoutTrashed()],
+                'no_rek' => ['required', Rule::unique('program')->ignore($programDpa->id)->withoutTrashed()],
             ],
             [
                 'nama.required' => 'Nama Dokumen tidak boleh kosong',
@@ -123,9 +123,9 @@ class ProgramDpaController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $program->nama = $request->nama;
-        $program->no_rek = $request->no_rek;
-        $program->save();
+        $programDpa->nama = $request->nama;
+        $programDpa->no_rek = $request->no_rek;
+        $programDpa->save();
 
         return response()->json(['status' => 'success']);
     }
@@ -133,14 +133,14 @@ class ProgramDpaController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Program  $program
+     * @param  \App\Models\ProgramDpa  $programDpa
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Program $program)
+    public function destroy(ProgramDpa $programDpa)
     {
-        $program->delete();
+        $programDpa->delete();
 
-        Kegiatan::where('program_id', $program->id)->delete();
+        Kegiatan::where('program_id', $programDpa->id)->delete();
 
         return response()->json(['status' => 'success']);
     }

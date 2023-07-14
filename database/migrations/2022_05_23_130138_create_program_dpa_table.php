@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProgramTable extends Migration
+class CreateProgramDpaTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateProgramTable extends Migration
      */
     public function up()
     {
-        Schema::create('program', function (Blueprint $table) {
+        Schema::create('program_dpa', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('nama');
             $table->string('no_rek');
@@ -29,6 +29,6 @@ class CreateProgramTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('program');
+        Schema::dropIfExists('program_dpa');
     }
 }
