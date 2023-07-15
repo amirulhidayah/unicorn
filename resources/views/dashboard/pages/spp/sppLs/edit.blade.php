@@ -80,87 +80,76 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6">
-                                @component('dashboard.components.widgets.info',
-                                    [
-                                        'judul' => 'Sekretariat Daerah',
-                                        'isi' => $sppLs->biroOrganisasi->nama,
-                                    ])
+                                @component('dashboard.components.widgets.info', [
+                                    'judul' => 'Sekretariat Daerah',
+                                    'isi' => $sppLs->SekretariatDaerah->nama,
+                                ])
                                 @endcomponent
-                                @component('dashboard.components.widgets.info',
-                                    [
-                                        'judul' => 'Nomor Surat',
-                                        'isi' => $sppLs->nomor_surat,
-                                    ])
+                                @component('dashboard.components.widgets.info', [
+                                    'judul' => 'Nomor Surat',
+                                    'isi' => $sppLs->nomor_surat,
+                                ])
                                 @endcomponent
-                                @component('dashboard.components.widgets.info',
-                                    [
-                                        'judul' => 'Kategori',
-                                        'isi' => $sppLs->kategori,
-                                    ])
+                                @component('dashboard.components.widgets.info', [
+                                    'judul' => 'Kategori',
+                                    'isi' => $sppLs->kategori,
+                                ])
                                 @endcomponent
-                                @component('dashboard.components.widgets.info',
-                                    [
-                                        'judul' => 'Tahun',
-                                        'isi' => $sppLs->tahun->tahun,
-                                    ])
+                                @component('dashboard.components.widgets.info', [
+                                    'judul' => 'Tahun',
+                                    'isi' => $sppLs->tahun->tahun,
+                                ])
                                 @endcomponent
-                                @component('dashboard.components.widgets.info',
-                                    [
-                                        'judul' => 'Program',
-                                        'isi' => $sppLs->kegiatan->program->nama . ' (' . $sppLs->kegiatan->program->no_rek . ')',
-                                    ])
+                                @component('dashboard.components.widgets.info', [
+                                    'judul' => 'Program',
+                                    'isi' => $sppLs->kegiatan->program->nama . ' (' . $sppLs->kegiatan->program->no_rek . ')',
+                                ])
                                 @endcomponent
-                                @component('dashboard.components.widgets.info',
-                                    [
-                                        'judul' => 'Kegiatan',
-                                        'isi' => $sppLs->kegiatan->nama . ' (' . $sppLs->kegiatan->no_rek . ')',
-                                    ])
+                                @component('dashboard.components.widgets.info', [
+                                    'judul' => 'Kegiatan',
+                                    'isi' => $sppLs->kegiatan->nama . ' (' . $sppLs->kegiatan->no_rek . ')',
+                                ])
                                 @endcomponent
-                                @component('dashboard.components.widgets.info',
-                                    [
-                                        'judul' => 'Bulan',
-                                        'isi' => $sppLs->bulan,
-                                    ])
+                                @component('dashboard.components.widgets.info', [
+                                    'judul' => 'Bulan',
+                                    'isi' => $sppLs->bulan,
+                                ])
                                 @endcomponent
-                                @component('dashboard.components.widgets.info',
-                                    [
-                                        'judul' => 'Jumlah Anggaran',
-                                        'isi' => $jumlahAnggaran,
-                                    ])
+                                @component('dashboard.components.widgets.info', [
+                                    'judul' => 'Jumlah Anggaran',
+                                    'isi' => $jumlahAnggaran,
+                                ])
                                 @endcomponent
                                 <div class="col-12">
-                                    @component('dashboard.components.formElements.input',
-                                        [
-                                            'label' => 'Anggaran Yang Digunakan (Rp)',
-                                            'type' => 'text',
-                                            'id' => 'anggaran_digunakan',
-                                            'name' => 'anggaran_digunakan',
-                                            'class' => 'uang',
-                                            'value' => $sppLs->anggaran_digunakan,
-                                            'wajib' => '<sup class="text-danger">*</sup>',
-                                            'placeholder' => 'Masukkan Anggaran Yang Digunakan',
-                                        ])
+                                    @component('dashboard.components.formElements.input', [
+                                        'label' => 'Anggaran Yang Digunakan (Rp)',
+                                        'type' => 'text',
+                                        'id' => 'anggaran_digunakan',
+                                        'name' => 'anggaran_digunakan',
+                                        'class' => 'uang',
+                                        'value' => $sppLs->anggaran_digunakan,
+                                        'wajib' => '<sup class="text-danger">*</sup>',
+                                        'placeholder' => 'Masukkan Anggaran Yang Digunakan',
+                                    ])
                                     @endcomponent
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 @if ($sppLs->alasan_validasi_asn != null)
-                                    @component('dashboard.components.widgets.alert',
-                                        [
-                                            'oleh' => 'asn',
-                                            'tanggal' => $sppLs->tanggal_validasi_asn,
-                                            'isi' => $sppLs->alasan_validasi_asn,
-                                        ])
+                                    @component('dashboard.components.widgets.alert', [
+                                        'oleh' => 'asn',
+                                        'tanggal' => $sppLs->tanggal_validasi_asn,
+                                        'isi' => $sppLs->alasan_validasi_asn,
+                                    ])
                                     @endcomponent
                                 @endif
 
                                 @if ($sppLs->alasan_validasi_ppk != null)
-                                    @component('dashboard.components.widgets.alert',
-                                        [
-                                            'oleh' => 'ppk',
-                                            'tanggal' => $sppLs->tanggal_validasi_ppk,
-                                            'isi' => $sppLs->alasan_validasi_ppk,
-                                        ])
+                                    @component('dashboard.components.widgets.alert', [
+                                        'oleh' => 'ppk',
+                                        'tanggal' => $sppLs->tanggal_validasi_ppk,
+                                        'isi' => $sppLs->alasan_validasi_ppk,
+                                    ])
                                     @endcomponent
                                 @endif
 

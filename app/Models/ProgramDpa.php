@@ -15,8 +15,8 @@ class ProgramDpa extends Model
 
     protected $table = 'program_dpa';
 
-    public function kegiatan()
+    public function kegiatanDpa()
     {
-        return $this->hasMany(Kegiatan::class, 'program_id')->withTrashed();
+        return $this->hasMany(KegiatanDpa::class, 'program_dpa_id')->withTrashed();
     }
 }

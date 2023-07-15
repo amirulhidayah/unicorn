@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\dashboard\masterData;
 
 use App\Http\Controllers\Controller;
-use App\Models\Kegiatan;
+use App\Models\KegiatanDpa;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -11,16 +11,11 @@ use Illuminate\Validation\Rule;
 
 class KegiatanDpaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
         $idProgram = $request->program;
         if ($request->ajax()) {
-            $data = Kegiatan::where('program_id', $idProgram)->orderBy('no_rek', 'asc')->get();
+            $data = KegiatanDpa::where('program_dpa_id', $idProgram)->orderBy('no_rek', 'asc')->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
@@ -33,29 +28,18 @@ class KegiatanDpaController extends Controller
         return view('dashboard.pages.masterData.kegiatanDpa.index', compact('idProgram'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $validator = Validator::make(
             $request->all(),
             [
                 'nama' => 'required',
-                'no_rek' => ['required', Rule::unique('kegiatan')->withoutTrashed()],
+                'no_rek' => ['required', Rule::unique('kegiatan_dpa')->withoutTrashed()],
             ],
             [
                 'nama.required' => 'Nama Dokumen tidak boleh kosong',
@@ -68,53 +52,34 @@ class KegiatanDpaController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $kegiatan = new Kegiatan();
-        $kegiatan->program_id = $request->program;
-        $kegiatan->nama = $request->nama;
-        $kegiatan->no_rek = $request->no_rek;
-        $kegiatan->save();
+        $kegiatanDpa = new KegiatanDpa();
+        $kegiatanDpa->program_dpa_id = $request->program;
+        $kegiatanDpa->nama = $request->nama;
+        $kegiatanDpa->no_rek = $request->no_rek;
+        $kegiatanDpa->save();
 
         return response()->json(['status' => 'success']);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Kegiatan  $kegiatan
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Kegiatan $kegiatan)
+    public function show(KegiatanDpa $kegiatanDpa)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Kegiatan  $kegiatan
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Request $request)
     {
-        $kegiatan = Kegiatan::find($request->kegiatan);
-        return response()->json($kegiatan);
+        $kegiatanDpa = KegiatanDpa::find($request->kegiatan_dpa);
+        return response()->json($kegiatanDpa);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Kegiatan  $kegiatan
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request)
     {
-        $kegiatan = Kegiatan::find($request->kegiatan);
+        $kegiatanDpa = KegiatanDpa::find($request->kegiatan_dpa);
         $validator = Validator::make(
             $request->all(),
             [
                 'nama' => 'required',
-                'no_rek' => ['required', Rule::unique('kegiatan')->ignore($kegiatan->id)->withoutTrashed()],
+                'no_rek' => ['required', Rule::unique('kegiatan_dpa')->ignore($kegiatanDpa->id)->withoutTrashed()],
             ],
             [
                 'nama.required' => 'Nama Dokumen tidak boleh kosong',
@@ -127,23 +92,17 @@ class KegiatanDpaController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $kegiatan->program_id = $request->program;
-        $kegiatan->nama = $request->nama;
-        $kegiatan->no_rek = $request->no_rek;
-        $kegiatan->save();
+        $kegiatanDpa->program_dpa_id = $request->program;
+        $kegiatanDpa->nama = $request->nama;
+        $kegiatanDpa->no_rek = $request->no_rek;
+        $kegiatanDpa->save();
 
         return response()->json(['status' => 'success']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Kegiatan  $kegiatan
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Request $request)
     {
-        Kegiatan::where('id', $request->kegiatan)->delete();
+        KegiatanDpa::where('id', $request->kegiatan_dpa)->delete();
         return response()->json(['status' => 'success']);
     }
 }

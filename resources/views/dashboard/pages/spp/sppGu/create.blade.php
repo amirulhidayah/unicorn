@@ -81,17 +81,16 @@
                             <div class="col-md-6">
                                 @if (Auth::user()->role == 'Admin')
                                     <div class="col-12">
-                                        @component('dashboard.components.formElements.select',
-                                            [
-                                                'label' => 'Sekretariat Daerah',
-                                                'id' => 'biro_organisasi',
-                                                'name' => 'biro_organisasi',
-                                                'class' => 'select2',
-                                                'wajib' => '<sup class="text-danger">*</sup>',
-                                            ])
+                                        @component('dashboard.components.formElements.select', [
+                                            'label' => 'Sekretariat Daerah',
+                                            'id' => 'sekretariat_daerah',
+                                            'name' => 'sekretariat_daerah',
+                                            'class' => 'select2',
+                                            'wajib' => '<sup class="text-danger">*</sup>',
+                                        ])
                                             @slot('options')
-                                                @foreach ($daftarBiroOrganisasi as $biroOrganisasi)
-                                                    <option value="{{ $biroOrganisasi->id }}">{{ $biroOrganisasi->nama }}
+                                                @foreach ($daftarSekretariatDaerah as $SekretariatDaerah)
+                                                    <option value="{{ $SekretariatDaerah->id }}">{{ $SekretariatDaerah->nama }}
                                                     </option>
                                                 @endforeach
                                             @endslot
@@ -102,32 +101,30 @@
                                         <label for="exampleFormControlInput1">Sekretariat Daerah</label>
                                         <br>
                                         <label for="exampleFormControlInput1"
-                                            class="badge badge-primary text-light my-2">{{ Auth::user()->profil->biroOrganisasi->nama }}</label>
+                                            class="badge badge-primary text-light my-2">{{ Auth::user()->profil->SekretariatDaerah->nama }}</label>
                                         <br>
                                     </div>
                                 @endif
                                 <div class="col-12">
-                                    @component('dashboard.components.formElements.input',
-                                        [
-                                            'label' => 'Nomor Surat',
-                                            'type' => 'text',
-                                            'id' => 'nomor_surat',
-                                            'class' => '',
-                                            'name' => 'nomor_surat',
-                                            'wajib' => '<sup class="text-danger">*</sup>',
-                                            'placeholder' => 'Masukkan Nomor Surat',
-                                        ])
+                                    @component('dashboard.components.formElements.input', [
+                                        'label' => 'Nomor Surat',
+                                        'type' => 'text',
+                                        'id' => 'nomor_surat',
+                                        'class' => '',
+                                        'name' => 'nomor_surat',
+                                        'wajib' => '<sup class="text-danger">*</sup>',
+                                        'placeholder' => 'Masukkan Nomor Surat',
+                                    ])
                                     @endcomponent
                                 </div>
                                 <div class="col-12">
-                                    @component('dashboard.components.formElements.select',
-                                        [
-                                            'label' => 'Tahun',
-                                            'id' => 'tahun',
-                                            'name' => 'tahun',
-                                            'class' => 'select2',
-                                            'wajib' => '<sup class="text-danger">*</sup>',
-                                        ])
+                                    @component('dashboard.components.formElements.select', [
+                                        'label' => 'Tahun',
+                                        'id' => 'tahun',
+                                        'name' => 'tahun',
+                                        'class' => 'select2',
+                                        'wajib' => '<sup class="text-danger">*</sup>',
+                                    ])
                                         @slot('options')
                                             @foreach ($daftarTahun as $tahun)
                                                 <option value="{{ $tahun->id }}">{{ $tahun->tahun }}</option>
@@ -137,41 +134,38 @@
                                 </div>
 
                                 <div class="col-12">
-                                    @component('dashboard.components.formElements.select',
-                                        [
-                                            'label' => 'Program',
-                                            'id' => 'program',
-                                            'name' => 'program',
-                                            'class' => 'select2',
-                                            'attribute' => 'disabled',
-                                            'wajib' => '<sup class="text-danger">*</sup>',
-                                        ])
+                                    @component('dashboard.components.formElements.select', [
+                                        'label' => 'Program',
+                                        'id' => 'program_dpa_id',
+                                        'name' => 'program_dpa_id',
+                                        'class' => 'select2',
+                                        'attribute' => 'disabled',
+                                        'wajib' => '<sup class="text-danger">*</sup>',
+                                    ])
                                     @endcomponent
                                 </div>
 
                                 <div class="col-12">
-                                    @component('dashboard.components.formElements.select',
-                                        [
-                                            'label' => 'Kegiatan',
-                                            'id' => 'kegiatan',
-                                            'name' => 'kegiatan',
-                                            'class' => 'select2',
-                                            'attribute' => 'disabled',
-                                            'wajib' => '<sup class="text-danger">*</sup>',
-                                        ])
+                                    @component('dashboard.components.formElements.select', [
+                                        'label' => 'Kegiatan',
+                                        'id' => 'kegiatan_dpa_id',
+                                        'name' => 'kegiatan_dpa_id',
+                                        'class' => 'select2',
+                                        'attribute' => 'disabled',
+                                        'wajib' => '<sup class="text-danger">*</sup>',
+                                    ])
                                     @endcomponent
                                 </div>
 
                                 <div class="col-12">
-                                    @component('dashboard.components.formElements.select',
-                                        [
-                                            'label' => 'Bulan',
-                                            'id' => 'bulan',
-                                            'name' => 'bulan',
-                                            'class' => 'select2',
-                                            'attribute' => 'disabled',
-                                            'wajib' => '<sup class="text-danger">*</sup>',
-                                        ])
+                                    @component('dashboard.components.formElements.select', [
+                                        'label' => 'Bulan',
+                                        'id' => 'bulan',
+                                        'name' => 'bulan',
+                                        'class' => 'select2',
+                                        'attribute' => 'disabled',
+                                        'wajib' => '<sup class="text-danger">*</sup>',
+                                    ])
                                         @slot('options')
                                             <option value="Januari">Januari</option>
                                             <option value="Februari">Februari</option>
@@ -191,32 +185,30 @@
 
 
                                 <div class="col-12">
-                                    @component('dashboard.components.formElements.input',
-                                        [
-                                            'label' => 'Jumlah Anggaran (Rp)',
-                                            'type' => 'text',
-                                            'id' => 'jumlah_anggaran',
-                                            'class' => 'uang',
-                                            'name' => 'jumlah_anggaran',
-                                            'wajib' => '<sup class="text-danger">*</sup>',
-                                            'attribute' => 'disabled',
-                                            'value' => '0',
-                                        ])
+                                    @component('dashboard.components.formElements.input', [
+                                        'label' => 'Jumlah Anggaran (Rp)',
+                                        'type' => 'text',
+                                        'id' => 'jumlah_anggaran',
+                                        'class' => 'uang',
+                                        'name' => 'jumlah_anggaran',
+                                        'wajib' => '<sup class="text-danger">*</sup>',
+                                        'attribute' => 'disabled',
+                                        'value' => '0',
+                                    ])
                                     @endcomponent
                                 </div>
 
                                 <div class="col-12">
-                                    @component('dashboard.components.formElements.input',
-                                        [
-                                            'label' => 'Anggaran Yang Digunakan (Rp)',
-                                            'type' => 'text',
-                                            'id' => 'anggaran_digunakan',
-                                            'name' => 'anggaran_digunakan',
-                                            'class' => 'uang',
-                                            'attribute' => 'disabled',
-                                            'wajib' => '<sup class="text-danger">*</sup>',
-                                            'placeholder' => 'Masukkan Anggaran Yang Digunakan',
-                                        ])
+                                    @component('dashboard.components.formElements.input', [
+                                        'label' => 'Anggaran Yang Digunakan (Rp)',
+                                        'type' => 'text',
+                                        'id' => 'anggaran_digunakan',
+                                        'name' => 'anggaran_digunakan',
+                                        'class' => 'uang',
+                                        'attribute' => 'disabled',
+                                        'wajib' => '<sup class="text-danger">*</sup>',
+                                        'placeholder' => 'Masukkan Anggaran Yang Digunakan',
+                                    ])
                                     @endcomponent
                                 </div>
 
@@ -483,68 +475,70 @@
 
         $('#tahun').on('change', function() {
             var tahun = $(this).val();
-            var biroOrganisasi = $('#biro_organisasi').val();
-            $('#kegiatan').html('').attr('disabled', true);
+            var SekretariatDaerah = $('#sekretariat_daerah').val();
+            $('#kegiatan_dpa_id').html('').attr('disabled', true);
             $('#bulan').val('').trigger('change').attr('disabled', true);
             $('#jumlah_anggaran').val('0');
             $('#anggaran_digunakan').val('0').attr('disabled', true);
             $.ajax({
-                url: "{{ url('list/program') }}",
+                url: "{{ url('list/program-dpa') }}",
                 type: "POST",
                 data: {
                     '_token': '{{ csrf_token() }}',
                     tahun: tahun,
-                    biro_organisasi: biroOrganisasi
+                    sekretariat_daerah: SekretariatDaerah
                 },
                 success: function(response) {
-                    $('#program').removeAttr('disabled');
+                    $('#program_dpa_id').removeAttr('disabled');
                     if (response.length > 0) {
-                        $('#program').html('');
-                        $('#program').append('<option value="">Pilih Program</option>');
+                        $('#program_dpa_id').html('');
+                        $('#program_dpa_id').append('<option value="">Pilih Program</option>');
                         $.each(response, function(key, value) {
-                            $('#program').append('<option value="' + value.id + '">' + value
+                            $('#program_dpa_id').append('<option value="' + value.id + '">' +
+                                value
                                 .nama + " (" + value.no_rek + ")" + '</option>');
                         })
                     } else {
-                        $('#program').html('');
+                        $('#program_dpa_id').html('');
                     }
                 }
             })
         })
 
-        $('#program').on('change', function() {
-            var program = $('#program').val();
+        $('#program_dpa_id').on('change', function() {
+            var program = $('#program_dpa_id').val();
             var tahun = $('#tahun').val();
-            var biroOrganisasi = $('#biro_organisasi').val();
+            var SekretariatDaerah = $('#sekretariat_daerah').val();
             $('#bulan').val('').trigger('change').attr('disabled', true);
             $('#jumlah_anggaran').val('0');
             $('#anggaran_digunakan').val('0').attr('disabled', true);
             $.ajax({
-                url: "{{ url('list/kegiatan') }}",
+                url: "{{ url('list/kegiatan-dpa') }}",
                 type: "POST",
                 data: {
                     '_token': '{{ csrf_token() }}',
                     tahun: tahun,
                     program: program,
-                    biro_organisasi: biroOrganisasi
+                    sekretariat_daerah: SekretariatDaerah
                 },
                 success: function(response) {
-                    $('#kegiatan').removeAttr('disabled');
+                    $('#kegiatan_dpa_id').removeAttr('disabled');
                     if (response.length > 0) {
-                        $('#kegiatan').html('');
-                        $('#kegiatan').append('<option value="">Pilih kegiatan</option>');
+                        $('#kegiatan_dpa_id').html('');
+                        $('#kegiatan_dpa_id').append('<option value="">Pilih kegiatan</option>');
                         $.each(response, function(key, value) {
-                            $('#kegiatan').append('<option value="' + value.id + '">' + value
+                            $('#kegiatan_dpa_id').append('<option value="' + value.id + '">' +
+                                value
                                 .nama + " (" + value.no_rek + ")" + '</option>');
                         })
                     } else {
-                        $('#kegiatan').html('');
+                        $('#kegiatan_dpa_id').html('');
                     }
                 }
             })
         })
 
-        $("#kegiatan").on('change', function() {
+        $("#kegiatan_dpa_id").on('change', function() {
             $('#bulan').val('').trigger('change').attr('disabled', false);
             $('#jumlah_anggaran').val('0');
             $('#anggaran_digunakan').val('0').attr('disabled', true);
@@ -552,10 +546,10 @@
 
         $('#bulan').on('change', function() {
             $('#anggaran_digunakan').val('0').attr('disabled', false);
-            var kegiatan = $('#kegiatan').val();
+            var kegiatan = $('#kegiatan_dpa_id').val();
             var tahun = $('#tahun').val();
             var bulan = $('#bulan').val();
-            var biroOrganisasi = $('#biro_organisasi').val();
+            var SekretariatDaerah = $('#sekretariat_daerah').val();
             $.ajax({
                 url: "{{ url('tabel-dpa/get-spd') }}",
                 type: "POST",
@@ -564,7 +558,7 @@
                     tahun: tahun,
                     kegiatan: kegiatan,
                     bulan: bulan,
-                    biro_organisasi: biroOrganisasi
+                    sekretariat_daerah: SekretariatDaerah
                 },
                 success: function(response) {
                     jumlahAnggaran = response.jumlah_anggaran;
@@ -582,8 +576,8 @@
             }
         })
 
-        $('#biro_organisasi').on('change', function() {
-            $('#program').val('').trigger('change');
+        $('#sekretariat_daerah').on('change', function() {
+            $('#program_dpa_id').val('').trigger('change');
             $('#bulan').val('').trigger('change');
             $('#tahun').val('').trigger('change');
             $('#bulan').val('').trigger('change');

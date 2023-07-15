@@ -81,17 +81,16 @@
                             <div class="col-md-6">
                                 @if (Auth::user()->role == 'Admin')
                                     <div class="col-12">
-                                        @component('dashboard.components.formElements.select',
-                                            [
-                                                'label' => 'Sekretariat Daerah',
-                                                'id' => 'biro_organisasi',
-                                                'name' => 'biro_organisasi',
-                                                'class' => 'select2',
-                                                'wajib' => '<sup class="text-danger">*</sup>',
-                                            ])
+                                        @component('dashboard.components.formElements.select', [
+                                            'label' => 'Sekretariat Daerah',
+                                            'id' => 'sekretariat_daerah',
+                                            'name' => 'sekretariat_daerah',
+                                            'class' => 'select2',
+                                            'wajib' => '<sup class="text-danger">*</sup>',
+                                        ])
                                             @slot('options')
-                                                @foreach ($daftarBiroOrganisasi as $biroOrganisasi)
-                                                    <option value="{{ $biroOrganisasi->id }}">{{ $biroOrganisasi->nama }}
+                                                @foreach ($daftarSekretariatDaerah as $SekretariatDaerah)
+                                                    <option value="{{ $SekretariatDaerah->id }}">{{ $SekretariatDaerah->nama }}
                                                     </option>
                                                 @endforeach
                                             @endslot
@@ -102,32 +101,30 @@
                                         <label for="exampleFormControlInput1">Sekretariat Daerah</label>
                                         <br>
                                         <label for="exampleFormControlInput1"
-                                            class="badge badge-primary text-light my-2">{{ Auth::user()->profil->biroOrganisasi->nama }}</label>
+                                            class="badge badge-primary text-light my-2">{{ Auth::user()->profil->SekretariatDaerah->nama }}</label>
                                         <br>
                                     </div>
                                 @endif
                                 <div class="col-12">
-                                    @component('dashboard.components.formElements.input',
-                                        [
-                                            'label' => 'Nomor Surat',
-                                            'type' => 'text',
-                                            'id' => 'nomor_surat',
-                                            'class' => '',
-                                            'name' => 'nomor_surat',
-                                            'wajib' => '<sup class="text-danger">*</sup>',
-                                            'placeholder' => 'Masukkan Nomor Surat',
-                                        ])
+                                    @component('dashboard.components.formElements.input', [
+                                        'label' => 'Nomor Surat',
+                                        'type' => 'text',
+                                        'id' => 'nomor_surat',
+                                        'class' => '',
+                                        'name' => 'nomor_surat',
+                                        'wajib' => '<sup class="text-danger">*</sup>',
+                                        'placeholder' => 'Masukkan Nomor Surat',
+                                    ])
                                     @endcomponent
                                 </div>
                                 <div class="col-12">
-                                    @component('dashboard.components.formElements.select',
-                                        [
-                                            'label' => 'Kategori',
-                                            'id' => 'kategori',
-                                            'name' => 'kategori',
-                                            'class' => 'select2',
-                                            'wajib' => '<sup class="text-danger">*</sup>',
-                                        ])
+                                    @component('dashboard.components.formElements.select', [
+                                        'label' => 'Kategori',
+                                        'id' => 'kategori',
+                                        'name' => 'kategori',
+                                        'class' => 'select2',
+                                        'wajib' => '<sup class="text-danger">*</sup>',
+                                    ])
                                         @slot('options')
                                             <option value="Belanja Hibah">Belanja Hibah</option>
                                             <option value="Barang dan Jasa">Barang dan Jasa</option>
@@ -135,15 +132,14 @@
                                     @endcomponent
                                 </div>
                                 <div class="col-12">
-                                    @component('dashboard.components.formElements.select',
-                                        [
-                                            'label' => 'Tahun',
-                                            'id' => 'tahun',
-                                            'name' => 'tahun',
-                                            'class' => 'select2',
-                                            'attribute' => 'disabled',
-                                            'wajib' => '<sup class="text-danger">*</sup>',
-                                        ])
+                                    @component('dashboard.components.formElements.select', [
+                                        'label' => 'Tahun',
+                                        'id' => 'tahun',
+                                        'name' => 'tahun',
+                                        'class' => 'select2',
+                                        'attribute' => 'disabled',
+                                        'wajib' => '<sup class="text-danger">*</sup>',
+                                    ])
                                         @slot('options')
                                             @foreach ($daftarTahun as $tahun)
                                                 <option value="{{ $tahun->id }}">{{ $tahun->tahun }}</option>
@@ -153,41 +149,38 @@
                                 </div>
 
                                 <div class="col-12">
-                                    @component('dashboard.components.formElements.select',
-                                        [
-                                            'label' => 'Program',
-                                            'id' => 'program',
-                                            'name' => 'program',
-                                            'class' => 'select2',
-                                            'attribute' => 'disabled',
-                                            'wajib' => '<sup class="text-danger">*</sup>',
-                                        ])
+                                    @component('dashboard.components.formElements.select', [
+                                        'label' => 'Program',
+                                        'id' => 'program',
+                                        'name' => 'program',
+                                        'class' => 'select2',
+                                        'attribute' => 'disabled',
+                                        'wajib' => '<sup class="text-danger">*</sup>',
+                                    ])
                                     @endcomponent
                                 </div>
 
                                 <div class="col-12">
-                                    @component('dashboard.components.formElements.select',
-                                        [
-                                            'label' => 'Kegiatan',
-                                            'id' => 'kegiatan',
-                                            'name' => 'kegiatan',
-                                            'class' => 'select2',
-                                            'attribute' => 'disabled',
-                                            'wajib' => '<sup class="text-danger">*</sup>',
-                                        ])
+                                    @component('dashboard.components.formElements.select', [
+                                        'label' => 'Kegiatan',
+                                        'id' => 'kegiatan',
+                                        'name' => 'kegiatan',
+                                        'class' => 'select2',
+                                        'attribute' => 'disabled',
+                                        'wajib' => '<sup class="text-danger">*</sup>',
+                                    ])
                                     @endcomponent
                                 </div>
 
                                 <div class="col-12">
-                                    @component('dashboard.components.formElements.select',
-                                        [
-                                            'label' => 'Bulan',
-                                            'id' => 'bulan',
-                                            'name' => 'bulan',
-                                            'class' => 'select2',
-                                            'attribute' => 'disabled',
-                                            'wajib' => '<sup class="text-danger">*</sup>',
-                                        ])
+                                    @component('dashboard.components.formElements.select', [
+                                        'label' => 'Bulan',
+                                        'id' => 'bulan',
+                                        'name' => 'bulan',
+                                        'class' => 'select2',
+                                        'attribute' => 'disabled',
+                                        'wajib' => '<sup class="text-danger">*</sup>',
+                                    ])
                                         @slot('options')
                                             <option value="Januari">Januari</option>
                                             <option value="Februari">Februari</option>
@@ -207,32 +200,30 @@
 
 
                                 <div class="col-12">
-                                    @component('dashboard.components.formElements.input',
-                                        [
-                                            'label' => 'Jumlah Anggaran (Rp)',
-                                            'type' => 'text',
-                                            'id' => 'jumlah_anggaran',
-                                            'class' => 'uang',
-                                            'name' => 'jumlah_anggaran',
-                                            'wajib' => '<sup class="text-danger">*</sup>',
-                                            'attribute' => 'disabled',
-                                            'value' => '0',
-                                        ])
+                                    @component('dashboard.components.formElements.input', [
+                                        'label' => 'Jumlah Anggaran (Rp)',
+                                        'type' => 'text',
+                                        'id' => 'jumlah_anggaran',
+                                        'class' => 'uang',
+                                        'name' => 'jumlah_anggaran',
+                                        'wajib' => '<sup class="text-danger">*</sup>',
+                                        'attribute' => 'disabled',
+                                        'value' => '0',
+                                    ])
                                     @endcomponent
                                 </div>
 
                                 <div class="col-12">
-                                    @component('dashboard.components.formElements.input',
-                                        [
-                                            'label' => 'Anggaran Yang Digunakan (Rp)',
-                                            'type' => 'text',
-                                            'id' => 'anggaran_digunakan',
-                                            'name' => 'anggaran_digunakan',
-                                            'class' => 'uang',
-                                            'attribute' => 'disabled',
-                                            'wajib' => '<sup class="text-danger">*</sup>',
-                                            'placeholder' => 'Masukkan Anggaran Yang Digunakan',
-                                        ])
+                                    @component('dashboard.components.formElements.input', [
+                                        'label' => 'Anggaran Yang Digunakan (Rp)',
+                                        'type' => 'text',
+                                        'id' => 'anggaran_digunakan',
+                                        'name' => 'anggaran_digunakan',
+                                        'class' => 'uang',
+                                        'attribute' => 'disabled',
+                                        'wajib' => '<sup class="text-danger">*</sup>',
+                                        'placeholder' => 'Masukkan Anggaran Yang Digunakan',
+                                    ])
                                     @endcomponent
                                 </div>
 
@@ -495,7 +486,7 @@
             })
         })
 
-        $('#biro_organisasi').on('change', function() {
+        $('#sekretariat_daerah').on('change', function() {
             $('#kategori').val('').trigger('change');
             $('#program').val('').trigger('change');
             $('#bulan').val('').trigger('change');
@@ -507,7 +498,7 @@
 
         $('#tahun').on('change', function() {
             var tahun = $(this).val();
-            var biroOrganisasi = $('#biro_organisasi').val();
+            var SekretariatDaerah = $('#sekretariat_daerah').val();
             $('#kegiatan').html('').attr('disabled', true);
             $('#bulan').val('').trigger('change').attr('disabled', true);
             $('#jumlah_anggaran').val('0');
@@ -518,7 +509,7 @@
                 data: {
                     '_token': '{{ csrf_token() }}',
                     tahun: tahun,
-                    biro_organisasi: biroOrganisasi
+                    sekretariat_daerah: SekretariatDaerah
                 },
                 success: function(response) {
                     $('#program').removeAttr('disabled');
@@ -539,7 +530,7 @@
         $('#program').on('change', function() {
             var program = $('#program').val();
             var tahun = $('#tahun').val();
-            var biroOrganisasi = $('#biro_organisasi').val();
+            var SekretariatDaerah = $('#sekretariat_daerah').val();
             $('#bulan').val('').trigger('change').attr('disabled', true);
             $('#jumlah_anggaran').val('0');
             $('#anggaran_digunakan').val('0').attr('disabled', true);
@@ -550,7 +541,7 @@
                     '_token': '{{ csrf_token() }}',
                     tahun: tahun,
                     program: program,
-                    biro_organisasi: biroOrganisasi
+                    sekretariat_daerah: SekretariatDaerah
                 },
                 success: function(response) {
                     $('#kegiatan').removeAttr('disabled');
@@ -579,7 +570,7 @@
             var kegiatan = $('#kegiatan').val();
             var tahun = $('#tahun').val();
             var bulan = $('#bulan').val();
-            var biroOrganisasi = $('#biro_organisasi').val();
+            var SekretariatDaerah = $('#sekretariat_daerah').val();
             $.ajax({
                 url: "{{ url('tabel-dpa/get-spd') }}",
                 type: "POST",
@@ -588,7 +579,7 @@
                     tahun: tahun,
                     kegiatan: kegiatan,
                     bulan: bulan,
-                    biro_organisasi: biroOrganisasi
+                    sekretariat_daerah: SekretariatDaerah
                 },
                 success: function(response) {
                     jumlahAnggaran = response.jumlah_anggaran;

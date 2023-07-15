@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\dashboard\masterData;
 
 use App\Http\Controllers\Controller;
-use App\Models\BiroOrganisasi;
+use App\Models\SekretariatDaerah;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Yajra\DataTables\Facades\DataTables;
 
-class BiroOrganisasiController extends Controller
+class SekretariatDaerahController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,7 +19,7 @@ class BiroOrganisasiController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = BiroOrganisasi::orderBy('created_at', 'desc')->get();
+            $data = SekretariatDaerah::orderBy('created_at', 'desc')->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
@@ -29,7 +29,7 @@ class BiroOrganisasiController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('dashboard.pages.masterData.biroOrganisasi.index');
+        return view('dashboard.pages.masterData.sekretariatDaerah.index');
     }
 
     /**
@@ -53,7 +53,7 @@ class BiroOrganisasiController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'nama' => ['required', Rule::unique('biro_organisasi')->withoutTrashed()],
+                'nama' => ['required', Rule::unique('sekretariat_daerah')->withoutTrashed()],
             ],
             [
                 'nama.required' => 'Nama Biro Organisasi tidak boleh kosong',
@@ -65,9 +65,9 @@ class BiroOrganisasiController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $biroOrganisasi = new BiroOrganisasi();
-        $biroOrganisasi->nama = $request->nama;
-        $biroOrganisasi->save();
+        $SekretariatDaerah = new SekretariatDaerah();
+        $SekretariatDaerah->nama = $request->nama;
+        $SekretariatDaerah->save();
 
         return response()->json(['status' => 'success']);
     }
@@ -75,10 +75,10 @@ class BiroOrganisasiController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\BiroOrganisasi  $biroOrganisasi
+     * @param  \App\Models\SekretariatDaerah  $SekretariatDaerah
      * @return \Illuminate\Http\Response
      */
-    public function show(BiroOrganisasi $biroOrganisasi)
+    public function show(SekretariatDaerah $SekretariatDaerah)
     {
         //
     }
@@ -86,27 +86,27 @@ class BiroOrganisasiController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\BiroOrganisasi  $biroOrganisasi
+     * @param  \App\Models\SekretariatDaerah  $SekretariatDaerah
      * @return \Illuminate\Http\Response
      */
-    public function edit(BiroOrganisasi $biroOrganisasi)
+    public function edit(SekretariatDaerah $SekretariatDaerah)
     {
-        return response()->json($biroOrganisasi);
+        return response()->json($SekretariatDaerah);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\BiroOrganisasi  $biroOrganisasi
+     * @param  \App\Models\SekretariatDaerah  $SekretariatDaerah
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, BiroOrganisasi $biroOrganisasi)
+    public function update(Request $request, SekretariatDaerah $SekretariatDaerah)
     {
         $validator = Validator::make(
             $request->all(),
             [
-                'nama' => ['required', Rule::unique('biro_organisasi')->ignore($biroOrganisasi->id)->withoutTrashed()],
+                'nama' => ['required', Rule::unique('sekretariat_daerah')->ignore($SekretariatDaerah->id)->withoutTrashed()],
             ],
             [
                 'nama.required' => 'Nama Biro Organisasi tidak boleh kosong',
@@ -118,8 +118,8 @@ class BiroOrganisasiController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $biroOrganisasi->nama = $request->nama;
-        $biroOrganisasi->save();
+        $SekretariatDaerah->nama = $request->nama;
+        $SekretariatDaerah->save();
 
         return response()->json(['status' => 'success']);
     }
@@ -127,12 +127,12 @@ class BiroOrganisasiController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\BiroOrganisasi  $biroOrganisasi
+     * @param  \App\Models\SekretariatDaerah  $SekretariatDaerah
      * @return \Illuminate\Http\Response
      */
-    public function destroy(BiroOrganisasi $biroOrganisasi)
+    public function destroy(SekretariatDaerah $SekretariatDaerah)
     {
-        $biroOrganisasi->delete();
+        $SekretariatDaerah->delete();
         return response()->json(['status' => 'success']);
     }
 }

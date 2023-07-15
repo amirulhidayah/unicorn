@@ -56,30 +56,29 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col">
-                            <div class="card fieldset">
-                                @component('dashboard.components.widgets.filter')
-                                    @slot('daftarBiroOrganisasi', $daftarBiroOrganisasi)
-                                    @slot('daftarTahun', $daftarTahun)
-                                @endcomponent
-                                @component('dashboard.components.dataTables.index', [
-                                    'id' => 'table-data',
-                                    'th' => [
-                                        'No',
-                                        'Tanggal',
-                                        'Kegiatan',
-                                        'Program',
-                                        'Sekretariat Daerah',
-                                        'Kategori',
-                                        'Periode',
-                                        'Anggaran Digunakan',
-                                        'Verifikasi ASN Sub Bagian Keuangan',
-                                        'Verifikasi PPK',
-                                        'Status Verifikasi Akhir',
-                                        'Aksi',
-                                    ],
-                                ])
-                                @endcomponent
-                            </div>
+                            @component('dashboard.components.widgets.filter')
+                                @slot('daftarSekretariatDaerah', $daftarSekretariatDaerah)
+                                @slot('daftarTahun', $daftarTahun)
+                            @endcomponent
+                            @livewire('dashboard.spp.spp-ls.table')
+                            @component('dashboard.components.dataTables.index', [
+                                'id' => 'table-data',
+                                'th' => [
+                                    'No',
+                                    'Tanggal',
+                                    'Kegiatan',
+                                    'Program',
+                                    'Sekretariat Daerah',
+                                    'Kategori',
+                                    'Periode',
+                                    'Anggaran Digunakan',
+                                    'Verifikasi ASN Sub Bagian Keuangan',
+                                    'Verifikasi PPK',
+                                    'Status Verifikasi Akhir',
+                                    'Aksi',
+                                ],
+                            ])
+                            @endcomponent
                         </div>
                     </div>
                 </div>
@@ -197,7 +196,7 @@
             ajax: {
                 url: "{{ url('spp-ls') }}",
                 data: function(d) {
-                    d.biro_organisasi_id = $('#biro_organisasi').val();
+                    d.sekretariat_daerah_id = $('#sekretariat_daerah').val();
                     d.tahun = $('#tahun').val();
                     d.status = $('#status').val();
                     d.search = $('input[type="search"]').val();
@@ -226,8 +225,8 @@
                     className: 'text-center',
                 },
                 {
-                    data: 'biro_organisasi',
-                    name: 'biro_organisasi',
+                    data: 'sekretariat_daerah',
+                    name: 'sekretariat_daerah',
                     className: 'text-center',
                 },
                 {

@@ -19,7 +19,7 @@ class CreateSppTuTable extends Migration
             $table->uuid('kegiatan_spp_id');
             $table->bigInteger('jumlah_anggaran');
             $table->string('bulan');
-            $table->uuid('biro_organisasi_id');
+            $table->uuid('sekretariat_daerah_id');
             $table->integer('tahap_riwayat')->default(1);
             $table->string('nomor_surat');
             $table->uuid('user_id');

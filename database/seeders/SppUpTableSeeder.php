@@ -14,18 +14,18 @@ class SppUpTableSeeder extends Seeder
      */
     public function run()
     {
-        
+
 
         \DB::table('spp_up')->delete();
-        
-        \DB::table('spp_up')->insert(array (
-            0 => 
-            array (
+
+        \DB::table('spp_up')->insert(array(
+            0 =>
+            array(
                 'id' => 'dafdbff1-bb0a-4b18-b9f9-5434dc1030c8',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
                 'kegiatan_spp_id' => 'f408e460-42a6-429c-92c6-73b3f8529939',
                 'jumlah_anggaran' => 17250000,
-                'biro_organisasi_id' => '68c37c05-84a4-493b-9419-35cb6d10a319',
+                'sekretariat_daerah_id' => '68c37c05-84a4-493b-9419-35cb6d10a319',
                 'nomor_surat' => '101/SPP-UP/06/2022',
                 'tahap_riwayat' => 2,
                 'user_id' => 'b45916f6-02aa-4285-a51e-1c2280f5a3d0',
@@ -42,7 +42,5 @@ class SppUpTableSeeder extends Seeder
                 'updated_at' => '2022-06-21 12:01:03',
             ),
         ));
-        
-        
     }
 }

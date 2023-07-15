@@ -2,7 +2,7 @@
 
 namespace App\Imports;
 
-use App\Models\BiroOrganisasi;
+use App\Models\SekretariatDaerah;
 use App\Models\Kegiatan;
 use App\Models\KegiatanSpp;
 use App\Models\Program;
@@ -42,7 +42,7 @@ class ImportSpd implements ToCollection, WithHeadingRow
             $kegiatan = Kegiatan::where('no_rek', preg_replace("/[^A-Za-z0-9.,`~!@#$%^&*)(-_+=}{\;:? ]/", " ", $row['No.Rek. Keg.SKPD']))->first();
             if (!$kegiatan) {
                 $kegiatan = new Kegiatan();
-                $kegiatan->program_id = $program->id;
+                $kegiatan->program_dpa_id = $program->id;
                 $kegiatan->nama = preg_replace("/[^A-Za-z0-9.,`~!@#$%^&*)(-_+=}{\;:? ]/", " ", $row['Kegiatan']);
                 $kegiatan->no_rek = preg_replace("/[^A-Za-z0-9.,`~!@#$%^&*)(-_+=}{\;:? ]/", " ", $row['No.Rek. Keg.SKPD']);
                 $kegiatan->save();
@@ -65,7 +65,7 @@ class ImportSpd implements ToCollection, WithHeadingRow
                 $kegiatanSpp->save();
             }
 
-            $biroOrganisasi = BiroOrganisasi::where('nama', $row['Biro Organisasi'])->first();
+            $SekretariatDaerah = SekretariatDaerah::where('nama', $row['Biro Organisasi'])->first();
 
             // $tw1 = str_replace(['Rp', ','], '', $row['TW 1']);
             // $tw2 = str_replace(['Rp', ','], '', $row['TW 2']);
@@ -73,12 +73,12 @@ class ImportSpd implements ToCollection, WithHeadingRow
             // $tw4 = str_replace(['Rp', ','], '', $row['TW 4']);
             $jumlah_anggaran = preg_replace("/[^0-9]/", "", $row['Jumlah Anggaran']);
 
-            if ($biroOrganisasi) {
-                $cekSpd = Spd::where('kegiatan_id', $kegiatan->id)->where('biro_organisasi_id', $biroOrganisasi->id)->where('tahun_id', $tahun)->first();
+            if ($SekretariatDaerah) {
+                $cekSpd = Spd::where('kegiatan_dpa_id', $kegiatan->id)->where('sekretariat_daerah_id', $SekretariatDaerah->id)->where('tahun_id', $tahun)->first();
                 if (!$cekSpd) {
                     $spd = new Spd();
-                    $spd->kegiatan_id = $kegiatan->id;
-                    $spd->biro_organisasi_id = $biroOrganisasi->id;
+                    $spd->kegiatan_dpa_id = $kegiatan->id;
+                    $spd->sekretariat_daerah_id = $SekretariatDaerah->id;
                     $spd->tahun_id = $tahun;
                     $spd->jumlah_anggaran = $jumlah_anggaran;
                     // $spd->tw1 = $tw1 == '-' ? 0 : $tw1;

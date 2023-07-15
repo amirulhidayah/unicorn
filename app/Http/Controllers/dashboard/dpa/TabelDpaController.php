@@ -6,7 +6,7 @@ use App\Exports\FormatImport;
 use App\Exports\TabelDpaExport;
 use App\Http\Controllers\Controller;
 use App\Imports\ImportSpd;
-use App\Models\BiroOrganisasi;
+use App\Models\SekretariatDaerah;
 use App\Models\Program;
 use App\Models\Spd;
 use App\Models\SppGu;
@@ -30,14 +30,14 @@ class TabelDpaController extends Controller
     public function index()
     {
         $tahun = Tahun::orderBy('tahun', 'asc')->get();
-        $biroOrganisasi = BiroOrganisasi::orderBY('nama', 'asc')->get();
-        // $program = Program::with('kegiatan')->whereHas('kegiatan', function ($query) use ($biroOrganisasi) {
-        //     $query->whereHas('spd', function ($query) use ($biroOrganisasi) {
-        //         $query->where('biro_organisasi_id', $biroOrganisasi);
+        $SekretariatDaerah = SekretariatDaerah::orderBY('nama', 'asc')->get();
+        // $program = Program::with('kegiatan')->whereHas('kegiatan', function ($query) use ($SekretariatDaerah) {
+        //     $query->whereHas('spd', function ($query) use ($SekretariatDaerah) {
+        //         $query->where('sekretariat_daerah_id', $SekretariatDaerah);
         //     });
         // })->get();
 
-        return view('dashboard.pages.dpa.tabel.index', compact('tahun', 'biroOrganisasi'));
+        return view('dashboard.pages.dpa.tabel.index', compact('tahun', 'SekretariatDaerah'));
     }
 
     /**
@@ -62,14 +62,14 @@ class TabelDpaController extends Controller
             $request->all(),
             [
                 'tahun' => 'required',
-                'biro_organisasi' => 'required',
+                'sekretariat_daerah' => 'required',
                 'program' => 'required',
                 'kegiatan' => 'required',
                 'jumlah_anggaran' => 'required',
             ],
             [
                 'tahun.required' => 'Tahun tidak boleh kosong',
-                'biro_organisasi.required' => 'Biro Organisasi tidak boleh kosong',
+                'sekretariat_daerah.required' => 'Biro Organisasi tidak boleh kosong',
                 'program.required' => 'Program tidak boleh kosong',
                 'kegiatan.required' => 'Kegiatan tidak boleh kosong',
                 'jumlah_anggaran.required' => 'Jumlah anggaran tidak boleh kosong',
@@ -80,16 +80,16 @@ class TabelDpaController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $cekSpd = Spd::where('kegiatan_id', $request->kegiatan)->where('biro_organisasi_id', $request->biro_organisasi)->where('tahun_id', $request->tahun)->first();
+        $cekSpd = Spd::where('kegiatan_dpa_id', $request->kegiatan)->where('sekretariat_daerah_id', $request->sekretariat_daerah)->where('tahun_id', $request->tahun)->first();
 
         if ($cekSpd) {
             return response()->json(['status' => 'unique']);
         }
 
         $spd = new Spd();
-        $spd->kegiatan_id = $request->kegiatan;
+        $spd->kegiatan_dpa_id = $request->kegiatan;
         $spd->tahun_id = $request->tahun;
-        $spd->biro_organisasi_id = $request->biro_organisasi;
+        $spd->sekretariat_daerah_id = $request->sekretariat_daerah;
         $spd->jumlah_anggaran = preg_replace("/[^0-9]/", "", $request->jumlah_anggaran);
         $spd->save();
 
@@ -132,14 +132,14 @@ class TabelDpaController extends Controller
             $request->all(),
             [
                 'tahun' => 'required',
-                'biro_organisasi' => 'required',
+                'sekretariat_daerah' => 'required',
                 'program' => 'required',
                 'kegiatan' => 'required',
                 'jumlah_anggaran' => 'required',
             ],
             [
                 'tahun.required' => 'Tahun tidak boleh kosong',
-                'biro_organisasi.required' => 'Biro Organisasi tidak boleh kosong',
+                'sekretariat_daerah.required' => 'Biro Organisasi tidak boleh kosong',
                 'program.required' => 'Program tidak boleh kosong',
                 'kegiatan.required' => 'Kegiatan tidak boleh kosong',
                 'jumlah_anggaran.required' => 'TW1 tidak boleh kosong',
@@ -150,15 +150,15 @@ class TabelDpaController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $cekSpd = Spd::where('kegiatan_id', $request->kegiatan)->where('biro_organisasi_id', $request->biro_organisasi)->where('tahun_id', $request->tahun)->where('id', '!=', $spd->id)->first();
+        $cekSpd = Spd::where('kegiatan_dpa_id', $request->kegiatan)->where('sekretariat_daerah_id', $request->sekretariat_daerah)->where('tahun_id', $request->tahun)->where('id', '!=', $spd->id)->first();
 
         if ($cekSpd) {
             return response()->json(['status' => 'unique']);
         }
 
-        $spd->kegiatan_id = $request->kegiatan;
+        $spd->kegiatan_dpa_id = $request->kegiatan;
         $spd->tahun_id = $request->tahun;
-        $spd->biro_organisasi_id = $request->biro_organisasi;
+        $spd->sekretariat_daerah_id = $request->sekretariat_daerah;
         $spd->jumlah_anggaran = preg_replace("/[^0-9]/", "", $request->jumlah_anggaran);
         $spd->save();
 
@@ -216,22 +216,22 @@ class TabelDpaController extends Controller
         $kegiatan = $request->kegiatan;
         $bulan = $request->bulan;
 
-        $biroOrganisasi = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->biro_organisasi : Auth::user()->profil->biro_organisasi_id;
+        $SekretariatDaerah = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
 
-        $spd = Spd::where('kegiatan_id', $kegiatan)->where('biro_organisasi_id', $biroOrganisasi)->where('tahun_id', $tahun)->first();
+        $spd = Spd::where('kegiatan_dpa_id', $kegiatan)->where('sekretariat_daerah_id', $SekretariatDaerah)->where('tahun_id', $tahun)->first();
 
         $jumlahAnggaran = $spd->jumlah_anggaran;
 
-        $sppLs = SppLs::where('biro_organisasi_id', $biroOrganisasi)
+        $sppLs = SppLs::where('sekretariat_daerah_id', $SekretariatDaerah)
             ->orderBy('created_at', 'asc')
             ->where('tahun_id', $tahun)
-            ->where('kegiatan_id', $kegiatan)
+            ->where('kegiatan_dpa_id', $kegiatan)
             ->where('status_validasi_akhir', 1);
 
-        $sppGu = SppGu::where('biro_organisasi_id', $biroOrganisasi)
+        $sppGu = SppGu::where('sekretariat_daerah_id', $SekretariatDaerah)
             ->orderBy('created_at', 'asc')
             ->where('tahun_id', $tahun)
-            ->where('kegiatan_id', $kegiatan)
+            ->where('kegiatan_dpa_id', $kegiatan)
             ->where('status_validasi_akhir', 1);
 
         if ($bulan == 'Januari') {
@@ -287,38 +287,38 @@ class TabelDpaController extends Controller
     {
         $role = Auth::user()->role;
         $tahun = $request->tahun;
-        $biroOrganisasi = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->biro_organisasi : Auth::user()->profil->biro_organisasi_id;
-        $daftarBiroOrganisasi = Spd::with('biroOrganisasi')->where('tahun_id', $tahun)
-            ->where(function ($query) use ($biroOrganisasi) {
-                if ($biroOrganisasi != "Semua") {
-                    $query->where('biro_organisasi_id', $biroOrganisasi);
+        $SekretariatDaerah = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
+        $daftarSekretariatDaerah = Spd::with('SekretariatDaerah')->where('tahun_id', $tahun)
+            ->where(function ($query) use ($SekretariatDaerah) {
+                if ($SekretariatDaerah != "Semua") {
+                    $query->where('sekretariat_daerah_id', $SekretariatDaerah);
                 }
             })
-            ->whereHas('biroOrganisasi', function ($query) {
+            ->whereHas('SekretariatDaerah', function ($query) {
                 $query->orderBy('nama', 'asc');
-            })->groupBy('biro_organisasi_id')->get()->pluck('biroOrganisasi')->sortBy('nama');
+            })->groupBy('sekretariat_daerah_id')->get()->pluck('SekretariatDaerah')->sortBy('nama');
 
-        return view('dashboard.components.widgets.tabelSpd', compact(['daftarBiroOrganisasi', 'tahun']))->render();
+        return view('dashboard.components.widgets.tabelSpd', compact(['daftarSekretariatDaerah', 'tahun']))->render();
     }
 
     public function exportSpd(Request $request)
     {
         $tahun = $request->tahun;
-        $biroOrganisasi = Auth::user()->role != "Bendahara Pengeluaran" ? $request->biro_organisasi : Auth::user()->profil->biro_organisasi_id;
-        $daftarBiroOrganisasi = Spd::with('biroOrganisasi')->where('tahun_id', $tahun)
-            ->where(function ($query) use ($biroOrganisasi) {
-                if ($biroOrganisasi != "Semua") {
-                    $query->where('biro_organisasi_id', $biroOrganisasi);
+        $SekretariatDaerah = Auth::user()->role != "Bendahara Pengeluaran" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
+        $daftarSekretariatDaerah = Spd::with('SekretariatDaerah')->where('tahun_id', $tahun)
+            ->where(function ($query) use ($SekretariatDaerah) {
+                if ($SekretariatDaerah != "Semua") {
+                    $query->where('sekretariat_daerah_id', $SekretariatDaerah);
                 }
             })
-            ->whereHas('biroOrganisasi', function ($query) {
+            ->whereHas('SekretariatDaerah', function ($query) {
                 $query->orderBy('nama', 'asc');
-            })->groupBy('biro_organisasi_id')->get()->pluck('biroOrganisasi')->sortBy('nama');
+            })->groupBy('sekretariat_daerah_id')->get()->pluck('SekretariatDaerah')->sortBy('nama');
 
         $tanggal = Carbon::parse(Carbon::now())->translatedFormat('d F Y');
 
-        return Excel::download(new TabelDpaExport($daftarBiroOrganisasi, $tahun), "Export" . "-" . $tanggal . "-" . rand(1, 9999) . '.xlsx');
+        return Excel::download(new TabelDpaExport($daftarSekretariatDaerah, $tahun), "Export" . "-" . $tanggal . "-" . rand(1, 9999) . '.xlsx');
 
-        // return view('dashboard.components.widgets.tabelSpd', compact(['daftarBiroOrganisasi', 'tahun']))->render();
+        // return view('dashboard.components.widgets.tabelSpd', compact(['daftarSekretariatDaerah', 'tahun']))->render();
     }
 }

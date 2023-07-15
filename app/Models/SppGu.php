@@ -13,9 +13,9 @@ class SppGu extends Model
 
     protected $table = 'spp_gu';
 
-    public function kegiatan()
+    public function kegiatanDpa()
     {
-        return $this->belongsTo(Kegiatan::class)->withTrashed();
+        return $this->belongsTo(KegiatanDpa::class)->withTrashed();
     }
 
     public function tahun()
@@ -23,9 +23,9 @@ class SppGu extends Model
         return $this->belongsTo(Tahun::class)->withTrashed();
     }
 
-    public function biroOrganisasi()
+    public function SekretariatDaerah()
     {
-        return $this->belongsTo(BiroOrganisasi::class)->withTrashed();
+        return $this->belongsTo(SekretariatDaerah::class)->withTrashed();
     }
 
     public function dokumenSppGu()

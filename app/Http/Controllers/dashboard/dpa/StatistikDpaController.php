@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\dashboard\dpa;
 
 use App\Http\Controllers\Controller;
-use App\Models\BiroOrganisasi;
+use App\Models\SekretariatDaerah;
 use App\Models\Kegiatan;
 use App\Models\Spd;
 use App\Models\SppGu;
@@ -17,38 +17,38 @@ class StatistikDpaController extends Controller
     public function index()
     {
         $tahun = Tahun::orderBy('tahun', 'asc')->get();
-        $biroOrganisasi = BiroOrganisasi::orderBY('nama', 'asc')->get();
-        return view('dashboard.pages.dpa.statistik.index', compact('tahun', 'biroOrganisasi'));
+        $SekretariatDaerah = SekretariatDaerah::orderBY('nama', 'asc')->get();
+        return view('dashboard.pages.dpa.statistik.index', compact('tahun', 'SekretariatDaerah'));
     }
 
     public function getDataStatistik(Request $request)
     {
         $role = Auth::user()->role;
         $tahun_id = $request->tahun_id;
-        $kegiatan_id = $request->kegiatan_id;
-        $biro_organisasi_id = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->biro_organisasi_id : Auth::user()->profil->biro_organisasi_id;
+        $kegiatan_dpa_id = $request->kegiatan_dpa_id;
+        $sekretariat_daerah_id = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->sekretariat_daerah_id : Auth::user()->profil->sekretariat_daerah_id;
 
-        $kegiatan = Kegiatan::where('id', $kegiatan_id)->first();
+        $kegiatan = Kegiatan::where('id', $kegiatan_dpa_id)->first();
 
         $judul = $kegiatan ? $kegiatan->nama : 'Kegiatan Belum Dipilih';
 
-        $spd = Spd::where('kegiatan_id', $kegiatan_id)->where('biro_organisasi_id', $biro_organisasi_id)->where('tahun_id', $tahun_id)->first();
+        $spd = Spd::where('kegiatan_dpa_id', $kegiatan_dpa_id)->where('sekretariat_daerah_id', $sekretariat_daerah_id)->where('tahun_id', $tahun_id)->first();
 
         $bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
         $anggaranDigunakan = [];
-        $anggaranDigunakan[] = $this->anggaranDigunakan($biro_organisasi_id, $tahun_id, $kegiatan_id, 'Januari');
-        $anggaranDigunakan[] = $this->anggaranDigunakan($biro_organisasi_id, $tahun_id, $kegiatan_id, 'Februari');
-        $anggaranDigunakan[] = $this->anggaranDigunakan($biro_organisasi_id, $tahun_id, $kegiatan_id, 'Maret');
-        $anggaranDigunakan[] = $this->anggaranDigunakan($biro_organisasi_id, $tahun_id, $kegiatan_id, 'April');
-        $anggaranDigunakan[] = $this->anggaranDigunakan($biro_organisasi_id, $tahun_id, $kegiatan_id, 'Mei');
-        $anggaranDigunakan[] = $this->anggaranDigunakan($biro_organisasi_id, $tahun_id, $kegiatan_id, 'Juni');
-        $anggaranDigunakan[] = $this->anggaranDigunakan($biro_organisasi_id, $tahun_id, $kegiatan_id, 'Juli');
-        $anggaranDigunakan[] = $this->anggaranDigunakan($biro_organisasi_id, $tahun_id, $kegiatan_id, 'Agustus');
-        $anggaranDigunakan[] = $this->anggaranDigunakan($biro_organisasi_id, $tahun_id, $kegiatan_id, 'September');
-        $anggaranDigunakan[] = $this->anggaranDigunakan($biro_organisasi_id, $tahun_id, $kegiatan_id, 'Oktober');
-        $anggaranDigunakan[] = $this->anggaranDigunakan($biro_organisasi_id, $tahun_id, $kegiatan_id, 'November');
-        $anggaranDigunakan[] = $this->anggaranDigunakan($biro_organisasi_id, $tahun_id, $kegiatan_id, 'Desember');
+        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'Januari');
+        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'Februari');
+        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'Maret');
+        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'April');
+        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'Mei');
+        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'Juni');
+        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'Juli');
+        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'Agustus');
+        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'September');
+        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'Oktober');
+        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'November');
+        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'Desember');
 
         return response()->json([
             'judul' => $judul,
@@ -58,20 +58,20 @@ class StatistikDpaController extends Controller
         ]);
     }
 
-    private function anggaranDigunakan($biro_organisasi_id, $tahun_id, $kegiatan_id, $bulan)
+    private function anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, $bulan)
     {
-        $sppLs = SppLs::where('biro_organisasi_id', $biro_organisasi_id)
+        $sppLs = SppLs::where('sekretariat_daerah_id', $sekretariat_daerah_id)
             ->orderBy('created_at', 'asc')
             ->where('tahun_id', $tahun_id)
-            ->where('kegiatan_id', $kegiatan_id)
+            ->where('kegiatan_dpa_id', $kegiatan_dpa_id)
             ->where('status_validasi_akhir', 1)
             ->where('bulan', $bulan)
             ->sum('anggaran_digunakan');
 
-        $sppGu = SppGu::where('biro_organisasi_id', $biro_organisasi_id)
+        $sppGu = SppGu::where('sekretariat_daerah_id', $sekretariat_daerah_id)
             ->orderBy('created_at', 'asc')
             ->where('tahun_id', $tahun_id)
-            ->where('kegiatan_id', $kegiatan_id)
+            ->where('kegiatan_dpa_id', $kegiatan_dpa_id)
             ->where('status_validasi_akhir', 1)
             ->where('bulan', $bulan)
             ->sum('anggaran_digunakan');

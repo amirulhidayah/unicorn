@@ -37,14 +37,17 @@
                     <div class="card-head-row">
                         <div class="card-title">Daftar Dokumen</div>
                         <div class="card-tools">
-                            @if ((Auth::user()->role == 'PPK' && $sppUp->status_validasi_ppk == 0 && Auth::user()->is_aktif == 1) || ($sppUp->status_validasi_asn == 0 && Auth::user()->role == 'ASN Sub Bagian Keuangan' && Auth::user()->is_aktif == 1))
-                                @component('dashboard.components.buttons.verifikasi',
-                                    [
-                                        'id' => 'btn-verifikasi',
-                                        'class' => '',
-                                        'url' => '/anc/create',
-                                        'type' => 'button',
-                                    ])
+                            @if (
+                                (Auth::user()->role == 'PPK' && $sppUp->status_validasi_ppk == 0 && Auth::user()->is_aktif == 1) ||
+                                    ($sppUp->status_validasi_asn == 0 &&
+                                        Auth::user()->role == 'ASN Sub Bagian Keuangan' &&
+                                        Auth::user()->is_aktif == 1))
+                                @component('dashboard.components.buttons.verifikasi', [
+                                    'id' => 'btn-verifikasi',
+                                    'class' => '',
+                                    'url' => '/anc/create',
+                                    'type' => 'button',
+                                ])
                                 @endcomponent
                             @endif
                         </div>
@@ -53,51 +56,44 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-lg-6">
-                            @component('dashboard.components.widgets.info',
-                                [
-                                    'judul' => 'Sekretariat Daerah',
-                                    'isi' => $sppUp->biroOrganisasi->nama,
-                                ])
+                            @component('dashboard.components.widgets.info', [
+                                'judul' => 'Sekretariat Daerah',
+                                'isi' => $sppUp->SekretariatDaerah->nama,
+                            ])
                             @endcomponent
-                            @component('dashboard.components.widgets.info',
-                                [
-                                    'judul' => 'Nomor Surat',
-                                    'isi' => $sppUp->nomor_surat,
-                                ])
+                            @component('dashboard.components.widgets.info', [
+                                'judul' => 'Nomor Surat',
+                                'isi' => $sppUp->nomor_surat,
+                            ])
                             @endcomponent
-                            @component('dashboard.components.widgets.info',
-                                [
-                                    'judul' => 'Tahun',
-                                    'isi' => $sppUp->tahun->tahun,
-                                ])
+                            @component('dashboard.components.widgets.info', [
+                                'judul' => 'Tahun',
+                                'isi' => $sppUp->tahun->tahun,
+                            ])
                             @endcomponent
-                            @component('dashboard.components.widgets.info',
-                                [
-                                    'judul' => 'Program',
-                                    'isi' => $sppUp->kegiatan->program->nama . ' (' . $sppUp->kegiatan->program->no_rek . ')',
-                                ])
+                            @component('dashboard.components.widgets.info', [
+                                'judul' => 'Program',
+                                'isi' => $sppUp->kegiatan->program->nama . ' (' . $sppUp->kegiatan->program->no_rek . ')',
+                            ])
                             @endcomponent
-                            @component('dashboard.components.widgets.info',
-                                [
-                                    'judul' => 'Kegiatan',
-                                    'isi' => $sppUp->kegiatan->nama . ' (' . $sppUp->kegiatan->no_rek . ')',
-                                ])
+                            @component('dashboard.components.widgets.info', [
+                                'judul' => 'Kegiatan',
+                                'isi' => $sppUp->kegiatan->nama . ' (' . $sppUp->kegiatan->no_rek . ')',
+                            ])
                             @endcomponent
-                            @component('dashboard.components.widgets.info',
-                                [
-                                    'judul' => 'Jumlah Anggaran',
-                                    'isi' => $jumlahAnggaran,
-                                ])
+                            @component('dashboard.components.widgets.info', [
+                                'judul' => 'Jumlah Anggaran',
+                                'isi' => $jumlahAnggaran,
+                            ])
                             @endcomponent
                         </div>
                         <div class="col-lg-6">
 
-                            @component('dashboard.components.widgets.listDokumen',
-                                [
-                                    'dokumenSpp' => $sppUp->dokumenSppUp,
-                                    'spp' => $sppUp,
-                                    'tipe' => $tipe,
-                                ])
+                            @component('dashboard.components.widgets.listDokumen', [
+                                'dokumenSpp' => $sppUp->dokumenSppUp,
+                                'spp' => $sppUp,
+                                'tipe' => $tipe,
+                            ])
                             @endcomponent
                         </div>
                     </div>

@@ -57,7 +57,12 @@
                         <p>SPP GU</p>
                     </a>
                 </li>
-                @if (in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']))
+                @if (in_array(Auth::user()->role, [
+                        'Admin',
+                        'Bendahara Pengeluaran',
+                        'Bendahara Pengeluaran Pembantu',
+                        'Bendahara Pengeluaran Pembantu Belanja Hibah',
+                    ]))
                     <li class="nav-section">
                         <span class="sidebar-mini-icon">
                             <i class="fa fa-ellipsis-h"></i>
@@ -97,7 +102,12 @@
                         </a>
                     </li>
                 @endif
-                @if (in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']))
+                @if (in_array(Auth::user()->role, [
+                        'Admin',
+                        'Bendahara Pengeluaran',
+                        'Bendahara Pengeluaran Pembantu',
+                        'Bendahara Pengeluaran Pembantu Belanja Hibah',
+                    ]))
                     <li class="nav-item" id="master-program-spp">
                         <a href="{{ url('/master-data/program-spp') }}">
                             <i class="far fa-list-alt"></i>
@@ -107,8 +117,8 @@
                 @endif
 
                 @if (Auth::user()->role == 'Admin')
-                    <li class="nav-item" id="master-biro-organisasi">
-                        <a href="{{ url('/master-data/biro-organisasi') }}">
+                    <li class="nav-item" id="master-sekretariat-daerah">
+                        <a href="{{ url('/master-data/sekretariat-daerah') }}">
                             <i class="fas fa-building"></i>
                             <p>Sekretariat Daerah</p>
                         </a>

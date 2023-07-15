@@ -1,4 +1,4 @@
-@push('styles')
+@push('style')
     <style>
         .table thead th {
             padding: 0.75rem 0rem;
@@ -9,7 +9,9 @@
         }
 
         .table th,
-        td {
+        .table td {
+            padding-top: 15px !important;
+            padding-bottom: 15px !important;
             padding-left: 15px !important;
             padding-right: 15px !important;
         }

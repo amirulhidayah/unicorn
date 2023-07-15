@@ -9,6 +9,9 @@
                 'title' => 'Nama',
             ],
             [
+                'title' => 'Kategori',
+            ],
+            [
                 'title' => 'Aksi',
             ],
         ],
@@ -24,6 +27,13 @@
                         <div class="d-flex">
                             <div class="d-flex flex-column justify-content-center">
                                 <h6 class="mb-0 text-xs">{{ $data->nama }}</h6>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex">
+                            <div class="d-flex flex-column justify-content-center">
+                                <h6 class="mb-0 text-xs">{{ $data->kategori }}</h6>
                             </div>
                         </div>
                     </td>

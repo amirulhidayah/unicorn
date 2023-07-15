@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\dashboard\spp;
 
 use App\Http\Controllers\Controller;
-use App\Models\BiroOrganisasi;
+use App\Models\SekretariatDaerah;
 use App\Models\DokumenSppLs;
 use App\Models\RiwayatSppLs;
 use App\Models\Spd;
@@ -28,11 +28,11 @@ class SppLsController extends Controller
     public function index(Request $request)
     {
         $role = Auth::user()->role;
-        $biroOrganisasi = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->biro_organisasi_id : Auth::user()->profil->biro_organisasi_id;
+        $SekretariatDaerah = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->sekretariat_daerah_id : Auth::user()->profil->sekretariat_daerah_id;
         if ($request->ajax()) {
-            $data = SppLs::where(function ($query) use ($request, $biroOrganisasi, $role) {
-                if ($biroOrganisasi && $biroOrganisasi != 'Semua') {
-                    $query->where('biro_organisasi_id', $biroOrganisasi);
+            $data = SppLs::where(function ($query) use ($request, $SekretariatDaerah, $role) {
+                if ($SekretariatDaerah && $SekretariatDaerah != 'Semua') {
+                    $query->where('sekretariat_daerah_id', $SekretariatDaerah);
                 }
 
                 if ($request->tahun && $request->tahun != 'Semua') {
@@ -79,11 +79,11 @@ class SppLsController extends Controller
                     return Carbon::parse($row->created_at)->translatedFormat('d F Y');
                 })
                 ->addColumn('nama', function ($row) {
-                    $nama = $row->kegiatan->nama . " (" . $row->kegiatan->no_rek . ")";
+                    $nama = $row->kegiatanDpa->nama . " (" . $row->kegiatanDpa->no_rek . ")";
                     return $nama;
                 })
                 ->addColumn('program', function ($row) {
-                    $nama = $row->kegiatan->program->nama . " (" . $row->kegiatan->program->no_rek . ")";
+                    $nama = $row->kegiatanDpa->programDpa->nama . " (" . $row->kegiatanDpa->programDpa->no_rek . ")";
                     return $nama;
                 })
                 ->addColumn('periode', function ($row) {
@@ -94,9 +94,9 @@ class SppLsController extends Controller
                     $actionBtn = '<a href="' . url('spp-ls/riwayat/' . $row->id) . '" class="btn btn-primary btn-sm"><i class="fas fa-history"></i> Riwayat</a>';
                     return $actionBtn;
                 })
-                ->addColumn('biro_organisasi', function ($row) {
-                    $biroOrganisasi = $row->biroOrganisasi->nama;
-                    return $biroOrganisasi;
+                ->addColumn('sekretariat_daerah', function ($row) {
+                    $SekretariatDaerah = $row->SekretariatDaerah->nama;
+                    return $SekretariatDaerah;
                 })
                 ->addColumn('anggaran_digunakan', function ($row) {
                     return 'Rp. ' . number_format($row->anggaran_digunakan, 0, ',', '.');
@@ -126,7 +126,7 @@ class SppLsController extends Controller
                 ->addColumn('action', function ($row) {
                     $actionBtn = '';
 
-                    if ($row->biro_organisasi_id == Auth::user()->profil->biro_organisasi_id  || in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
+                    if ($row->sekretariat_daerah_id == Auth::user()->profil->sekretariat_daerah_id  || in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
 
                         if (($row->status_validasi_asn != 0 && $row->status_validasi_ppk != 0) && (($row->status_validasi_asn == 2 || $row->status_validasi_ppk == 2))) {
                             $actionBtn .= '<div class="d-flex justify-content-center mb-1"><a href="' . url('/surat-penolakan/spp-ls/' . $row->id . '/' . $row->tahap_riwayat) . '" class="btn btn-primary btn-sm mt-1 mr-1"><i class="fas fa-envelope"></i> Surat Pengembalian</a>';
@@ -143,7 +143,7 @@ class SppLsController extends Controller
                     if (in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
                         $actionBtn .= '<a class="btn btn-primary text-light btn-sm mr-1" href="' . url('spp-ls/' . $row->id) . '"><i class="far fa-check-circle"></i> Lihat</a>';
 
-                        if (($row->status_validasi_akhir == 0 && in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']) && $row->biro_organisasi_id == Auth::user()->profil->biro_organisasi_id) || Auth::user()->role == "Admin") {
+                        if (($row->status_validasi_akhir == 0 && in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']) && $row->sekretariat_daerah_id == Auth::user()->profil->sekretariat_daerah_id) || Auth::user()->role == "Admin") {
                             $actionBtn .= '<button id="btn-delete" class="btn btn-danger btn-sm mr-1" value="' . $row->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
                         }
                     }
@@ -180,14 +180,14 @@ class SppLsController extends Controller
                         return '<span class="badge badge-success">Diverifikasi</span>';
                     }
                 })
-                ->rawColumns(['action', 'biro_organisasi', 'tanggal_dibuat', 'riwayat', 'periode', 'verifikasi_asn', 'verifikasi_ppk', 'anggaran_digunakan', 'status_verifikasi_akhir'])
+                ->rawColumns(['action', 'sekretariat_daerah', 'tanggal_dibuat', 'riwayat', 'periode', 'verifikasi_asn', 'verifikasi_ppk', 'anggaran_digunakan', 'status_verifikasi_akhir'])
                 ->make(true);
         }
 
-        $daftarBiroOrganisasi = BiroOrganisasi::orderBy('nama', 'asc')->get();
+        $daftarSekretariatDaerah = SekretariatDaerah::orderBy('nama', 'asc')->get();
         $daftarTahun = Tahun::orderBy('tahun', 'asc')->get();
 
-        return view('dashboard.pages.spp.sppLs.index', compact('daftarBiroOrganisasi', 'daftarTahun'));
+        return view('dashboard.pages.spp.sppLs.index', compact('daftarSekretariatDaerah', 'daftarTahun'));
     }
 
     /**
@@ -198,8 +198,8 @@ class SppLsController extends Controller
     public function create()
     {
         $daftarTahun = Tahun::orderBy('tahun', 'asc')->get();
-        $daftarBiroOrganisasi = BiroOrganisasi::orderBy('nama', 'asc')->get();
-        return view('dashboard.pages.spp.sppLs.create', compact(['daftarTahun', 'daftarBiroOrganisasi']));
+        $daftarSekretariatDaerah = SekretariatDaerah::orderBy('nama', 'asc')->get();
+        return view('dashboard.pages.spp.sppLs.create', compact(['daftarTahun', 'daftarSekretariatDaerah']));
     }
 
     /**
@@ -218,7 +218,7 @@ class SppLsController extends Controller
                 'nama_file' => 'required',
                 'nama_file.*' => 'required',
                 'file_dokumen.*' => 'mimes:pdf|max:5120',
-                'biro_organisasi' => $role == "Admin" ? 'required' : 'nullable',
+                'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
                 'kategori' => 'required',
                 'tahun' => 'required',
                 'program' => 'required',
@@ -231,7 +231,7 @@ class SppLsController extends Controller
                 'nama_file.*.required' => 'Nama file tidak boleh kosong',
                 'file_dokumen.*.mimes' => "Dokumen Harus Berupa File PDF",
                 'file_dokumen.*.max' => "Dokumen Tidak Boleh Lebih Dari 5 Mb",
-                'biro_organisasi.required' => 'Biro Organisasi Tidak Boleh Kosong',
+                'sekretariat_daerah.required' => 'Biro Organisasi Tidak Boleh Kosong',
                 'kategori.required' => 'Kategori Tidak Boleh Kosong',
                 'tahun.required' => 'Tahun Tidak Boleh Kosong',
                 'program.required' => 'Program Tidak Boleh Kosong',
@@ -247,9 +247,9 @@ class SppLsController extends Controller
 
         $sppLs = new SppLs();
         $sppLs->user_id = Auth::user()->id;
-        $sppLs->biro_organisasi_id = $role == "Admin" ? $request->biro_organisasi : Auth::user()->profil->biro_organisasi_id;
+        $sppLs->sekretariat_daerah_id = $role == "Admin" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
         $sppLs->tahun_id = $request->tahun;
-        $sppLs->kegiatan_id = $request->kegiatan;
+        $sppLs->kegiatan_dpa_id = $request->kegiatan;
         $sppLs->bulan = $request->bulan;
         $sppLs->kategori = $request->kategori;
         $sppLs->anggaran_digunakan = str_replace(".", "", $request->anggaran_digunakan);
@@ -294,7 +294,7 @@ class SppLsController extends Controller
         $anggaranDigunakan = 'Rp. ' . number_format($sppLs->anggaran_digunakan, 0, ',', '.');
 
         $role = Auth::user()->role;
-        if ((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) || Auth::user()->profil->biro_organisasi_id == $sppLs->biro_organisasi_id) {
+        if ((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) || Auth::user()->profil->sekretariat_daerah_id == $sppLs->sekretariat_daerah_id) {
             return view('dashboard.pages.spp.sppLs.show', compact(['sppLs', 'tipe', 'anggaranDigunakan']));
         } else {
             abort(403, 'Anda tidak memiliki akses halaman tersebut!');
@@ -309,12 +309,12 @@ class SppLsController extends Controller
      */
     public function edit(SppLs $sppLs, Request $request)
     {
-        $spd = Spd::where('kegiatan_id', $sppLs->kegiatan_id)->where('biro_organisasi_id', $sppLs->biro_organisasi_id)->where('tahun_id', $sppLs->tahun_id)->first();
+        $spd = Spd::where('kegiatan_dpa_id', $sppLs->kegiatan_dpa_id)->where('sekretariat_daerah_id', $sppLs->sekretariat_daerah_id)->where('tahun_id', $sppLs->tahun_id)->first();
         $jumlahAnggaranHitung = $spd->jumlah_anggaran;
         $jumlahAnggaran = 'Rp. ' . number_format($jumlahAnggaranHitung, 0, ',', '.');
         $anggaranDigunakan = 'Rp. ' . number_format($sppLs->anggaran_digunakan, 0, ',', '.');
         $role = Auth::user()->role;
-        if (($role == "Admin" || Auth::user()->profil->biro_organisasi_id == $sppLs->biro_organisasi_id) && ($sppLs->status_validasi_asn == 2 || $sppLs->status_validasi_ppk == 2)) {
+        if (($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppLs->sekretariat_daerah_id) && ($sppLs->status_validasi_asn == 2 || $sppLs->status_validasi_ppk == 2)) {
             return view('dashboard.pages.spp.sppLs.edit', compact(['sppLs', 'request', 'jumlahAnggaran', 'anggaranDigunakan', 'jumlahAnggaranHitung']));
         } else {
             abort(403, 'Anda tidak memiliki akses halaman tersebut!');
@@ -493,7 +493,7 @@ class SppLsController extends Controller
         $tipeSuratPengembalian = 'spp_ls';
 
         $role = Auth::user()->role;
-        if ((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) || Auth::user()->profil->biro_organisasi_id == $sppLs->biro_organisasi_id) {
+        if ((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) || Auth::user()->profil->sekretariat_daerah_id == $sppLs->sekretariat_daerah_id) {
             return view('dashboard.pages.spp.sppLs.riwayat', compact(['sppLs', 'tipeSuratPenolakan', 'tipeSuratPengembalian']));
         } else {
             abort(403, 'Anda tidak memiliki akses halaman tersebut!');

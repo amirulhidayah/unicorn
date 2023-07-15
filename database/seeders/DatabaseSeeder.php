@@ -43,7 +43,7 @@ class DatabaseSeeder extends Seeder
         );
 
         // \App\Models\User::factory(10)->create();
-        $this->call(BiroOrganisasiTableSeeder::class);
+        $this->call(SekretariatDaerahTableSeeder::class);
         $this->call(DaftarDokumenSppUpTableSeeder::class);
         $this->call(DaftarDokumenSppTuTableSeeder::class);
         $this->call(DaftarDokumenSppLsTableSeeder::class);
@@ -52,7 +52,7 @@ class DatabaseSeeder extends Seeder
         $this->call(UsersTableSeeder::class);
         $this->call(ProfilTableSeeder::class);
         $this->call(SpdTableSeeder::class);
-        $this->call(KegiatanTableSeeder::class);
+        $this->call(KegiatanDpaTableSeeder::class);
         $this->call(ProgramDpaTableSeeder::class);
         $this->call(KegiatanSppTableSeeder::class);
         $this->call(ProgramSppTableSeeder::class);

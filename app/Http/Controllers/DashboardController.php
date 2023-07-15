@@ -24,13 +24,13 @@ class DashboardController extends Controller
     {
         $totalDokumen = SppUp::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
-                $query->where('biro_organisasi_id', Auth::user()->profil->biro_organisasi_id);
+                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
             }
         })->count();
 
         $belumProses = SppUp::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
-                $query->where('biro_organisasi_id', Auth::user()->profil->biro_organisasi_id);
+                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
             }
 
             if (Auth::user()->role == "ASN Sub Bagian Keuangan") {
@@ -44,7 +44,7 @@ class DashboardController extends Controller
 
         $ditolak = SppUp::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
-                $query->where('biro_organisasi_id', Auth::user()->profil->biro_organisasi_id);
+                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
             }
 
             if (Auth::user()->role == "ASN Sub Bagian Keuangan") {
@@ -59,7 +59,7 @@ class DashboardController extends Controller
 
         $selesai = SppUp::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
-                $query->where('biro_organisasi_id', Auth::user()->profil->biro_organisasi_id);
+                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
             }
         })->where('status_validasi_akhir', 1)->count();
 
@@ -75,13 +75,13 @@ class DashboardController extends Controller
     {
         $totalDokumen = SppTu::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
-                $query->where('biro_organisasi_id', Auth::user()->profil->biro_organisasi_id);
+                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
             }
         })->count();
 
         $belumProses = SppTu::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
-                $query->where('biro_organisasi_id', Auth::user()->profil->biro_organisasi_id);
+                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
             }
 
             if (Auth::user()->role == "ASN Sub Bagian Keuangan") {
@@ -95,7 +95,7 @@ class DashboardController extends Controller
 
         $ditolak = SppTu::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
-                $query->where('biro_organisasi_id', Auth::user()->profil->biro_organisasi_id);
+                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
             }
 
             if (Auth::user()->role == "ASN Sub Bagian Keuangan") {
@@ -110,7 +110,7 @@ class DashboardController extends Controller
 
         $selesai = SppTu::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
-                $query->where('biro_organisasi_id', Auth::user()->profil->biro_organisasi_id);
+                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
             }
         })->where('status_validasi_akhir', 1)->count();
 
@@ -126,13 +126,13 @@ class DashboardController extends Controller
     {
         $totalDokumen = SppLs::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
-                $query->where('biro_organisasi_id', Auth::user()->profil->biro_organisasi_id);
+                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
             }
         })->count();
 
         $belumProses = SppLs::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
-                $query->where('biro_organisasi_id', Auth::user()->profil->biro_organisasi_id);
+                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
             }
 
             if (Auth::user()->role == "ASN Sub Bagian Keuangan") {
@@ -146,7 +146,7 @@ class DashboardController extends Controller
 
         $ditolak = SppLs::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
-                $query->where('biro_organisasi_id', Auth::user()->profil->biro_organisasi_id);
+                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
             }
 
             if (Auth::user()->role == "ASN Sub Bagian Keuangan") {
@@ -161,7 +161,7 @@ class DashboardController extends Controller
 
         $selesai = SppLs::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
-                $query->where('biro_organisasi_id', Auth::user()->profil->biro_organisasi_id);
+                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
             }
         })->where('status_validasi_akhir', 1)->count();
 
@@ -177,13 +177,13 @@ class DashboardController extends Controller
     {
         $totalDokumen = SppGu::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
-                $query->where('biro_organisasi_id', Auth::user()->profil->biro_organisasi_id);
+                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
             }
         })->count();
 
         $belumProses = SppGu::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
-                $query->where('biro_organisasi_id', Auth::user()->profil->biro_organisasi_id);
+                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
             }
 
             if (Auth::user()->role == "ASN Sub Bagian Keuangan") {
@@ -197,7 +197,7 @@ class DashboardController extends Controller
 
         $ditolak = SppGu::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
-                $query->where('biro_organisasi_id', Auth::user()->profil->biro_organisasi_id);
+                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
             }
 
             if (Auth::user()->role == "ASN Sub Bagian Keuangan") {
@@ -212,7 +212,7 @@ class DashboardController extends Controller
 
         $selesai = SppGu::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
-                $query->where('biro_organisasi_id', Auth::user()->profil->biro_organisasi_id);
+                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
             }
         })->where('status_validasi_akhir', 1)->count();
 

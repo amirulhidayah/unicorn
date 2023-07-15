@@ -20,8 +20,8 @@ class KegiatanDpa extends Model
         return $this->hasMany(Spd::class, 'kegiatan_dpa_id')->withTrashed();
     }
 
-    public function program()
+    public function programDpa()
     {
-        return $this->belongsTo(Program::class, 'program_dpa_id')->withTrashed();
+        return $this->belongsTo(ProgramDpa::class, 'program_dpa_id')->withTrashed();
     }
 }

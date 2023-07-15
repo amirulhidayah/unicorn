@@ -55,18 +55,22 @@
                 <div class="card-body">
                     <div class="row mb-4">
                         @csrf
-                        @if (!in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']))
+                        @if (
+                            !in_array(Auth::user()->role, [
+                                'Bendahara Pengeluaran',
+                                'Bendahara Pengeluaran Pembantu',
+                                'Bendahara Pengeluaran Pembantu Belanja Hibah',
+                            ]))
                             <div class="col-6">
-                                @component('dashboard.components.formElements.select',
-                                    [
-                                        'label' => 'Sekretariat Daerah',
-                                        'id' => 'biro_organisasi',
-                                        'name' => 'biro_organisasi',
-                                        'class' => 'select2',
-                                        'wajib' => '<sup class="text-danger">*</sup>',
-                                    ])
+                                @component('dashboard.components.formElements.select', [
+                                    'label' => 'Sekretariat Daerah',
+                                    'id' => 'sekretariat_daerah',
+                                    'name' => 'sekretariat_daerah',
+                                    'class' => 'select2',
+                                    'wajib' => '<sup class="text-danger">*</sup>',
+                                ])
                                     @slot('options')
-                                        @foreach ($biroOrganisasi as $item)
+                                        @foreach ($SekretariatDaerah as $item)
                                             <option value="{{ $item->id }}">{{ $item->nama }}
                                             </option>
                                         @endforeach
@@ -75,14 +79,13 @@
                             </div>
                         @endif
                         <div class="col-6">
-                            @component('dashboard.components.formElements.select',
-                                [
-                                    'label' => 'Tahun',
-                                    'id' => 'tahun',
-                                    'name' => 'tahun',
-                                    'class' => 'select2',
-                                    'wajib' => '<sup class="text-danger">*</sup>',
-                                ])
+                            @component('dashboard.components.formElements.select', [
+                                'label' => 'Tahun',
+                                'id' => 'tahun',
+                                'name' => 'tahun',
+                                'class' => 'select2',
+                                'wajib' => '<sup class="text-danger">*</sup>',
+                            ])
                                 @slot('options')
                                     @foreach ($tahun as $item)
                                         <option value="{{ $item->id }}">{{ $item->tahun }}</option>
@@ -91,39 +94,36 @@
                             @endcomponent
                         </div>
                         <div class="col-6">
-                            @component('dashboard.components.formElements.select',
-                                [
-                                    'label' => 'Program',
-                                    'id' => 'program',
-                                    'name' => 'program',
-                                    'class' => 'select2',
-                                    'attribute' => 'disabled',
-                                    'wajib' => '<sup class="text-danger">*</sup>',
-                                ])
+                            @component('dashboard.components.formElements.select', [
+                                'label' => 'Program',
+                                'id' => 'program',
+                                'name' => 'program',
+                                'class' => 'select2',
+                                'attribute' => 'disabled',
+                                'wajib' => '<sup class="text-danger">*</sup>',
+                            ])
                             @endcomponent
                         </div>
 
                         <div class="col-6">
-                            @component('dashboard.components.formElements.select',
-                                [
-                                    'label' => 'Kegiatan',
-                                    'id' => 'kegiatan',
-                                    'name' => 'kegiatan',
-                                    'class' => 'select2',
-                                    'attribute' => 'disabled',
-                                    'wajib' => '<sup class="text-danger">*</sup>',
-                                ])
+                            @component('dashboard.components.formElements.select', [
+                                'label' => 'Kegiatan',
+                                'id' => 'kegiatan',
+                                'name' => 'kegiatan',
+                                'class' => 'select2',
+                                'attribute' => 'disabled',
+                                'wajib' => '<sup class="text-danger">*</sup>',
+                            ])
                             @endcomponent
                         </div>
                         <div class="col-6">
-                            @component('dashboard.components.formElements.select',
-                                [
-                                    'label' => 'Model Statistik',
-                                    'id' => 'model',
-                                    'name' => 'model',
-                                    'class' => 'select2',
-                                    'wajib' => '<sup class="text-danger">*</sup>',
-                                ])
+                            @component('dashboard.components.formElements.select', [
+                                'label' => 'Model Statistik',
+                                'id' => 'model',
+                                'name' => 'model',
+                                'class' => 'select2',
+                                'wajib' => '<sup class="text-danger">*</sup>',
+                            ])
                                 @slot('options')
                                     <option value="Bar Chart">Bar Chart</option>
                                     <option value="Line Chart">Line Chart</option>
@@ -379,22 +379,22 @@
 
         function getDataStatistik() {
             var tahun = $('#tahun').val();
-            var biroOrganisasi = roleAdmin.includes(role) ? $('#biro_organisasi').val() :
-                "{{ Auth::user()->profil->biro_organisasi_id }}";
+            var SekretariatDaerah = roleAdmin.includes(role) ? $('#sekretariat_daerah').val() :
+                "{{ Auth::user()->profil->sekretariat_daerah_id }}";
             var kegiatan = $('#kegiatan').val();
             var model = $('#model').val();
 
             resetChart();
 
-            if ((tahun != '') && (biroOrganisasi != '') && (kegiatan != '') && (model != '')) {
+            if ((tahun != '') && (SekretariatDaerah != '') && (kegiatan != '') && (model != '')) {
                 $.ajax({
                     url: "{{ url('statistik-dpa/get-data-statistik') }}",
                     type: "POST",
                     data: {
                         '_token': '{{ csrf_token() }}',
                         tahun_id: tahun,
-                        biro_organisasi_id: biroOrganisasi,
-                        kegiatan_id: kegiatan
+                        sekretariat_daerah_id: SekretariatDaerah,
+                        kegiatan_dpa_id: kegiatan
                     },
                     success: function(response) {
                         if (model == "Bar Chart") {
@@ -426,7 +426,7 @@
     <script>
         $('#tahun').on('change', function() {
             var tahun = $(this).val();
-            var biroOrganisasi = $('#biro_organisasi').val();
+            var SekretariatDaerah = $('#sekretariat_daerah').val();
             $('#kegiatan').html('').attr('disabled', true);
             getDataStatistik();
             $.ajax({
@@ -435,7 +435,7 @@
                 data: {
                     '_token': '{{ csrf_token() }}',
                     tahun: tahun,
-                    biro_organisasi: biroOrganisasi
+                    sekretariat_daerah: SekretariatDaerah
                 },
                 success: function(response) {
                     $('#program').removeAttr('disabled');
@@ -456,7 +456,7 @@
         $('#program').on('change', function() {
             var program = $('#program').val();
             var tahun = $('#tahun').val();
-            var biroOrganisasi = $('#biro_organisasi').val();
+            var SekretariatDaerah = $('#sekretariat_daerah').val();
             getDataStatistik();
             $.ajax({
                 url: "{{ url('list/kegiatan') }}",
@@ -465,7 +465,7 @@
                     '_token': '{{ csrf_token() }}',
                     tahun: tahun,
                     program: program,
-                    biro_organisasi: biroOrganisasi
+                    sekretariat_daerah: SekretariatDaerah
                 },
                 success: function(response) {
                     $('#kegiatan').removeAttr('disabled');
@@ -487,7 +487,7 @@
             getDataStatistik();
         })
 
-        $('#biro_organisasi').on('change', function() {
+        $('#sekretariat_daerah').on('change', function() {
             getDataStatistik();
         })
 

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\dashboard\masterData;
 
 use App\Http\Controllers\Controller;
-use App\Models\BiroOrganisasi;
+use App\Models\SekretariatDaerah;
 use App\Models\Profil;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -28,8 +28,8 @@ class AkunController extends Controller
                 ->addColumn('nama', function ($row) {
                     return $row->profil->nama;
                 })
-                ->addColumn('biro_organisasi', function ($row) {
-                    return $row->profil->biroOrganisasi->nama ?? '-';
+                ->addColumn('sekretariat_daerah', function ($row) {
+                    return $row->profil->SekretariatDaerah->nama ?? '-';
                 })
                 ->addColumn('role', function ($row) {
                     return $row->role;
@@ -54,8 +54,8 @@ class AkunController extends Controller
      */
     public function create()
     {
-        $daftarBiroOrganisasi = BiroOrganisasi::orderBy('created_at', 'asc')->get();
-        return view('dashboard.pages.masterData.akun.create', compact(['daftarBiroOrganisasi']));
+        $daftarSekretariatDaerah = SekretariatDaerah::orderBy('created_at', 'asc')->get();
+        return view('dashboard.pages.masterData.akun.create', compact(['daftarSekretariatDaerah']));
     }
 
     /**
@@ -77,7 +77,7 @@ class AkunController extends Controller
                 'alamat' => 'required',
                 'nomor_hp' => 'required',
                 'nip' => 'nullable',
-                'biro_organisasi' => 'required',
+                'sekretariat_daerah' => 'required',
                 'foto' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:1024',
                 'tanda_tangan' => 'required|image|mimes:png|max:1024',
             ],
@@ -92,7 +92,7 @@ class AkunController extends Controller
                 'jenis_kelamin.required' => 'Jenis kelamin tidak boleh kosong',
                 'alamat.required' => 'Alamat tidak boleh kosong',
                 'nomor_hp.required' => 'Nomor HP tidak boleh kosong',
-                'biro_organisasi.required' => 'Biro organisasi tidak boleh kosong',
+                'sekretariat_daerah.required' => 'Biro organisasi tidak boleh kosong',
                 'foto.required' => 'Foto tidak boleh kosong',
                 'foto.image' => 'Foto harus berupa gambar',
                 'foto.mimes' => 'Foto harus berupa gambar',
@@ -127,7 +127,7 @@ class AkunController extends Controller
         $profil->alamat = $request->alamat;
         $profil->nomor_hp = $request->nomor_hp;
         $profil->nip = $request->nip;
-        $profil->biro_organisasi_id = $request->biro_organisasi;
+        $profil->sekretariat_daerah_id = $request->sekretariat_daerah;
         $profil->foto = $namaFoto;
         $profil->tanda_tangan = $namaTandaTangan;
         $profil->save();
@@ -156,8 +156,8 @@ class AkunController extends Controller
      */
     public function edit(User $user)
     {
-        $daftarBiroOrganisasi = BiroOrganisasi::orderBy('created_at', 'asc')->get();
-        return view('dashboard.pages.masterData.akun.edit', compact(['user', 'daftarBiroOrganisasi']));
+        $daftarSekretariatDaerah = SekretariatDaerah::orderBy('created_at', 'asc')->get();
+        return view('dashboard.pages.masterData.akun.edit', compact(['user', 'daftarSekretariatDaerah']));
     }
 
     /**
@@ -180,7 +180,7 @@ class AkunController extends Controller
                 'alamat' => 'required',
                 'nomor_hp' => 'required',
                 'nip' => 'nullable',
-                'biro_organisasi' => 'required',
+                'sekretariat_daerah' => 'required',
                 'foto' => $request->foto ? 'required|image|mimes:jpeg,png,jpg,gif,svg|max:1024' : 'nullable',
                 'tanda_tangan' => $request->tanda_tangan ? 'required|image|mimes:png|max:1024' : 'nullable',
             ],
@@ -195,7 +195,7 @@ class AkunController extends Controller
                 'jenis_kelamin.required' => 'Jenis kelamin tidak boleh kosong',
                 'alamat.required' => 'Alamat tidak boleh kosong',
                 'nomor_hp.required' => 'Nomor HP tidak boleh kosong',
-                'biro_organisasi.required' => 'Biro organisasi tidak boleh kosong',
+                'sekretariat_daerah.required' => 'Biro organisasi tidak boleh kosong',
                 'foto.required' => 'Foto tidak boleh kosong',
                 'foto.image' => 'Foto harus berupa gambar',
                 'foto.mimes' => 'Foto harus berupa gambar',
@@ -243,7 +243,7 @@ class AkunController extends Controller
         $profil->alamat = $request->alamat;
         $profil->nomor_hp = $request->nomor_hp;
         $profil->nip = $request->nip;
-        $profil->biro_organisasi_id = $request->biro_organisasi;
+        $profil->sekretariat_daerah_id = $request->sekretariat_daerah;
         if ($request->foto) {
             $profil->foto = $namaFoto;
         }

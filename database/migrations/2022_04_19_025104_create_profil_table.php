@@ -23,7 +23,7 @@ class CreateProfilTable extends Migration
             $table->string('nip')->nullable();
             $table->text('foto');
             $table->text('tanda_tangan');
-            $table->uuid('biro_organisasi_id')->nullable();
+            $table->uuid('sekretariat_daerah_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

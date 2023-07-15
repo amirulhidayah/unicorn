@@ -163,6 +163,18 @@
         .swal-modal .swal-text {
             text-align: center;
         }
+
+        .pagination>li>a,
+        .pagination>li:first-child>a,
+        .pagination>li:last-child>a,
+        .pagination>li>span,
+        .pagination>li:first-child>span,
+        .pagination>li:last-child>span {
+            border-radius: 0px !important;
+            margin: 0 0px;
+            color: #777777;
+            border-color: #ddd;
+        }
     </style>
 
     @stack('style')

@@ -89,7 +89,7 @@
                     <div class="row">
                         <div class="col">
                             @component('dashboard.components.forms.masterData.akun')
-                                @slot('daftarBiroOrganisasi', $daftarBiroOrganisasi)
+                                @slot('daftarSekretariatDaerah', $daftarSekretariatDaerah)
                                 @slot('form_id', 'form-tambah')
                                 @slot('action', url('/master-data/akun/' . $user->id))
                                 @slot('method', 'PUT')
@@ -111,7 +111,7 @@
             $('#akun-sekretariat').addClass('active');
             $('#email').val('{{ $user->email }}');
             $('#role').val('{{ $user->role }}').trigger('change');
-            $('#biro_organisasi').val('{{ $user->profil->biro_organisasi_id }}').trigger('change');
+            $('#sekretariat_daerah').val('{{ $user->profil->sekretariat_daerah_id }}').trigger('change');
             $('#jenis_kelamin').val('{{ $user->profil->jenis_kelamin }}').trigger('change');
             $('#alamat').val('{{ $user->profil->alamat }}');
             $('#nomor_hp').val('{{ $user->profil->nomor_hp }}');

@@ -5,7 +5,7 @@ use App\Http\Controllers\dashboard\dpa\StatistikDpaController;
 use App\Http\Controllers\dashboard\dpa\TabelDpaController;
 use App\Http\Controllers\dashboard\masterData\AkunController;
 use App\Http\Controllers\dashboard\masterData\AkunLainnyaController;
-use App\Http\Controllers\dashboard\masterData\BiroOrganisasiController;
+use App\Http\Controllers\dashboard\masterData\SekretariatDaerahController;
 use App\Http\Controllers\dashboard\masterData\DokumenSppGuController;
 use App\Http\Controllers\dashboard\masterData\DokumenSppLsController;
 use App\Http\Controllers\dashboard\masterData\DokumenSppTuController;
@@ -46,7 +46,7 @@ Route::get('/tentang', [LandingController::class, 'tentang']);
 // Master Data
 Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['role:Admin']], function () {
-        Route::resource('/master-data/biro-organisasi', BiroOrganisasiController::class);
+        Route::resource('/master-data/sekretariat-daerah', SekretariatDaerahController::class);
         Route::resource('/master-data/tahun', TahunController::class);
         Route::resource('/master-data/daftar-dokumen-spp-up', DokumenSppUpController::class);
         Route::resource('/master-data/daftar-dokumen-spp-tu', DokumenSppTuController::class);
@@ -60,7 +60,7 @@ Route::group(['middleware' => ['auth']], function () {
         ]);
 
         Route::resource('/master-data/kegiatan-dpa/{program}', KegiatanDpaController::class)->parameters([
-            '{program}' => 'kegiatan'
+            '{program}' => 'kegiatan_dpa'
         ]);
 
         Route::resource('/master-data/akun', AkunController::class)->parameters([
@@ -201,8 +201,8 @@ Route::group(['middleware' => ['auth']], function () {
 
     // List
     Route::post('/list/dokumen-spp-ls', [ListController::class, 'dokumenSppLs']);
-    Route::post('/list/program', [ListController::class, 'program']);
-    Route::post('/list/kegiatan', [ListController::class, 'kegiatan']);
+    Route::post('/list/program-dpa', [ListController::class, 'programDpa']);
+    Route::post('/list/kegiatan-dpa', [ListController::class, 'kegiatanDpa']);
     Route::post('/list/program-spp', [ListController::class, 'programSpp']);
     Route::post('/list/kegiatan-spp', [ListController::class, 'kegiatanSpp']);
 

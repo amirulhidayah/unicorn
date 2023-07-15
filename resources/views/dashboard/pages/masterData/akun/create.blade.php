@@ -89,7 +89,7 @@
                     <div class="row">
                         <div class="col">
                             @component('dashboard.components.forms.masterData.akun')
-                                @slot('daftarBiroOrganisasi', $daftarBiroOrganisasi)
+                                @slot('daftarSekretariatDaerah', $daftarSekretariatDaerah)
                                 @slot('form_id', 'form-tambah')
                                 @slot('action', url('/master-data/akun'))
                                 @slot('method', 'POST')

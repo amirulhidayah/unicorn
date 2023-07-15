@@ -34,7 +34,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach ($biroOrganisasi as $item)
+        @foreach ($SekretariatDaerah as $item)
             @for ($i = 0; $i < 5; $i++)
                 <tr style="border: 1px solid black">
                     <td align="center" style="vertical-align: center;border: 1px solid black">

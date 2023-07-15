@@ -15,7 +15,7 @@ class KegiatanSpp extends Model
 
     protected $table = 'kegiatan_spp';
 
-    public function program()
+    public function programSpp()
     {
         return $this->belongsTo(ProgramSpp::class, 'program_spp_id', 'id')->withTrashed();
     }

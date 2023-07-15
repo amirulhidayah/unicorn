@@ -17,7 +17,7 @@ class FileController extends Controller
 
 
         if ($dokumen) {
-            if ((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) || Auth::user()->profil->biro_organisasi_id == $dokumen->sppGu->biro_organisasi_id) {
+            if ((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) || Auth::user()->profil->sekretariat_daerah_id == $dokumen->sppGu->sekretariat_daerah_id) {
                 return Storage::download('dokumen_spp_gu/' . $dokumen->dokumen);
             }
         }

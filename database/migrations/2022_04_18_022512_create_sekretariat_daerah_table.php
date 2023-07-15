@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBiroOrganisasiTable extends Migration
+class CreateSekretariatDaerahTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateBiroOrganisasiTable extends Migration
      */
     public function up()
     {
-        Schema::create('biro_organisasi', function (Blueprint $table) {
+        Schema::create('sekretariat_daerah', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('nama');
             $table->softDeletes();
@@ -28,6 +28,6 @@ class CreateBiroOrganisasiTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('biro_organisasi');
+        Schema::dropIfExists('sekretariat_daerah');
     }
 }

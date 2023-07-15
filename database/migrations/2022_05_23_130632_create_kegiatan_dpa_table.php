@@ -15,7 +15,7 @@ class CreateKegiatanDpaTable extends Migration
     {
         Schema::create('kegiatan_dpa', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('program_id');
+            $table->uuid('program_dpa_id');
             $table->string('nama');
             $table->string('no_rek');
             $table->softDeletes();

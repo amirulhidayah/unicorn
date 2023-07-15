@@ -8,12 +8,12 @@ use Maatwebsite\Excel\Concerns\FromView;
 
 class TabelDpaExport implements FromView
 {
-    protected $daftarBiroOrganisasi;
+    protected $daftarSekretariatDaerah;
     protected $tahun;
 
-    function __construct($daftarBiroOrganisasi, $tahun)
+    function __construct($daftarSekretariatDaerah, $tahun)
     {
-        $this->daftarBiroOrganisasi = $daftarBiroOrganisasi;
+        $this->daftarSekretariatDaerah = $daftarSekretariatDaerah;
         $this->tahun = $tahun;
     }
     /**
@@ -21,8 +21,8 @@ class TabelDpaExport implements FromView
      */
     public function view(): View
     {
-        $daftarBiroOrganisasi = $this->daftarBiroOrganisasi;
+        $daftarSekretariatDaerah = $this->daftarSekretariatDaerah;
         $tahun = $this->tahun;
-        return view('dashboard.pages.dpa.tabel.exportSpd', compact(['daftarBiroOrganisasi', 'tahun']));
+        return view('dashboard.pages.dpa.tabel.exportSpd', compact(['daftarSekretariatDaerah', 'tahun']));
     }
 }

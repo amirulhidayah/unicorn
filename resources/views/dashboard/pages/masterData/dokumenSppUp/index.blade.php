@@ -49,9 +49,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col">
-                            <div class="card fieldset">
-                                @livewire('dashboard.master-data.dokumen-spp-up.table')
-                            </div>
+                            @livewire('dashboard.master-data.dokumen-spp-up.table')
                         </div>
                     </div>
                 </div>

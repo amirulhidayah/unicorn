@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\dashboard\masterData;
 
 use App\Http\Controllers\Controller;
-use App\Models\BiroOrganisasi;
+use App\Models\SekretariatDaerah;
 use App\Models\Profil;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -58,8 +58,8 @@ class AkunLainnyaController extends Controller
      */
     public function create()
     {
-        $daftarBiroOrganisasi = BiroOrganisasi::orderBy('created_at', 'asc')->get();
-        return view('dashboard.pages.masterData.akunLainnya.create', compact(['daftarBiroOrganisasi']));
+        $daftarSekretariatDaerah = SekretariatDaerah::orderBy('created_at', 'asc')->get();
+        return view('dashboard.pages.masterData.akunLainnya.create', compact(['daftarSekretariatDaerah']));
     }
 
     /**
@@ -145,7 +145,7 @@ class AkunLainnyaController extends Controller
         $profil->alamat = $request->alamat;
         $profil->nomor_hp = $request->nomor_hp;
         $profil->nip = $request->nip;
-        $profil->biro_organisasi_id = $request->biro_organisasi ?? null;
+        $profil->sekretariat_daerah_id = $request->sekretariat_daerah ?? null;
         $profil->foto = $namaFoto;
         $profil->tanda_tangan = $namaTandaTangan;
         $profil->save();
@@ -258,7 +258,7 @@ class AkunLainnyaController extends Controller
         $profil->alamat = $request->alamat;
         $profil->nomor_hp = $request->nomor_hp;
         $profil->nip = $request->nip;
-        $profil->biro_organisasi_id = $request->biro_organisasi;
+        $profil->sekretariat_daerah_id = $request->sekretariat_daerah;
         if ($request->foto) {
             $profil->foto = $namaFoto;
         }

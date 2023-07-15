@@ -18,7 +18,7 @@ class CreateSppUpTable extends Migration
             $table->uuid('tahun_id');
             $table->uuid('kegiatan_spp_id');
             $table->bigInteger('jumlah_anggaran');
-            $table->uuid('biro_organisasi_id');
+            $table->uuid('sekretariat_daerah_id');
             $table->string('nomor_surat');
             $table->integer('tahap_riwayat')->default(1);
             $table->uuid('user_id');

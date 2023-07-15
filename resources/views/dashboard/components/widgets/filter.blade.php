@@ -4,8 +4,8 @@
         <div class="col">
             @component('dashboard.components.formElements.select', [
                 'label' => 'Sekretariat Daerah',
-                'id' => 'biro_organisasi',
-                'name' => 'biro_organisasi',
+                'id' => 'sekretariat_daerah',
+                'name' => 'sekretariat_daerah',
                 'class' => 'select2 filter',
                 'wajib' => '<sup class="text-danger">*</sup>',
             ])
@@ -13,9 +13,9 @@
                     <option value="Semua">
                         Semua
                     </option>
-                    @foreach ($daftarBiroOrganisasi as $biroOrganisasi)
-                        <option value="{{ $biroOrganisasi->id }}">
-                            {{ $biroOrganisasi->nama }}
+                    @foreach ($daftarSekretariatDaerah as $SekretariatDaerah)
+                        <option value="{{ $SekretariatDaerah->id }}">
+                            {{ $SekretariatDaerah->nama }}
                         </option>
                     @endforeach
                 @endslot

@@ -49,13 +49,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col">
-                            <div class="card fieldset">
-                                @component('dashboard.components.dataTables.index', [
-                                    'id' => 'table-data',
-                                    'th' => ['No', 'Nama', 'No. Rek', 'Aksi'],
-                                ])
-                                @endcomponent
-                            </div>
+                            @livewire('dashboard.master-data.program-spp.table')
                         </div>
                     </div>
                 </div>
@@ -122,12 +116,14 @@
         var aksiTambah = 'tambah';
         $('#btn-tambah').click(function() {
             aksiTambah = 'tambah';
+            $('#nama').val('');
+            $('#no_rek').val('');
             $('#modal-tambah').modal('show');
             $('#modal-tambah-title').html('Tambah Daftar Program SPP');
         })
 
         $(document).on('click', '#btn-edit', function() {
-            let id = $(this).val();
+            let id = $(this).data('value');
             idEdit = id;
 
             $.ajax({
@@ -227,7 +223,7 @@
         })
 
         $(document).on('click', '#btn-delete', function() {
-            let id = $(this).val();
+            let id = $(this).data('value');
             swal({
                 title: 'Apakah Anda Yakin ?',
                 icon: 'error',

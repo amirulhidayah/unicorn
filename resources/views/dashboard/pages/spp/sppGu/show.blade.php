@@ -37,14 +37,17 @@
                     <div class="card-head-row">
                         <div class="card-title">Detail Dokumen</div>
                         <div class="card-tools">
-                            @if ((Auth::user()->role == 'PPK' && $sppGu->status_validasi_ppk == 0 && Auth::user()->is_aktif == 1) || ($sppGu->status_validasi_asn == 0 && Auth::user()->role == 'ASN Sub Bagian Keuangan' && Auth::user()->is_aktif == 1))
-                                @component('dashboard.components.buttons.verifikasi',
-                                    [
-                                        'id' => 'btn-verifikasi',
-                                        'class' => '',
-                                        'url' => '/anc/create',
-                                        'type' => 'button',
-                                    ])
+                            @if (
+                                (Auth::user()->role == 'PPK' && $sppGu->status_validasi_ppk == 0 && Auth::user()->is_aktif == 1) ||
+                                    ($sppGu->status_validasi_asn == 0 &&
+                                        Auth::user()->role == 'ASN Sub Bagian Keuangan' &&
+                                        Auth::user()->is_aktif == 1))
+                                @component('dashboard.components.buttons.verifikasi', [
+                                    'id' => 'btn-verifikasi',
+                                    'class' => '',
+                                    'url' => '/anc/create',
+                                    'type' => 'button',
+                                ])
                                 @endcomponent
                             @endif
                         </div>
@@ -53,68 +56,58 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-lg-6">
-                            @component('dashboard.components.widgets.info',
-                                [
-                                    'judul' => 'Tahap',
-                                    'isi' => $tahap,
-                                ])
+                            @component('dashboard.components.widgets.info', [
+                                'judul' => 'Tahap',
+                                'isi' => $tahap,
+                            ])
                             @endcomponent
-                            @component('dashboard.components.widgets.info',
-                                [
-                                    'judul' => 'Sekretariat Daerah',
-                                    'isi' => $sppGu->biroOrganisasi->nama,
-                                ])
+                            @component('dashboard.components.widgets.info', [
+                                'judul' => 'Sekretariat Daerah',
+                                'isi' => $sppGu->SekretariatDaerah->nama,
+                            ])
                             @endcomponent
-                            @component('dashboard.components.widgets.info',
-                                [
-                                    'judul' => 'Nomor Surat',
-                                    'isi' => $sppGu->nomor_surat,
-                                ])
+                            @component('dashboard.components.widgets.info', [
+                                'judul' => 'Nomor Surat',
+                                'isi' => $sppGu->nomor_surat,
+                            ])
                             @endcomponent
-                            @component('dashboard.components.widgets.info',
-                                [
-                                    'judul' => 'Tahun',
-                                    'isi' => $sppGu->tahun->tahun,
-                                ])
+                            @component('dashboard.components.widgets.info', [
+                                'judul' => 'Tahun',
+                                'isi' => $sppGu->tahun->tahun,
+                            ])
                             @endcomponent
-                            @component('dashboard.components.widgets.info',
-                                [
-                                    'judul' => 'Bulan',
-                                    'isi' => $sppGu->bulan,
-                                ])
+                            @component('dashboard.components.widgets.info', [
+                                'judul' => 'Bulan',
+                                'isi' => $sppGu->bulan,
+                            ])
                             @endcomponent
-                            @component('dashboard.components.widgets.info',
-                                [
-                                    'judul' => 'Program',
-                                    'isi' => $sppGu->kegiatan->program->nama . ' (' . $sppGu->kegiatan->program->no_rek . ')',
-                                ])
+                            @component('dashboard.components.widgets.info', [
+                                'judul' => 'Program',
+                                'isi' => $sppGu->kegiatanDpa->programDpa->nama . ' (' . $sppGu->kegiatanDpa->programDpa->no_rek . ')',
+                            ])
                             @endcomponent
-                            @component('dashboard.components.widgets.info',
-                                [
-                                    'judul' => 'Kegiatan',
-                                    'isi' => $sppGu->kegiatan->nama . ' (' . $sppGu->kegiatan->no_rek . ')',
-                                ])
+                            @component('dashboard.components.widgets.info', [
+                                'judul' => 'Kegiatan',
+                                'isi' => $sppGu->kegiatanDpa->nama . ' (' . $sppGu->kegiatanDpa->no_rek . ')',
+                            ])
                             @endcomponent
-                            @component('dashboard.components.widgets.info',
-                                [
-                                    'judul' => 'Jumlah Anggaran',
-                                    'isi' => $jumlahAnggaran,
-                                ])
+                            @component('dashboard.components.widgets.info', [
+                                'judul' => 'Jumlah Anggaran',
+                                'isi' => $jumlahAnggaran,
+                            ])
                             @endcomponent
-                            @component('dashboard.components.widgets.info',
-                                [
-                                    'judul' => 'Anggaran Yang Digunakan',
-                                    'isi' => $anggaranDigunakan,
-                                ])
+                            @component('dashboard.components.widgets.info', [
+                                'judul' => 'Anggaran Yang Digunakan',
+                                'isi' => $anggaranDigunakan,
+                            ])
                             @endcomponent
                         </div>
                         <div class="col-lg-6">
-                            @component('dashboard.components.widgets.listDokumen',
-                                [
-                                    'dokumenSpp' => $daftarDokumenSppGu,
-                                    'spp' => $sppGu,
-                                    'tipe' => $tipe,
-                                ])
+                            @component('dashboard.components.widgets.listDokumen', [
+                                'dokumenSpp' => $daftarDokumenSppGu,
+                                'spp' => $sppGu,
+                                'tipe' => $tipe,
+                            ])
                             @endcomponent
                         </div>
                     </div>
