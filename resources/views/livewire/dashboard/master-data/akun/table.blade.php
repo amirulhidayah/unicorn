@@ -1,4 +1,41 @@
 <div>
+    <div>
+        <div class="row mb-3" wire:ignore>
+            <div class="col-sm-12 col-lg-6">
+                @component('dashboard.components.formElements.select', [
+                    'label' => 'Sekretariat Daerah',
+                    'id' => 'sekretariat_daerah',
+                    'name' => 'sekretariat_daerah',
+                    'class' => 'select2',
+                    'wajib' => '<sup class="text-danger">*</sup>',
+                ])
+                    @slot('options')
+                        <option value="Semua">Semua</option>
+                        @foreach ($daftarSekretariatDaerah as $sekretariatDaerah)
+                            <option value="{{ $sekretariatDaerah->id }}">{{ $sekretariatDaerah->nama }}</option>
+                        @endforeach
+                    @endslot
+                @endcomponent
+            </div>
+            <div class="col-sm-12 col-lg-6">
+                @component('dashboard.components.formElements.select', [
+                    'label' => 'Role',
+                    'id' => 'role',
+                    'name' => 'role',
+                    'class' => 'select2',
+                    'wajib' => '<sup class="text-danger">*</sup>',
+                ])
+                    @slot('options')
+                        <option value="Semua">Semua</option>
+                        <option value="Bendahara Pengeluaran">Bendahara Pengeluaran</option>
+                        <option value="Bendahara Pengeluaran Pembantu">Bendahara Pengeluaran Pembantu</option>
+                        <option value="Bendahara Pengeluaran Pembantu Belanja Hibah">Bendahara Pengeluaran Pembantu Belanja Hibah
+                        </option>
+                    @endslot
+                @endcomponent
+            </div>
+        </div>
+    </div>
     @component('dashboard.components.livewire.table', [
         'th' => [
             [
@@ -78,3 +115,11 @@
         @endslot
     @endcomponent
 </div>
+
+@push('script')
+    <script>
+        $('.select2').on('change', function() {
+            @this.set($(this).attr('name'), $(this).select2("val"));
+        })
+    </script>
+@endpush

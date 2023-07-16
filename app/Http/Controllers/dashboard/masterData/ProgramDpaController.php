@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Kegiatan;
 use App\Models\KegiatanDpa;
 use App\Models\ProgramDpa;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -40,7 +43,7 @@ class ProgramDpaController extends Controller
             $request->all(),
             [
                 'nama' => 'required',
-                'no_rek' => ['required', Rule::unique('program')->withoutTrashed()],
+                'no_rek' => ['required', Rule::unique('program_dpa')->withoutTrashed()],
             ],
             [
                 'nama.required' => 'Nama Dokumen tidak boleh kosong',
@@ -53,10 +56,16 @@ class ProgramDpaController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $programDpa = new ProgramDpa();
-        $programDpa->nama = $request->nama;
-        $programDpa->no_rek = $request->no_rek;
-        $programDpa->save();
+        try {
+            DB::transaction(function () use ($request) {
+                $programDpa = new ProgramDpa();
+                $programDpa->nama = $request->nama;
+                $programDpa->no_rek = $request->no_rek;
+                $programDpa->save();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
 
         return response()->json(['status' => 'success']);
     }
@@ -76,7 +85,7 @@ class ProgramDpaController extends Controller
             $request->all(),
             [
                 'nama' => 'required',
-                'no_rek' => ['required', Rule::unique('program')->ignore($programDpa->id)->withoutTrashed()],
+                'no_rek' => ['required', Rule::unique('program_dpa')->ignore($programDpa->id)->withoutTrashed()],
             ],
             [
                 'nama.required' => 'Nama Dokumen tidak boleh kosong',
@@ -89,18 +98,29 @@ class ProgramDpaController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $programDpa->nama = $request->nama;
-        $programDpa->no_rek = $request->no_rek;
-        $programDpa->save();
+        try {
+            DB::transaction(function () use ($programDpa, $request) {
+                $programDpa->nama = $request->nama;
+                $programDpa->no_rek = $request->no_rek;
+                $programDpa->save();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
 
         return response()->json(['status' => 'success']);
     }
 
     public function destroy(ProgramDpa $programDpa)
     {
-        $programDpa->delete();
-
-        KegiatanDpa::where('program_dpa_id', $programDpa->id)->delete();
+        try {
+            DB::transaction(function () use ($programDpa) {
+                $programDpa->delete();
+                KegiatanDpa::where('program_dpa_id', $programDpa->id)->delete();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
 
         return response()->json(['status' => 'success']);
     }

@@ -4,7 +4,10 @@ namespace App\Http\Controllers\dashboard\masterData;
 
 use App\Http\Controllers\Controller;
 use App\Models\DaftarDokumenSppUp;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -38,9 +41,16 @@ class DokumenSppUpController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $daftarDokumenSppUp = new DaftarDokumenSppUp();
-        $daftarDokumenSppUp->nama = $request->nama;
-        $daftarDokumenSppUp->save();
+        try {
+            DB::transaction(function () use ($request) {
+                $daftarDokumenSppUp = new DaftarDokumenSppUp();
+                $daftarDokumenSppUp->nama = $request->nama;
+                $daftarDokumenSppUp->save();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
+
 
         return response()->json(['status' => 'success']);
     }
@@ -72,15 +82,29 @@ class DokumenSppUpController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $daftarDokumenSppUp->nama = $request->nama;
-        $daftarDokumenSppUp->save();
+        try {
+            DB::transaction(function () use ($request, $daftarDokumenSppUp) {
+                $daftarDokumenSppUp->nama = $request->nama;
+                $daftarDokumenSppUp->save();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
+
 
         return response()->json(['status' => 'success']);
     }
 
     public function destroy(DaftarDokumenSppUp $daftarDokumenSppUp)
     {
-        $daftarDokumenSppUp->delete();
+        try {
+            DB::transaction(function () use ($daftarDokumenSppUp) {
+                $daftarDokumenSppUp->delete();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
+
         return response()->json(['status' => 'success']);
     }
 }

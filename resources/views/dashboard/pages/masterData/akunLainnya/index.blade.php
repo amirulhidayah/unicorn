@@ -61,7 +61,7 @@
 @push('script')
     <script>
         $(document).on('click', '#btn-delete', function() {
-            let id = $(this).data('value');
+            let id = $(this).attr('data-value');
             swal({
                 title: 'Apakah Anda Yakin ?',
                 icon: 'error',
@@ -115,25 +115,5 @@
             $('#menu-akun').collapse('show');
             $('#akun-lainnya').addClass('active');
         })
-
-        function printErrorMsg(msg) {
-            $.each(msg, function(key, value) {
-                $('.' + key + '-error').removeClass('d-none');
-                $('.' + key + '-error').text(value);
-            });
-        }
-
-        function resetError() {
-            resetErrorElement('nama');
-        }
-
-        function resetModal() {
-            resetError();
-            $('#form-tambah')[0].reset();
-        }
-
-        function resetErrorElement(key) {
-            $('.' + key + '-error').addClass('d-none');
-        }
     </script>
 @endpush

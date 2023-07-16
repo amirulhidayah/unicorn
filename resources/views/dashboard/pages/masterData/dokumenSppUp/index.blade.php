@@ -98,6 +98,7 @@
         var idEdit = '';
         var aksiTambah = 'tambah';
         $('#btn-tambah').click(function() {
+            resetError();
             aksiTambah = 'tambah';
             $('#nama').val('');
             $('#modal-tambah-title').html('Tambah Daftar Dokumen SPP UP');
@@ -105,7 +106,8 @@
         })
 
         $(document).on('click', '#btn-edit', function() {
-            let id = $(this).data('value');
+            resetError();
+            let id = $(this).attr('data-value');
             idEdit = id;
 
             $.ajax({
@@ -125,6 +127,7 @@
 
         $('#form-tambah').submit(function(e) {
             e.preventDefault();
+            resetError();
             swal({
                 title: 'Apakah Anda Yakin ?',
                 icon: 'warning',
@@ -156,7 +159,6 @@
                                         buttons: false,
                                         timer: 1000,
                                     });
-                                    resetModal();
                                     Livewire.emit('refreshTable');
                                 } else {
                                     printErrorMsg(response.error);
@@ -184,7 +186,7 @@
                                         buttons: false,
                                         timer: 1000,
                                     });
-                                    resetModal();
+
                                 } else {
                                     printErrorMsg(response.error);
                                 }
@@ -203,7 +205,7 @@
         })
 
         $(document).on('click', '#btn-delete', function() {
-            let id = $(this).data('value');
+            let id = $(this).attr('data-value');
             swal({
                 title: 'Apakah Anda Yakin ?',
                 icon: 'error',
@@ -255,25 +257,5 @@
         $(document).ready(function() {
             $('#master-daftar-dokumen-spp-up').addClass('active');
         })
-
-        function printErrorMsg(msg) {
-            $.each(msg, function(key, value) {
-                $('.' + key + '-error').removeClass('d-none');
-                $('.' + key + '-error').text(value);
-            });
-        }
-
-        function resetError() {
-            resetErrorElement('nama');
-        }
-
-        function resetModal() {
-            resetError();
-            $('#form-tambah')[0].reset();
-        }
-
-        function resetErrorElement(key) {
-            $('.' + key + '-error').addClass('d-none');
-        }
     </script>
 @endpush

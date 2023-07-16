@@ -5,18 +5,16 @@ namespace App\Http\Controllers\dashboard\masterData;
 use App\Http\Controllers\Controller;
 use App\Models\KegiatanSpp;
 use App\Models\ProgramSpp;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class ProgramSppController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -33,33 +31,22 @@ class ProgramSppController extends Controller
         return view('dashboard.pages.masterData.programSpp.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $validator = Validator::make(
             $request->all(),
             [
                 'nama' => 'required',
-                'no_rek' => [$request->no_rek ? Rule::unique('program_spp')->withoutTrashed() : ''],
+                'no_rek' => ['required', $request->no_rek ? Rule::unique('program_spp')->withoutTrashed() : ''],
             ],
             [
                 'nama.required' => 'Nama Dokumen tidak boleh kosong',
-                // 'no_rek.required' => 'Nomor Rekening tidak boleh kosong',
+                'no_rek.required' => 'Nomor Rekening tidak boleh kosong',
                 'no_rek.unique' => 'Nomor Rekening sudah ada',
             ]
         );
@@ -68,43 +55,30 @@ class ProgramSppController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $programSpp = new ProgramSpp();
-        $programSpp->nama = $request->nama;
-        $programSpp->no_rek = $request->no_rek;
-        $programSpp->save();
+        try {
+            DB::transaction(function () use ($request) {
+                $programSpp = new ProgramSpp();
+                $programSpp->nama = $request->nama;
+                $programSpp->no_rek = $request->no_rek;
+                $programSpp->save();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
 
         return response()->json(['status' => 'success']);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\ProgramSpp  $programSpp
-     * @return \Illuminate\Http\Response
-     */
     public function show(ProgramSpp $programSpp)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\ProgramSpp  $programSpp
-     * @return \Illuminate\Http\Response
-     */
     public function edit(ProgramSpp $programSpp)
     {
         return response()->json($programSpp);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\ProgramSpp  $programSpp
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, ProgramSpp $programSpp)
     {
         $validator = Validator::make(
@@ -124,24 +98,29 @@ class ProgramSppController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $programSpp->nama = $request->nama;
-        $programSpp->no_rek = $request->no_rek;
-        $programSpp->save();
+        try {
+            DB::transaction(function () use ($request, $programSpp) {
+                $programSpp->nama = $request->nama;
+                $programSpp->no_rek = $request->no_rek;
+                $programSpp->save();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
 
         return response()->json(['status' => 'success']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\ProgramSpp  $programSpp
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(ProgramSpp $programSpp)
     {
-        $programSpp->delete();
-
-        KegiatanSpp::where('program_spp_id', $programSpp->id)->delete();
+        try {
+            DB::transaction(function () use ($programSpp) {
+                $programSpp->delete();
+                KegiatanSpp::where('program_spp_id', $programSpp->id)->delete();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
 
         return response()->json(['status' => 'success']);
     }

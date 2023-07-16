@@ -1,4 +1,31 @@
 <div>
+    <div>
+        <div class="row mb-3" wire:ignore>
+            <div class="col-12">
+                @component('dashboard.components.formElements.select', [
+                    'label' => 'Kategori',
+                    'id' => 'kategori_filter',
+                    'name' => 'kategori_filter',
+                    'class' => 'select2 select2-filter',
+                    'wajib' => '<sup class="text-danger">*</sup>',
+                ])
+                    @slot('options')
+                        <option value="Semua">
+                            Semua
+                        </option>
+                        <option value="Belanja Hibah">
+                            Belanja Hibah
+                        </option>
+                        <option value="Barang dan Jasa">
+                            Barang dan Jasa
+                        </option>
+                    @endslot
+                @endcomponent
+            </div>
+
+        </div>
+    </div>
+
     @component('dashboard.components.livewire.table', [
         'th' => [
             [
@@ -58,3 +85,11 @@
         @endslot
     @endcomponent
 </div>
+
+@push('script')
+    <script>
+        $('.select2-filter').on('change', function() {
+            @this.set($(this).attr('name'), $(this).select2("val"));
+        })
+    </script>
+@endpush

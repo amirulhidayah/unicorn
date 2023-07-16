@@ -18,7 +18,7 @@ class Table extends Component
 
     public function getData($pagination = true)
     {
-        $datas = Tahun::where('tahun', 'like', '%' . $this->cari . '%')->orderBy('id', 'desc')->when($pagination, function ($query) {
+        $datas = Tahun::where('tahun', 'like', '%' . $this->cari . '%')->orderBy('created_at', 'desc')->when($pagination, function ($query) {
             return $query->paginate($this->totalPagination);
         }, function ($query) {
             return $query->get();
@@ -36,14 +36,14 @@ class Table extends Component
         $this->resetPage();
     }
 
-    public function refreshTable()
-    {
-    }
-
     public function render()
     {
         return view('livewire.dashboard.master-data.tahun.table', [
             'datas' =>  $this->getData()
         ]);
+    }
+
+    public function refreshTable()
+    {
     }
 }

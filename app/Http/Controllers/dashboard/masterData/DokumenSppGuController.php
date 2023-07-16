@@ -4,7 +4,10 @@ namespace App\Http\Controllers\dashboard\masterData;
 
 use App\Http\Controllers\Controller;
 use App\Models\DaftarDokumenSppGu;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -32,22 +35,11 @@ class DokumenSppGuController extends Controller
         return view('dashboard.pages.masterData.dokumenSppGu.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $validator = Validator::make(
@@ -67,43 +59,30 @@ class DokumenSppGuController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $daftarDokumenSppGu = new DaftarDokumenSppGu();
-        $daftarDokumenSppGu->nama = $request->nama;
-        $daftarDokumenSppGu->kategori = $request->kategori;
-        $daftarDokumenSppGu->save();
+        try {
+            DB::transaction(function () use ($request) {
+                $daftarDokumenSppGu = new DaftarDokumenSppGu();
+                $daftarDokumenSppGu->nama = $request->nama;
+                $daftarDokumenSppGu->kategori = $request->kategori;
+                $daftarDokumenSppGu->save();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
 
         return response()->json(['status' => 'success']);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\DaftarDokumenSppGu  $daftarDokumenSppGu
-     * @return \Illuminate\Http\Response
-     */
     public function show(DaftarDokumenSppGu $daftarDokumenSppGu)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\DaftarDokumenSppGu  $daftarDokumenSppGu
-     * @return \Illuminate\Http\Response
-     */
     public function edit(DaftarDokumenSppGu $daftarDokumenSppGu)
     {
         return response()->json($daftarDokumenSppGu);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\DaftarDokumenSppGu  $daftarDokumenSppGu
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, DaftarDokumenSppGu $daftarDokumenSppGu)
     {
         $validator = Validator::make(
@@ -123,22 +102,29 @@ class DokumenSppGuController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $daftarDokumenSppGu->nama = $request->nama;
-        $daftarDokumenSppGu->kategori = $request->kategori;
-        $daftarDokumenSppGu->save();
+        try {
+            DB::transaction(function () use ($request, $daftarDokumenSppGu) {
+                $daftarDokumenSppGu->nama = $request->nama;
+                $daftarDokumenSppGu->kategori = $request->kategori;
+                $daftarDokumenSppGu->save();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
 
         return response()->json(['status' => 'success']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\DaftarDokumenSppGu  $daftarDokumenSppGu
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(DaftarDokumenSppGu $daftarDokumenSppGu)
     {
-        $daftarDokumenSppGu->delete();
+        try {
+            DB::transaction(function () use ($daftarDokumenSppGu) {
+                $daftarDokumenSppGu->delete();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
+
         return response()->json(['status' => 'success']);
     }
 }

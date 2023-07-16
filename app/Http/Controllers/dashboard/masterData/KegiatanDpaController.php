@@ -4,7 +4,10 @@ namespace App\Http\Controllers\dashboard\masterData;
 
 use App\Http\Controllers\Controller;
 use App\Models\KegiatanDpa;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -52,11 +55,17 @@ class KegiatanDpaController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $kegiatanDpa = new KegiatanDpa();
-        $kegiatanDpa->program_dpa_id = $request->program;
-        $kegiatanDpa->nama = $request->nama;
-        $kegiatanDpa->no_rek = $request->no_rek;
-        $kegiatanDpa->save();
+        try {
+            DB::transaction(function () use ($request) {
+                $kegiatanDpa = new KegiatanDpa();
+                $kegiatanDpa->program_dpa_id = $request->program;
+                $kegiatanDpa->nama = $request->nama;
+                $kegiatanDpa->no_rek = $request->no_rek;
+                $kegiatanDpa->save();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
 
         return response()->json(['status' => 'success']);
     }
@@ -92,17 +101,30 @@ class KegiatanDpaController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $kegiatanDpa->program_dpa_id = $request->program;
-        $kegiatanDpa->nama = $request->nama;
-        $kegiatanDpa->no_rek = $request->no_rek;
-        $kegiatanDpa->save();
+        try {
+            DB::transaction(function () use ($request, $kegiatanDpa) {
+                $kegiatanDpa->program_dpa_id = $request->program;
+                $kegiatanDpa->nama = $request->nama;
+                $kegiatanDpa->no_rek = $request->no_rek;
+                $kegiatanDpa->save();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
 
         return response()->json(['status' => 'success']);
     }
 
     public function destroy(Request $request)
     {
-        KegiatanDpa::where('id', $request->kegiatan_dpa)->delete();
+        try {
+            DB::transaction(function () use ($request) {
+                KegiatanDpa::where('id', $request->kegiatan_dpa)->delete();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
+
         return response()->json(['status' => 'success']);
     }
 }

@@ -333,6 +333,25 @@
             ribuan = ribuan.join('.').split('').reverse().join('');
             return ribuan;
         }
+
+        const printErrorMsg = (msg) => {
+            for (const key in msg) {
+                const errorElement = key.split(".").length > 1 ?
+                    document.querySelectorAll(`.${key.split(".")[0]}-error`)[key.split(".")[1]] :
+                    document.querySelector(`.${key}-error`);
+
+                if (Array.isArray(msg[key])) {
+                    errorElement.innerHTML = msg[key].map((message) => `${message}<br>`).join('');
+                } else {
+                    errorElement.textContent = `${msg[key]}<br>`;
+                    console.log(errorElement)
+                }
+            }
+        };
+
+        function resetError() {
+            $('.error-text').html('');
+        }
     </script>
     @stack('script')
 </body>

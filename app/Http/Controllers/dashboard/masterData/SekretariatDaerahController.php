@@ -4,18 +4,16 @@ namespace App\Http\Controllers\dashboard\masterData;
 
 use App\Http\Controllers\Controller;
 use App\Models\SekretariatDaerah;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Yajra\DataTables\Facades\DataTables;
 
 class SekretariatDaerahController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -32,22 +30,6 @@ class SekretariatDaerahController extends Controller
         return view('dashboard.pages.masterData.sekretariatDaerah.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $validator = Validator::make(
@@ -56,8 +38,8 @@ class SekretariatDaerahController extends Controller
                 'nama' => ['required', Rule::unique('sekretariat_daerah')->withoutTrashed()],
             ],
             [
-                'nama.required' => 'Nama Biro Organisasi tidak boleh kosong',
-                'nama.unique' => 'Nama Biro Organisasi sudah ada',
+                'nama.required' => 'Sekretariat Daerah tidak boleh kosong',
+                'nama.unique' => 'Sekretariat Daerah sudah ada',
             ]
         );
 
@@ -65,52 +47,34 @@ class SekretariatDaerahController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $SekretariatDaerah = new SekretariatDaerah();
-        $SekretariatDaerah->nama = $request->nama;
-        $SekretariatDaerah->save();
+        try {
+            DB::transaction(function () use ($request) {
+                $sekretariatDaerah = new SekretariatDaerah();
+                $sekretariatDaerah->nama = $request->nama;
+                $sekretariatDaerah->save();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
 
         return response()->json(['status' => 'success']);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\SekretariatDaerah  $SekretariatDaerah
-     * @return \Illuminate\Http\Response
-     */
-    public function show(SekretariatDaerah $SekretariatDaerah)
+    public function edit(SekretariatDaerah $sekretariatDaerah)
     {
-        //
+        return response()->json($sekretariatDaerah);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\SekretariatDaerah  $SekretariatDaerah
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(SekretariatDaerah $SekretariatDaerah)
-    {
-        return response()->json($SekretariatDaerah);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\SekretariatDaerah  $SekretariatDaerah
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, SekretariatDaerah $SekretariatDaerah)
+    public function update(Request $request, SekretariatDaerah $sekretariatDaerah)
     {
         $validator = Validator::make(
             $request->all(),
             [
-                'nama' => ['required', Rule::unique('sekretariat_daerah')->ignore($SekretariatDaerah->id)->withoutTrashed()],
+                'nama' => ['required', Rule::unique('sekretariat_daerah')->ignore($sekretariatDaerah->id)->withoutTrashed()],
             ],
             [
-                'nama.required' => 'Nama Biro Organisasi tidak boleh kosong',
-                'nama.unique' => 'Nama Biro Organisasi sudah ada',
+                'nama.required' => 'Sekretariat Daerah tidak boleh kosong',
+                'nama.unique' => 'Sekretariat Daerah sudah ada',
             ]
         );
 
@@ -118,21 +82,28 @@ class SekretariatDaerahController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $SekretariatDaerah->nama = $request->nama;
-        $SekretariatDaerah->save();
+        try {
+            DB::transaction(function () use ($request, $sekretariatDaerah) {
+                $sekretariatDaerah->nama = $request->nama;
+                $sekretariatDaerah->save();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
 
         return response()->json(['status' => 'success']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\SekretariatDaerah  $SekretariatDaerah
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(SekretariatDaerah $SekretariatDaerah)
+    public function destroy(SekretariatDaerah $sekretariatDaerah)
     {
-        $SekretariatDaerah->delete();
+        try {
+            DB::transaction(function () use ($sekretariatDaerah) {
+                $sekretariatDaerah->delete();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
+
         return response()->json(['status' => 'success']);
     }
 }

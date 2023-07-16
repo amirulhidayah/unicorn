@@ -15,10 +15,19 @@ class Table extends Component
 
     public $totalPagination = '25';
     public $cari = '';
+    public $kategori_filter;
 
     public function getData($pagination = true)
     {
-        $datas = DaftarDokumenSppGu::where('nama', 'like', '%' . $this->cari . '%')->orderBy('created_at', 'desc')->when($pagination, function ($query) {
+        $kategoriFilter = $this->kategori_filter;
+        $cari = $this->cari;
+
+        $datas = DaftarDokumenSppGu::where(function ($query) use ($cari, $kategoriFilter) {
+            $query->where('nama', 'like', '%' . $cari . '%');
+            if (isset($kategoriFilter) && $kategoriFilter != 'Semua') {
+                $query->where('kategori', $kategoriFilter);
+            }
+        })->orderBy('created_at', 'desc')->when($pagination, function ($query) {
             return $query->paginate($this->totalPagination);
         }, function ($query) {
             return $query->get();

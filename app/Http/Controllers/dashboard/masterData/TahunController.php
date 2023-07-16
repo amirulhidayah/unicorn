@@ -4,18 +4,16 @@ namespace App\Http\Controllers\dashboard\masterData;
 
 use App\Http\Controllers\Controller;
 use App\Models\Tahun;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Yajra\DataTables\Facades\DataTables;
 
 class TahunController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -32,22 +30,6 @@ class TahunController extends Controller
         return view('dashboard.pages.masterData.tahun.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $validator = Validator::make(
@@ -65,42 +47,25 @@ class TahunController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $tahun = new Tahun();
-        $tahun->tahun = $request->tahun;
-        $tahun->save();
+        try {
+            DB::transaction(function () use ($request) {
+                $tahun = new Tahun();
+                $tahun->tahun = $request->tahun;
+                $tahun->save();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
+
 
         return response()->json(['status' => 'success']);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Tahun  $tahun
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Tahun $tahun)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Tahun  $tahun
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Tahun $tahun)
     {
         return response()->json($tahun);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Tahun  $tahun
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Tahun $tahun)
     {
         $validator = Validator::make(
@@ -118,21 +83,28 @@ class TahunController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $tahun->tahun = $request->tahun;
-        $tahun->save();
+        try {
+            DB::transaction(function () use ($tahun, $request) {
+                $tahun->tahun = $request->tahun;
+                $tahun->save();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
 
         return response()->json(['status' => 'success']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Tahun  $tahun
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Tahun $tahun)
     {
-        $tahun->delete();
+        try {
+            DB::transaction(function () use ($tahun) {
+                $tahun->delete();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
+
         return response()->json(['status' => 'success']);
     }
 }

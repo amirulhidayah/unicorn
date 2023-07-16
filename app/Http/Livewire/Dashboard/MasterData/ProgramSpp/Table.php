@@ -18,7 +18,7 @@ class Table extends Component
 
     public function getData($pagination = true)
     {
-        $datas = ProgramSpp::where('nama', 'like', '%' . $this->cari . '%')->orderBy('id', 'desc')->when($pagination, function ($query) {
+        $datas = ProgramSpp::where('nama', 'like', '%' . $this->cari . '%')->orderBy('created_at', 'desc')->when($pagination, function ($query) {
             return $query->paginate($this->totalPagination);
         }, function ($query) {
             return $query->get();

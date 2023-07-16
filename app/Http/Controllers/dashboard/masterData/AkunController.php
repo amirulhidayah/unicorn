@@ -14,11 +14,6 @@ use Yajra\DataTables\Facades\DataTables;
 
 class AkunController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -47,23 +42,12 @@ class AkunController extends Controller
         return view('dashboard.pages.masterData.akun.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         $daftarSekretariatDaerah = SekretariatDaerah::orderBy('created_at', 'asc')->get();
         return view('dashboard.pages.masterData.akun.create', compact(['daftarSekretariatDaerah']));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $validator = Validator::make(
@@ -137,36 +121,17 @@ class AkunController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
     public function show(User $user)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
     public function edit(User $user)
     {
         $daftarSekretariatDaerah = SekretariatDaerah::orderBy('created_at', 'asc')->get();
         return view('dashboard.pages.masterData.akun.edit', compact(['user', 'daftarSekretariatDaerah']));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, User $user)
     {
         $validator = Validator::make(
@@ -259,12 +224,6 @@ class AkunController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(User $user)
     {
         $user->delete();

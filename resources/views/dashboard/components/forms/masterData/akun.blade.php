@@ -171,6 +171,7 @@
     <script>
         $('#{{ $form_id }}').submit(function(e) {
             e.preventDefault();
+            resetError();
             var formData = new FormData(this);
             swal({
                 title: 'Apakah Anda Yakin ?',
@@ -238,12 +239,6 @@
                 keyboard: false
             })
         })
-
-        const printErrorMsg = (msg) => {
-            $.each(msg, function(key, value) {
-                $('.' + key + '-error').text(value);
-            });
-        }
     </script>
 
     <script>

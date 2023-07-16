@@ -1,4 +1,40 @@
 <div>
+    <div>
+        <div class="row mb-3" wire:ignore>
+            <div class="col-sm-12 col-lg-6">
+                @component('dashboard.components.formElements.select', [
+                    'label' => 'Aktif',
+                    'id' => 'aktif',
+                    'name' => 'aktif',
+                    'class' => 'select2',
+                    'wajib' => '<sup class="text-danger">*</sup>',
+                ])
+                    @slot('options')
+                        <option value="Semua">Semua</option>
+                        <option value="1">Ya</option>
+                        <option value="0">Tidak</option>
+                    @endslot
+                @endcomponent
+            </div>
+            <div class="col-sm-12 col-lg-6">
+                @component('dashboard.components.formElements.select', [
+                    'label' => 'Role',
+                    'id' => 'role',
+                    'name' => 'role',
+                    'class' => 'select2',
+                    'wajib' => '<sup class="text-danger">*</sup>',
+                ])
+                    @slot('options')
+                        <option value="Semua">Semua</option>
+                        <option value="Admin">Admin</option>
+                        <option value="ASN Sub Bagian Keuangan">ASN Sub Bagian Keuangan</option>
+                        <option value="Kuasa Pengguna Anggaran">Kuasa Pengguna Anggaran</option>
+                        <option value="PPK">PPK</option>
+                    @endslot
+                @endcomponent
+            </div>
+        </div>
+    </div>
     @component('dashboard.components.livewire.table', [
         'th' => [
             [
@@ -82,3 +118,11 @@
         @endslot
     @endcomponent
 </div>
+
+@push('script')
+    <script>
+        $('.select2').on('change', function() {
+            @this.set($(this).attr('name'), $(this).select2("val"));
+        })
+    </script>
+@endpush

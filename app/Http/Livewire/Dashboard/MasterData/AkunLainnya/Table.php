@@ -16,14 +16,28 @@ class Table extends Component
     public $totalPagination = '25';
     public $cari = '';
 
+    public $role;
+    public $aktif;
+
     public function getData($pagination = true)
     {
         $cari = $this->cari;
-        $datas = User::orderBy('created_at', 'desc')->whereNotIn('role', ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])->orderBy('created_at', 'desc')->where(function ($query) use ($cari) {
+        $role = $this->role;
+        $aktif = $this->aktif;
+
+        $datas = User::orderBy('created_at', 'desc')->whereNotIn('role', ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])->orderBy('created_at', 'desc')->where(function ($query) use ($cari, $role, $aktif) {
             if ($cari) {
                 $query->whereHas('profil', function ($query) use ($cari) {
                     $query->where('nama', 'like', '%' . $this->cari . '%');
                 });
+            }
+
+            if (isset($role) && $role != 'Semua') {
+                $query->where('role', $role);
+            }
+
+            if (isset($aktif) && $aktif != 'Semua') {
+                $query->where('is_aktif', $aktif);
             }
         })->when($pagination, function ($query) {
             return $query->paginate($this->totalPagination);

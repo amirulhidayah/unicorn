@@ -4,18 +4,16 @@ namespace App\Http\Controllers\dashboard\masterData;
 
 use App\Http\Controllers\Controller;
 use App\Models\DaftarDokumenSppLs;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class DokumenSppLsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -32,22 +30,11 @@ class DokumenSppLsController extends Controller
         return view('dashboard.pages.masterData.dokumenSppLs.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $validator = Validator::make(
@@ -67,43 +54,30 @@ class DokumenSppLsController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $daftarDokumenSppLs = new DaftarDokumenSppLs();
-        $daftarDokumenSppLs->nama = $request->nama;
-        $daftarDokumenSppLs->kategori = $request->kategori;
-        $daftarDokumenSppLs->save();
+        try {
+            DB::transaction(function () use ($request) {
+                $daftarDokumenSppLs = new DaftarDokumenSppLs();
+                $daftarDokumenSppLs->nama = $request->nama;
+                $daftarDokumenSppLs->kategori = $request->kategori;
+                $daftarDokumenSppLs->save();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
 
         return response()->json(['status' => 'success']);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\DaftarDokumenSppLs  $daftarDokumenSppLs
-     * @return \Illuminate\Http\Response
-     */
     public function show(DaftarDokumenSppLs $daftarDokumenSppLs)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\DaftarDokumenSppLs  $daftarDokumenSppLs
-     * @return \Illuminate\Http\Response
-     */
     public function edit(DaftarDokumenSppLs $daftarDokumenSppLs, Request $request)
     {
         return response()->json($daftarDokumenSppLs);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\DaftarDokumenSppLs  $daftarDokumenSppLs
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, DaftarDokumenSppLs $daftarDokumenSppLs)
     {
         $validator = Validator::make(
@@ -123,22 +97,29 @@ class DokumenSppLsController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $daftarDokumenSppLs->nama = $request->nama;
-        $daftarDokumenSppLs->kategori = $request->kategori;
-        $daftarDokumenSppLs->save();
+        try {
+            DB::transaction(function () use ($request, $daftarDokumenSppLs) {
+                $daftarDokumenSppLs->nama = $request->nama;
+                $daftarDokumenSppLs->kategori = $request->kategori;
+                $daftarDokumenSppLs->save();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
 
         return response()->json(['status' => 'success']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\DaftarDokumenSppLs  $daftarDokumenSppLs
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(DaftarDokumenSppLs $daftarDokumenSppLs)
     {
-        $daftarDokumenSppLs->delete();
+        try {
+            DB::transaction(function () use ($daftarDokumenSppLs) {
+                $daftarDokumenSppLs->delete();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
+
         return response()->json(['status' => 'success']);
     }
 }

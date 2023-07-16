@@ -99,6 +99,7 @@
         var idEdit = '';
         var aksiTambah = 'tambah';
         $('#btn-tambah').click(function() {
+            resetError();
             aksiTambah = 'tambah';
             $('#tahun').val('');
             $('#modal-tambah').modal('show');
@@ -106,9 +107,9 @@
         })
 
         $(document).on('click', '#btn-edit', function() {
-            let id = $(this).data('value');
+            resetError();
+            let id = $(this).attr('data-value');
             idEdit = id;
-
             $.ajax({
                 url: "{{ url('master-data/tahun') }}" + '/' + id + '/edit',
                 type: "GET",
@@ -126,6 +127,7 @@
 
         $('#form-tambah').submit(function(e) {
             e.preventDefault();
+            resetError();
             swal({
                 title: 'Apakah Anda Yakin ?',
                 icon: 'warning',
@@ -158,7 +160,7 @@
                                         buttons: false,
                                         timer: 1000,
                                     });
-                                    resetModal();
+
                                 } else {
                                     printErrorMsg(response.error);
                                 }
@@ -185,7 +187,7 @@
                                         buttons: false,
                                         timer: 1000,
                                     });
-                                    resetModal();
+
                                 } else {
                                     printErrorMsg(response.error);
                                 }
@@ -205,7 +207,7 @@
         })
 
         $(document).on('click', '#btn-delete', function() {
-            let id = $(this).data('value');
+            let id = $(this).attr('data-value');
             swal({
                 title: 'Apakah Anda Yakin ?',
                 icon: 'error',
@@ -257,25 +259,5 @@
         $(document).ready(function() {
             $('#master-tahun').addClass('active');
         })
-
-        function printErrorMsg(msg) {
-            $.each(msg, function(key, value) {
-                $('.' + key + '-error').removeClass('d-none');
-                $('.' + key + '-error').text(value);
-            });
-        }
-
-        function resetError() {
-            resetErrorElement('nama');
-        }
-
-        function resetModal() {
-            resetError();
-            $('#form-tambah')[0].reset();
-        }
-
-        function resetErrorElement(key) {
-            $('.' + key + '-error').addClass('d-none');
-        }
     </script>
 @endpush

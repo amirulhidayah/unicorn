@@ -9,38 +9,35 @@
                 datanya</small>
         </div>
         <div class="col-sm-12 col-lg-4">
-            @component('dashboard.components.formElements.input',
-                [
-                    'label' => 'Email',
-                    'type' => 'text',
-                    'id' => 'email',
-                    'name' => 'email',
-                    'wajib' => '<sup class="text-danger">*</sup>',
-                    'placeholder' => 'Masukkan Alamat Email',
-                ])
+            @component('dashboard.components.formElements.input', [
+                'label' => 'Email',
+                'type' => 'text',
+                'id' => 'email',
+                'name' => 'email',
+                'wajib' => '<sup class="text-danger">*</sup>',
+                'placeholder' => 'Masukkan Alamat Email',
+            ])
             @endcomponent
         </div>
         <div class="col-sm-12 col-lg-4">
-            @component('dashboard.components.formElements.input',
-                [
-                    'label' => 'Password',
-                    'type' => 'text',
-                    'id' => 'password',
-                    'name' => 'password',
-                    'wajib' => '<sup class="text-danger">*</sup>',
-                    'placeholder' => 'Masukkan Password',
-                ])
+            @component('dashboard.components.formElements.input', [
+                'label' => 'Password',
+                'type' => 'text',
+                'id' => 'password',
+                'name' => 'password',
+                'wajib' => '<sup class="text-danger">*</sup>',
+                'placeholder' => 'Masukkan Password',
+            ])
             @endcomponent
         </div>
         <div class="col-sm-12 col-lg-4">
-            @component('dashboard.components.formElements.select',
-                [
-                    'label' => 'Role',
-                    'id' => 'role',
-                    'name' => 'role',
-                    'class' => 'select2',
-                    'wajib' => '<sup class="text-danger">*</sup>',
-                ])
+            @component('dashboard.components.formElements.select', [
+                'label' => 'Role',
+                'id' => 'role',
+                'name' => 'role',
+                'class' => 'select2',
+                'wajib' => '<sup class="text-danger">*</sup>',
+            ])
                 @slot('options')
                     <option value="Admin">Admin</option>
                     <option value="ASN Sub Bagian Keuangan">ASN Sub Bagian Keuangan</option>
@@ -50,26 +47,24 @@
             @endcomponent
         </div>
         <div class="col-sm-12 col-lg-6">
-            @component('dashboard.components.formElements.input',
-                [
-                    'label' => 'Nama Lengkap',
-                    'type' => 'text',
-                    'id' => 'nama',
-                    'name' => 'nama',
-                    'wajib' => '<sup class="text-danger">*</sup>',
-                    'placeholder' => 'Masukkan Nama Lengkap',
-                ])
+            @component('dashboard.components.formElements.input', [
+                'label' => 'Nama Lengkap',
+                'type' => 'text',
+                'id' => 'nama',
+                'name' => 'nama',
+                'wajib' => '<sup class="text-danger">*</sup>',
+                'placeholder' => 'Masukkan Nama Lengkap',
+            ])
             @endcomponent
         </div>
         <div class="col-sm-12 col-lg-6">
-            @component('dashboard.components.formElements.select',
-                [
-                    'label' => 'Jenis Kelamin',
-                    'id' => 'jenis_kelamin',
-                    'name' => 'jenis_kelamin',
-                    'class' => 'select2',
-                    'wajib' => '<sup class="text-danger">*</sup>',
-                ])
+            @component('dashboard.components.formElements.select', [
+                'label' => 'Jenis Kelamin',
+                'id' => 'jenis_kelamin',
+                'name' => 'jenis_kelamin',
+                'class' => 'select2',
+                'wajib' => '<sup class="text-danger">*</sup>',
+            ])
                 @slot('options')
                     <option value="Laki-Laki">Laki-Laki</option>
                     <option value="Perempuan">Perempuan</option>
@@ -77,52 +72,48 @@
             @endcomponent
         </div>
         <div class="col-sm-12 col-lg-6">
-            @component('dashboard.components.formElements.input',
-                [
-                    'label' => 'Alamat',
-                    'type' => 'text',
-                    'id' => 'alamat',
-                    'name' => 'alamat',
-                    'wajib' => '<sup class="text-danger">*</sup>',
-                    'placeholder' => 'Masukkan Alamat',
-                ])
+            @component('dashboard.components.formElements.input', [
+                'label' => 'Alamat',
+                'type' => 'text',
+                'id' => 'alamat',
+                'name' => 'alamat',
+                'wajib' => '<sup class="text-danger">*</sup>',
+                'placeholder' => 'Masukkan Alamat',
+            ])
             @endcomponent
         </div>
         <div class="col-sm-12 col-lg-6">
-            @component('dashboard.components.formElements.input',
-                [
-                    'label' => 'Nomor Hp',
-                    'type' => 'text',
-                    'id' => 'nomor_hp',
-                    'name' => 'nomor_hp',
-                    'class' => 'numerik',
-                    'wajib' => '<sup class="text-danger">*</sup>',
-                    'placeholder' => 'Masukkan Nomor Hp',
-                ])
+            @component('dashboard.components.formElements.input', [
+                'label' => 'Nomor Hp',
+                'type' => 'text',
+                'id' => 'nomor_hp',
+                'name' => 'nomor_hp',
+                'class' => 'numerik',
+                'wajib' => '<sup class="text-danger">*</sup>',
+                'placeholder' => 'Masukkan Nomor Hp',
+            ])
             @endcomponent
         </div>
         <div class="col-sm-12 col-lg-6">
-            @component('dashboard.components.formElements.input',
-                [
-                    'label' => 'NIP',
-                    'type' => 'text',
-                    'id' => 'nip',
-                    'name' => 'nip',
-                    'class' => 'numerik',
-                    'wajib' => '',
-                    'placeholder' => 'Masukkan NIP',
-                ])
+            @component('dashboard.components.formElements.input', [
+                'label' => 'NIP',
+                'type' => 'text',
+                'id' => 'nip',
+                'name' => 'nip',
+                'class' => 'numerik',
+                'wajib' => '',
+                'placeholder' => 'Masukkan NIP',
+            ])
             @endcomponent
         </div>
         <div class="col-sm-12 col-lg-6">
-            @component('dashboard.components.formElements.select',
-                [
-                    'label' => 'Aktif',
-                    'id' => 'aktif',
-                    'name' => 'aktif',
-                    'class' => 'select2',
-                    'wajib' => '<sup class="text-danger">*</sup>',
-                ])
+            @component('dashboard.components.formElements.select', [
+                'label' => 'Aktif',
+                'id' => 'aktif',
+                'name' => 'aktif',
+                'class' => 'select2',
+                'wajib' => '<sup class="text-danger">*</sup>',
+            ])
                 @slot('options')
                     <option value="1">Ya</option>
                     <option value="0">Tidak</option>
@@ -161,10 +152,9 @@
             <span class="text-danger error-text tanda_tangan-error"></span>
         </div>
         <div class="col-12 text-right">
-            @component('dashboard.components.buttons.submit',
-                [
-                    'label' => 'Simpan',
-                ])
+            @component('dashboard.components.buttons.submit', [
+                'label' => 'Simpan',
+            ])
             @endcomponent
         </div>
     </div>
@@ -180,6 +170,7 @@
     <script>
         $('#{{ $form_id }}').submit(function(e) {
             e.preventDefault();
+            resetError();
             var formData = new FormData(this);
             swal({
                 title: 'Apakah Anda Yakin ?',
@@ -247,12 +238,6 @@
                 keyboard: false
             })
         })
-
-        const printErrorMsg = (msg) => {
-            $.each(msg, function(key, value) {
-                $('.' + key + '-error').text(value);
-            });
-        }
     </script>
 
     <script>
