@@ -10,6 +10,8 @@ use App\Models\Spd;
 use App\Models\SppLs;
 use App\Models\Tahun;
 use Carbon\Carbon;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -20,11 +22,6 @@ use Illuminate\Support\Str;
 
 class SppLsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
         $role = Auth::user()->role;
@@ -190,11 +187,6 @@ class SppLsController extends Controller
         return view('dashboard.pages.spp.sppLs.index', compact('daftarSekretariatDaerah', 'daftarTahun'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         $daftarTahun = Tahun::orderBy('tahun', 'asc')->get();
@@ -202,91 +194,105 @@ class SppLsController extends Controller
         return view('dashboard.pages.spp.sppLs.create', compact(['daftarTahun', 'daftarSekretariatDaerah']));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $role = Auth::user()->role;
 
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'nama_file' => 'required',
-                'nama_file.*' => 'required',
-                'file_dokumen.*' => 'mimes:pdf|max:5120',
-                'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
-                'kategori' => 'required',
-                'tahun' => 'required',
-                'program' => 'required',
-                'kegiatan' => 'required',
-                'bulan' => 'required',
-                'anggaran_digunakan' => 'required',
-            ],
-            [
-                'nama_file.required' => 'Nama file tidak boleh kosong',
-                'nama_file.*.required' => 'Nama file tidak boleh kosong',
-                'file_dokumen.*.mimes' => "Dokumen Harus Berupa File PDF",
-                'file_dokumen.*.max' => "Dokumen Tidak Boleh Lebih Dari 5 Mb",
-                'sekretariat_daerah.required' => 'Biro Organisasi Tidak Boleh Kosong',
-                'kategori.required' => 'Kategori Tidak Boleh Kosong',
-                'tahun.required' => 'Tahun Tidak Boleh Kosong',
-                'program.required' => 'Program Tidak Boleh Kosong',
-                'kegiatan.required' => 'Kegiatan Tidak Boleh Kosong',
-                'bulan.required' => 'Bulan Tidak Boleh Kosong',
-                'anggaran_digunakan.required' => 'Anggaran Digunakan Tidak Boleh Kosong',
-            ]
-        );
+        $rules = [
+            'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
+            'kategori' => 'required',
+            'tahun' => 'required',
+            'program' => 'required',
+            'kegiatan' => 'required',
+            'bulan' => 'required',
+            'anggaran_digunakan' => 'required',
+        ];
+
+        $messages = [
+            'sekretariat_daerah.required' => 'Biro Organisasi Tidak Boleh Kosong',
+            'kategori.required' => 'Kategori Tidak Boleh Kosong',
+            'tahun.required' => 'Tahun Tidak Boleh Kosong',
+            'program.required' => 'Program Tidak Boleh Kosong',
+            'kegiatan.required' => 'Kegiatan Tidak Boleh Kosong',
+            'bulan.required' => 'Bulan Tidak Boleh Kosong',
+            'anggaran_digunakan.required' => 'Anggaran Digunakan Tidak Boleh Kosong',
+        ];
+
+        if ($request->fileDokumen) {
+            foreach ($request->fileDokumen as $dokumen) {
+                $rules["$dokumen"] = 'required|mimes:pdf|max:5120';
+                $messages["$dokumen.required"] = "File tidak boleh kosong";
+                $messages["$dokumen.mimes"] = "File harus berupa file pdf";
+                $messages["$dokumen.max"] = "File tidak boleh lebih dari 5 MB";
+            }
+        }
+
+        if ($request->namaFile) {
+            foreach ($request->namaFile as $nama) {
+                $rules["$nama"] = 'required';
+                $messages["$nama.required"] = "Nama tidak boleh kosong";
+            }
+        }
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if (!$request->fileDokumen) {
+            $validator->after(function ($validator) {
+                $validator->errors()->add('dokumenFileHitung', 'Dokumen Minimal 1');
+            });
+        }
 
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $sppLs = new SppLs();
-        $sppLs->user_id = Auth::user()->id;
-        $sppLs->sekretariat_daerah_id = $role == "Admin" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
-        $sppLs->tahun_id = $request->tahun;
-        $sppLs->kegiatan_dpa_id = $request->kegiatan;
-        $sppLs->bulan = $request->bulan;
-        $sppLs->kategori = $request->kategori;
-        $sppLs->anggaran_digunakan = str_replace(".", "", $request->anggaran_digunakan);
-        $sppLs->nomor_surat = $request->nomor_surat;
-        $sppLs->save();
+        $arrayFileDokumen = [];
 
-        $lengthBerkas = count($request->nama_file);
-        for ($i = 0; $i < $lengthBerkas; $i++) {
-            $namaFileBerkas = Str::slug($request->nama_file[$i], '-') . "-" . $i . Carbon::now()->format('YmdHs') . rand(1, 9999) . ".pdf";
-            $request->file('file_dokumen')[$i]->storeAs(
-                'dokumen_spp_ls',
-                $namaFileBerkas
-            );
+        try {
+            DB::transaction(function () use ($request, &$arrayFileDokumen, $role) {
+                $sppLs = new SppLs();
+                $sppLs->user_id = Auth::user()->id;
+                $sppLs->sekretariat_daerah_id = $role == "Admin" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
+                $sppLs->tahun_id = $request->tahun;
+                $sppLs->kegiatan_dpa_id = $request->kegiatan;
+                $sppLs->bulan = $request->bulan;
+                $sppLs->kategori = $request->kategori;
+                $sppLs->anggaran_digunakan = str_replace(".", "", $request->anggaran_digunakan);
+                $sppLs->nomor_surat = $request->nomor_surat;
+                $sppLs->save();
 
-            $dokumenSppLs = new DokumenSppLs();
-            $dokumenSppLs->nama_dokumen = $request->nama_file[$i];
-            $dokumenSppLs->dokumen = $namaFileBerkas;
-            $dokumenSppLs->spp_ls_id = $sppLs->id;
-            $dokumenSppLs->save();
+                foreach ($request->fileDokumen as $index => $nama) {
+                    $namaFileBerkas = Str::slug($request[$request->namaFile[$index]], '-') . "-" . ($index + 1) . Carbon::now()->format('YmdHs') . rand(1, 9999) . ".pdf";
+                    $request->$nama->storeAs('dokumen_spp_ls', $namaFileBerkas);
+                    $arrayFileDokumen[] = $namaFileBerkas;
+
+                    $dokumenSppLs = new DokumenSppLs();
+                    $dokumenSppLs->nama_dokumen = $request[$request->namaFile[$index]];
+                    $dokumenSppLs->dokumen = $namaFileBerkas;
+                    $dokumenSppLs->spp_ls_id = $sppLs->id;
+                    $dokumenSppLs->save();
+                }
+
+                $riwayatSppLs = new RiwayatSppLs();
+                $riwayatSppLs->spp_ls_id = $sppLs->id;
+                $riwayatSppLs->user_id = Auth::user()->id;
+                $riwayatSppLs->anggaran_digunakan = str_replace(".", "", $request->anggaran_digunakan);
+                $riwayatSppLs->status = 'Dibuat';
+                $riwayatSppLs->save();
+            });
+        } catch (QueryException $error) {
+            foreach ($arrayFileDokumen as $nama) {
+                if (Storage::exists('dokumen_spp_ls/' . $nama)) {
+                    Storage::delete('dokumen_spp_ls/' . $nama);
+                }
+            }
+
+            return throw new Exception($error);
         }
-
-        $riwayatSppLs = new RiwayatSppLs();
-        $riwayatSppLs->spp_ls_id = $sppLs->id;
-        $riwayatSppLs->user_id = Auth::user()->id;
-        $riwayatSppLs->anggaran_digunakan = str_replace(".", "", $request->anggaran_digunakan);
-        $riwayatSppLs->status = 'Dibuat';
-        $riwayatSppLs->save();
 
         return response()->json(['status' => 'success']);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\SppLs  $sppLs
-     * @return \Illuminate\Http\Response
-     */
     public function show(SppLs $sppLs)
     {
         $tipe = 'spp_ls';
@@ -301,12 +307,6 @@ class SppLsController extends Controller
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\SppLs  $sppLs
-     * @return \Illuminate\Http\Response
-     */
     public function edit(SppLs $sppLs, Request $request)
     {
         $spd = Spd::where('kegiatan_dpa_id', $sppLs->kegiatan_dpa_id)->where('sekretariat_daerah_id', $sppLs->sekretariat_daerah_id)->where('tahun_id', $sppLs->tahun_id)->first();
@@ -321,167 +321,205 @@ class SppLsController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\SppLs  $sppLs
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, SppLs $sppLs)
     {
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'nama_file' => $request->nama_file ? 'required' : 'nullable',
-                'nama_file.*' => $request->nama_file ? 'required' : 'nullable',
-                'nama_file_update' => 'required',
-                'nama_file_update.*' => 'required',
-                'file_dokumen.*' => 'mimes:pdf|max:5120',
-                'file_dokumen_update.*' => 'mimes:pdf|max:5120',
-                'surat_penolakan' => 'required|mimes:pdf|max:5120',
-                'anggaran_digunakan' => 'required'
-            ],
-            [
-                'nama_file.required' => 'Nama file tidak boleh kosong',
-                'nama_file.*.required' => 'Nama file tidak boleh kosong',
-                'nama_file_update.required' => 'Nama file tidak boleh kosong',
-                'nama_file_update.*.required' => 'Nama file tidak boleh kosong',
-                'file_dokumen.*.mimes' => "Dokumen Harus Berupa File PDF",
-                'file_dokumen.*.max' => "Dokumen Tidak Boleh Lebih Dari 5 Mb",
-                'file_dokumen_update.*.mimes' => "Dokumen Harus Berupa File PDF",
-                'file_dokumen_update.*.max' => "Dokumen Tidak Boleh Lebih Dari 5 Mb",
-                'surat_penolakan.required' => 'Surat Penolakan tidak boleh kosong',
-                'surat_penolakan.mimes' => 'Dokumen Harus Berupa File PDF',
-                'surat_penolakan.max' => "Dokumen Tidak Boleh Lebih Dari 5 Mb",
-                'anggaran_digunakan.required' => 'Anggaran Digunakan tidak boleh kosong'
-            ]
-        );
+        $rules = [
+            'surat_penolakan' => 'required|mimes:pdf|max:5120',
+            'anggaran_digunakan' => 'required'
+        ];
+
+        $messages = [
+            'surat_penolakan.required' => 'Surat Penolakan tidak boleh kosong',
+            'surat_penolakan.mimes' => 'Dokumen Harus Berupa File PDF',
+            'surat_penolakan.max' => "Dokumen Tidak Boleh Lebih Dari 5 Mb",
+            'anggaran_digunakan.required' => 'Anggaran Digunakan tidak boleh kosong'
+        ];
+
+        if ($request->fileDokumenUpdate) {
+            foreach ($request->fileDokumenUpdate as $dokumen) {
+                $dokumen = "'" . $dokumen . "'";
+                $rules["$dokumen"] = $request["$dokumen"] ? 'required|mimes:pdf|max:5120' : 'nullable';
+                $messages["$dokumen.required"] = "File tidak boleh kosong";
+                $messages["$dokumen.mimes"] = "File harus berupa file pdf";
+                $messages["$dokumen.max"] = "File tidak boleh lebih dari 5 MB";
+            }
+        }
+
+        if ($request->namaFileUpdate) {
+            foreach ($request->namaFileUpdate as $nama) {
+                $rules["$nama"] = 'required';
+                $messages["$nama.required"] = "Nama tidak boleh kosong";
+            }
+        }
+
+        if ($request->fileDokumen) {
+            foreach ($request->fileDokumen as $dokumen) {
+                $rules["$dokumen"] = 'required|mimes:pdf|max:5120';
+                $messages["$dokumen.required"] = "File tidak boleh kosong";
+                $messages["$dokumen.mimes"] = "File harus berupa file pdf";
+                $messages["$dokumen.max"] = "File tidak boleh lebih dari 5 MB";
+            }
+        }
+
+        if ($request->namaFile) {
+            foreach ($request->namaFile as $nama) {
+                $rules["$nama"] = 'required';
+                $messages["$nama.required"] = "Nama tidak boleh kosong";
+            }
+        }
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if (!$request->fileDokumen && !$request->fileDokumenUpdate) {
+            $validator->after(function ($validator) {
+                $validator->errors()->add('dokumenFileHitung', 'Dokumen Minimal 1');
+            });
+        }
 
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()]);
         }
 
+        $arrayFileDokumen = [];
+        $arrayFileDokumenSebelumnya = [];
+        $arrayFileDokumenUpdate = [];
+        $arrayFileDokumenHapus = [];
 
-        $arrayDokumenUpdate = json_decode($request->arrayDokumenUpdate);
-        $arrayNamaFileUpdate = json_decode($request->arrayNamaFileUpdate);
-        $arrayDokumenHapus = json_decode($request->arrayDokumenHapus);
-        // return response()->json($arrayDokumenUpdate);
+        try {
+            DB::transaction(function () use ($request, &$arrayFileDokumen, &$arrayFileDokumenSebelumnya, &$arrayFileDokumenUpdate, &$arrayFileDokumenHapus, $sppLs) {
+                if ($request->fileDokumenUpdate) {
+                    $daftarDokumenSppLs = DokumenSppLs::where('spp_ls_id', $sppLs->id)->whereNotIn('id', $request->fileDokumenUpdate)->get();
+                    foreach ($daftarDokumenSppLs as $dokumen) {
+                        $arrayFileDokumenHapus[] = $dokumen->dokumen;
+                        $dokumen->delete();
+                    }
 
-        if ($arrayDokumenHapus) {
-            for ($i = 0; $i < count($arrayDokumenHapus); $i++) {
-                $dokumenSppLs = DokumenSppLs::find($arrayDokumenHapus[$i]);
-                if (Storage::exists('dokumen_spp_ls/' . $dokumenSppLs->dokumen)) {
-                    Storage::delete('dokumen_spp_ls/' . $dokumenSppLs->dokumen);
-                }
-                $dokumenSppLs->delete();
-            }
-        }
+                    foreach ($request->fileDokumenUpdate as $index => $id) {
+                        $dokumenSppLs = DokumenSppLs::where('id', $id)->first();
+                        $dokumenSppLs->nama_dokumen = $request[$request->namaFileUpdate[$index]];
 
-        if ($arrayNamaFileUpdate) {
-            for ($i = 0; $i < count($arrayNamaFileUpdate); $i++) {
-                $dokumenSppLs = DokumenSppLs::find($arrayNamaFileUpdate[$i]);
-                $dokumenSppLs->nama_dokumen = $request->nama_file_update[$i];
-                $dokumenSppLs->save();
-            }
-        }
+                        if ($request["$id"]) {
+                            $namaFile = Str::slug($request->namaFileUpdate[$index], '-') . "-" . ($index + 1) . Carbon::now()->format('YmdHs') . rand(1, 9999) . ".pdf";
+                            $request->$id->storeAs('dokumen_spp_ls/', $namaFile);
+                            $arrayFileDokumenUpdate[] = $namaFile;
+                            $arrayFileDokumenSebelumnya[] = $dokumenSppLs->dokumen;
 
-        if ($arrayDokumenUpdate) {
-            $file_dokumen_update = array_values($request->file('file_dokumen_update'));
-            for ($i = 0; $i < count($arrayDokumenUpdate); $i++) {
-
-                $indexNamaFileUpdate = array_search($arrayDokumenUpdate[$i], $arrayNamaFileUpdate);
-
-                $dokumenSppLs = DokumenSppLs::where('id', $arrayDokumenUpdate[$i])->first();
-                if (Storage::exists('dokumen_spp_ls/' . $dokumenSppLs->dokumen)) {
-                    Storage::delete('dokumen_spp_ls/' . $dokumenSppLs->dokumen);
+                            $dokumenSppLs->dokumen = $namaFile;
+                        }
+                        $dokumenSppLs->save();
+                    }
                 }
 
-                $namaFileBerkas = Str::slug($request->nama_file_update[$indexNamaFileUpdate], '-') . "-" . $i . Carbon::now()->format('YmdHs') . rand(1, 9999) . ".pdf";
-                $file_dokumen_update[$i]->storeAs(
-                    'dokumen_spp_ls',
-                    $namaFileBerkas
-                );
+                if ($request->fileDokumen) {
+                    foreach ($request->fileDokumen as $index => $nama) {
+                        $namaFileBerkas = Str::slug($request[$request->namaFile[$index]], '-') . "-" . ($index + 1) . Carbon::now()->format('YmdHs') . rand(1, 9999) . ".pdf";
+                        $request->$nama->storeAs('dokumen_spp_ls', $namaFileBerkas);
+                        $arrayFileDokumen[] = $namaFileBerkas;
 
-                $dokumenSppLs->dokumen = $namaFileBerkas;
+                        $dokumenSppLs = new DokumenSppLs();
+                        $dokumenSppLs->nama_dokumen = $request[$request->namaFile[$index]];
+                        $dokumenSppLs->dokumen = $namaFileBerkas;
+                        $dokumenSppLs->spp_ls_id = $sppLs->id;
+                        $dokumenSppLs->save();
+                    }
+                }
 
-                $dokumenSppLs->save();
+
+                $riwayatSppLs = new RiwayatSppLs();
+
+                if ($request->file('surat_penolakan')) {
+                    $namaFileBerkas = "Surat Penolakan" . "-"  . Carbon::now()->format('YmdHs') . rand(1, 9999) . ".pdf";
+                    $request->file('surat_penolakan')->storeAs(
+                        'surat_penolakan_spp_ls',
+                        $namaFileBerkas
+                    );
+                    $riwayatSppLs->surat_penolakan = $namaFileBerkas;
+                    $sppLs->surat_penolakan = $namaFileBerkas;
+                }
+
+                if ($sppLs->status_validasi_ppk == 2) {
+                    $sppLs->status_validasi_ppk = 0;
+                    $sppLs->alasan_validasi_ppk = null;
+                }
+
+                if ($sppLs->status_validasi_asn == 2) {
+                    $sppLs->status_validasi_asn = 0;
+                    $sppLs->alasan_validasi_asn = null;
+                }
+                $sppLs->tahap_riwayat = $sppLs->tahap_riwayat + 1;
+                $sppLs->anggaran_digunakan = str_replace(".", "", $request->anggaran_digunakan);
+                $sppLs->save();
+
+                $riwayatSppLs->spp_ls_id = $sppLs->id;
+                $riwayatSppLs->user_id = Auth::user()->id;
+                $riwayatSppLs->status = 'Diperbaiki';
+                $riwayatSppLs->anggaran_digunakan = str_replace(".", "", $request->anggaran_digunakan);
+                $riwayatSppLs->save();
+            });
+        } catch (QueryException $error) {
+            foreach ($arrayFileDokumen as $nama) {
+                if (Storage::exists('dokumen_spp_ls/' . $nama)) {
+                    Storage::delete('dokumen_spp_ls/' . $nama);
+                }
+            }
+
+            foreach ($arrayFileDokumenUpdate as $nama) {
+                if (Storage::exists('dokumen_spp_ls/' . $nama)) {
+                    Storage::delete('dokumen_spp_ls/' . $nama);
+                }
+            }
+
+            return throw new Exception($error);
+        }
+
+        foreach ($arrayFileDokumenSebelumnya as $nama) {
+            if (Storage::exists('dokumen_spp_ls/' . $nama)) {
+                Storage::delete('dokumen_spp_ls/' . $nama);
             }
         }
 
-        if ($request->file('file_dokumen')) {
-            for ($i = 0; $i < count($request->file('file_dokumen')); $i++) {
-                $namaFileBerkas = Str::slug($request->nama_file[$i], '-') . "-" . $i . Carbon::now()->format('YmdHs') . rand(1, 9999) . ".pdf";
-                $request->file('file_dokumen')[$i]->storeAs(
-                    'dokumen_spp_ls',
-                    $namaFileBerkas
-                );
-                $dokumenSppLs = new DokumenSppLs();
-                $dokumenSppLs->nama_dokumen = $request->nama_file[$i];
-                $dokumenSppLs->dokumen = $namaFileBerkas;
-                $dokumenSppLs->spp_ls_id = $sppLs->id;
-                $dokumenSppLs->save();
+        foreach ($arrayFileDokumenHapus as $nama) {
+            if (Storage::exists('dokumen_spp_ls/' . $nama)) {
+                Storage::delete('dokumen_spp_ls/' . $nama);
             }
         }
-
-        $riwayatSppLs = new RiwayatSppLs();
-
-        if ($request->file('surat_penolakan')) {
-            $namaFileBerkas = "Surat Penolakan" . "-"  . Carbon::now()->format('YmdHs') . rand(1, 9999) . ".pdf";
-            $request->file('surat_penolakan')->storeAs(
-                'surat_penolakan_spp_ls',
-                $namaFileBerkas
-            );
-            $riwayatSppLs->surat_penolakan = $namaFileBerkas;
-            $sppLs->surat_penolakan = $namaFileBerkas;
-        }
-
-        if ($sppLs->status_validasi_ppk == 2) {
-            $sppLs->status_validasi_ppk = 0;
-            $sppLs->alasan_validasi_ppk = null;
-        }
-
-        if ($sppLs->status_validasi_asn == 2) {
-            $sppLs->status_validasi_asn = 0;
-            $sppLs->alasan_validasi_asn = null;
-        }
-        $sppLs->tahap_riwayat = $sppLs->tahap_riwayat + 1;
-        $sppLs->anggaran_digunakan = str_replace(".", "", $request->anggaran_digunakan);
-        $sppLs->save();
-
-
-        $riwayatSppLs->spp_ls_id = $sppLs->id;
-        $riwayatSppLs->user_id = Auth::user()->id;
-        $riwayatSppLs->anggaran_digunakan = str_replace(".", "", $request->anggaran_digunakan);
-        $riwayatSppLs->status = 'Diperbaiki';
-        $riwayatSppLs->save();
 
         return response()->json(['status' => 'success']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\SppLs  $sppLs
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(SppLs $sppLs)
     {
-        $sppLs->delete();
-
         $riwayatSppLs = RiwayatSppLs::where('spp_ls_id', $sppLs->id)->whereNotNull('surat_penolakan')->get();
-        if (count($riwayatSppLs) > 0) {
-            foreach ($riwayatSppLs as $riwayat) {
-                Storage::delete('surat_penolakan_spp_ls/' . $riwayat->surat_penolakan);
+
+        $arraySuratPenolakan = null;
+
+        $arrayDokumen = $sppLs->dokumenSppLs->pluck('dokumen');
+        if ($riwayatSppLs) {
+            $arraySuratPenolakan = $riwayatSppLs->pluck('surat_penolakan');
+        }
+
+        try {
+            DB::transaction(
+                function () use ($sppLs) {
+                    $sppLs->delete();
+                    $riwayatSppLs = RiwayatSppLs::where('spp_ls_id', $sppLs->id)->delete();
+                    $dokumenSppLs = DokumenSppLs::where('spp_ls_id', $sppLs->id)->delete();
+                }
+            );
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
+
+        if (count($arraySuratPenolakan) > 0) {
+            foreach ($arraySuratPenolakan as $suratPenolakan) {
+                Storage::delete('surat_penolakan_spp_ls/' . $suratPenolakan);
             }
         }
 
-        RiwayatSppLs::where('spp_ls_id', $sppLs->id)->delete();
-
-        $dokumenSppLs = DokumenSppLs::where('spp_ls_id', $sppLs->id)->get();
-        foreach ($dokumenSppLs as $dokumen) {
-            Storage::delete('dokumen_spp_ls/' . $dokumen->dokumen);
-            $dokumen->delete();
+        if (count($arrayDokumen) > 0) {
+            foreach ($arrayDokumen as $dokumen) {
+                Storage::delete('dokumen_spp_ls/' . $dokumen);
+            }
         }
 
         return response()->json(['status' => 'success']);
@@ -518,53 +556,69 @@ class SppLsController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        if (Auth::user()->role == "ASN Sub Bagian Keuangan") {
-            $sppLs->status_validasi_asn = $request->verifikasi;
-            $sppLs->alasan_validasi_asn = $request->alasan;
-            $sppLs->tanggal_validasi_asn = Carbon::now();
-        } else {
-            $sppLs->status_validasi_ppk = $request->verifikasi;
-            $sppLs->alasan_validasi_ppk = $request->alasan;
-            $sppLs->tanggal_validasi_ppk = Carbon::now();
-        }
-        $sppLs->save();
+        try {
+            DB::transaction(
+                function () use ($sppLs, $request) {
+                    if (Auth::user()->role == "ASN Sub Bagian Keuangan") {
+                        $sppLs->status_validasi_asn = $request->verifikasi;
+                        $sppLs->alasan_validasi_asn = $request->alasan;
+                        $sppLs->tanggal_validasi_asn = Carbon::now();
+                    } else {
+                        $sppLs->status_validasi_ppk = $request->verifikasi;
+                        $sppLs->alasan_validasi_ppk = $request->alasan;
+                        $sppLs->tanggal_validasi_ppk = Carbon::now();
+                    }
+                    $sppLs->save();
 
-        $riwayatTerakhir = RiwayatSppLs::whereNotNull('nomor_surat')->where('spp_ls_id', $sppLs->id)->where('tahap_riwayat', $sppLs->tahap_riwayat)->first();
+                    $riwayatTerakhir = RiwayatSppLs::whereNotNull('nomor_surat')->where('spp_ls_id', $sppLs->id)->where('tahap_riwayat', $sppLs->tahap_riwayat)->first();
 
-        $riwayatSppLs = new RiwayatSppLs();
-        $riwayatSppLs->spp_ls_id = $sppLs->id;
-        $riwayatSppLs->anggaran_digunakan = $sppLs->anggaran_digunakan;
-        $riwayatSppLs->tahap_riwayat = $sppLs->tahap_riwayat;
-        $riwayatSppLs->user_id = Auth::user()->id;
-        $riwayatSppLs->status = $request->verifikasi == '1' ? 'Disetujui' : 'Ditolak';
-        if ($request->verifikasi == 2) {
-            $nomorSurat = DB::table('riwayat_spp_ls')
-                ->select(['spp_ls_id', 'tahap_riwayat'], DB::raw('count(*) as total'))
-                ->groupBy(['spp_ls_id', 'tahap_riwayat'])
-                ->whereNotNull('nomor_surat')
-                ->get()
-                ->count();
-            $riwayatSppLs->nomor_surat = $riwayatTerakhir ? $riwayatTerakhir->nomor_surat : ($nomorSurat + 1) . "/SPP-LS/P/" . Carbon::now()->format('m') . "/" . Carbon::now()->format('Y');
+                    $riwayatSppLs = new RiwayatSppLs();
+                    $riwayatSppLs->spp_ls_id = $sppLs->id;
+                    $riwayatSppLs->anggaran_digunakan = $sppLs->anggaran_digunakan;
+                    $riwayatSppLs->tahap_riwayat = $sppLs->tahap_riwayat;
+                    $riwayatSppLs->user_id = Auth::user()->id;
+                    $riwayatSppLs->status = $request->verifikasi == '1' ? 'Disetujui' : 'Ditolak';
+                    if ($request->verifikasi == 2) {
+                        $nomorSurat = DB::table('riwayat_spp_ls')
+                            ->select(['spp_ls_id', 'tahap_riwayat'], DB::raw('count(*) as total'))
+                            ->groupBy(['spp_ls_id', 'tahap_riwayat'])
+                            ->whereNotNull('nomor_surat')
+                            ->get()
+                            ->count();
+                        $riwayatSppLs->nomor_surat = $riwayatTerakhir ? $riwayatTerakhir->nomor_surat : ($nomorSurat + 1) . "/SPP-LS/P/" . Carbon::now()->format('m') . "/" . Carbon::now()->format('Y');
+                    }
+                    $riwayatSppLs->role = Auth::user()->role;
+                    $riwayatSppLs->alasan = $request->alasan;
+                    $riwayatSppLs->save();
+                }
+            );
+        } catch (QueryException $error) {
+            return throw new Exception($error);
         }
-        $riwayatSppLs->role = Auth::user()->role;
-        $riwayatSppLs->alasan = $request->alasan;
-        $riwayatSppLs->save();
 
         return response()->json(['status' => 'success']);
     }
 
     public function verifikasiAkhir(SppLs $sppLs)
     {
-        $sppLs->status_validasi_akhir = 1;
-        $sppLs->tanggal_validasi_akhir = Carbon::now();
-        $sppLs->save();
+        try {
+            DB::transaction(
+                function () use ($sppLs) {
+                    $sppLs->status_validasi_akhir = 1;
+                    $sppLs->tanggal_validasi_akhir = Carbon::now();
+                    $sppLs->save();
 
-        $riwayatSppLs = new RiwayatSppLs();
-        $riwayatSppLs->spp_ls_id = $sppLs->id;
-        $riwayatSppLs->anggaran_digunakan = $sppLs->anggaran_digunakan;
-        $riwayatSppLs->user_id = Auth::user()->id;
-        $riwayatSppLs->status = 'Diselesaikan';
-        $riwayatSppLs->save();
+                    $riwayatSppLs = new RiwayatSppLs();
+                    $riwayatSppLs->spp_ls_id = $sppLs->id;
+                    $riwayatSppLs->anggaran_digunakan = $sppLs->anggaran_digunakan;
+                    $riwayatSppLs->user_id = Auth::user()->id;
+                    $riwayatSppLs->status = 'Diselesaikan';
+                    $riwayatSppLs->save();
+                }
+            );
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
 
         return response()->json(['status' => 'success']);
     }

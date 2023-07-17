@@ -102,7 +102,7 @@
                         @component('dashboard.components.buttons.edit', [
                             'class' => 'btn-sm',
                             'id' => 'btn-edit',
-                            'url' => url('/master-data/akun/' . $data->id . '/edit'),
+                            'url' => url('/master-data/akun-lainnya/' . $data->id . '/edit'),
                         ])
                         @endcomponent
                         @component('dashboard.components.buttons.delete', [

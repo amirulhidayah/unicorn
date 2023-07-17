@@ -102,12 +102,12 @@
                                 @endcomponent
                                 @component('dashboard.components.widgets.info', [
                                     'judul' => 'Program',
-                                    'isi' => $sppTu->kegiatan->program->nama . ' (' . $sppTu->kegiatan->program->no_rek . ')',
+                                    'isi' => $sppTu->kegiatanSpp->programSpp->nama . ' (' . $sppTu->kegiatanSpp->programSpp->no_rek . ')',
                                 ])
                                 @endcomponent
                                 @component('dashboard.components.widgets.info', [
                                     'judul' => 'Kegiatan',
-                                    'isi' => $sppTu->kegiatan->nama . ' (' . $sppTu->kegiatan->no_rek . ')',
+                                    'isi' => $sppTu->kegiatanSpp->nama . ' (' . $sppTu->kegiatanSpp->no_rek . ')',
                                 ])
                                 @endcomponent
                                 <div class="col-12">
@@ -169,7 +169,7 @@
                                                     </div>
                                                     <div class="mb-3">
                                                         <input name="surat_penolakan" class="form-control" type="file"
-                                                            multiple="true">
+                                                            accept="application/pdf">
                                                         <p class="text-danger error-text surat_penolakan-error my-0">
                                                         </p>
                                                     </div>
@@ -180,45 +180,16 @@
                                             ! Wajib Dimasukan</div>
                                     </div>
                                     <hr>
+                                    <small class="text-danger error-text dokumenFileHitung-error"
+                                        id="dokumenFileHitung-error"></small>
                                     @foreach ($sppTu->dokumenSppTu as $dokumen)
-                                        <div class="card box-upload" id="box-upload-{{ $loop->iteration }}"
-                                            class="box-upload">
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <!-- <div class="d-flex border rounded shadow shadow-lg p-2 "> -->
-                                                    <div class="col-3 d-flex align-items-center justify-content-center">
-                                                        <img src="{{ asset('assets/dashboard/img/pdf.png') }}"
-                                                            alt="" width="70px">
-                                                    </div>
-                                                    <div class="col-9">
-                                                        <div class="mb-3 mt-2">
-                                                            <input type="text" class="form-control nama_file_update"
-                                                                id="nama_file" name="nama_file_update[]"
-                                                                placeholder="Masukkan Nama File"
-                                                                value="{{ $dokumen->nama_dokumen }}">
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <input name="file_dokumen_update[]"
-                                                                class="form-control file_dokumen_update" type="file"
-                                                                multiple="true" data-id="{{ $dokumen->id }}">
-                                                            <span class="text-mute" style="font-size: 11px">Kosongkan
-                                                                Dokumen Jika Tidak Ingin
-                                                                Merubah Dokumen</span>
-                                                            <p class="text-danger error-text nama_file_update-error my-0">
-                                                            </p>
-                                                            <p
-                                                                class="text-danger error-text file_dokumen_update-error my-0">
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <button type="button"
-                                                class="btn btn-danger fw-bold card-footer bg-danger text-center p-0"
-                                                onclick="hapusUpdate({{ $loop->iteration }},{{ $dokumen->id }})"><i
-                                                    class="fas fa-trash-alt"></i>
-                                                Hapus</button>
-                                        </div>
+                                        @component('dashboard.components.dynamicForm.spp', [
+                                            'labelNama' => $dokumen->nama_dokumen,
+                                            'nameFileDokumen' => $dokumen->id,
+                                            'classDokumen' => 'file_dokumen_update',
+                                            'classNama' => 'nama_file_update',
+                                        ])
+                                        @endcomponent
                                     @endforeach
                                 </div>
 
@@ -255,103 +226,64 @@
         })
 
         function hapus(id) {
-            $('#box-upload-' + id).fadeOut("slow", function() {
-                $("#box-upload-" + id).remove();
-            });
-
-        }
-
-        function hapusUpdate(id, value) {
-            $('#box-upload-' + id).fadeOut("slow", function() {
-                $("#box-upload-" + id).remove();
-            });
-            arrayNamaFileUpdate = arrayNamaFileUpdate.filter(item => item !== value);
-            arrayDokumenHapus.push(value);
+            $("#box-upload-" + id).remove();
         }
 
         $('#card-tambah').click(function() {
-            totalList++;
-            var cardUpload =
-                '<div class="card box-upload" id="box-upload-' + totalList +
-                '" style="display: none;"><div class="card-body"><div class="row"><div class="col-3 d-flex align-items-center justify-content-center"><img src="{{ asset('assets/dashboard/img/pdf.png') }}" alt=""width="70px"></div><div class="col-9"><div class="mb-3 mt-2"><input type="text" class="form-control nama_file" id="nama_file" name="nama_file[]" placeholder="Masukkan Nama File" value=""></div><div class="mb-3"><input name="file_dokumen[]" class="form-control file_dokumen" type="file" id="formFile"  multiple="true"><p class="text-danger error-text nama_file-error my-0"></p><p class="text-danger error-text file_dokumen-error my-0"></p></div></div></div></div><button type="button" class="btn btn-danger fw-bold card-footer bg-danger text-center p-0" onclick="hapus(' +
-                totalList + ')"><i class="fas fa-trash-alt"></i> Hapus</button>';
-            $('#list-upload').append(cardUpload);
-            $('#box-upload-' + totalList).fadeIn("slow");
+            $.ajax({
+                type: "GET",
+                url: "{{ url('append/spp') }}",
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.status == 'success') {
+                        $('#list-upload').append(response.html);
+                    } else {
+                        swal("Periksa Kembali Data Anda", {
+                            buttons: false,
+                            timer: 1500,
+                            icon: "warning",
+                        });
+                    }
+                },
+                error: function(response) {
+                    swal("Gagal", "Terjadi Kesalahan", {
+                        icon: "error",
+                        buttons: false,
+                        timer: 1000,
+                    });
+                },
+            });
         })
 
         $('#form-tambah').submit(function(e) {
             e.preventDefault();
-            var totalDokumenKosong = 0;
-            var totalNamaKosong = 0;
-            var indexArray = 0;
-            var totalDokumen = 0;
-            var totalDokumenUpdate = 0;
-            arrayDokumenUpdate = [];
+            var formData = new FormData(this);
 
-            $('.surat-penolakan_error').html('');
+            $('.file_dokumen_update').each(function() {
+                var nama = $(this).attr('name');
+                formData.append('fileDokumenUpdate[]', nama);
+            });
 
-            $(".file_dokumen_update-error").each(function() {
-                $(this).html('');
-            })
+            $('.nama_file_update').each(function() {
+                var nama = $(this).attr('name');
+                formData.append('namaFileUpdate[]', nama);
+            });
 
-            $(".nama_file_update-error").each(function() {
-                $(this).html('');
-            })
+            $('.file_dokumen').each(function() {
+                var nama = $(this).attr('name');
+                formData.append('fileDokumen[]', nama);
+            });
 
-            $(".file_dokumen-error").each(function() {
-                $(this).html('');
-            })
+            $('.nama_file').each(function() {
+                var nama = $(this).attr('name');
+                formData.append('namaFile[]', nama);
+            });
 
-            $(".nama_file-error").each(function() {
-                $(this).html('');
-            })
-
-            totalDokumen = $('.file_dokumen').length;
-            totalDokumenUpdate = $('.file_dokumen_update').length;
-
-            if (totalDokumen == 0 && totalDokumenUpdate == 0) {
-                swal("Dokumen Kosong, Silahkan Tambahkan Dokumen Minimal 1", {
-                    buttons: false,
-                    timer: 1500,
-                    icon: "warning",
-                });
-                return false;
-            }
-
-            $(".file_dokumen").each(function() {
-                if ($(this).val() == '') {
-                    $('.file_dokumen-error')[indexArray].innerHTML = 'Dokumen Tidak Boleh Kosong';
-                    totalDokumenKosong++;
-                }
-
-                if ($(".nama_file")[indexArray].value == '') {
-                    $('.nama_file-error')[indexArray].innerHTML = 'Nama File Tidak Boleh Kosong';
-                    totalNamaKosong++;
-                }
-
-                indexArray++;
-            })
-
-            $(".file_dokumen_update").each(function() {
-                if ($(this).val() != '') {
-                    arrayDokumenUpdate.push($(this).data('id'));
-                }
-            })
-
-            if (totalDokumenKosong != 0 || totalNamaKosong != 0) {
-                swal("Periksa Kembali Data Anda", {
-                    buttons: false,
-                    timer: 1500,
-                    icon: "warning",
-                });
-                return false;
-            }
-
-            var formData = new FormData($(this)[0]);
-            formData.append('arrayNamaFileUpdate', JSON.stringify(arrayNamaFileUpdate));
-            formData.append('arrayDokumenHapus', JSON.stringify(arrayDokumenHapus));
-            formData.append('arrayDokumenUpdate', JSON.stringify(arrayDokumenUpdate));
-            formData.append('perbaiki', perbaiki);
             swal({
                 title: 'Apakah Anda Yakin ?',
                 icon: 'warning',
@@ -409,52 +341,5 @@
                 }
             });
         })
-
-        function printErrorMsg(msg) {
-            $.each(msg, function(keyError, valueError) {
-                var totalError = valueError.length;
-                var indexError = 0;
-                $.each(valueError, function(key, value) {
-                    if (keyError.split(".").length > 1) {
-                        $('.' + keyError.split(".")[0] + '-error')[keyError.split(".")[1]].innerHTML = $(
-                            '.' +
-                            keyError.split(".")[0] + '-error')[keyError.split(".")[1]].innerHTML + value;
-                        if ((indexError + 1) != totalError) {
-                            $('.' + keyError.split(".")[0] + '-error')[keyError.split(".")[1]].innerHTML =
-                                $(
-                                    '.' +
-                                    keyError.split(".")[0] + '-error')[keyError.split(".")[1]].innerHTML +
-                                ", ";
-                        }
-                    } else {
-                        $('.' + keyError + '-error').text(value);
-                    }
-                    indexError++;
-                });
-            });
-        }
-
-        function resetError() {
-            resetErrorElement('nama');
-        }
-
-        function resetModal() {
-            resetError();
-            $('#form-tambah')[0].reset();
-        }
-
-        // function printErrorMsg(msg) {
-        //     $('.jawaban-error').each(function(i, o) {
-        //         $(o).text('');
-        //     })
-        //     var i = 0;
-        //     $.each(msg, function(key, value) {
-        //         $('.text-jawaban').each(function(i, o) {
-        //             if ($(o).val() == '') {
-        //                 $('.jawaban-error').eq(i).text(value);
-        //             };
-        //         })
-        //     });
-        // }
     </script>
 @endpush

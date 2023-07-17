@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AppendController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\dashboard\dpa\StatistikDpaController;
 use App\Http\Controllers\dashboard\dpa\TabelDpaController;
@@ -218,6 +219,11 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {
         \UniSharp\LaravelFilemanager\Lfm::routes();
+    });
+
+    Route::prefix('append')->group(function () {
+        Route::get('spp', [AppendController::class, 'spp']);
+        Route::get('sppLs', [AppendController::class, 'sppLs']);
     });
 });
 

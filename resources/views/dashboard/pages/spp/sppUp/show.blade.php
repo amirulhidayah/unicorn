@@ -73,12 +73,12 @@
                             @endcomponent
                             @component('dashboard.components.widgets.info', [
                                 'judul' => 'Program',
-                                'isi' => $sppUp->kegiatan->program->nama . ' (' . $sppUp->kegiatan->program->no_rek . ')',
+                                'isi' => $sppUp->kegiatanSpp->programSpp->nama . ' (' . $sppUp->kegiatanSpp->programSpp->no_rek . ')',
                             ])
                             @endcomponent
                             @component('dashboard.components.widgets.info', [
                                 'judul' => 'Kegiatan',
-                                'isi' => $sppUp->kegiatan->nama . ' (' . $sppUp->kegiatan->no_rek . ')',
+                                'isi' => $sppUp->kegiatanSpp->nama . ' (' . $sppUp->kegiatanSpp->no_rek . ')',
                             ])
                             @endcomponent
                             @component('dashboard.components.widgets.info', [
@@ -187,12 +187,6 @@
     </script>
 
     <script>
-        const printErrorMsg = (msg) => {
-            $.each(msg, function(key, value) {
-                $('.' + key + '-error').text(value);
-            });
-        }
-
         $(document).ready(function() {
             $('#spp-up').addClass('active');
         })

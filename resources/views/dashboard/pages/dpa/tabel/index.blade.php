@@ -458,13 +458,6 @@
     </script>
 
     <script>
-        function printErrorMsg(msg) {
-            $.each(msg, function(key, value) {
-                $('.' + key + '-error').removeClass('d-none');
-                $('.' + key + '-error').text(value);
-            });
-        }
-
         $(document).ready(function() {
             $('#tabel-dpa').addClass('active');
             getProgram('tambah', '');
@@ -552,7 +545,7 @@
         function getKegiatan() {
             var program = $('#program').val();
             $.ajax({
-                url: "{{ url('list/kegiatan') }}",
+                url: "{{ url('list/kegiatan-dpa') }}",
                 type: "POST",
                 data: {
                     '_token': '{{ csrf_token() }}',
@@ -610,7 +603,7 @@
 
         function getProgram(tipe, id) {
             $.ajax({
-                url: "{{ url('list/program') }}",
+                url: "{{ url('list/program-dpa') }}",
                 type: "POST",
                 data: {
                     '_token': '{{ csrf_token() }}',

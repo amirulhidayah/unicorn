@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\SekretariatDaerah;
 use App\Models\Profil;
 use App\Models\User;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -93,28 +96,41 @@ class AkunController extends Controller
         }
 
         $namaFoto = time() . '.' . $request->foto->extension();
-        $request->foto->storeAs('profil', $namaFoto);
-
         $namaTandaTangan = time() . '.' . $request->tanda_tangan->extension();
-        $request->tanda_tangan->storeAs('tanda_tangan', $namaTandaTangan);
 
-        $user = new User();
-        $user->email = $request->email;
-        $user->password = bcrypt($request->password);
-        $user->role = $request->role;
-        $user->save();
+        try {
+            DB::transaction(function () use ($request, $namaFoto, $namaTandaTangan) {
+                $request->foto->storeAs('profil', $namaFoto);
+                $request->tanda_tangan->storeAs('tanda_tangan', $namaTandaTangan);
 
-        $profil = new Profil();
-        $profil->user_id = $user->id;
-        $profil->nama = $request->nama;
-        $profil->jenis_kelamin = $request->jenis_kelamin;
-        $profil->alamat = $request->alamat;
-        $profil->nomor_hp = $request->nomor_hp;
-        $profil->nip = $request->nip;
-        $profil->sekretariat_daerah_id = $request->sekretariat_daerah;
-        $profil->foto = $namaFoto;
-        $profil->tanda_tangan = $namaTandaTangan;
-        $profil->save();
+                $user = new User();
+                $user->email = $request->email;
+                $user->password = bcrypt($request->password);
+                $user->role = $request->role;
+                $user->save();
+
+                $profil = new Profil();
+                $profil->user_id = $user->id;
+                $profil->nama = $request->nama;
+                $profil->jenis_kelamin = $request->jenis_kelamin;
+                $profil->alamat = $request->alamat;
+                $profil->nomor_hp = $request->nomor_hp;
+                $profil->nip = $request->nip;
+                $profil->sekretariat_daerah_id = $request->sekretariat_daerah;
+                $profil->foto = $namaFoto;
+                $profil->tanda_tangan = $namaTandaTangan;
+                $profil->save();
+            });
+        } catch (QueryException $error) {
+            if (Storage::exists('profil/' . $namaFoto)) {
+                Storage::delete('profil/' . $namaFoto);
+            }
+
+            if (Storage::exists('tanda_tangan/' . $namaTandaTangan)) {
+                Storage::delete('tanda_tangan/' . $namaTandaTangan);
+            }
+            return throw new Exception($error);
+        }
 
         return response()->json([
             'status' => 'success'
@@ -176,48 +192,82 @@ class AkunController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        if ($request->foto) {
-            if (Storage::exists('profil/' . $user->profil->foto)) {
-                Storage::delete('profil/' . $user->profil->foto);
-            }
+        $namaFotoSebelumnya = $user->profil->foto;
+        $namaTandaTanganSebelumnya = $user->profil->tanda_tangan;
 
+        $namaFoto = '';
+        $namaTandaTangan = '';
+
+        if ($request->foto) {
             $namaFoto = time() . '.' . $request->foto->extension();
-            $request->foto->storeAs('profil', $namaFoto);
+        }
+        if ($request->tanda_tangan) {
+            $namaTandaTangan = time() . '.' . $request->tanda_tangan->extension();
         }
 
-        if ($request->tanda_tangan) {
-            if (Storage::exists('tanda_tangan/' . $user->profil->tanda_tangan)) {
-                Storage::delete('tanda_tangan/' . $user->profil->tanda_tangan);
+        try {
+            DB::transaction(function () use ($request, $namaFoto, $namaTandaTangan, $user) {
+
+                if ($request->foto) {
+                    $request->foto->storeAs('profil', $namaFoto);
+                }
+
+                if ($request->tanda_tangan) {
+                    $request->tanda_tangan->storeAs('tanda_tangan', $namaTandaTangan);
+                }
+
+                $user->email = $request->email;
+                if ($request->password) {
+                    $user->password = bcrypt($request->password);
+                }
+                $user->role = $request->role;
+                $user->save();
+
+                $profil = Profil::where('user_id', $user->id)->first();
+                $profil->user_id = $user->id;
+                $profil->nama = $request->nama;
+                $profil->jenis_kelamin = $request->jenis_kelamin;
+                $profil->alamat = $request->alamat;
+                $profil->nomor_hp = $request->nomor_hp;
+                $profil->nip = $request->nip;
+                $profil->sekretariat_daerah_id = $request->sekretariat_daerah;
+
+                if ($request->foto) {
+                    $profil->foto = $namaFoto;
+                }
+
+                if ($request->tanda_tangan) {
+                    $profil->tanda_tangan = $namaTandaTangan;
+                }
+
+                $profil->save();
+            });
+        } catch (QueryException $error) {
+            if ($request->foto) {
+                if (Storage::exists('profil/' . $namaFoto)) {
+                    Storage::delete('profil/' . $namaFoto);
+                }
             }
 
-            $namaTandaTangan = time() . '.' . $request->tanda_tangan->extension();
-            $request->tanda_tangan->storeAs('tanda_tangan', $namaTandaTangan);
+            if ($request->tanda_tangan) {
+                if (Storage::exists('tanda_tangan/' . $namaTandaTangan)) {
+                    Storage::delete('tanda_tangan/' . $namaTandaTangan);
+                }
+            }
+            return throw new Exception($error);
         }
 
-        $user->email = $request->email;
-        if ($request->password) {
-            $user->password = bcrypt($request->password);
-        }
-        $user->role = $request->role;
-        $user->save();
-
-        $profil = Profil::where('user_id', $user->id)->first();
-        $profil->user_id = $user->id;
-        $profil->nama = $request->nama;
-        $profil->jenis_kelamin = $request->jenis_kelamin;
-        $profil->alamat = $request->alamat;
-        $profil->nomor_hp = $request->nomor_hp;
-        $profil->nip = $request->nip;
-        $profil->sekretariat_daerah_id = $request->sekretariat_daerah;
         if ($request->foto) {
-            $profil->foto = $namaFoto;
+            if (Storage::exists('profil/' . $namaFotoSebelumnya)) {
+                Storage::delete('profil/' . $namaFotoSebelumnya);
+            }
         }
 
         if ($request->tanda_tangan) {
-            $profil->tanda_tangan = $namaTandaTangan;
+            if (Storage::exists('tanda_tangan/' . $namaTandaTanganSebelumnya)) {
+                Storage::delete('tanda_tangan/' . $namaTandaTanganSebelumnya);
+            }
         }
-
-        $profil->save();
 
         return response()->json([
             'status' => 'success'
@@ -226,9 +276,14 @@ class AkunController extends Controller
 
     public function destroy(User $user)
     {
-        $user->delete();
-
-        Profil::where('user_id', $user->id)->delete();
+        try {
+            DB::transaction(function () use ($user) {
+                $user->delete();
+                Profil::where('user_id', $user->id)->delete();
+            });
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
 
         return response()->json(['status' => 'success']);
     }

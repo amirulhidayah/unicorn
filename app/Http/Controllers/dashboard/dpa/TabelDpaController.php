@@ -220,7 +220,7 @@ class TabelDpaController extends Controller
 
         $spd = Spd::where('kegiatan_dpa_id', $kegiatan)->where('sekretariat_daerah_id', $SekretariatDaerah)->where('tahun_id', $tahun)->first();
 
-        $jumlahAnggaran = $spd->jumlah_anggaran;
+        $jumlahAnggaran = $spd->jumlah_anggaran ?? 0;
 
         $sppLs = SppLs::where('sekretariat_daerah_id', $SekretariatDaerah)
             ->orderBy('created_at', 'asc')
@@ -276,7 +276,7 @@ class TabelDpaController extends Controller
         $sppGu = $sppGu->sum('anggaran_digunakan');
 
         $totalSpp = ($sppLs + $sppGu);
-        $jumlahAnggaran = ($spd->jumlah_anggaran - $totalSpp);
+        $jumlahAnggaran = (($spd->jumlah_anggaran ?? 0) - $totalSpp);
 
         return response()->json([
             'jumlah_anggaran' => $jumlahAnggaran,

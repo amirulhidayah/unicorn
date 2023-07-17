@@ -128,7 +128,7 @@
             <div class="input-group">
                 <div class="custom-file">
                     <input type="file" id="foto" class="imgInp custom-file-input"
-                        aria-describedby="inputGroupFileAddon01" name="foto">
+                        aria-describedby="inputGroupFileAddon01" name="foto" accept="image/*">
                     <label id="label-foto" class="custom-file-label" for="foto">Tambah Foto</label>
                 </div>
             </div>
@@ -143,7 +143,7 @@
             <div class="input-group">
                 <div class="custom-file">
                     <input type="file" id="tanda-tangan" class="imgInp custom-file-input"
-                        aria-describedby="inputGroupFileAddon01" name="tanda_tangan">
+                        aria-describedby="inputGroupFileAddon01" name="tanda_tangan" accept="image/*">
                     <label class="custom-file-label" id="label-tanda-tangan" for="tanda-tangan">Tambah Tanda
                         Tangan</label>
                 </div>

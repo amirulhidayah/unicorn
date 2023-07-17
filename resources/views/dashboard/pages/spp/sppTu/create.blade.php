@@ -212,66 +212,23 @@
                                     </div>
                                 </div>
                                 <div id="list-upload">
+                                    <small class="text-danger error-text dokumenFileHitung-error"
+                                        id="dokumenFileHitung-error"></small>
                                     @forelse ($daftarDokumenSppTu as $dokumen)
-                                        <div class="card box-upload" id="box-upload-{{ $loop->iteration }}"
-                                            class="box-upload">
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <!-- <div class="d-flex border rounded shadow shadow-lg p-2 "> -->
-                                                    <div class="col-3 d-flex align-items-center justify-content-center">
-                                                        <img src="{{ asset('assets/dashboard/img/pdf.png') }}"
-                                                            alt="" width="70px">
-                                                    </div>
-                                                    <div class="col-9">
-                                                        <div class="mb-3 mt-2">
-                                                            <input type="text" class="form-control nama_file"
-                                                                id="nama_file" name="nama_file[]"
-                                                                placeholder="Masukkan Nama File"
-                                                                value="{{ $dokumen->nama }}">
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <input name="file_dokumen[]" class="form-control file_dokumen"
-                                                                type="file" multiple="true">
-                                                            <p class="text-danger error-text nama_file-error my-0"></p>
-                                                            <p class="text-danger error-text file_dokumen-error my-0"></p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <button type="button"
-                                                class="btn btn-danger fw-bold card-footer bg-danger text-center p-0"
-                                                onclick="hapus({{ $loop->iteration }})"><i class="fas fa-trash-alt"></i>
-                                                Hapus</button>
-                                        </div>
+                                        @component('dashboard.components.dynamicForm.spp', [
+                                            'labelNama' => $dokumen->nama,
+                                            'nameFileDokumen' => substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), 0, 10),
+                                            'classNama' => 'nama_file',
+                                            'classDokumen' => 'file_dokumen',
+                                        ])
+                                        @endcomponent
                                     @empty
-                                        <div class="card box-upload" id="box-upload-1" class="box-upload">
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <!-- <div class="d-flex border rounded shadow shadow-lg p-2 "> -->
-                                                    <div class="col-3 d-flex align-items-center justify-content-center">
-                                                        <img src="{{ asset('assets/dashboard/img/pdf.png') }}"
-                                                            alt="" width="70px">
-                                                    </div>
-                                                    <div class="col-9">
-                                                        <div class="mb-3 mt-2">
-                                                            <input type="text" class="form-control nama_file"
-                                                                id="nama_file" name="nama_file[]"
-                                                                placeholder="Masukkan Nama File" value="">
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <input name="file_dokumen[]" class="form-control file_dokumen"
-                                                                type="file" multiple="true">
-                                                            <p class="text-danger error-text nama_file-error my-0"></p>
-                                                            <p class="text-danger error-text file_dokumen-error my-0"></p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <button type="button"
-                                                class="btn btn-danger fw-bold card-footer bg-danger text-center p-0"
-                                                onclick="hapus(1)"><i class="fas fa-trash-alt"></i>
-                                                Hapus</button>
-                                        </div>
+                                        @component('dashboard.components.dynamicForm.spp', [
+                                            'nameFileDokumen' => substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), 0, 10),
+                                            'classNama' => 'nama_file',
+                                            'classDokumen' => 'file_dokumen',
+                                        ])
+                                        @endcomponent
                                     @endforelse
                                 </div>
 
@@ -422,71 +379,54 @@
         })
 
         function hapus(id) {
-            $('#box-upload-' + id).fadeOut("slow", function() {
-                $("#box-upload-" + id).remove();
-            });
+            $("#box-upload-" + id).remove();
         }
 
         $('#card-tambah').click(function() {
-            totalList++;
-            var cardUpload =
-                '<div class="card box-upload" id="box-upload-' + totalList +
-                '" style="display: none;"><div class="card-body"><div class="row"><div class="col-3 d-flex align-items-center justify-content-center"><img src="{{ asset('assets/dashboard/img/pdf.png') }}" alt=""width="70px"></div><div class="col-9"><div class="mb-3 mt-2"><input type="text" class="form-control nama_file" id="nama_file" name="nama_file[]" placeholder="Masukkan Nama File" value=""></div><div class="mb-3"><input name="file_dokumen[]" class="form-control file_dokumen" type="file" id="formFile"  multiple="true"><p class="text-danger error-text nama_file-error my-0"></p><p class="text-danger error-text file_dokumen-error my-0"></p></div></div></div></div><button type="button" class="btn btn-danger fw-bold card-footer bg-danger text-center p-0" onclick="hapus(' +
-                totalList + ')"><i class="fas fa-trash-alt"></i> Hapus</button>';
-            $('#list-upload').append(cardUpload);
-            $('#box-upload-' + totalList).fadeIn("slow");
+            $.ajax({
+                type: "GET",
+                url: "{{ url('append/spp') }}",
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.status == 'success') {
+                        $('#list-upload').append(response.html);
+                    } else {
+                        swal("Periksa Kembali Data Anda", {
+                            buttons: false,
+                            timer: 1500,
+                            icon: "warning",
+                        });
+                    }
+                },
+                error: function(response) {
+                    swal("Gagal", "Terjadi Kesalahan", {
+                        icon: "error",
+                        buttons: false,
+                        timer: 1000,
+                    });
+                },
+            });
         })
 
         $('#form-tambah').submit(function(e) {
             e.preventDefault();
-            var totalDokumenKosong = 0;
-            var totalNamaKosong = 0;
-            var indexArray = 0;
-            var totalDokumen = 0;
+            var formData = new FormData(this);
 
-            $(".file_dokumen-error").each(function() {
-                $(this).html('');
-            })
+            $('.file_dokumen').each(function() {
+                var nama = $(this).attr('name');
+                formData.append('fileDokumen[]', nama);
+            });
 
-            $(".nama_file-error").each(function() {
-                $(this).html('');
-            })
+            $('.nama_file').each(function() {
+                var nama = $(this).attr('name');
+                formData.append('namaFile[]', nama);
+            });
 
-            totalDokumen = $('.file_dokumen').length;
-
-            if (totalDokumen == 0) {
-                swal("Dokumen Kosong, Silahkan Tambahkan Dokumen Minimal 1", {
-                    buttons: false,
-                    timer: 1500,
-                    icon: "warning",
-                });
-                return false;
-            }
-
-            $(".file_dokumen").each(function() {
-                if ($(this).val() == '') {
-                    $('.file_dokumen-error')[indexArray].innerHTML = 'Dokumen Tidak Boleh Kosong';
-                    totalDokumenKosong++;
-                }
-
-                if ($(".nama_file")[indexArray].value == '') {
-                    $('.nama_file-error')[indexArray].innerHTML = 'Nama File Tidak Boleh Kosong';
-                    totalNamaKosong++;
-                }
-
-                indexArray++;
-            })
-
-            if (totalDokumenKosong != 0 || totalNamaKosong != 0) {
-                swal("Periksa Kembali Data Anda", {
-                    buttons: false,
-                    timer: 1500,
-                    icon: "warning",
-                });
-                return false;
-            }
-
-            var formData = new FormData($(this)[0]);
             swal({
                 title: 'Apakah Anda Yakin ?',
                 icon: 'warning',
@@ -638,39 +578,6 @@
                     }
                 }
             })
-        }
-
-        function printErrorMsg(msg) {
-            $.each(msg, function(keyError, valueError) {
-                var totalError = valueError.length;
-                var indexError = 0;
-                $.each(valueError, function(key, value) {
-                    if (keyError.split(".").length > 1) {
-                        $('.' + keyError.split(".")[0] + '-error')[keyError.split(".")[1]].innerHTML = $(
-                            '.' +
-                            keyError.split(".")[0] + '-error')[keyError.split(".")[1]].innerHTML + value;
-                        if ((indexError + 1) != totalError) {
-                            $('.' + keyError.split(".")[0] + '-error')[keyError.split(".")[1]].innerHTML =
-                                $(
-                                    '.' +
-                                    keyError.split(".")[0] + '-error')[keyError.split(".")[1]].innerHTML +
-                                ", ";
-                        }
-                    } else {
-                        $('.' + keyError + '-error').text(value);
-                    }
-                    indexError++;
-                });
-            });
-        }
-
-        function resetError() {
-            resetErrorElement('nama');
-        }
-
-        function resetModal() {
-            resetError();
-            $('#form-tambah')[0].reset();
         }
 
         $('#tahun').on('change', function() {

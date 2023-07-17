@@ -278,25 +278,5 @@
         $(document).ready(function() {
             $('#spp-up').addClass('active');
         })
-
-        function printErrorMsg(msg) {
-            $.each(msg, function(key, value) {
-                $('.' + key + '-error').removeClass('d-none');
-                $('.' + key + '-error').text(value);
-            });
-        }
-
-        function resetError() {
-            resetErrorElement('nama');
-        }
-
-        function resetModal() {
-            resetError();
-            $('#form-tambah')[0].reset();
-        }
-
-        function resetErrorElement(key) {
-            $('.' + key + '-error').addClass('d-none');
-        }
     </script>
 @endpush

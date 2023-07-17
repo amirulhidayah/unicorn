@@ -440,39 +440,6 @@
             });
         })
 
-        function printErrorMsg(msg) {
-            $.each(msg, function(keyError, valueError) {
-                var totalError = valueError.length;
-                var indexError = 0;
-                $.each(valueError, function(key, value) {
-                    if (keyError.split(".").length > 1) {
-                        $('.' + keyError.split(".")[0] + '-error')[keyError.split(".")[1]].innerHTML = $(
-                            '.' +
-                            keyError.split(".")[0] + '-error')[keyError.split(".")[1]].innerHTML + value;
-                        if ((indexError + 1) != totalError) {
-                            $('.' + keyError.split(".")[0] + '-error')[keyError.split(".")[1]].innerHTML =
-                                $(
-                                    '.' +
-                                    keyError.split(".")[0] + '-error')[keyError.split(".")[1]].innerHTML +
-                                ", ";
-                        }
-                    } else {
-                        $('.' + keyError + '-error').text(value);
-                    }
-                    indexError++;
-                });
-            });
-        }
-
-        function resetError() {
-            resetErrorElement('nama');
-        }
-
-        function resetModal() {
-            resetError();
-            $('#form-tambah')[0].reset();
-        }
-
         $('#tahun').on('change', function() {
             var tahun = $(this).val();
             var SekretariatDaerah = $('#sekretariat_daerah').val();

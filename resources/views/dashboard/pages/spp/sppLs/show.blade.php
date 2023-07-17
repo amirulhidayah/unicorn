@@ -83,12 +83,12 @@
                             @endcomponent
                             @component('dashboard.components.widgets.info', [
                                 'judul' => 'Program',
-                                'isi' => $sppLs->kegiatan->program->nama . ' (' . $sppLs->kegiatan->program->no_rek . ')',
+                                'isi' => $sppLs->kegiatanDpa->programDpa->nama . ' (' . $sppLs->kegiatanDpa->programDpa->no_rek . ')',
                             ])
                             @endcomponent
                             @component('dashboard.components.widgets.info', [
                                 'judul' => 'Kegiatan',
-                                'isi' => $sppLs->kegiatan->nama . ' (' . $sppLs->kegiatan->no_rek . ')',
+                                'isi' => $sppLs->kegiatanDpa->nama . ' (' . $sppLs->kegiatanDpa->no_rek . ')',
                             ])
                             @endcomponent
                             @component('dashboard.components.widgets.info', [
@@ -194,12 +194,6 @@
     </script>
 
     <script>
-        const printErrorMsg = (msg) => {
-            $.each(msg, function(key, value) {
-                $('.' + key + '-error').text(value);
-            });
-        }
-
         $(document).ready(function() {
             $('#spp-ls').addClass('active');
         })

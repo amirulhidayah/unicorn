@@ -179,7 +179,7 @@
                                                     </div>
                                                     <div class="mb-3">
                                                         <input name="surat_penolakan" class="form-control" type="file"
-                                                            multiple="true">
+                                                            accept="application/pdf">
                                                         <p class="text-danger error-text surat_penolakan-error my-0">
                                                         </p>
                                                     </div>

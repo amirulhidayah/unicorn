@@ -336,6 +336,7 @@
 
         const printErrorMsg = (msg) => {
             for (const key in msg) {
+                console.log(msg);
                 const errorElement = key.split(".").length > 1 ?
                     document.querySelectorAll(`.${key.split(".")[0]}-error`)[key.split(".")[1]] :
                     document.querySelector(`.${key}-error`);
@@ -351,6 +352,15 @@
 
         function resetError() {
             $('.error-text').html('');
+        }
+
+        function generateRandomString(length) {
+            const characters = 'abcdefghijklmnopqrstuvwxyz';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
         }
     </script>
     @stack('script')
