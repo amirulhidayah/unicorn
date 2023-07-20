@@ -35,7 +35,7 @@
     <div class="wrapper wrapper-login wrapper-login-full p-0">
         <div
             class="login-aside w-50 d-flex flex-column align-items-center justify-content-center text-center bg-success-gradient">
-            <h1 class="title fw-bold text-white mb-3">E-VAKU</h1>
+            <h1 class="title fw-bold text-white mb-3">E-VAKUx</h1>
             <p class="subtitle text-white op-7">Elektronik Verifikasi Pertanggung Jawaban Keuangan</p>
         </div>
         <div class="login-aside w-50 d-flex align-items-center justify-content-center bg-white">

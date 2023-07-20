@@ -10,12 +10,12 @@
         </div>
         <div class="col-sm-12 col-lg-4">
             @component('dashboard.components.formElements.input', [
-                'label' => 'Email',
+                'label' => 'Username',
                 'type' => 'text',
-                'id' => 'email',
-                'name' => 'email',
+                'id' => 'username',
+                'name' => 'username',
                 'wajib' => '<sup class="text-danger">*</sup>',
-                'placeholder' => 'Masukkan Alamat Email',
+                'placeholder' => 'Masukkan Username',
             ])
             @endcomponent
         </div>
@@ -43,6 +43,7 @@
                     <option value="ASN Sub Bagian Keuangan">ASN Sub Bagian Keuangan</option>
                     <option value="Kuasa Pengguna Anggaran">Kuasa Pengguna Anggaran</option>
                     <option value="PPK">PPK</option>
+                    <option value="Operator SPM">Operator SPM</option>
                 @endslot
             @endcomponent
         </div>

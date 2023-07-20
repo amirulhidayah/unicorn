@@ -205,8 +205,8 @@
                     @endif
                     <div class="login-form">
                         <div class="form-group">
-                            <label for="email" class="placeholder"><b>Email</b></label>
-                            <input id="email" name="email" type="email" class="form-control" required>
+                            <label for="username" class="placeholder"><b>Username</b></label>
+                            <input id="username" name="username" type="text" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="password" class="placeholder"><b>Password</b></label>

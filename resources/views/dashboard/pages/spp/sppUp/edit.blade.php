@@ -149,31 +149,33 @@
                                     </div>
                                 </div>
                                 <div id="list-upload">
-                                    <div class="card box-upload" class="box-upload">
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <!-- <div class="d-flex border rounded shadow shadow-lg p-2 "> -->
-                                                <div class="col-3 d-flex align-items-center justify-content-center">
-                                                    <img src="{{ asset('assets/dashboard/img/pdf.png') }}" alt=""
-                                                        width="70px">
-                                                </div>
-                                                <div class="col-9">
-                                                    <div class="mb-3 mt-2">
-                                                        <p class="fw-bold" style="font-size: 15px;">Surat Penolakan
-                                                        </p>
+                                    @if (!($sppUp->status_validasi_ppk == 0 && $sppUp->status_validasi_asn == 0))
+                                        <div class="card box-upload" class="box-upload">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <!-- <div class="d-flex border rounded shadow shadow-lg p-2 "> -->
+                                                    <div class="col-3 d-flex align-items-center justify-content-center">
+                                                        <img src="{{ asset('assets/dashboard/img/pdf.png') }}"
+                                                            alt="" width="70px">
                                                     </div>
-                                                    <div class="mb-3">
-                                                        <input name="surat_penolakan" class="form-control" type="file"
-                                                            accept="application/pdf">
-                                                        <p class="text-danger error-text surat_penolakan-error my-0">
-                                                        </p>
+                                                    <div class="col-9">
+                                                        <div class="mb-3 mt-2">
+                                                            <p class="fw-bold" style="font-size: 15px;">Surat Penolakan
+                                                            </p>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <input name="surat_penolakan" class="form-control"
+                                                                type="file" accept="application/pdf">
+                                                            <p class="text-danger error-text surat_penolakan-error my-0">
+                                                            </p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="fw-bold card-footer bg-primary text-light text-center p-0">
+                                                ! Wajib Dimasukan</div>
                                         </div>
-                                        <div class="fw-bold card-footer bg-primary text-light text-center p-0">
-                                            ! Wajib Dimasukan</div>
-                                    </div>
+                                    @endif
                                     <hr>
                                     <small class="text-danger error-text dokumenFileHitung-error"
                                         id="dokumenFileHitung-error"></small>

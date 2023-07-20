@@ -362,6 +362,14 @@
             }
             return result;
         }
+
+        function openPdfInFullscreen(linkPdf) {
+            var pdfUrl = linkPdf; // Replace this with the URL of your PDF
+            var screenWidth = screen.availWidth;
+            var screenHeight = screen.availHeight;
+            var newWindow = window.open('', '', 'width=' + screenWidth + ',height=' + screenHeight + ',top=0,left=0');
+            newWindow.document.write('<iframe src="' + pdfUrl + '" width="100%" height="100%"></iframe>');
+        }
     </script>
     @stack('script')
 </body>

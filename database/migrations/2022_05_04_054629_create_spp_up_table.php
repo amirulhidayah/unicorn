@@ -31,6 +31,8 @@ class CreateSppUpTable extends Migration
             $table->date('tanggal_validasi_ppk')->nullable();
             $table->integer('status_validasi_akhir')->default(0);
             $table->date('tanggal_validasi_akhir')->nullable();
+            $table->text('dokumen_spm')->nullable();
+            $table->text('dokumen_arsip_sp2d')->nullable();
             $table->timestamps();
         });
     }

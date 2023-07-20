@@ -46,6 +46,8 @@ Route::get('/', [LandingController::class, 'index']);
 Route::get('/tentang', [LandingController::class, 'tentang']);
 // Master Data
 Route::group(['middleware' => ['auth']], function () {
+    Route::get('spp-up/cek-sp2d', [SppUpController::class, 'cekSp2d']);
+
     Route::group(['middleware' => ['role:Admin']], function () {
         Route::resource('/master-data/sekretariat-daerah', SekretariatDaerahController::class);
         Route::resource('/master-data/tahun', TahunController::class);
@@ -127,6 +129,13 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['middleware' => ['role:PPK']], function () {
         Route::put('/spp-up/verifikasi-akhir/{sppUp}', [SppUpController::class, 'verifikasiAkhir']);
+    });
+
+    Route::group(['middleware' => ['role:Admin|Operator SPM']], function () {
+        Route::put('spp-up/spm/{sppUp}', [SppUpController::class, 'storeSpm']);
+    });
+    Route::group(['middleware' => ['role:Admin|Bendahara Pengeluaran|Bendahara Pengeluaran Pembantu|Bendahara Pengeluaran Pembantu Belanja Hibah']], function () {
+        Route::put('spp-up/sp2d/{sppUp}', [SppUpController::class, 'storeSp2d']);
     });
 
     Route::get('/surat-penolakan/spp-up/{sppUp}/{tahapRiwayat}', [UnduhController::class, 'suratPenolakanSppUp']);

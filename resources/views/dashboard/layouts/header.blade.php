@@ -44,7 +44,14 @@
                                             <div class="u-text">
                                                 <h4>{{ Auth::user()->profil->nama }}</h4>
                                                 <p class="text-muted">
-                                                    @if (!in_array(Auth::user()->role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']))
+                                                    @if (
+                                                        !in_array(Auth::user()->role, [
+                                                            'Admin',
+                                                            'Operator SPM',
+                                                            'PPK',
+                                                            'ASN Sub Bagian Keuangan',
+                                                            'Kuasa Pengguna Anggaran',
+                                                        ]))
                                                         {{ Auth::user()->profil->SekretariatDaerah->nama }}
                                                     @else
                                                         {{ Auth::user()->role }}

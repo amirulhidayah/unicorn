@@ -19,33 +19,6 @@ class AkunLainnyaController extends Controller
 {
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $data = User::orderBy('created_at', 'desc')->whereNotIn('role', ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])->get();
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('nama', function ($row) {
-                    return $row->profil->nama;
-                })
-                ->addColumn('aktif', function ($row) {
-                    if ($row->is_aktif == 1) {
-                        return '<span class="badge badge-success">Aktif</span>';
-                    } else {
-                        return '<span class="badge badge-danger">Tidak Aktif</span>';
-                    }
-                })
-                ->addColumn('role', function ($row) {
-                    return $row->role;
-                })
-                ->addColumn('foto', function ($row) {
-                    return '<img src="' . Storage::url('profil/' . $row->profil->foto) . '" class="img-fluid" width="80px" alt="Responsive image">';
-                })
-                ->addColumn('action', function ($row) {
-                    $actionBtn = '<a class="btn btn-warning btn-sm mr-1" href="' . url('/master-data/akun-lainnya/' . $row->id . '/edit') . '" ><i class="fas fa-edit"></i> Ubah</a><button id="btn-delete" class="btn btn-danger btn-sm mr-1" value="' . $row->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
-                    return $actionBtn;
-                })
-                ->rawColumns(['action', 'foto', 'aktif'])
-                ->make(true);
-        }
         return view('dashboard.pages.masterData.akunLainnya.index');
     }
 
@@ -60,7 +33,7 @@ class AkunLainnyaController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'email' => ['email', 'required', Rule::unique('users')->withoutTrashed()],
+                'username' => ['required', Rule::unique('users')->withoutTrashed()],
                 'password' => 'required|min:6',
                 'role' => 'required',
                 'nama' => 'required',
@@ -73,9 +46,8 @@ class AkunLainnyaController extends Controller
                 'aktif' => 'required',
             ],
             [
-                'email.required' => 'Email tidak boleh kosong',
-                'email.email' => 'Email tidak valid',
-                'email.unique' => 'Email sudah digunakan',
+                'username.required' => 'Username tidak boleh kosong',
+                'username.unique' => 'Username sudah digunakan',
                 'password.required' => 'Password tidak boleh kosong',
                 'password.min' => 'Password minimal 6 karakter',
                 'role.required' => 'Role tidak boleh kosong',
@@ -118,7 +90,7 @@ class AkunLainnyaController extends Controller
                 }
 
                 $user = new User();
-                $user->email = $request->email;
+                $user->username = $request->username;
                 $user->password = bcrypt($request->password);
                 $user->role = $request->role;
                 $user->is_aktif = $request->aktif;
@@ -167,7 +139,7 @@ class AkunLainnyaController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)->withoutTrashed()],
+                'username' => ['required',  Rule::unique('users')->ignore($user->id)->withoutTrashed()],
                 'password' => $request->password ? 'required|min:6' : 'nullable',
                 'role' => 'required',
                 'nama' => 'required',
@@ -179,9 +151,8 @@ class AkunLainnyaController extends Controller
                 'tanda_tangan' => $request->tanda_tangan ? 'required|image|mimes:png|max:1024' : 'nullable',
             ],
             [
-                'email.required' => 'Email tidak boleh kosong',
-                'email.email' => 'Email tidak valid',
-                'email.unique' => 'Email sudah digunakan',
+                'username.required' => 'Username tidak boleh kosong',
+                'username.unique' => 'Username sudah digunakan',
                 'password.required' => 'Password tidak boleh kosong',
                 'password.min' => 'Password minimal 6 karakter',
                 'role.required' => 'Role tidak boleh kosong',
@@ -228,7 +199,7 @@ class AkunLainnyaController extends Controller
                     $request->tanda_tangan->storeAs('tanda_tangan', $namaTandaTangan);
                 }
 
-                $user->email = $request->email;
+                $user->username = $request->username;
                 if ($request->password) {
                     $user->password = bcrypt($request->password);
                 }

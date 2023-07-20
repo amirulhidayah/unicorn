@@ -56,7 +56,7 @@ class AkunController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'email' => ['email', 'required', Rule::unique('users')->withoutTrashed()],
+                'username' => ['required', Rule::unique('users')->withoutTrashed()],
                 'password' => 'required|min:6',
                 'role' => 'required',
                 'nama' => 'required',
@@ -69,9 +69,8 @@ class AkunController extends Controller
                 'tanda_tangan' => 'required|image|mimes:png|max:1024',
             ],
             [
-                'email.required' => 'Email tidak boleh kosong',
-                'email.email' => 'Email tidak valid',
-                'email.unique' => 'Email sudah digunakan',
+                'username.required' => 'Username tidak boleh kosong',
+                'username.unique' => 'Username sudah digunakan',
                 'password.required' => 'Password tidak boleh kosong',
                 'password.min' => 'Password minimal 6 karakter',
                 'role.required' => 'Role tidak boleh kosong',
@@ -104,7 +103,7 @@ class AkunController extends Controller
                 $request->tanda_tangan->storeAs('tanda_tangan', $namaTandaTangan);
 
                 $user = new User();
-                $user->email = $request->email;
+                $user->username = $request->username;
                 $user->password = bcrypt($request->password);
                 $user->role = $request->role;
                 $user->save();
@@ -153,7 +152,7 @@ class AkunController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)->withoutTrashed()],
+                'username' => ['required', Rule::unique('users')->ignore($user->id)->withoutTrashed()],
                 'password' => $request->password ? 'required|min:6' : 'nullable',
                 'role' => 'required',
                 'nama' => 'required',
@@ -166,9 +165,8 @@ class AkunController extends Controller
                 'tanda_tangan' => $request->tanda_tangan ? 'required|image|mimes:png|max:1024' : 'nullable',
             ],
             [
-                'email.required' => 'Email tidak boleh kosong',
-                'email.email' => 'Email tidak valid',
-                'email.unique' => 'Email sudah digunakan',
+                'username.required' => 'Username tidak boleh kosong',
+                'username.unique' => 'Username sudah digunakan',
                 'password.required' => 'Password tidak boleh kosong',
                 'password.min' => 'Password minimal 6 karakter',
                 'role.required' => 'Role tidak boleh kosong',
@@ -216,7 +214,7 @@ class AkunController extends Controller
                     $request->tanda_tangan->storeAs('tanda_tangan', $namaTandaTangan);
                 }
 
-                $user->email = $request->email;
+                $user->username = $request->username;
                 if ($request->password) {
                     $user->password = bcrypt($request->password);
                 }

@@ -115,7 +115,20 @@
                         $timelineBody = $riwayat->profil->nama . ' (' . $riwayat->user->role . ') ' . ' memperbaiki dokumen';
                         $timelineBadgeBgColor = 'bg-warning';
                         $timelineBadgeIcon = 'fas fa-pencil-alt';
-                        $surat = '<a href="' . Storage::url('surat_penolakan_' . $tipeSuratPengembalian . '/' . $riwayat->surat_penolakan) . '" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> Surat Pengembalian</a>';
+                        $surat = '<button onclick="openPdfInFullscreen(' . "'" . Storage::url('surat_penolakan_' . $tipeSuratPengembalian . '/' . $riwayat->surat_penolakan) . "'" . ')" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> Surat Pengembalian</button>';
+                    } elseif ($riwayat->status == 'Upload SPM') {
+                        $timelineMode = 'timeline-inverted';
+                        $timelineTitle = 'Upload SPM';
+                        $timelineBody = $riwayat->profil->nama . ' (' . $riwayat->user->role . ') ' . ' mengupload dokumen spm';
+                        $timelineBadgeBgColor = 'bg-primary';
+                        $timelineBadgeIcon = 'fas fa-file-upload';
+                        $surat = '<button onclick="openPdfInFullscreen(' . "'" . Storage::url('dokumen_spm_spp_up/' . $spp->dokumen_spm) . "'" . ')" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> SPM</button>';
+                    } elseif ($riwayat->status == 'Upload Arsip SP2D') {
+                        $timelineTitle = 'Upload Arsip SP2D';
+                        $timelineBody = $riwayat->profil->nama . ' (' . $riwayat->user->role . ') ' . ' mengupload dokumen spm';
+                        $timelineBadgeBgColor = 'bg-primary';
+                        $timelineBadgeIcon = 'fas fa-file-upload';
+                        $surat = '<button onclick="openPdfInFullscreen(' . "'" . Storage::url('dokumen_arsip_sp2d_spp_up/' . $spp->dokumen_arsip_sp2d) . "'" . ')" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> Arsip SP2D</button>';
                     }
 
                 @endphp

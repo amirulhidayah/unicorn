@@ -10,12 +10,12 @@
         </div>
         <div class="col-sm-12 col-lg-4">
             @component('dashboard.components.formElements.input', [
-                'label' => 'Email',
+                'label' => 'Username',
                 'type' => 'text',
-                'id' => 'email',
-                'name' => 'email',
+                'id' => 'username',
+                'name' => 'username',
                 'wajib' => '<sup class="text-danger">*</sup>',
-                'placeholder' => 'Masukkan Alamat Email',
+                'placeholder' => 'Masukkan Username',
             ])
             @endcomponent
         </div>

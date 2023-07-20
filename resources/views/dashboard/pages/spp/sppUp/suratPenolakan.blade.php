@@ -72,7 +72,7 @@
             <td width="50%">
                 <p> : {{ $riwayatSppUp->sppUp->nomor_surat }}</p>
                 <p> : {{ \Carbon\Carbon::parse($riwayatSppUp->created_at)->translatedFormat('d F Y') }}</p>
-                <p> : {{ $riwayatSppUp->sppUp->kegiatan->nama }},</p>
+                <p> : {{ $riwayatSppUp->sppUp->kegiatanSpp->nama }},</p>
             </td>
             <td width="5%">
                 <p>&nbsp;</p>
@@ -127,8 +127,8 @@
             <td width="50%" style="text-align: center">
                 <p>Palu, {{ $hariIni }}</p>
                 <p>Kuasa Pengguna Anggaran</p>
-                <img src="{{ Storage::url('tanda_tangan/' . $kuasaPenggunaAnggaran->profil->tanda_tangan) }}" alt=""
-                    class="tanda-tangan">
+                <img src="{{ Storage::url('tanda_tangan/' . $kuasaPenggunaAnggaran->profil->tanda_tangan) }}"
+                    alt="" class="tanda-tangan">
                 <p class="nama-ttd"><u>{{ $kuasaPenggunaAnggaran->profil->nama }}</u></p>
                 <p class="nip-ttd">NIP. {{ $kuasaPenggunaAnggaran->profil->nip }}</p>
             </td>

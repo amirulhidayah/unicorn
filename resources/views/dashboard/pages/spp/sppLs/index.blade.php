@@ -56,29 +56,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col">
-                            @component('dashboard.components.widgets.filter')
-                                @slot('daftarSekretariatDaerah', $daftarSekretariatDaerah)
-                                @slot('daftarTahun', $daftarTahun)
-                            @endcomponent
                             @livewire('dashboard.spp.spp-ls.table')
-                            @component('dashboard.components.dataTables.index', [
-                                'id' => 'table-data',
-                                'th' => [
-                                    'No',
-                                    'Tanggal',
-                                    'Kegiatan',
-                                    'Program',
-                                    'Sekretariat Daerah',
-                                    'Kategori',
-                                    'Periode',
-                                    'Anggaran Digunakan',
-                                    'Verifikasi ASN Sub Bagian Keuangan',
-                                    'Verifikasi PPK',
-                                    'Status Verifikasi Akhir',
-                                    'Aksi',
-                                ],
-                            ])
-                            @endcomponent
                         </div>
                     </div>
                 </div>
@@ -184,98 +162,6 @@
                 }
             });
         })
-
-        var table = $('#table-data').DataTable({
-            processing: true,
-            serverSide: true,
-            dom: 'lfrtip',
-            lengthMenu: [
-                [20, 25, 50, -1],
-                [20, 25, 50, "All"]
-            ],
-            ajax: {
-                url: "{{ url('spp-ls') }}",
-                data: function(d) {
-                    d.sekretariat_daerah_id = $('#sekretariat_daerah').val();
-                    d.tahun = $('#tahun').val();
-                    d.status = $('#status').val();
-                    d.search = $('input[type="search"]').val();
-                }
-            },
-            columns: [{
-                    data: 'DT_RowIndex',
-                    name: 'DT_RowIndex',
-                    className: 'text-center',
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: 'tanggal_dibuat',
-                    name: 'tanggal_dibuat',
-                    className: 'text-center',
-                },
-                {
-                    data: 'nama',
-                    name: 'nama',
-                    className: 'text-center',
-                },
-                {
-                    data: 'program',
-                    name: 'program',
-                    className: 'text-center',
-                },
-                {
-                    data: 'sekretariat_daerah',
-                    name: 'sekretariat_daerah',
-                    className: 'text-center',
-                },
-                {
-                    data: 'kategori',
-                    name: 'kategori',
-                    className: 'text-center',
-                },
-                {
-                    data: 'periode',
-                    name: 'periode',
-                    className: 'text-center',
-                },
-                {
-                    data: 'anggaran_digunakan',
-                    name: 'anggaran_digunakan',
-                    className: 'text-center',
-                },
-                {
-                    data: 'verifikasi_asn',
-                    name: 'verifikasi_asn',
-                    className: 'text-center',
-                },
-                {
-                    data: 'verifikasi_ppk',
-                    name: 'verifikasi_ppk',
-                    className: 'text-center',
-                },
-                {
-                    data: 'status_verifikasi_akhir',
-                    name: 'status_verifikasi_akhir',
-                    className: 'text-center',
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    className: 'text-center',
-                    orderable: true,
-                    searchable: true
-                },
-
-            ],
-            columnDefs: [
-                // {
-                //     targets: 4,
-                //     visible: false,
-                // },
-
-            ],
-        });
     </script>
 
     <script>

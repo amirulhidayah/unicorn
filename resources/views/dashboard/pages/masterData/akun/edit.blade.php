@@ -109,7 +109,7 @@
             $('#master-akun').addClass('active');
             $('#menu-akun').collapse('show');
             $('#akun-sekretariat').addClass('active');
-            $('#email').val('{{ $user->email }}');
+            $('#username').val('{{ $user->username }}');
             $('#role').val('{{ $user->role }}').trigger('change');
             $('#sekretariat_daerah').val('{{ $user->profil->sekretariat_daerah_id }}').trigger('change');
             $('#jenis_kelamin').val('{{ $user->profil->jenis_kelamin }}').trigger('change');

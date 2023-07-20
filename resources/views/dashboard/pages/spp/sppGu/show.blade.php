@@ -199,12 +199,6 @@
     </script>
 
     <script>
-        const printErrorMsg = (msg) => {
-            $.each(msg, function(key, value) {
-                $('.' + key + '-error').text(value);
-            });
-        }
-
         $(document).ready(function() {
             $('#spp-gu').addClass('active');
         })
