@@ -378,14 +378,6 @@
                                 $actionBtn .= '<a class="btn btn-primary text-light btn-sm mr-1 my-1" href="' . url('spp-up/' . $data->id) . '"><i class="far fa-check-circle"></i> Proses Validasi</a>';
                             }
 
-                            // if (Auth::user()->role == 'ASN Sub Bagian Keuangan') {
-                            //     if (Auth::user()->role == 'ASN Sub Bagian Keuangan' && $data->status_validasi_asn == 0 && Auth::user()->is_aktif == 1) {
-                            //         $actionBtn .= '<a class="btn btn-primary text-light btn-sm mr-1 my-1" href="' . url('spp-up/' . $data->id) . '"><i class="far fa-check-circle"></i> Proses</a>';
-                            //     } else {
-                            //         $actionBtn .= '<a class="btn btn-primary text-light btn-sm mr-1 my-1" href="' . url('spp-up/' . $data->id) . '"><i class="fas fa-eye"></i> Lihat</a>';
-                            //     }
-                            // }
-
                             $actionBtn .= '<a href="' . url('spp-up/riwayat/' . $data->id) . '" class="btn btn-primary btn-sm my-1"><i class="fas fa-history"></i> Riwayat</a>';
 
                         @endphp

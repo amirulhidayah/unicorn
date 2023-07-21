@@ -46,7 +46,6 @@
                                 @component('dashboard.components.buttons.add', [
                                     'id' => 'btn-tambah',
                                     'class' => '',
-                                    'url' => url('spp-tu/create'),
                                 ])
                                 @endcomponent
                             @endif
@@ -63,10 +62,43 @@
             </div>
         </div>
     </div>
+
+    @component('dashboard.components.widgets.spmSp2d', [
+        'spp' => 'spp-tu',
+    ])
+    @endcomponent
 @endsection
 
 @push('script')
     <script>
+        $('#btn-tambah').click(function() {
+            $.ajax({
+                url: "{{ url('spp-tu/cek-sp2d') }}",
+                type: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.status == 'success') {
+                        window.location.href = "{{ url('spp-tu/create') }}";
+                    } else {
+                        swal("Selesaikan Terlebih Dahulu Arsip SP2D", response.message, {
+                            icon: "error",
+                            buttons: false,
+                            timer: 5000,
+                        });
+                    }
+                },
+                error: function(response) {
+                    swal("Gagal", "Gagal Memproses", {
+                        icon: "error",
+                        buttons: false,
+                        timer: 1000,
+                    });
+                }
+            })
+        });
+
         $(document).on('click', '#btn-delete', function() {
             let id = $(this).val();
             swal({

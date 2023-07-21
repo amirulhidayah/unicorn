@@ -122,13 +122,13 @@
                         $timelineBody = $riwayat->profil->nama . ' (' . $riwayat->user->role . ') ' . ' mengupload dokumen spm';
                         $timelineBadgeBgColor = 'bg-primary';
                         $timelineBadgeIcon = 'fas fa-file-upload';
-                        $surat = '<button onclick="openPdfInFullscreen(' . "'" . Storage::url('dokumen_spm_spp_up/' . $spp->dokumen_spm) . "'" . ')" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> SPM</button>';
+                        $surat = '<button onclick="openPdfInFullscreen(' . "'" . Storage::url('dokumen_spm_' . $tipeSuratPengembalian . '/' . $spp->dokumen_spm) . "'" . ')" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> SPM</button>';
                     } elseif ($riwayat->status == 'Upload Arsip SP2D') {
                         $timelineTitle = 'Upload Arsip SP2D';
                         $timelineBody = $riwayat->profil->nama . ' (' . $riwayat->user->role . ') ' . ' mengupload dokumen spm';
                         $timelineBadgeBgColor = 'bg-primary';
                         $timelineBadgeIcon = 'fas fa-file-upload';
-                        $surat = '<button onclick="openPdfInFullscreen(' . "'" . Storage::url('dokumen_arsip_sp2d_spp_up/' . $spp->dokumen_arsip_sp2d) . "'" . ')" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> Arsip SP2D</button>';
+                        $surat = '<button onclick="openPdfInFullscreen(' . "'" . Storage::url('dokumen_arsip_sp2d_' . $tipeSuratPengembalian . '/' . $spp->dokumen_arsip_sp2d) . "'" . ')" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> Arsip SP2D</button>';
                     }
 
                 @endphp

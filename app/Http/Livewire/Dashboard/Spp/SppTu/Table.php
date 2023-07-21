@@ -25,6 +25,8 @@ class Table extends Component
     public $tahun;
     public $bulan;
     public $sekretariat_daerah;
+    public $status_upload_skm;
+    public $status_upload_arsip_sp2d;
 
     public $daftarTahun = null;
     public $daftarSekretariatDaerah = null;
@@ -42,14 +44,20 @@ class Table extends Component
         $statusVerifikasiPpk = $this->status_verifikasi_ppk;
         $statusVerifikasiAkhir = $this->status_verifikasi_akhir;
         $sekretariatDaerah = $this->sekretariat_daerah;
+        $statusUploadSkm = $this->status_upload_skm;
+        $statusUploadArsipSp2d = $this->status_upload_arsip_sp2d;
         $tahun = $this->tahun;
         $bulan = $this->bulan;
 
-        $datas = SppTu::where(function ($query) use ($cari, $statusVerifikasiAsn, $statusVerifikasiPpk, $statusVerifikasiAkhir, $bulan, $tahun, $sekretariatDaerah) {
+        $datas = SppTu::where(function ($query) use ($cari, $statusVerifikasiAsn, $statusVerifikasiPpk, $statusVerifikasiAkhir, $bulan, $tahun, $sekretariatDaerah, $statusUploadSkm, $statusUploadArsipSp2d) {
             if (in_array(Auth::user()->role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) {
                 if (isset($sekretariatDaerah) && $sekretariatDaerah != 'Semua') {
                     $query->where('sekretariat_daerah_id', $sekretariatDaerah);
                 }
+            } else if (Auth::user()->role == 'Operator SPM') {
+                $query->where('status_validasi_asn', 1);
+                $query->where('status_validasi_ppk', 1);
+                $query->where('status_validasi_akhir', 1);
             } else {
                 $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
             }
@@ -79,6 +87,28 @@ class Table extends Component
                     $query->where('status_validasi_akhir', 0);
                 } else {
                     $query->where('status_validasi_akhir', 1);
+                }
+            }
+
+
+            if (isset($statusUploadSkm) && $statusUploadSkm != 'Semua') {
+                $query->where('status_validasi_ppk', 1);
+                $query->where('status_validasi_akhir', 1);
+                if ($statusUploadSkm == "Belum Ada") {
+                    $query->whereNull('dokumen_spm');
+                } else {
+                    $query->whereNotNull('dokumen_spm');
+                }
+            }
+
+            if (isset($statusUploadArsipSp2d) && $statusUploadArsipSp2d != 'Semua') {
+                $query->where('status_validasi_ppk', 1);
+                $query->where('status_validasi_akhir', 1);
+                $query->whereNotNull('dokumen_spm');
+                if ($statusUploadArsipSp2d == "Belum Ada") {
+                    $query->whereNull('dokumen_arsip_sp2d');
+                } else {
+                    $query->whereNotNull('dokumen_arsip_sp2d');
                 }
             }
 

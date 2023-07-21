@@ -47,6 +47,7 @@ Route::get('/tentang', [LandingController::class, 'tentang']);
 // Master Data
 Route::group(['middleware' => ['auth']], function () {
     Route::get('spp-up/cek-sp2d', [SppUpController::class, 'cekSp2d']);
+    Route::get('spp-tu/cek-sp2d', [SppTuController::class, 'cekSp2d']);
 
     Route::group(['middleware' => ['role:Admin']], function () {
         Route::resource('/master-data/sekretariat-daerah', SekretariatDaerahController::class);
@@ -116,12 +117,15 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     // SPP UP
+    Route::group(['middleware' => ['role:Admin|PPK|ASN Sub Bagian Keuangan|Kuasa Pengguna Anggaran|Operator SPM']], function () {
+        Route::get('/spp-up/riwayat/{sppUp}', [SppUpController::class, 'riwayat']);
+        Route::get('/spp-tu/riwayat/{sppTu}', [SppTuController::class, 'riwayat']);
+    });
+
     Route::resource('/spp-up', SppUpController::class)->only(
         'index',
         'show'
     );
-
-    Route::get('/spp-up/riwayat/{sppUp}', [SppUpController::class, 'riwayat']);
 
     Route::group(['middleware' => ['role:PPK|ASN Sub Bagian Keuangan']], function () {
         Route::put('/spp-up/verifikasi/{sppUp}', [SppUpController::class, 'verifikasi']);
@@ -133,9 +137,12 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['middleware' => ['role:Admin|Operator SPM']], function () {
         Route::put('spp-up/spm/{sppUp}', [SppUpController::class, 'storeSpm']);
+        Route::put('spp-tu/spm/{sppTu}', [SppTuController::class, 'storeSpm']);
     });
+
     Route::group(['middleware' => ['role:Admin|Bendahara Pengeluaran|Bendahara Pengeluaran Pembantu|Bendahara Pengeluaran Pembantu Belanja Hibah']], function () {
         Route::put('spp-up/sp2d/{sppUp}', [SppUpController::class, 'storeSp2d']);
+        Route::put('spp-tu/sp2d/{sppTu}', [SppTuController::class, 'storeSp2d']);
     });
 
     Route::get('/surat-penolakan/spp-up/{sppUp}/{tahapRiwayat}', [UnduhController::class, 'suratPenolakanSppUp']);
@@ -155,7 +162,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/spp-tu/verifikasi-akhir/{sppTu}', [SppTuController::class, 'verifikasiAkhir']);
     });
 
-    Route::get('/spp-tu/riwayat/{sppTu}', [SppTuController::class, 'riwayat']);
     Route::get('/surat-penolakan/spp-tu/{sppTu}/{tahapRiwayat}', [UnduhController::class, 'suratPenolakanSppTu']);
     Route::get('/surat-pernyataan/spp-tu/{sppTu}', [UnduhController::class, 'suratPernyataanSppTu']);
 
