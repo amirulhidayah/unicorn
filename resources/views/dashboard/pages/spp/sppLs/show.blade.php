@@ -37,15 +37,10 @@
                     <div class="card-head-row">
                         <div class="card-title">Detail Dokumen</div>
                         <div class="card-tools">
-                            @if (
-                                (Auth::user()->role == 'PPK' && $sppLs->status_validasi_ppk == 0 && Auth::user()->is_aktif == 1) ||
-                                    ($sppLs->status_validasi_asn == 0 &&
-                                        Auth::user()->role == 'ASN Sub Bagian Keuangan' &&
-                                        Auth::user()->is_aktif == 1))
+                            @if (in_array(Auth::user()->role, ['PPK', 'ASN Sub Bagian Keuangan']) && $sppLs->status_validasi_akhir == 0)
                                 @component('dashboard.components.buttons.verifikasi', [
                                     'id' => 'btn-verifikasi',
                                     'class' => '',
-                                    'url' => '/anc/create',
                                     'type' => 'button',
                                 ])
                                 @endcomponent

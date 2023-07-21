@@ -190,6 +190,7 @@
                             }
                         },
                         error: function(response) {
+                            console.log(response.responseText);
                             swal("Gagal", "Data Gagal Diproses", {
                                 icon: "error",
                                 buttons: false,

@@ -23,56 +23,56 @@
                     @endcomponent
                 </div>
             @endif
+            <div
+                class="{{ in_array(Auth::user()->role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? 'col-md-4' : 'col-md-6' }} col-sm-12">
+                @component('dashboard.components.formElements.select', [
+                    'label' => 'Bulan',
+                    'id' => 'bulan',
+                    'name' => 'bulan',
+                    'class' => 'select2 select2-filter',
+                    'wajib' => '<sup class="text-danger">*</sup>',
+                ])
+                    @slot('options')
+                        <option value="Semua">
+                            Semua
+                        </option>
+                        <option value="Januari">Januari</option>
+                        <option value="Februari">Februari</option>
+                        <option value="Maret">Maret</option>
+                        <option value="April">April</option>
+                        <option value="Mei">Mei</option>
+                        <option value="Juni">Juni</option>
+                        <option value="Juli">Juli</option>
+                        <option value="Agustus">Agustus</option>
+                        <option value="September">September</option>
+                        <option value="Oktober">Oktober</option>
+                        <option value="November">November</option>
+                        <option value="Desember">Desember</option>
+                    @endslot
+                @endcomponent
+            </div>
+            <div
+                class="{{ in_array(Auth::user()->role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? 'col-md-4' : 'col-md-6' }} col-sm-12">
+                @component('dashboard.components.formElements.select', [
+                    'label' => 'Tahun',
+                    'id' => 'tahun',
+                    'name' => 'tahun',
+                    'class' => 'select2 select2-filter',
+                    'wajib' => '<sup class="text-danger">*</sup>',
+                ])
+                    @slot('options')
+                        <option value="Semua">
+                            Semua
+                        </option>
+                        @foreach ($daftarTahun as $tahun)
+                            <option value="{{ $tahun->id }}">
+                                {{ $tahun->tahun }}
+                            </option>
+                        @endforeach
+                    @endslot
+                @endcomponent
+            </div>
             @if (Auth::user()->role != 'Operator SPM')
-                <div
-                    class="{{ in_array(Auth::user()->role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? 'col-md-4' : 'col-md-6' }} col-sm-12">
-                    @component('dashboard.components.formElements.select', [
-                        'label' => 'Bulan',
-                        'id' => 'bulan',
-                        'name' => 'bulan',
-                        'class' => 'select2 select2-filter',
-                        'wajib' => '<sup class="text-danger">*</sup>',
-                    ])
-                        @slot('options')
-                            <option value="Semua">
-                                Semua
-                            </option>
-                            <option value="Januari">Januari</option>
-                            <option value="Februari">Februari</option>
-                            <option value="Maret">Maret</option>
-                            <option value="April">April</option>
-                            <option value="Mei">Mei</option>
-                            <option value="Juni">Juni</option>
-                            <option value="Juli">Juli</option>
-                            <option value="Agustus">Agustus</option>
-                            <option value="September">September</option>
-                            <option value="Oktober">Oktober</option>
-                            <option value="November">November</option>
-                            <option value="Desember">Desember</option>
-                        @endslot
-                    @endcomponent
-                </div>
-                <div
-                    class="{{ in_array(Auth::user()->role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? 'col-md-4' : 'col-md-6' }} col-sm-12">
-                    @component('dashboard.components.formElements.select', [
-                        'label' => 'Tahun',
-                        'id' => 'tahun',
-                        'name' => 'tahun',
-                        'class' => 'select2 select2-filter',
-                        'wajib' => '<sup class="text-danger">*</sup>',
-                    ])
-                        @slot('options')
-                            <option value="Semua">
-                                Semua
-                            </option>
-                            @foreach ($daftarTahun as $tahun)
-                                <option value="{{ $tahun->id }}">
-                                    {{ $tahun->tahun }}
-                                </option>
-                            @endforeach
-                        @endslot
-                    @endcomponent
-                </div>
                 <div class="col-md-4 col-sm-12">
                     @component('dashboard.components.formElements.select', [
                         'label' => 'Status Verifikasi ASN Sub Bagian Keuangan',
@@ -97,52 +97,52 @@
                         @endslot
                     @endcomponent
                 </div>
+                <div class="col-md-4 col-sm-12">
+                    @component('dashboard.components.formElements.select', [
+                        'label' => 'Status Verifikasi PPK',
+                        'id' => 'status_verifikasi_ppk',
+                        'name' => 'status_verifikasi_ppk',
+                        'class' => 'select2 select2-filter',
+                        'wajib' => '<sup class="text-danger">*</sup>',
+                    ])
+                        @slot('options')
+                            <option value="Semua">
+                                Semua
+                            </option>
+                            <option value="Belum Diproses">
+                                Belum Diproses
+                            </option>
+                            <option value="Ditolak">
+                                Ditolak
+                            </option>
+                            <option value="Diterima">
+                                Diterima
+                            </option>
+                        @endslot
+                    @endcomponent
+                </div>
+                <div class="col-md-4 col-sm-12">
+                    @component('dashboard.components.formElements.select', [
+                        'label' => 'Status Verifikasi Akhir',
+                        'id' => 'status_verifikasi_akhir',
+                        'name' => 'status_verifikasi_akhir',
+                        'class' => 'select2 select2-filter',
+                        'wajib' => '<sup class="text-danger">*</sup>',
+                    ])
+                        @slot('options')
+                            <option value="Semua">
+                                Semua
+                            </option>
+                            <option value="Belum Diproses">
+                                Belum Diproses
+                            </option>
+                            <option value="Diverifikasi">
+                                Diverifikasi
+                            </option>
+                        @endslot
+                    @endcomponent
+                </div>
             @endif
-            <div class="col-md-4 col-sm-12">
-                @component('dashboard.components.formElements.select', [
-                    'label' => 'Status Verifikasi PPK',
-                    'id' => 'status_verifikasi_ppk',
-                    'name' => 'status_verifikasi_ppk',
-                    'class' => 'select2 select2-filter',
-                    'wajib' => '<sup class="text-danger">*</sup>',
-                ])
-                    @slot('options')
-                        <option value="Semua">
-                            Semua
-                        </option>
-                        <option value="Belum Diproses">
-                            Belum Diproses
-                        </option>
-                        <option value="Ditolak">
-                            Ditolak
-                        </option>
-                        <option value="Diterima">
-                            Diterima
-                        </option>
-                    @endslot
-                @endcomponent
-            </div>
-            <div class="col-md-4 col-sm-12">
-                @component('dashboard.components.formElements.select', [
-                    'label' => 'Status Verifikasi Akhir',
-                    'id' => 'status_verifikasi_akhir',
-                    'name' => 'status_verifikasi_akhir',
-                    'class' => 'select2 select2-filter',
-                    'wajib' => '<sup class="text-danger">*</sup>',
-                ])
-                    @slot('options')
-                        <option value="Semua">
-                            Semua
-                        </option>
-                        <option value="Belum Diproses">
-                            Belum Diproses
-                        </option>
-                        <option value="Diverifikasi">
-                            Diverifikasi
-                        </option>
-                    @endslot
-                @endcomponent
-            </div>
             <div class="col-md-6 col-sm-12">
                 @component('dashboard.components.formElements.select', [
                     'label' => 'Status Upload SKM',

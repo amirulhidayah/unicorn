@@ -562,7 +562,7 @@ class SppTuController extends Controller
         $tipeSuratPengembalian = 'spp_tu';
         $role = Auth::user()->role;
 
-        if (!(in_array($role, ['Admin', 'PPK', 'Operator SPM'])) || Auth::user()->profil->sekretariat_daerah_id == $sppTu->sekretariat_daerah_id) {
+        if (!((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran', 'Operator SPM'])) || Auth::user()->profil->sekretariat_daerah_id == $sppTu->sekretariat_daerah_id)) {
             abort(403, 'Anda tidak memiliki akses halaman tersebut!');
         }
 
@@ -640,6 +640,12 @@ class SppTuController extends Controller
 
     public function verifikasiAkhir(SppTu $sppTu)
     {
+        if (!($sppTu->status_validasi_ppk == 1 && $sppTu->status_validasi_akhir == 0 && $sppTu->status_validasi_asn == 1 && Auth::user()->is_aktif == 1)) {
+            return response()->json([
+                'status' => 'error'
+            ]);
+        }
+
         try {
             DB::transaction(
                 function () use ($sppTu) {

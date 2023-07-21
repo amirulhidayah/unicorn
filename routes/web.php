@@ -48,6 +48,7 @@ Route::get('/tentang', [LandingController::class, 'tentang']);
 Route::group(['middleware' => ['auth']], function () {
     Route::get('spp-up/cek-sp2d', [SppUpController::class, 'cekSp2d']);
     Route::get('spp-tu/cek-sp2d', [SppTuController::class, 'cekSp2d']);
+    Route::get('spp-ls/cek-sp2d', [SppLsController::class, 'cekSp2d']);
 
     Route::group(['middleware' => ['role:Admin']], function () {
         Route::resource('/master-data/sekretariat-daerah', SekretariatDaerahController::class);
@@ -118,9 +119,10 @@ Route::group(['middleware' => ['auth']], function () {
 
     // SPP UP
     Route::group(['middleware' => ['role:Admin|PPK|ASN Sub Bagian Keuangan|Kuasa Pengguna Anggaran|Operator SPM']], function () {
-        Route::get('/spp-up/riwayat/{sppUp}', [SppUpController::class, 'riwayat']);
-        Route::get('/spp-tu/riwayat/{sppTu}', [SppTuController::class, 'riwayat']);
     });
+    Route::get('/spp-up/riwayat/{sppUp}', [SppUpController::class, 'riwayat']);
+    Route::get('/spp-tu/riwayat/{sppTu}', [SppTuController::class, 'riwayat']);
+    Route::get('/spp-ls/riwayat/{sppLs}', [SppLsController::class, 'riwayat']);
 
     Route::resource('/spp-up', SppUpController::class)->only(
         'index',
@@ -138,11 +140,13 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['role:Admin|Operator SPM']], function () {
         Route::put('spp-up/spm/{sppUp}', [SppUpController::class, 'storeSpm']);
         Route::put('spp-tu/spm/{sppTu}', [SppTuController::class, 'storeSpm']);
+        Route::put('spp-ls/spm/{sppLs}', [SppLsController::class, 'storeSpm']);
     });
 
     Route::group(['middleware' => ['role:Admin|Bendahara Pengeluaran|Bendahara Pengeluaran Pembantu|Bendahara Pengeluaran Pembantu Belanja Hibah']], function () {
         Route::put('spp-up/sp2d/{sppUp}', [SppUpController::class, 'storeSp2d']);
         Route::put('spp-tu/sp2d/{sppTu}', [SppTuController::class, 'storeSp2d']);
+        Route::put('spp-ls/sp2d/{sppLs}', [SppLsController::class, 'storeSp2d']);
     });
 
     Route::get('/surat-penolakan/spp-up/{sppUp}/{tahapRiwayat}', [UnduhController::class, 'suratPenolakanSppUp']);
@@ -181,7 +185,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/spp-ls/verifikasi-akhir/{sppLs}', [SppLsController::class, 'verifikasiAkhir']);
     });
 
-    Route::get('/spp-ls/riwayat/{sppLs}', [SppLsController::class, 'riwayat']);
     Route::get('/surat-penolakan/spp-ls/{sppLs}/{tahapRiwayat}', [UnduhController::class, 'suratPenolakanSppLs']);
     Route::get('/surat-pernyataan/spp-ls/{sppLs}', [UnduhController::class, 'suratPernyataanSppLs']);
 
@@ -199,7 +202,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/spp-gu/verifikasi-akhir/{sppGu}', [SppGuController::class, 'verifikasiAkhir']);
     });
 
-    Route::get('/spp-gu/riwayat/{sppGu}', [SppGuController::class, 'riwayat']);
     Route::get('/surat-penolakan/spp-gu/{sppGu}/{tahapRiwayat}', [UnduhController::class, 'suratPenolakanSppGu']);
     Route::get('/surat-pernyataan/spp-gu/{sppGu}', [UnduhController::class, 'suratPernyataanSppGu']);
 

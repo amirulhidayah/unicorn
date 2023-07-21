@@ -511,7 +511,11 @@
                 },
                 success: function(response) {
                     jumlahAnggaran = response.jumlah_anggaran;
-                    $('#jumlah_anggaran').val(formatRupiah(response.jumlah_anggaran));
+                    if (bulan) {
+                        $('#jumlah_anggaran').val(formatRupiah(response.jumlah_anggaran));
+                    } else {
+                        $('#jumlah_anggaran').val(0);
+                    }
                 }
             })
         })
