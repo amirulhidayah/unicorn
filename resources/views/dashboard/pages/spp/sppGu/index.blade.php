@@ -46,7 +46,6 @@
                                 @component('dashboard.components.buttons.add', [
                                     'id' => 'btn-tambah',
                                     'class' => '',
-                                    'url' => url('spp-gu/create'),
                                 ])
                                 @endcomponent
                             @endif
@@ -56,39 +55,50 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col">
-                            @component('dashboard.components.widgets.filter')
-                                @slot('daftarSekretariatDaerah', $daftarSekretariatDaerah)
-                                @slot('daftarTahun', $daftarTahun)
-                            @endcomponent
                             @livewire('dashboard.spp.spp-gu.table')
-                            @component('dashboard.components.dataTables.index', [
-                                'id' => 'table-data',
-                                'th' => [
-                                    'No',
-                                    'Tanggal',
-                                    'Kegiatan',
-                                    'Program',
-                                    'Sekretariat Daerah',
-                                    'Periode',
-                                    'Anggaran Digunakan',
-                                    'Verifikasi ASN Sub Bagian Keuangan',
-                                    'Verifikasi PPK',
-                                    'Status Verifikasi Akhir',
-                                    'Tahap',
-                                    'Aksi',
-                                ],
-                            ])
-                            @endcomponent
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    @component('dashboard.components.widgets.spmSp2d', [
+        'spp' => 'spp-gu',
+    ])
+    @endcomponent
 @endsection
 
 @push('script')
     <script>
+        $('#btn-tambah').click(function() {
+            $.ajax({
+                url: "{{ url('spp-gu/cek-sp2d') }}",
+                type: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.status == 'success') {
+                        window.location.href = "{{ url('spp-gu/create') }}";
+                    } else {
+                        swal("Selesaikan Terlebih Dahulu Arsip SP2D", response.message, {
+                            icon: "error",
+                            buttons: false,
+                            timer: 5000,
+                        });
+                    }
+                },
+                error: function(response) {
+                    swal("Gagal", "Gagal Memproses", {
+                        icon: "error",
+                        buttons: false,
+                        timer: 1000,
+                    });
+                }
+            })
+        });
+
         $(document).on('click', '#btn-delete', function() {
             let id = $(this).val();
             swal({
@@ -184,98 +194,6 @@
                 }
             });
         })
-
-        var table = $('#table-data').DataTable({
-            processing: true,
-            serverSide: true,
-            dom: 'lfrtip',
-            lengthMenu: [
-                [20, 25, 50, -1],
-                [20, 25, 50, "All"]
-            ],
-            ajax: {
-                url: "{{ url('spp-gu') }}",
-                data: function(d) {
-                    d.sekretariat_daerah_id = $('#sekretariat_daerah').val();
-                    d.tahun = $('#tahun').val();
-                    d.status = $('#status').val();
-                    d.search = $('input[type="search"]').val();
-                }
-            },
-            columns: [{
-                    data: 'DT_RowIndex',
-                    name: 'DT_RowIndex',
-                    className: 'text-center',
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: 'tanggal_dibuat',
-                    name: 'tanggal_dibuat',
-                    className: 'text-center',
-                },
-                {
-                    data: 'nama',
-                    name: 'nama',
-                    className: 'text-center',
-                },
-                {
-                    data: 'program_dpa',
-                    name: 'program_dpa',
-                    className: 'text-center',
-                },
-                {
-                    data: 'sekretariat_daerah',
-                    name: 'sekretariat_daerah',
-                    className: 'text-center',
-                },
-                {
-                    data: 'periode',
-                    name: 'periode',
-                    className: 'text-center',
-                },
-                {
-                    data: 'anggaran_digunakan',
-                    name: 'anggaran_digunakan',
-                    className: 'text-center',
-                },
-                {
-                    data: 'verifikasi_asn',
-                    name: 'verifikasi_asn',
-                    className: 'text-center',
-                },
-                {
-                    data: 'verifikasi_ppk',
-                    name: 'verifikasi_ppk',
-                    className: 'text-center',
-                },
-                {
-                    data: 'status_verifikasi_akhir',
-                    name: 'status_verifikasi_akhir',
-                    className: 'text-center',
-                },
-                {
-                    data: 'tahap',
-                    name: 'tahap',
-                    className: 'text-center',
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    className: 'text-center',
-                    orderable: true,
-                    searchable: true
-                },
-
-            ],
-            columnDefs: [
-                // {
-                //     targets: 4,
-                //     visible: false,
-                // },
-
-            ],
-        });
     </script>
 
     <script>

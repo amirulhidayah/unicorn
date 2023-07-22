@@ -392,7 +392,7 @@
                                 }
                             }
 
-                            if (($data->status_validasi_akhir == 0 && in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']) && $data->sekretariat_daerah_id == Auth::user()->profil->sekretariat_daerah_id) || Auth::user()->role == 'Admin') {
+                            if ((in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']) && $data->sekretariat_daerah_id == Auth::user()->profil->sekretariat_daerah_id && $data->status_validasi_asn == 0 && $data->status_validasi_ppk == 0) || Auth::user()->role == 'Admin') {
                                 $actionBtn .= '<button id="btn-delete" class="btn btn-danger btn-sm mr-1 my-1" value="' . $data->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
                             }
 

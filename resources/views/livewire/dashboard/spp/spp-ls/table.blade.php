@@ -143,6 +143,27 @@
                     @endcomponent
                 </div>
             @endif
+            <div class="col-md-12 col-sm-12">
+                @component('dashboard.components.formElements.select', [
+                    'label' => 'Kategori',
+                    'id' => 'kategori',
+                    'name' => 'kategori',
+                    'class' => 'select2 select2-filter',
+                    'wajib' => '<sup class="text-danger">*</sup>',
+                ])
+                    @slot('options')
+                        <option value="Semua">
+                            Semua
+                        </option>
+                        <option value="Belanja Hibah">
+                            Belanja Hibah
+                        </option>
+                        <option value="Barang dan Jasa">
+                            Barang dan Jasa
+                        </option>
+                    @endslot
+                @endcomponent
+            </div>
             <div class="col-md-6 col-sm-12">
                 @component('dashboard.components.formElements.select', [
                     'label' => 'Status Upload SKM',
@@ -192,6 +213,9 @@
             ],
             [
                 'title' => 'Sekretariat Daerah',
+            ],
+            [
+                'title' => 'Kategori',
             ],
             [
                 'title' => 'Periode',
@@ -263,6 +287,15 @@
                             <div class="d-flex flex-column justify-content-center">
                                 <h6 class="mb-0 text-xs">
                                     {{ $data->SekretariatDaerah->nama }}
+                                </h6>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex">
+                            <div class="d-flex flex-column justify-content-center">
+                                <h6 class="mb-0 text-xs">
+                                    {{ $data->kategori }}
                                 </h6>
                             </div>
                         </div>
@@ -392,7 +425,7 @@
                                 }
                             }
 
-                            if (($data->status_validasi_akhir == 0 && in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']) && $data->sekretariat_daerah_id == Auth::user()->profil->sekretariat_daerah_id) || Auth::user()->role == 'Admin') {
+                            if ((in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']) && $data->sekretariat_daerah_id == Auth::user()->profil->sekretariat_daerah_id && $data->status_validasi_asn == 0 && $data->status_validasi_ppk == 0) || Auth::user()->role == 'Admin') {
                                 $actionBtn .= '<button id="btn-delete" class="btn btn-danger btn-sm mr-1 my-1" value="' . $data->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
                             }
 

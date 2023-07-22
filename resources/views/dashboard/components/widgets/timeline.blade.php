@@ -85,9 +85,9 @@
                         $timelineBody = $riwayat->profil->nama . ' (' . $riwayat->user->role . ') ' . ' mengupload dokumen tahap awal';
                         $timelineBadgeBgColor = 'bg-primary';
                         $timelineBadgeIcon = 'fas fa-file-upload';
-                    } elseif ($riwayat->status == 'Dibuat Tahap Akhir') {
-                        $timelineTitle = 'Upload Dokumen Tahap Akhir';
-                        $timelineBody = $riwayat->profil->nama . ' (' . $riwayat->user->role . ') ' . ' mengupload dokumen tahap akhir';
+                    } elseif ($riwayat->status == 'Upload Tahap SPP') {
+                        $timelineTitle = 'Upload Tahap SPP';
+                        $timelineBody = $riwayat->profil->nama . ' (' . $riwayat->user->role . ') ' . ' mengupload dokumen tahap spp';
                         $timelineBadgeBgColor = 'bg-primary';
                         $timelineBadgeIcon = 'fas fa-file-upload';
                     } elseif ($riwayat->status == 'Disetujui') {

@@ -20,10 +20,11 @@ class CreateSppGuTable extends Migration
             $table->uuid('sekretariat_daerah_id');
             $table->integer('tahap_riwayat')->default(1);
             $table->string('bulan');
+            $table->bigInteger('perencanaan_anggaran');
             $table->bigInteger('anggaran_digunakan');
             $table->string('nomor_surat');
             $table->uuid('user_id');
-            $table->string('tahap')->default('Awal');
+            $table->string('tahap')->default('SPJ');
             $table->text('surat_penolakan')->nullable();
             $table->integer('status_validasi_asn')->default(0);
             $table->text('alasan_validasi_asn')->nullable();
@@ -33,6 +34,8 @@ class CreateSppGuTable extends Migration
             $table->date('tanggal_validasi_ppk')->nullable();
             $table->integer('status_validasi_akhir')->default(0);
             $table->date('tanggal_validasi_akhir')->nullable();
+            $table->text('dokumen_spm')->nullable();
+            $table->text('dokumen_arsip_sp2d')->nullable();
             $table->timestamps();
         });
     }

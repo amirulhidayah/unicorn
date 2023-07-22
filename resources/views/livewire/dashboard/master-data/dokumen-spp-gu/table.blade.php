@@ -13,11 +13,11 @@
                         <option value="Semua">
                             Semua
                         </option>
-                        <option value="Awal">
-                            Awal
+                        <option value="SPJ">
+                            SPJ
                         </option>
-                        <option value="Akhir">
-                            Akhir
+                        <option value="SPP">
+                            SPP
                         </option>
                     @endslot
                 @endcomponent

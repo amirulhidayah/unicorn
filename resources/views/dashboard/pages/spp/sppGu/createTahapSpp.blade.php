@@ -60,26 +60,30 @@
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">SPP LS</a>
+            <a href="#">SPP GU</a>
         </li>
     </ul>
 @endsection
 
 @section('content')
-    <form id="form-tambah" enctype="multipart/form-data">
+    <form method="POST" id="form-tambah" enctype="multipart/form-data" action="{{ url('spp-gu') }}">
         {{ csrf_field() }}
-        @method('PUT')
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
                         <div class="card-head-row">
-                            <div class="card-title">Edit SPP LS</div>
+                            <div class="card-title">Tambah SPP GU</div>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6">
+                                @component('dashboard.components.widgets.info', [
+                                    'judul' => 'Tahap',
+                                    'isi' => '<span class="badge badge-primary">SPP</span>',
+                                ])
+                                @endcomponent
                                 @component('dashboard.components.widgets.info', [
                                     'judul' => 'Sekretariat Daerah',
                                     'isi' => $sppGu->SekretariatDaerah->nama,
@@ -96,6 +100,11 @@
                                 ])
                                 @endcomponent
                                 @component('dashboard.components.widgets.info', [
+                                    'judul' => 'Bulan',
+                                    'isi' => $sppGu->bulan,
+                                ])
+                                @endcomponent
+                                @component('dashboard.components.widgets.info', [
                                     'judul' => 'Program',
                                     'isi' => $sppGu->kegiatanDpa->programDpa->nama . ' (' . $sppGu->kegiatanDpa->programDpa->no_rek . ')',
                                 ])
@@ -106,64 +115,25 @@
                                 ])
                                 @endcomponent
                                 @component('dashboard.components.widgets.info', [
-                                    'judul' => 'Bulan',
-                                    'isi' => $sppGu->bulan,
+                                    'judul' => 'Anggaran Yang Direncanakan',
+                                    'isi' => $perencanaanAnggaran,
                                 ])
                                 @endcomponent
-                                @if ($sppGu->tahap == 'SPJ')
-                                    <div class="col-12">
-                                        @component('dashboard.components.formElements.input', [
-                                            'label' => 'Anggaran Yang Direncanakan (Rp)',
-                                            'type' => 'text',
-                                            'id' => 'perencanaan_anggaran',
-                                            'name' => 'perencanaan_anggaran',
-                                            'class' => 'uang',
-                                            'value' => $sppGu->perencanaan_anggaran,
-                                            'wajib' => '<sup class="text-danger">*</sup>',
-                                            'placeholder' => 'Masukkan Anggaran Yang Digunakan',
-                                        ])
-                                        @endcomponent
-                                    </div>
-                                @else
-                                    @component('dashboard.components.widgets.info', [
-                                        'judul' => 'Perencanaan Anggaran',
-                                        'isi' => $perencanaanAnggaran,
+                                <div class="col-12">
+                                    @component('dashboard.components.formElements.input', [
+                                        'label' => 'Anggaran Yang Digunakan (Rp)',
+                                        'type' => 'text',
+                                        'id' => 'anggaran_digunakan',
+                                        'name' => 'anggaran_digunakan',
+                                        'class' => 'uang',
+                                        'value' => $sppGu->anggaran_digunakan,
+                                        'wajib' => '<sup class="text-danger">*</sup>',
+                                        'placeholder' => 'Masukkan Anggaran Yang Digunakan',
                                     ])
                                     @endcomponent
-                                    <div class="col-12">
-                                        @component('dashboard.components.formElements.input', [
-                                            'label' => 'Anggaran Yang Digunakan (Rp)',
-                                            'type' => 'text',
-                                            'id' => 'anggaran_digunakan',
-                                            'name' => 'anggaran_digunakan',
-                                            'class' => 'uang',
-                                            'value' => $sppGu->anggaran_digunakan,
-                                            'wajib' => '<sup class="text-danger">*</sup>',
-                                            'placeholder' => 'Masukkan Anggaran Yang Digunakan',
-                                        ])
-                                        @endcomponent
-                                    </div>
-                                @endif
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                @if ($sppGu->alasan_validasi_asn != null)
-                                    @component('dashboard.components.widgets.alert', [
-                                        'oleh' => 'asn',
-                                        'tanggal' => $sppGu->tanggal_validasi_asn,
-                                        'isi' => $sppGu->alasan_validasi_asn,
-                                    ])
-                                    @endcomponent
-                                @endif
-
-                                @if ($sppGu->alasan_validasi_ppk != null)
-                                    @component('dashboard.components.widgets.alert', [
-                                        'oleh' => 'ppk',
-                                        'tanggal' => $sppGu->tanggal_validasi_ppk,
-                                        'isi' => $sppGu->alasan_validasi_ppk,
-                                    ])
-                                    @endcomponent
-                                @endif
-
                                 <div class="card" id="card-keterangan-upload">
                                     <div class="card-body text-center">
                                         <i class="fas fa-file-upload" style="font-size: 75px"></i>
@@ -177,43 +147,22 @@
                                 <small class="text-danger error-text dokumenFileHitung-error"
                                     id="dokumenFileHitung-error"></small>
                                 <div id="list-upload">
-                                    @if (!($sppGu->status_validasi_ppk == 0 && $sppGu->status_validasi_asn == 0))
-                                        <div class="card box-upload" class="box-upload">
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <!-- <div class="d-flex border rounded shadow shadow-lg p-2 "> -->
-                                                    <div class="col-3 d-flex align-items-center justify-content-center">
-                                                        <img src="{{ asset('assets/dashboard/img/pdf.png') }}"
-                                                            alt="" width="70px">
-                                                    </div>
-                                                    <div class="col-9">
-                                                        <div class="mb-3 mt-2">
-                                                            <p class="fw-bold" style="font-size: 15px;">Surat Penolakan
-                                                            </p>
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <input name="surat_penolakan" class="form-control"
-                                                                type="file" accept="application/pdf">
-                                                            <p class="text-danger error-text surat_penolakan-error my-0">
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="fw-bold card-footer bg-primary text-light text-center p-0">
-                                                ! Wajib Dimasukan</div>
-                                        </div>
-                                    @endif
-                                    <hr>
-                                    @foreach ($daftarDokumenSppGu as $dokumen)
+                                    @forelse ($daftarDokumenSppGu as $dokumen)
                                         @component('dashboard.components.dynamicForm.spp', [
-                                            'labelNama' => $dokumen->nama_dokumen,
-                                            'nameFileDokumen' => $dokumen->id,
-                                            'classDokumen' => 'file_dokumen_update',
-                                            'classNama' => 'nama_file_update',
+                                            'labelNama' => $dokumen->nama,
+                                            'nameFileDokumen' => substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), 0, 10),
+                                            'classNama' => 'nama_file',
+                                            'classDokumen' => 'file_dokumen',
                                         ])
                                         @endcomponent
-                                    @endforeach
+                                    @empty
+                                        @component('dashboard.components.dynamicForm.spp', [
+                                            'nameFileDokumen' => substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), 0, 10),
+                                            'classNama' => 'nama_file',
+                                            'classDokumen' => 'file_dokumen',
+                                        ])
+                                        @endcomponent
+                                    @endforelse
                                 </div>
 
                                 <div class="card bg-primary" id="card-tambah">
@@ -237,34 +186,9 @@
 @endsection
 
 @push('script')
-    @if ($sppGu->tahap == 'SPP')
-        <script>
-            $(document).ready(function() {
-                $('#anggaran_digunakan').keyup();
-            })
-        </script>
-
-        <script>
-            const jumlahAnggaran = {{ $perencanaanAnggaranHitung }};
-
-            $('#anggaran_digunakan').keyup(function() {
-                var anggaranDigunakan = $('#anggaran_digunakan').val().split('.').join('');
-                if (anggaranDigunakan > jumlahAnggaran) {
-                    $('.anggaran_digunakan-error').html('Anggaran melebihi anggaran yang telah ditentukan');
-                } else {
-                    $('.anggaran_digunakan-error').html('');
-                }
-            })
-        </script>
-    @else
-        <script>
-            $(document).ready(function() {
-                $('#perencanaan_anggaran').keyup();
-            })
-        </script>
-    @endif
-
     <script>
+        var jumlahAnggaran = {{ $perencanaanAnggaranHitung }};
+
         $(document).ready(function() {
             $('#spp-gu').addClass('active');
         })
@@ -308,16 +232,6 @@
             e.preventDefault();
             var formData = new FormData(this);
 
-            $('.file_dokumen_update').each(function() {
-                var nama = $(this).attr('name');
-                formData.append('fileDokumenUpdate[]', nama);
-            });
-
-            $('.nama_file_update').each(function() {
-                var nama = $(this).attr('name');
-                formData.append('namaFileUpdate[]', nama);
-            });
-
             $('.file_dokumen').each(function() {
                 var nama = $(this).attr('name');
                 formData.append('fileDokumen[]', nama);
@@ -354,7 +268,7 @@
                         success: function(response) {
                             if (response.status == "success") {
                                 swal("Berhasil",
-                                    "Dokumen berhasil diubah", {
+                                    "Dokumen berhasil ditambahkan", {
                                         button: false,
                                         icon: "success",
                                     });
@@ -372,10 +286,11 @@
                             }
                         },
                         error: function(response) {
-                            swal("Terjadi Kesalahan", {
+                            console.log(response);
+                            swal("Gagal", "Terjadi Kesalahan", {
+                                icon: "error",
                                 buttons: false,
-                                timer: 1500,
-                                icon: "warning",
+                                timer: 1000,
                             });
                         },
                         cache: false,
@@ -384,6 +299,15 @@
                     });
                 }
             });
+        })
+
+        $('#anggaran_digunakan').keyup(function() {
+            var anggaranDigunakan = $('#anggaran_digunakan').val().split('.').join('');
+            if (anggaranDigunakan > jumlahAnggaran) {
+                $('.anggaran_digunakan-error').html('Anggaran melebihi anggaran yang telah ditentukan');
+            } else {
+                $('.anggaran_digunakan-error').html('');
+            }
         })
     </script>
 @endpush

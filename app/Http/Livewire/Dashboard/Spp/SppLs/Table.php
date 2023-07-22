@@ -24,6 +24,7 @@ class Table extends Component
     public $status_verifikasi_akhir;
     public $status_upload_skm;
     public $status_upload_arsip_sp2d;
+    public $kategori;
     public $tahun;
     public $bulan;
     public $sekretariat_daerah;
@@ -46,10 +47,11 @@ class Table extends Component
         $sekretariatDaerah = $this->sekretariat_daerah;
         $statusUploadSkm = $this->status_upload_skm;
         $statusUploadArsipSp2d = $this->status_upload_arsip_sp2d;
+        $kategori = $this->kategori;
         $tahun = $this->tahun;
         $bulan = $this->bulan;
 
-        $datas = SppLs::where(function ($query) use ($cari, $statusVerifikasiAsn, $statusVerifikasiPpk, $statusVerifikasiAkhir, $bulan, $tahun, $sekretariatDaerah, $statusUploadSkm, $statusUploadArsipSp2d) {
+        $datas = SppLs::where(function ($query) use ($cari, $statusVerifikasiAsn, $statusVerifikasiPpk, $statusVerifikasiAkhir, $bulan, $tahun, $sekretariatDaerah, $statusUploadSkm, $statusUploadArsipSp2d, $kategori) {
             if (in_array(Auth::user()->role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) {
                 if (isset($sekretariatDaerah) && $sekretariatDaerah != 'Semua') {
                     $query->where('sekretariat_daerah_id', $sekretariatDaerah);
@@ -88,6 +90,10 @@ class Table extends Component
                 } else {
                     $query->where('status_validasi_akhir', 1);
                 }
+            }
+
+            if (isset($kategori) && $kategori != 'Semua') {
+                $query->where('kategori', $kategori);
             }
 
 

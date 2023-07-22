@@ -624,7 +624,7 @@ class SppTuController extends Controller
                             ->whereNotNull('nomor_surat')
                             ->get()
                             ->count();
-                        $riwayatSppTu->nomor_surat = $riwayatTerakhir ? $riwayatTerakhir->nomor_surat : ($nomorSurat + 1) . "/SPP-UP/P/" . Carbon::now()->format('m') . "/" . Carbon::now()->format('Y');
+                        $riwayatSppTu->nomor_surat = $riwayatTerakhir ? $riwayatTerakhir->nomor_surat : ($nomorSurat + 1) . "/SPP-TU/P/" . Carbon::now()->format('m') . "/" . Carbon::now()->format('Y');
                     }
                     $riwayatSppTu->alasan = $request->alasan;
                     $riwayatSppTu->role = Auth::user()->role;

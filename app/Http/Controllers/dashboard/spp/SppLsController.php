@@ -333,15 +333,16 @@ class SppLsController extends Controller
 
     public function edit(SppLs $sppLs, Request $request)
     {
+        $role = Auth::user()->role;
+        if (!($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppLs->sekretariat_daerah_id) && ($sppLs->status_validasi_asn == 2 || $sppLs->status_validasi_ppk == 2)) {
+            abort(403, 'Anda tidak memiliki akses halaman tersebut!');
+        }
+
         $spd = Spd::where('kegiatan_dpa_id', $sppLs->kegiatan_dpa_id)->where('sekretariat_daerah_id', $sppLs->sekretariat_daerah_id)->where('tahun_id', $sppLs->tahun_id)->first();
         $jumlahAnggaranHitung = $this->_getJumlahAnggaran($sppLs->sekretariat_daerah_id, $sppLs->kegiatan_dpa_id, $sppLs->bulan, $sppLs->tahun_id);
         $jumlahAnggaran = 'Rp. ' . number_format($jumlahAnggaranHitung, 0, ',', '.');
         $anggaranDigunakan = 'Rp. ' . number_format($sppLs->anggaran_digunakan, 0, ',', '.');
-        $role = Auth::user()->role;
 
-        if (!($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppLs->sekretariat_daerah_id) && ($sppLs->status_validasi_asn == 2 || $sppLs->status_validasi_ppk == 2)) {
-            abort(403, 'Anda tidak memiliki akses halaman tersebut!');
-        }
 
         return view('dashboard.pages.spp.sppLs.edit', compact(['sppLs', 'request', 'jumlahAnggaran', 'anggaranDigunakan', 'jumlahAnggaranHitung']));
     }
@@ -647,7 +648,7 @@ class SppLsController extends Controller
                             ->whereNotNull('nomor_surat')
                             ->get()
                             ->count();
-                        $riwayatSppLs->nomor_surat = $riwayatTerakhir ? $riwayatTerakhir->nomor_surat : ($nomorSurat + 1) . "/SPP-UP/P/" . Carbon::now()->format('m') . "/" . Carbon::now()->format('Y');
+                        $riwayatSppLs->nomor_surat = $riwayatTerakhir ? $riwayatTerakhir->nomor_surat : ($nomorSurat + 1) . "/SPP-LS/P/" . Carbon::now()->format('m') . "/" . Carbon::now()->format('Y');
                     }
                     $riwayatSppLs->alasan = $request->alasan;
                     $riwayatSppLs->role = Auth::user()->role;

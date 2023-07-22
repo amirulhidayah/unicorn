@@ -72,17 +72,17 @@
             <td width="50%">
                 <p> : {{ $riwayatSppGu->sppGu->nomor_surat }}</p>
                 <p> : {{ \Carbon\Carbon::parse($riwayatSppGu->created_at)->translatedFormat('d F Y') }}</p>
-                <p> : {{ $riwayatSppGu->sppGu->kegiatan->nama }},</p>
+                <p> : {{ $riwayatSppGu->sppGu->kegiatanDpa->nama }},</p>
             </td>
             <td width="5%">
-                <p>&nbsp;</p>
+                <p>Jumlah</p>
                 <p>&nbsp;</p>
                 <p>Jumlah</p>
             </td>
             <td width="25%">
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
                 <p> : Rp. {{ number_format($riwayatSppGu->anggaran_digunakan, 0, ',', '.') }}</p>
+                <p>&nbsp;</p>
+                <p> : Rp. {{ number_format($riwayatSppGu->perencanaan_anggaran, 0, ',', '.') }}</p>
             </td>
         </tr>
     </table>

@@ -37,15 +37,10 @@
                     <div class="card-head-row">
                         <div class="card-title">Detail Dokumen</div>
                         <div class="card-tools">
-                            @if (
-                                (Auth::user()->role == 'PPK' && $sppGu->status_validasi_ppk == 0 && Auth::user()->is_aktif == 1) ||
-                                    ($sppGu->status_validasi_asn == 0 &&
-                                        Auth::user()->role == 'ASN Sub Bagian Keuangan' &&
-                                        Auth::user()->is_aktif == 1))
+                            @if (in_array(Auth::user()->role, ['PPK', 'ASN Sub Bagian Keuangan']) && $sppGu->status_validasi_akhir == 0)
                                 @component('dashboard.components.buttons.verifikasi', [
                                     'id' => 'btn-verifikasi',
                                     'class' => '',
-                                    'url' => '/anc/create',
                                     'type' => 'button',
                                 ])
                                 @endcomponent
@@ -92,15 +87,18 @@
                             ])
                             @endcomponent
                             @component('dashboard.components.widgets.info', [
-                                'judul' => 'Jumlah Anggaran',
-                                'isi' => $jumlahAnggaran,
+                                'judul' => 'Anggaran Yang Direncanakan',
+                                'isi' => $perencanaanAnggaran,
                             ])
                             @endcomponent
-                            @component('dashboard.components.widgets.info', [
-                                'judul' => 'Anggaran Yang Digunakan',
-                                'isi' => $anggaranDigunakan,
-                            ])
-                            @endcomponent
+                            @if ($sppGu->tahap != 'SPJ')
+                                @component('dashboard.components.widgets.info', [
+                                    'judul' => 'Anggaran Yang Digunakan',
+                                    'isi' => $anggaranDigunakan,
+                                ])
+                                @endcomponent
+                            @endif
+
                         </div>
                         <div class="col-lg-6">
                             @component('dashboard.components.widgets.listDokumen', [
