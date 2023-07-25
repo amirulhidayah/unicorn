@@ -287,7 +287,7 @@ class TabelDpaController extends Controller
 
     public function tabelDpaDebug(Request $request)
     {
-        $listBulan = [
+        $arrayBulan = [
             'Januari',
             'Februari',
             'Maret',
@@ -301,6 +301,17 @@ class TabelDpaController extends Controller
             'November',
             'Desember'
         ];
+
+
+        $first = 'Januari';
+        $last = 'Juni';
+
+        // Find the indices of $first and $last in the $bulan array
+        $firstIndex = array_search($first, $arrayBulan);
+        $lastIndex = array_search($last, $arrayBulan);
+
+        // Extract the elements from $first to $last using array_slice
+        $listBulan = array_slice($arrayBulan, $firstIndex, $lastIndex - $firstIndex + 1);
 
         $tahun = '8fef08db-e1bf-4a1f-8bd2-9809d5e60426';
         $sekretariatDaerahId = '68c37c05-84a4-493b-9419-35cb6d10a319';
@@ -414,63 +425,53 @@ class TabelDpaController extends Controller
             }
         }
 
-        $aggregatedData = [];
+        // Loop through each sekretariat_daerah
+        foreach ($array['data'] as &$sekretariat) {
+            // Loop through each program under the sekretariat_daerah
+            foreach ($sekretariat['program'] as &$program) {
+                $totalBulan = null;
+                // Initialize sums for each program
+                $sum_perencanaan_anggaran_program = array_fill(0, count($listBulan), 0);
+                $sum_anggaran_digunakan_program = array_fill(0, count($listBulan), 0);
+                $sum_sisa_anggaran_program = array_fill(0, count($listBulan), 0);
 
-        foreach ($array['bulan'] as $index => $bulan) {
-            $totalPerencanaanAnggaran = 0;
-            $totalAnggaranDigunakan = 0;
-            $totalSisaAnggaran = 0;
-
-            foreach ($array['data'] as $sekretariat) {
-                foreach ($sekretariat['program'] as $program) {
-                    foreach ($program['kegiatan'] as $kegiatan) {
-                        $totalPerencanaanAnggaran += $kegiatan['bulan'][$index]['perencanaan_anggaran'];
-                        $totalAnggaranDigunakan += $kegiatan['bulan'][$index]['anggaran_digunakan'];
-                        $totalSisaAnggaran += $kegiatan['bulan'][$index]['sisa_anggaran'];
+                // Loop through each kegiatan under the program
+                foreach ($program['kegiatan'] as &$kegiatan) {
+                    // dd($kegiatan);
+                    // Loop through each month data under the kegiatan
+                    foreach ($kegiatan['bulan'] as $index => $bulanData) {
+                        // Accumulate the values for each month in each program
+                        $totalBulan[$index] = [
+                            'nama' => $bulanData['nama'],
+                            'perencanaan_anggaran' => ($totalBulan[$index]['perencanaan_anggaran'] ?? 0) + $bulanData['perencanaan_anggaran'],
+                            'anggaran_digunakan' => ($totalBulan[$index]['anggaran_digunakan'] ?? 0) + $bulanData['anggaran_digunakan'],
+                            'sisa_anggaran' => ($totalBulan[$index]['sisa_anggaran'] ?? 0) + $bulanData['sisa_anggaran']
+                        ];
+                        // $sum_perencanaan_anggaran_program[$index] += $bulanData['perencanaan_anggaran'];
+                        // $sum_anggaran_digunakan_program[$index] += $bulanData['anggaran_digunakan'];
+                        // $sum_sisa_anggaran_program[$index] += $bulanData['sisa_anggaran'];
                     }
                 }
-            }
 
-            // Add the aggregated data for each month to the $aggregatedData array
-            $aggregatedData[] = [
-                'bulan' => $bulan,
-                'data' => [
-                    'perencanaan_anggaran' => $totalPerencanaanAnggaran,
-                    'anggaran_digunakan' => $totalAnggaranDigunakan,
-                    'sisa_anggaran' => $totalSisaAnggaran,
-                ],
-            ];
-        }
-
-        // Sum perencanaan_anggaran, anggaran_digunakan, and sisa_anggaran in aggregatedData for each sekretariat_daerah
-        $aggregatedDataBySekretariat = [];
-
-        foreach ($array['data'] as $sekretariat) {
-            $totalPerencanaanAnggaranSekretariat = 0;
-            $totalAnggaranDigunakanSekretariat = 0;
-            $totalSisaAnggaranSekretariat = 0;
-
-            foreach ($sekretariat['program'] as $program) {
-                foreach ($program['kegiatan'] as $kegiatan) {
-                    $totalPerencanaanAnggaranSekretariat += $kegiatan['total_perencanaan_anggaran'];
-                    $totalAnggaranDigunakanSekretariat += $kegiatan['total_anggaran_digunakan'];
-                    $totalSisaAnggaranSekretariat += $kegiatan['total_sisa_anggaran'];
+                // Add the sums for each program in the 'program' array
+                $perencanaanAnggaran = 0;
+                $anggaranDigunakan = 0;
+                $sisaAnggaran = 0;
+                foreach ($totalBulan as $bulanData) {
+                    $perencanaanAnggaran += $bulanData['perencanaan_anggaran'];
+                    $anggaranDigunakan += $bulanData['anggaran_digunakan'];
+                    $sisaAnggaran += $bulanData['sisa_anggaran'];
                 }
+                $program['total_bulan'] = [
+                    'bulan' => $totalBulan,
+                    'perencanaan_anggaran' => $perencanaanAnggaran,
+                    'anggaran_digunakan' => $anggaranDigunakan,
+                    'sisa_anggaran' => $sisaAnggaran
+                ];
             }
-
-            $aggregatedDataBySekretariat[$sekretariat['sekretariat_daerah']] = [
-                'perencanaan_anggaran' => $totalPerencanaanAnggaranSekretariat,
-                'anggaran_digunakan' => $totalAnggaranDigunakanSekretariat,
-                'sisa_anggaran' => $totalSisaAnggaranSekretariat,
-            ];
         }
 
-        // Append the aggregated data to the existing $array['data']
-        foreach ($array['data'] as &$sekretariat) {
-            $sekretariatDaerah = $sekretariat['sekretariat_daerah'];
-            $sekretariat['total_bulan'] = $aggregatedData;
-            $sekretariat['total_keseluruhan'] = $aggregatedDataBySekretariat[$sekretariatDaerah];
-        }
+
         // echo "<pre>";
         // print_r($array);
         // echo "</pre>";

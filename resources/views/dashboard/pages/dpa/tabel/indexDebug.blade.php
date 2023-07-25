@@ -127,26 +127,29 @@
                                                 </td>
                                             </tr>
                                         @endforeach
+                                        <tr>
+                                            <td colspan="3" class="text-center">
+                                                Jumlah
+                                            </td>
+                                            @foreach ($program['total_bulan']['bulan'] as $total)
+                                                {{-- @php
+                                                    dd($total);
+                                                @endphp --}}
+                                                <td> {{ 'Rp. ' . number_format($total['perencanaan_anggaran'], 0, ',', '.') }}
+                                                </td>
+                                                <td> {{ 'Rp. ' . number_format($total['anggaran_digunakan'], 0, ',', '.') }}
+                                                </td>
+                                                <td> {{ 'Rp. ' . number_format($total['sisa_anggaran'], 0, ',', '.') }}
+                                                </td>
+                                            @endforeach
+                                            <td> {{ 'Rp. ' . number_format($program['total_bulan']['perencanaan_anggaran'], 0, ',', '.') }}
+                                            </td>
+                                            <td> {{ 'Rp. ' . number_format($program['total_bulan']['anggaran_digunakan'], 0, ',', '.') }}
+                                            </td>
+                                            <td> {{ 'Rp. ' . number_format($program['total_bulan']['sisa_anggaran'], 0, ',', '.') }}
+                                            </td>
+                                        </tr>
                                     @endforeach
-                                    <tr>
-                                        <td colspan="3">
-                                            Jumlah
-                                        </td>
-                                        @foreach ($data['total_bulan'] as $total)
-                                            <td> {{ 'Rp. ' . number_format($total['data']['perencanaan_anggaran'], 0, ',', '.') }}
-                                            </td>
-                                            <td> {{ 'Rp. ' . number_format($total['data']['anggaran_digunakan'], 0, ',', '.') }}
-                                            </td>
-                                            <td> {{ 'Rp. ' . number_format($total['data']['sisa_anggaran'], 0, ',', '.') }}
-                                            </td>
-                                        @endforeach
-                                        <td> {{ 'Rp. ' . number_format($data['total_keseluruhan']['perencanaan_anggaran'], 0, ',', '.') }}
-                                        </td>
-                                        <td> {{ 'Rp. ' . number_format($data['total_keseluruhan']['anggaran_digunakan'], 0, ',', '.') }}
-                                        </td>
-                                        <td> {{ 'Rp. ' . number_format($data['total_keseluruhan']['sisa_anggaran'], 0, ',', '.') }}
-                                        </td>
-                                    </tr>
                                 @endforeach
                             </tbody>
 
