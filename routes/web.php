@@ -210,6 +210,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/surat-pernyataan/spp-gu/{sppGu}', [UnduhController::class, 'suratPernyataanSppGu']);
 
     Route::post('/tabel-dpa/tabel-dpa', [TabelDpaController::class, 'tabelDpa']);
+    Route::get('/tabel-dpa/tabel-dpaDebug', [TabelDpaController::class, 'tabelDpaDebug']);
     Route::post('/tabel-dpa/get-spd', [TabelDpaController::class, 'getSpd']);
     Route::post('/tabel-dpa/export', [TabelDpaController::class, 'exportSpd']);
     Route::resource('/tabel-dpa', TabelDpaController::class)->parameters([

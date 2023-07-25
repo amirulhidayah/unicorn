@@ -643,7 +643,7 @@ class SppGuController extends Controller
 
     public function verifikasiAkhir(SppGu $sppGu)
     {
-        if (!($sppGu->status_validasi_ppk == 1 && $sppGu->status_validasi_akhir == 0 && $sppGu->status_validasi_asn == 1 && $sppGu->tahap == "Selesai" && Auth::user()->is_aktif == 1)) {
+        if (!($sppGu->status_validasi_ppk == 1 && $sppGu->status_validasi_akhir == 0 && $sppGu->status_validasi_asn == 1 && $sppGu->tahap == "SPP" && Auth::user()->is_aktif == 1)) {
             return response()->json([
                 'status' => 'error'
             ]);
