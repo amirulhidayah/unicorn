@@ -24,40 +24,33 @@ use Yajra\DataTables\Facades\DataTables;
 
 class TabelDpaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         $tahun = Tahun::orderBy('tahun', 'asc')->get();
-        $SekretariatDaerah = SekretariatDaerah::orderBY('nama', 'asc')->get();
-        // $program = Program::with('kegiatan')->whereHas('kegiatan', function ($query) use ($SekretariatDaerah) {
-        //     $query->whereHas('spd', function ($query) use ($SekretariatDaerah) {
-        //         $query->where('sekretariat_daerah_id', $SekretariatDaerah);
-        //     });
-        // })->get();
+        $sekretariatDaerah = SekretariatDaerah::orderBY('nama', 'asc')->get();
+        $daftarBulan = [
+            'Januari',
+            'Februari',
+            'Maret',
+            'April',
+            'Mei',
+            'Juni',
+            'Juli',
+            'Agustus',
+            'September',
+            'Oktober',
+            'November',
+            'Desember'
+        ];
 
-        return view('dashboard.pages.dpa.tabel.index', compact('tahun', 'SekretariatDaerah'));
+        return view('dashboard.pages.dpa.tabel.index', compact('tahun', 'sekretariatDaerah', 'daftarBulan'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $validator = Validator::make(
@@ -98,36 +91,17 @@ class TabelDpaController extends Controller
         return response()->json(['status' => 'success']);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Spd $spd)
     {
         $spd->kegiatan;
         return response()->json($spd);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Spd $spd)
     {
         $validator = Validator::make(
@@ -167,12 +141,6 @@ class TabelDpaController extends Controller
         return response()->json(['status' => 'success']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Spd $spd)
     {
         $spd->delete();
@@ -228,56 +196,39 @@ class TabelDpaController extends Controller
             ->orderBy('created_at', 'asc')
             ->where('tahun_id', $tahun)
             ->where('kegiatan_dpa_id', $kegiatan)
-            ->where('status_validasi_akhir', 1);
-
-        $sppGu = SppGu::where('sekretariat_daerah_id', $SekretariatDaerah)
-            ->orderBy('created_at', 'asc')
-            ->where('tahun_id', $tahun)
-            ->where('kegiatan_dpa_id', $kegiatan)
-            ->where('status_validasi_akhir', 1);
+            ->where('status_validasi_akhir', 1)
+            ->whereNotNull('dokumen_spm')
+            ->whereNotNull('dokumen_arsip_sp2d');
 
         if ($bulan == 'Januari') {
             $sppLs = $sppLs->where('bulan', 'Januari');
-            $sppGu = $sppGu->where('bulan', 'Januari');
         } else if ($bulan == 'Februari') {
             $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari']);
-            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari']);
         } else if ($bulan == 'Maret') {
             $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret']);
-            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret']);
         } else if ($bulan == 'April') {
             $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April']);
-            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April']);
         } else if ($bulan == 'Mei') {
             $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei']);
-            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei']);
         } else if ($bulan == 'Juni') {
             $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni']);
-            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni']);
         } else if ($bulan == 'Juli') {
             $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli']);
-            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli']);
         } else if ($bulan == 'Agustus') {
             $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus']);
-            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus']);
         } else if ($bulan == 'September') {
             $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September']);
-            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September']);
         } else if ($bulan == 'Oktober') {
             $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober']);
-            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober']);
         } else if ($bulan == 'November') {
             $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November']);
-            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November']);
         } else if ($bulan == 'Desember') {
             $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']);
-            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']);
         }
 
         $sppLs = $sppLs->sum('anggaran_digunakan');
-        $sppGu = $sppGu->sum('anggaran_digunakan');
 
-        $totalSpp = ($sppLs + $sppGu);
+        $totalSpp = ($sppLs);
         $jumlahAnggaran = (($spd->jumlah_anggaran ?? 0) - $totalSpp);
 
         return response()->json([
@@ -302,26 +253,26 @@ class TabelDpaController extends Controller
             'Desember'
         ];
 
+        $bulanDari = 'Januari';
+        $bulanSampai = 'Desember';
 
-        $first = 'Januari';
-        $last = 'Juni';
+        // Find the indices of $bulanDari and $bulanSampai in the $bulan array
+        $bulanDariIndex = array_search($bulanDari, $arrayBulan);
+        $bulanSampaiIndex = array_search($bulanSampai, $arrayBulan);
 
-        // Find the indices of $first and $last in the $bulan array
-        $firstIndex = array_search($first, $arrayBulan);
-        $lastIndex = array_search($last, $arrayBulan);
+        // Extract the elements from $bulanDari to $bulanSampai using array_slice
+        $listBulan = array_slice($arrayBulan, $bulanDariIndex, $bulanSampaiIndex - $bulanDariIndex + 1);
 
-        // Extract the elements from $first to $last using array_slice
-        $listBulan = array_slice($arrayBulan, $firstIndex, $lastIndex - $firstIndex + 1);
-
+        // $tahun = $request->tahun;
         $tahun = '8fef08db-e1bf-4a1f-8bd2-9809d5e60426';
-        $sekretariatDaerahId = '68c37c05-84a4-493b-9419-35cb6d10a319';
-        // $sekretariatDaerahId = 'Semua';
+        // $sekretariatDaerahId = $request->sekretariatDaerah;
+        $sekretariatDaerahId = 'Semua';
 
         $sekretariatDaerahS = SekretariatDaerah::where(function ($query) use ($sekretariatDaerahId) {
             if ($sekretariatDaerahId != "Semua") {
                 $query->where('id', $sekretariatDaerahId);
             }
-        })->get();
+        })->orderBy('nama', 'asc')->get();
 
         $array = [];
 
@@ -338,37 +289,35 @@ class TabelDpaController extends Controller
                 });
             })->withTrashed()->get();
 
-            // $programDpa = ProgramDpa::whereHas('kegiatanDpa', function ($query) use ($sekretariatDaerah, $tahun) {
-            //     $query->whereHas('sppGu', function ($query) use ($sekretariatDaerah, $tahun) {
-            //         $query->where('tahun_id', $tahun);
-            //         $query->where('sekretariat_daerah_id', $sekretariatDaerah->id);
-            //     });
-            // })->get();
-
             $programData = [];
             foreach ($programDpa as $program) {
                 $kegiatanData = [];
-                $kegiatanDpa = KegiatanDpa::where('program_dpa_id', $program->id)->whereHas('sppGu', function ($query) use ($sekretariatDaerah, $tahun) {
+                $kegiatanDpa = KegiatanDpa::where('program_dpa_id', $program->id)->whereHas('sppLs', function ($query) use ($sekretariatDaerah, $tahun) {
                     $query->where('tahun_id', $tahun);
                     $query->where('sekretariat_daerah_id', $sekretariatDaerah->id);
                 })->orderBy('no_rek', 'asc')->get();
 
                 foreach ($kegiatanDpa as $kegiatan) {
                     $bulanData = [];
+                    $spd = Spd::where('sekretariat_daerah_id', $sekretariatDaerah->id)->where('tahun_id', $tahun)->where('kegiatan_dpa_id', $kegiatan->id)->first();
+                    $sisaAnggaran = $spd->jumlah_anggaran ?? 0;
                     foreach ($listBulan as $bulan) {
-                        $sppGu = SppGu::where('kegiatan_dpa_id', $kegiatan->id)->where('bulan', $bulan)->where('tahap', 'Selesai')->where('tahun_id', $tahun)->first();
+                        $sppLs = SppLs::where('kegiatan_dpa_id', $kegiatan->id)->where('bulan', $bulan)->whereNotNull('dokumen_spm')
+                            ->whereNotNull('dokumen_arsip_sp2d')->where('tahun_id', $tahun)->first();
+
+                        $sisaAnggaran -= ($sppLs ? $sppLs->anggaran_digunakan : 0);
 
                         $bulanData[] = [
                             'nama' => $bulan,
-                            'perencanaan_anggaran' => $sppGu ? $sppGu->perencanaan_anggaran : 0,
-                            'anggaran_digunakan' => $sppGu ? $sppGu->anggaran_digunakan : 0,
-                            'sisa_anggaran' => ($sppGu->perencanaan_anggaran - $sppGu->anggaran_digunakan) ?? 0
+                            'anggaran_digunakan' => $sppLs ? $sppLs->anggaran_digunakan : 0,
+                            'sisa_anggaran' =>  $sisaAnggaran,
                         ];
                     }
 
                     $kegiatanData[] = [
                         'nama' => $kegiatan->nama,
                         'no_rek' => $kegiatan->no_rek,
+                        'jumlah_anggaran' => $spd->jumlah_anggaran,
                         'bulan' => $bulanData,
                     ];
                 }
@@ -395,7 +344,6 @@ class TabelDpaController extends Controller
                 foreach ($program['kegiatan'] as &$kegiatan) {
                     foreach ($kegiatan['bulan'] as &$bulanData) {
                         // Accumulate the values for each month
-                        $totalPerencanaanAnggaran += $bulanData['perencanaan_anggaran'];
                         $totalAnggaranDigunakan += $bulanData['anggaran_digunakan'];
                         $totalSisaAnggaran += $bulanData['sisa_anggaran'];
                     }
@@ -406,19 +354,16 @@ class TabelDpaController extends Controller
             foreach ($sekretariat['program'] as &$program) {
                 foreach ($program['kegiatan'] as &$kegiatan) {
                     // Initialize sums for each kegiatan
-                    $sum_perencanaan_anggaran_kegiatan = 0;
                     $sum_anggaran_digunakan_kegiatan = 0;
                     $sum_sisa_anggaran_kegiatan = 0;
 
                     foreach ($kegiatan['bulan'] as &$bulanData) {
                         // Accumulate the values for each kegiatan
-                        $sum_perencanaan_anggaran_kegiatan += $bulanData['perencanaan_anggaran'];
                         $sum_anggaran_digunakan_kegiatan += $bulanData['anggaran_digunakan'];
                         $sum_sisa_anggaran_kegiatan += $bulanData['sisa_anggaran'];
                     }
 
                     // Add the sums to the 'kegiatan' array
-                    $kegiatan['total_perencanaan_anggaran'] = $sum_perencanaan_anggaran_kegiatan;
                     $kegiatan['total_anggaran_digunakan'] = $sum_anggaran_digunakan_kegiatan;
                     $kegiatan['total_sisa_anggaran'] = $sum_sisa_anggaran_kegiatan;
                 }
@@ -435,15 +380,14 @@ class TabelDpaController extends Controller
                 $sum_anggaran_digunakan_program = array_fill(0, count($listBulan), 0);
                 $sum_sisa_anggaran_program = array_fill(0, count($listBulan), 0);
 
-                // Loop through each kegiatan under the program
+                $jumlahAnggaran = 0;
                 foreach ($program['kegiatan'] as &$kegiatan) {
-                    // dd($kegiatan);
+                    $jumlahAnggaran += $kegiatan['jumlah_anggaran'];
                     // Loop through each month data under the kegiatan
                     foreach ($kegiatan['bulan'] as $index => $bulanData) {
                         // Accumulate the values for each month in each program
                         $totalBulan[$index] = [
                             'nama' => $bulanData['nama'],
-                            'perencanaan_anggaran' => ($totalBulan[$index]['perencanaan_anggaran'] ?? 0) + $bulanData['perencanaan_anggaran'],
                             'anggaran_digunakan' => ($totalBulan[$index]['anggaran_digunakan'] ?? 0) + $bulanData['anggaran_digunakan'],
                             'sisa_anggaran' => ($totalBulan[$index]['sisa_anggaran'] ?? 0) + $bulanData['sisa_anggaran']
                         ];
@@ -453,21 +397,18 @@ class TabelDpaController extends Controller
                     }
                 }
 
-                // Add the sums for each program in the 'program' array
-                $perencanaanAnggaran = 0;
                 $anggaranDigunakan = 0;
                 $sisaAnggaran = 0;
-                foreach ($totalBulan as $bulanData) {
-                    $perencanaanAnggaran += $bulanData['perencanaan_anggaran'];
-                    $anggaranDigunakan += $bulanData['anggaran_digunakan'];
-                    $sisaAnggaran += $bulanData['sisa_anggaran'];
-                }
+                // foreach ($totalBulan as $bulanData) {
+                //     $anggaranDigunakan += $bulanData['anggaran_digunakan'];
+                //     $sisaAnggaran += $bulanData['sisa_anggaran'];
+                // }
                 $program['total_bulan'] = [
                     'bulan' => $totalBulan,
-                    'perencanaan_anggaran' => $perencanaanAnggaran,
-                    'anggaran_digunakan' => $anggaranDigunakan,
-                    'sisa_anggaran' => $sisaAnggaran
+                    // 'anggaran_digunakan' => $anggaranDigunakan,
+                    // 'sisa_anggaran' => $sisaAnggaran
                 ];
+                $program['jumlah_anggaran'] = $jumlahAnggaran;
             }
         }
 
@@ -482,39 +423,352 @@ class TabelDpaController extends Controller
 
     public function tabelDpa(Request $request)
     {
-        $role = Auth::user()->role;
-        $tahun = $request->tahun;
-        $SekretariatDaerah = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
-        $daftarSekretariatDaerah = Spd::with('SekretariatDaerah')->where('tahun_id', $tahun)
-            ->where(function ($query) use ($SekretariatDaerah) {
-                if ($SekretariatDaerah != "Semua") {
-                    $query->where('sekretariat_daerah_id', $SekretariatDaerah);
-                }
-            })
-            ->whereHas('SekretariatDaerah', function ($query) {
-                $query->orderBy('nama', 'asc');
-            })->groupBy('sekretariat_daerah_id')->get()->pluck('SekretariatDaerah')->sortBy('nama');
+        $arrayBulan = [
+            'Januari',
+            'Februari',
+            'Maret',
+            'April',
+            'Mei',
+            'Juni',
+            'Juli',
+            'Agustus',
+            'September',
+            'Oktober',
+            'November',
+            'Desember'
+        ];
 
-        return view('dashboard.components.widgets.tabelSpd', compact(['daftarSekretariatDaerah', 'tahun']))->render();
+        $bulanDari = $request->bulan_dari;
+        $bulanSampai = $request->bulan_sampai;
+
+        $bulanDariIndex = array_search($bulanDari, $arrayBulan);
+        $bulanSampaiIndex = array_search($bulanSampai, $arrayBulan);
+
+        $listBulan = array_slice($arrayBulan, $bulanDariIndex, $bulanSampaiIndex - $bulanDariIndex + 1);
+
+        $tahun = $request->tahun;
+        $sekretariatDaerahId = $request->sekretariat_daerah;
+        $jenisSpp = $request->jenis_spp;
+
+        if ($jenisSpp == "SPP-GU") {
+            $array = $this->_tabelDpaSppGu($sekretariatDaerahId, $tahun, $bulanDari, $bulanSampai, $listBulan);
+            return view('dashboard.components.widgets.tabelSpdDebug', compact(['array']))->render();
+        } else {
+            $array = $this->_tabelDpaSppLs($sekretariatDaerahId, $tahun, $bulanDari, $bulanSampai, $listBulan);
+            return view('dashboard.components.widgets.tabelSpdSppLsDebug', compact(['array']))->render();
+        }
+    }
+
+    private function _tabelDpaSppGu($sekretariatDaerahId, $tahun, $bulanDari, $bulanSampai, $listBulan)
+    {
+
+        $sekretariatDaerahS = SekretariatDaerah::where(function ($query) use ($sekretariatDaerahId) {
+            if (isset($sekretariatDaerahId) && $sekretariatDaerahId != "Semua") {
+                $query->where('id', $sekretariatDaerahId);
+            }
+        })->get();
+
+
+        $array = [];
+
+        if ($tahun && $bulanDari && $bulanSampai) {
+            $array = [
+                'bulan' => $listBulan
+            ];
+            foreach ($sekretariatDaerahS as $sekretariatDaerah) {
+                $programDpa = ProgramDpa::with('kegiatanDpa')->whereHas('kegiatanDpa', function ($query) use ($sekretariatDaerah, $tahun) {
+                    $query->whereHas('spd', function ($query) use ($sekretariatDaerah, $tahun) {
+                        $query->where('sekretariat_daerah_id', $sekretariatDaerah->id);
+                        if ($tahun) {
+                            $query->where('tahun_id', $tahun);
+                        }
+                    });
+                })->withTrashed()->get();
+
+                $programData = [];
+                foreach ($programDpa as $program) {
+                    $kegiatanData = [];
+                    $kegiatanDpa = KegiatanDpa::where('program_dpa_id', $program->id)->whereHas('sppGu', function ($query) use ($sekretariatDaerah, $tahun) {
+                        $query->where('tahun_id', $tahun);
+                        $query->where('sekretariat_daerah_id', $sekretariatDaerah->id);
+                    })->orderBy('no_rek', 'asc')->get();
+
+                    foreach ($kegiatanDpa as $kegiatan) {
+                        $bulanData = [];
+                        foreach ($listBulan as $bulan) {
+                            $sppGu = SppGu::where('kegiatan_dpa_id', $kegiatan->id)->where('bulan', $bulan)->where('tahap', 'Selesai')->where('tahun_id', $tahun)->first();
+
+                            $bulanData[] = [
+                                'nama' => $bulan,
+                                'perencanaan_anggaran' => $sppGu ? $sppGu->perencanaan_anggaran : 0,
+                                'anggaran_digunakan' => $sppGu ? $sppGu->anggaran_digunakan : 0,
+                                'sisa_anggaran' => ($sppGu->perencanaan_anggaran - $sppGu->anggaran_digunakan) ?? 0
+                            ];
+                        }
+
+                        $kegiatanData[] = [
+                            'nama' => $kegiatan->nama,
+                            'no_rek' => $kegiatan->no_rek,
+                            'bulan' => $bulanData,
+                        ];
+                    }
+
+                    $programData[] = [
+                        'nama' => $program->nama,
+                        'no_rek' => $program->no_rek,
+                        'kegiatan' => $kegiatanData,
+                    ];
+                }
+
+                $array['data'][] = [
+                    'sekretariat_daerah' => $sekretariatDaerah->nama,
+                    'program' => $programData,
+                ];
+            }
+
+            $totalPerencanaanAnggaran = 0;
+            $totalAnggaranDigunakan = 0;
+            $totalSisaAnggaran = 0;
+
+            foreach ($array['data'] as &$sekretariat) {
+                foreach ($sekretariat['program'] as &$program) {
+                    foreach ($program['kegiatan'] as &$kegiatan) {
+                        foreach ($kegiatan['bulan'] as &$bulanData) {
+                            $totalPerencanaanAnggaran += $bulanData['perencanaan_anggaran'];
+                            $totalAnggaranDigunakan += $bulanData['anggaran_digunakan'];
+                            $totalSisaAnggaran += $bulanData['sisa_anggaran'];
+                        }
+                    }
+                }
+            }
+            foreach ($array['data'] as &$sekretariat) {
+                foreach ($sekretariat['program'] as &$program) {
+                    foreach ($program['kegiatan'] as &$kegiatan) {
+                        $sum_perencanaan_anggaran_kegiatan = 0;
+                        $sum_anggaran_digunakan_kegiatan = 0;
+                        $sum_sisa_anggaran_kegiatan = 0;
+
+                        foreach ($kegiatan['bulan'] as &$bulanData) {
+                            $sum_perencanaan_anggaran_kegiatan += $bulanData['perencanaan_anggaran'];
+                            $sum_anggaran_digunakan_kegiatan += $bulanData['anggaran_digunakan'];
+                            $sum_sisa_anggaran_kegiatan += $bulanData['sisa_anggaran'];
+                        }
+
+                        $kegiatan['total_perencanaan_anggaran'] = $sum_perencanaan_anggaran_kegiatan;
+                        $kegiatan['total_anggaran_digunakan'] = $sum_anggaran_digunakan_kegiatan;
+                        $kegiatan['total_sisa_anggaran'] = $sum_sisa_anggaran_kegiatan;
+                    }
+                }
+            }
+
+            foreach ($array['data'] as &$sekretariat) {
+                foreach ($sekretariat['program'] as &$program) {
+                    $totalBulan = null;
+                    $sum_perencanaan_anggaran_program = array_fill(0, count($listBulan), 0);
+                    $sum_anggaran_digunakan_program = array_fill(0, count($listBulan), 0);
+                    $sum_sisa_anggaran_program = array_fill(0, count($listBulan), 0);
+
+                    foreach ($program['kegiatan'] as &$kegiatan) {
+                        foreach ($kegiatan['bulan'] as $index => $bulanData) {
+                            $totalBulan[$index] = [
+                                'nama' => $bulanData['nama'],
+                                'perencanaan_anggaran' => ($totalBulan[$index]['perencanaan_anggaran'] ?? 0) + $bulanData['perencanaan_anggaran'],
+                                'anggaran_digunakan' => ($totalBulan[$index]['anggaran_digunakan'] ?? 0) + $bulanData['anggaran_digunakan'],
+                                'sisa_anggaran' => ($totalBulan[$index]['sisa_anggaran'] ?? 0) + $bulanData['sisa_anggaran']
+                            ];
+                        }
+                    }
+
+                    $perencanaanAnggaran = 0;
+                    $anggaranDigunakan = 0;
+                    $sisaAnggaran = 0;
+                    foreach ($totalBulan as $bulanData) {
+                        $perencanaanAnggaran += $bulanData['perencanaan_anggaran'];
+                        $anggaranDigunakan += $bulanData['anggaran_digunakan'];
+                        $sisaAnggaran += $bulanData['sisa_anggaran'];
+                    }
+                    $program['total_bulan'] = [
+                        'bulan' => $totalBulan,
+                        'perencanaan_anggaran' => $perencanaanAnggaran,
+                        'anggaran_digunakan' => $anggaranDigunakan,
+                        'sisa_anggaran' => $sisaAnggaran
+                    ];
+                }
+            }
+        }
+
+        return $array;
+    }
+
+    private function _tabelDpaSppLs($sekretariatDaerahId, $tahun, $bulanDari, $bulanSampai, $listBulan)
+    {
+        $sekretariatDaerahS = SekretariatDaerah::where(function ($query) use ($sekretariatDaerahId) {
+            if ($sekretariatDaerahId != "Semua") {
+                $query->where('id', $sekretariatDaerahId);
+            }
+        })->orderBy('nama', 'asc')->get();
+
+        $array = [];
+
+        if ($tahun && $bulanDari && $bulanSampai) {
+            $array = [
+                'bulan' => $listBulan
+            ];
+            foreach ($sekretariatDaerahS as $sekretariatDaerah) {
+                $programDpa = ProgramDpa::with('kegiatanDpa')->whereHas('kegiatanDpa', function ($query) use ($sekretariatDaerah, $tahun) {
+                    $query->whereHas('spd', function ($query) use ($sekretariatDaerah, $tahun) {
+                        $query->where('sekretariat_daerah_id', $sekretariatDaerah->id);
+                        if ($tahun) {
+                            $query->where('tahun_id', $tahun);
+                        }
+                    });
+                })->withTrashed()->get();
+
+                $programData = [];
+                foreach ($programDpa as $program) {
+                    $kegiatanData = [];
+                    $kegiatanDpa = KegiatanDpa::where('program_dpa_id', $program->id)->whereHas('sppLs', function ($query) use ($sekretariatDaerah, $tahun) {
+                        $query->where('tahun_id', $tahun);
+                        $query->where('sekretariat_daerah_id', $sekretariatDaerah->id);
+                    })->orderBy('no_rek', 'asc')->get();
+
+                    foreach ($kegiatanDpa as $kegiatan) {
+                        $bulanData = [];
+                        $spd = Spd::where('sekretariat_daerah_id', $sekretariatDaerah->id)->where('tahun_id', $tahun)->where('kegiatan_dpa_id', $kegiatan->id)->first();
+                        $sisaAnggaran = $spd->jumlah_anggaran ?? 0;
+                        foreach ($listBulan as $bulan) {
+                            $sppLs = SppLs::where('kegiatan_dpa_id', $kegiatan->id)->where('bulan', $bulan)->whereNotNull('dokumen_spm')
+                                ->whereNotNull('dokumen_arsip_sp2d')->where('tahun_id', $tahun)->first();
+
+                            $sisaAnggaran -= ($sppLs ? $sppLs->anggaran_digunakan : 0);
+
+                            $bulanData[] = [
+                                'nama' => $bulan,
+                                'anggaran_digunakan' => $sppLs ? $sppLs->anggaran_digunakan : 0,
+                                'sisa_anggaran' =>  $sisaAnggaran,
+                            ];
+                        }
+
+                        $kegiatanData[] = [
+                            'nama' => $kegiatan->nama,
+                            'no_rek' => $kegiatan->no_rek,
+                            'jumlah_anggaran' => $spd->jumlah_anggaran,
+                            'bulan' => $bulanData,
+                        ];
+                    }
+
+                    $programData[] = [
+                        'nama' => $program->nama,
+                        'no_rek' => $program->no_rek,
+                        'kegiatan' => $kegiatanData,
+                    ];
+                }
+
+                $array['data'][] = [
+                    'sekretariat_daerah' => $sekretariatDaerah->nama,
+                    'program' => $programData,
+                ];
+            }
+
+            $totalAnggaranDigunakan = 0;
+            $totalSisaAnggaran = 0;
+
+            foreach ($array['data'] as &$sekretariat) {
+                foreach ($sekretariat['program'] as &$program) {
+                    foreach ($program['kegiatan'] as &$kegiatan) {
+                        foreach ($kegiatan['bulan'] as &$bulanData) {
+                            $totalAnggaranDigunakan += $bulanData['anggaran_digunakan'];
+                            $totalSisaAnggaran += $bulanData['sisa_anggaran'];
+                        }
+                    }
+                }
+            }
+            foreach ($array['data'] as &$sekretariat) {
+                foreach ($sekretariat['program'] as &$program) {
+                    foreach ($program['kegiatan'] as &$kegiatan) {
+                        $sum_anggaran_digunakan_kegiatan = 0;
+                        $sum_sisa_anggaran_kegiatan = 0;
+
+                        foreach ($kegiatan['bulan'] as &$bulanData) {
+                            $sum_anggaran_digunakan_kegiatan += $bulanData['anggaran_digunakan'];
+                            $sum_sisa_anggaran_kegiatan += $bulanData['sisa_anggaran'];
+                        }
+
+                        $kegiatan['total_anggaran_digunakan'] = $sum_anggaran_digunakan_kegiatan;
+                        $kegiatan['total_sisa_anggaran'] = $sum_sisa_anggaran_kegiatan;
+                    }
+                }
+            }
+
+            foreach ($array['data'] as &$sekretariat) {
+                foreach ($sekretariat['program'] as &$program) {
+                    $totalBulan = null;
+
+                    $jumlahAnggaran = 0;
+                    foreach ($program['kegiatan'] as &$kegiatan) {
+                        $jumlahAnggaran += $kegiatan['jumlah_anggaran'];
+                        foreach ($kegiatan['bulan'] as $index => $bulanData) {
+                            $totalBulan[$index] = [
+                                'nama' => $bulanData['nama'],
+                                'anggaran_digunakan' => ($totalBulan[$index]['anggaran_digunakan'] ?? 0) + $bulanData['anggaran_digunakan'],
+                                'sisa_anggaran' => ($totalBulan[$index]['sisa_anggaran'] ?? 0) + $bulanData['sisa_anggaran']
+                            ];
+                        }
+                    }
+
+                    $anggaranDigunakan = 0;
+                    $sisaAnggaran = 0;
+
+                    $program['total_bulan'] = [
+                        'bulan' => $totalBulan,
+                    ];
+                    $program['jumlah_anggaran'] = $jumlahAnggaran;
+                }
+            }
+        }
+
+        return $array;
     }
 
     public function exportSpd(Request $request)
     {
+        $arrayBulan = [
+            'Januari',
+            'Februari',
+            'Maret',
+            'April',
+            'Mei',
+            'Juni',
+            'Juli',
+            'Agustus',
+            'September',
+            'Oktober',
+            'November',
+            'Desember'
+        ];
+
+        $bulanDari = $request->bulan_dari;
+        $bulanSampai = $request->bulan_sampai;
+
+        $bulanDariIndex = array_search($bulanDari, $arrayBulan);
+        $bulanSampaiIndex = array_search($bulanSampai, $arrayBulan);
+
+        $listBulan = array_slice($arrayBulan, $bulanDariIndex, $bulanSampaiIndex - $bulanDariIndex + 1);
+
         $tahun = $request->tahun;
-        $SekretariatDaerah = Auth::user()->role != "Bendahara Pengeluaran" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
-        $daftarSekretariatDaerah = Spd::with('SekretariatDaerah')->where('tahun_id', $tahun)
-            ->where(function ($query) use ($SekretariatDaerah) {
-                if ($SekretariatDaerah != "Semua") {
-                    $query->where('sekretariat_daerah_id', $SekretariatDaerah);
-                }
-            })
-            ->whereHas('SekretariatDaerah', function ($query) {
-                $query->orderBy('nama', 'asc');
-            })->groupBy('sekretariat_daerah_id')->get()->pluck('SekretariatDaerah')->sortBy('nama');
+        $sekretariatDaerahId = $request->sekretariat_daerah;
+        $jenisSpp = $request->jenis_spp;
+
+        $array = [];
+        if ($jenisSpp == "SPP-GU") {
+            $array = $this->_tabelDpaSppGu($sekretariatDaerahId, $tahun, $bulanDari, $bulanSampai, $listBulan);
+        } else {
+            $array = $this->_tabelDpaSppLs($sekretariatDaerahId, $tahun, $bulanDari, $bulanSampai, $listBulan);
+        }
 
         $tanggal = Carbon::parse(Carbon::now())->translatedFormat('d F Y');
 
-        return Excel::download(new TabelDpaExport($daftarSekretariatDaerah, $tahun), "Export" . "-" . $tanggal . "-" . rand(1, 9999) . '.xlsx');
+        return Excel::download(new TabelDpaExport($jenisSpp, $array), "Export" . "-" . $tanggal . "-" . rand(1, 9999) . '.xlsx');
 
         // return view('dashboard.components.widgets.tabelSpd', compact(['daftarSekretariatDaerah', 'tahun']))->render();
     }

@@ -858,56 +858,39 @@ class SppLsController extends Controller
             ->orderBy('created_at', 'asc')
             ->where('tahun_id', $tahun)
             ->where('kegiatan_dpa_id', $kegiatan)
-            ->where('status_validasi_akhir', 1);
-
-        $sppGu = SppGu::where('sekretariat_daerah_id', $sekretariatDaerah)
-            ->orderBy('created_at', 'asc')
-            ->where('tahun_id', $tahun)
-            ->where('kegiatan_dpa_id', $kegiatan)
-            ->where('status_validasi_akhir', 1);
+            ->where('status_validasi_akhir', 1)
+            ->whereNotNull('dokumen_spm')
+            ->whereNotNull('dokumen_arsip_sp2d');
 
         if ($bulan == 'Januari') {
             $sppLs = $sppLs->where('bulan', 'Januari');
-            $sppGu = $sppGu->where('bulan', 'Januari');
         } else if ($bulan == 'Februari') {
             $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari']);
-            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari']);
         } else if ($bulan == 'Maret') {
             $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret']);
-            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret']);
         } else if ($bulan == 'April') {
             $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April']);
-            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April']);
         } else if ($bulan == 'Mei') {
             $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei']);
-            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei']);
         } else if ($bulan == 'Juni') {
             $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni']);
-            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni']);
         } else if ($bulan == 'Juli') {
             $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli']);
-            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli']);
         } else if ($bulan == 'Agustus') {
             $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus']);
-            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus']);
         } else if ($bulan == 'September') {
             $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September']);
-            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September']);
         } else if ($bulan == 'Oktober') {
             $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober']);
-            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober']);
         } else if ($bulan == 'November') {
             $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November']);
-            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November']);
         } else if ($bulan == 'Desember') {
             $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']);
-            $sppGu = $sppGu->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']);
         }
 
         $sppLs = $sppLs->sum('anggaran_digunakan');
-        $sppGu = $sppGu->sum('anggaran_digunakan');
 
-        $totalSpp = ($sppLs + $sppGu);
+        $totalSpp = ($sppLs);
         $jumlahAnggaran = (($spd->jumlah_anggaran ?? 0) - $totalSpp);
 
         return $jumlahAnggaran;

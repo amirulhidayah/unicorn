@@ -24,6 +24,10 @@ class KegiatanDpa extends Model
     {
         return $this->hasMany(SppGu::class, 'kegiatan_dpa_id');
     }
+    public function sppLs()
+    {
+        return $this->hasMany(SppLs::class, 'kegiatan_dpa_id');
+    }
 
     public function programDpa()
     {

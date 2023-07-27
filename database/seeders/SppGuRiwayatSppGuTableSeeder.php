@@ -27,16 +27,11 @@ class SppGuRiwayatSppGuTableSeeder extends Seeder
             'Desember'
         ];
 
-        $first = 'Januari';
-        $last = 'Agustus';
-
         $tahun = '8fef08db-e1bf-4a1f-8bd2-9809d5e60426';
 
         $daftarSekretariatDaerah = SekretariatDaerah::orderBy('nama', 'asc')->get();
 
         foreach ($daftarSekretariatDaerah as $sekretariatDaerah) {
-            // $kegiatanDpa = KegiatanDpa::where('program_dpa_id', 'd48f919a-e846-4793-8c05-e26eca813cd9')->get();
-
             $kegiatanDpa = KegiatanDpa::whereHas('spd', function ($query) use ($sekretariatDaerah, $tahun) {
                 $query->where('tahun_id', $tahun);
                 $query->where('sekretariat_daerah_id', $sekretariatDaerah->id);

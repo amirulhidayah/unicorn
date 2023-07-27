@@ -64,30 +64,48 @@
                                 ])
                                 @endcomponent
                             @endif
+
+                            <button class="btn btn-primary" id="btn-export"> <i class="fas fa-file-export"></i> Export
+                                DPA</button>
                         </div>
                     </div>
                 </div>
                 <div class="card-body">
-                    <form action="{{ url('/tabel-dpa/export') }}" method="POST" enctype="multipart/form-data">
+                    <form id="form-export" action="{{ url('/tabel-dpa/export') }}" method="POST"
+                        enctype="multipart/form-data">
                         <div class="row align-items-end mb-4">
                             @csrf
+                            <div class="col-md-12 col-sm-12">
+                                @component('dashboard.components.formElements.select', [
+                                    'label' => 'Jenis SPP',
+                                    'id' => 'jenis_spp_filter',
+                                    'name' => 'jenis_spp',
+                                    'class' => 'select2 filter',
+                                    'wajib' => '<sup class="text-danger">*</sup>',
+                                ])
+                                    @slot('options')
+                                        <option value="SPP-GU">SPP-GU</option>
+                                        <option value="SPP-LS">SPP-LS</option>
+                                    @endslot
+                                @endcomponent
+                            </div>
                             @if (
                                 !in_array(Auth::user()->role, [
                                     'Bendahara Pengeluaran',
                                     'Bendahara Pengeluaran Pembantu',
                                     'Bendahara Pengeluaran Pembantu Belanja Hibah',
                                 ]))
-                                <div class="col">
+                                <div class="col-md-6 col-sm-12">
                                     @component('dashboard.components.formElements.select', [
                                         'label' => 'Sekretariat Daerah',
                                         'id' => 'sekretariat_daerah',
-                                        'class' => 'select2',
+                                        'class' => 'select2 filter',
                                         'name' => 'sekretariat_daerah',
                                         'wajib' => '<sup class="text-danger">*</sup>',
                                     ])
                                         @slot('options')
                                             <option value="Semua">Semua</option>
-                                            @foreach ($SekretariatDaerah as $item)
+                                            @foreach ($sekretariatDaerah as $item)
                                                 <option value="{{ $item->id }}">{{ $item->nama }}</option>
                                             @endforeach
                                         @endslot
@@ -95,12 +113,12 @@
                                 </div>
                             @endif
 
-                            <div class="col">
+                            <div class="col-md-6 col-sm-12">
                                 @component('dashboard.components.formElements.select', [
                                     'label' => 'Tahun',
                                     'id' => 'tahun_filter',
                                     'name' => 'tahun',
-                                    'class' => 'select2',
+                                    'class' => 'select2 filter',
                                     'wajib' => '<sup class="text-danger">*</sup>',
                                 ])
                                     @slot('options')
@@ -110,11 +128,34 @@
                                     @endslot
                                 @endcomponent
                             </div>
-                            <div class="col-2">
-                                @component('dashboard.components.buttons.submit', [
-                                    'label' => 'Export',
-                                    'class' => 'col-12',
+                            <div class="col-md-6 col-sm-12">
+                                @component('dashboard.components.formElements.select', [
+                                    'label' => 'Bulan Dari',
+                                    'id' => 'bulan_dari_filter',
+                                    'name' => 'bulan_dari',
+                                    'class' => 'select2 filter',
+                                    'wajib' => '<sup class="text-danger">*</sup>',
                                 ])
+                                    @slot('options')
+                                        @foreach ($daftarBulan as $item)
+                                            <option value="{{ $item }}">{{ $item }}</option>
+                                        @endforeach
+                                    @endslot
+                                @endcomponent
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                @component('dashboard.components.formElements.select', [
+                                    'label' => 'Bulan Sampai',
+                                    'id' => 'bulan_sampai_filter',
+                                    'name' => 'bulan_sampai',
+                                    'class' => 'select2 filter',
+                                    'wajib' => '<sup class="text-danger">*</sup>',
+                                ])
+                                    @slot('options')
+                                        @foreach ($daftarBulan as $item)
+                                            <option value="{{ $item }}">{{ $item }}</option>
+                                        @endforeach
+                                    @endslot
                                 @endcomponent
                             </div>
                         </div>
@@ -231,7 +272,7 @@
                                     'wajib' => '<sup class="text-danger">*</sup>',
                                 ])
                                     @slot('options')
-                                        @foreach ($SekretariatDaerah as $item)
+                                        @foreach ($sekretariatDaerah as $item)
                                             <option value="{{ $item->id }}">{{ $item->nama }}
                                             </option>
                                         @endforeach
@@ -305,7 +346,9 @@
             $('#modal-tambah-title').html('Tambah Dokumen Pelaksana Anggaran');
         })
 
-
+        $('#btn-export').click(function() {
+            $('#form-export').submit();
+        })
 
         $('#btn-import').click(function() {
             $('#modal-import').modal('show');
@@ -464,23 +507,25 @@
             tabelSpd();
         })
 
-        $('#sekretariat_daerah').on('change', function() {
-            tabelSpd();
-        })
-
-        $('#tahun_filter').on('change', function() {
+        $('.filter').change(function() {
             tabelSpd();
         })
 
         function tabelSpd() {
             var tahun = $('#tahun_filter').val();
-            var SekretariatDaerah = $('#sekretariat_daerah').val();
+            var sekretariatDaerah = $('#sekretariat_daerah').val();
+            var bulanDari = $('#bulan_dari_filter').val();
+            var bulanSampai = $('#bulan_sampai_filter').val();
+            var jenisSpp = $('#jenis_spp_filter').val();
             $.ajax({
                 url: "{{ url('tabel-dpa/tabel-dpa') }}",
                 type: 'POST',
                 data: {
                     'tahun': tahun,
-                    'sekretariat_daerah': SekretariatDaerah,
+                    'sekretariat_daerah': sekretariatDaerah,
+                    'bulan_dari': bulanDari,
+                    'bulan_sampai': bulanSampai,
+                    'jenis_spp': jenisSpp
                 },
                 success: function(response) {
                     $('#tabel-spd').html(response);

@@ -430,7 +430,7 @@
             $('#kegiatan').html('').attr('disabled', true);
             getDataStatistik();
             $.ajax({
-                url: "{{ url('list/program') }}",
+                url: "{{ url('list/program-dpa') }}",
                 type: "POST",
                 data: {
                     '_token': '{{ csrf_token() }}',
@@ -459,7 +459,7 @@
             var SekretariatDaerah = $('#sekretariat_daerah').val();
             getDataStatistik();
             $.ajax({
-                url: "{{ url('list/kegiatan') }}",
+                url: "{{ url('list/kegiatan-dpa') }}",
                 type: "POST",
                 data: {
                     '_token': '{{ csrf_token() }}',

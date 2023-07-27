@@ -4,7 +4,7 @@ namespace App\Http\Controllers\dashboard\dpa;
 
 use App\Http\Controllers\Controller;
 use App\Models\SekretariatDaerah;
-use App\Models\Kegiatan;
+use App\Models\KegiatanDpa;
 use App\Models\Spd;
 use App\Models\SppGu;
 use App\Models\SppLs;
@@ -28,7 +28,7 @@ class StatistikDpaController extends Controller
         $kegiatan_dpa_id = $request->kegiatan_dpa_id;
         $sekretariat_daerah_id = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->sekretariat_daerah_id : Auth::user()->profil->sekretariat_daerah_id;
 
-        $kegiatan = Kegiatan::where('id', $kegiatan_dpa_id)->first();
+        $kegiatan = KegiatanDpa::where('id', $kegiatan_dpa_id)->first();
 
         $judul = $kegiatan ? $kegiatan->nama : 'Kegiatan Belum Dipilih';
 
@@ -68,14 +68,14 @@ class StatistikDpaController extends Controller
             ->where('bulan', $bulan)
             ->sum('anggaran_digunakan');
 
-        $sppGu = SppGu::where('sekretariat_daerah_id', $sekretariat_daerah_id)
-            ->orderBy('created_at', 'asc')
-            ->where('tahun_id', $tahun_id)
-            ->where('kegiatan_dpa_id', $kegiatan_dpa_id)
-            ->where('status_validasi_akhir', 1)
-            ->where('bulan', $bulan)
-            ->sum('anggaran_digunakan');
+        // $sppGu = SppGu::where('sekretariat_daerah_id', $sekretariat_daerah_id)
+        //     ->orderBy('created_at', 'asc')
+        //     ->where('tahun_id', $tahun_id)
+        //     ->where('kegiatan_dpa_id', $kegiatan_dpa_id)
+        //     ->where('status_validasi_akhir', 1)
+        //     ->where('bulan', $bulan)
+        //     ->sum('anggaran_digunakan');
 
-        return ($sppLs + $sppGu);
+        return ($sppLs);
     }
 }
