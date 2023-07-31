@@ -27,6 +27,7 @@ use App\Http\Controllers\FileController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ListController;
 use App\Http\Controllers\ProfilController;
+use App\Http\Controllers\ScanqrcodeController;
 use App\Http\Controllers\UnduhController;
 use App\Models\DaftarDokumenSppUp;
 use Illuminate\Support\Facades\Route;
@@ -50,6 +51,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('spp-tu/cek-sp2d', [SppTuController::class, 'cekSp2d']);
     Route::get('spp-ls/cek-sp2d', [SppLsController::class, 'cekSp2d']);
     Route::get('spp-gu/cek-sp2d', [SppGuController::class, 'cekSp2d']);
+    Route::get('spp-gu/qrcode-spj/{sppGu}', [SppGuController::class, 'qrcodeSpj']);
 
     Route::group(['middleware' => ['role:Admin']], function () {
         Route::resource('/master-data/sekretariat-daerah', SekretariatDaerahController::class);
@@ -233,6 +235,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::put('/profil/{user}', [ProfilController::class, 'update']);
 
     Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/scan-qrcode', [ScanqrcodeController::class, 'index']);
+    Route::post('/scan-qrcode', [ScanqrcodeController::class, 'getData']);
 
     // Route::get('/dokumen_spp_gu/{dokumen}', [FileController::class, 'dokumenSppGu']);
 

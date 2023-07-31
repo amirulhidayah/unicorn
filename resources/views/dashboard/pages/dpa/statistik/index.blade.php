@@ -48,13 +48,28 @@
                     <div class="card-head-row">
                         <div class="card-title">Statistik Dokumen Pelaksana Anggaran</div>
                         <div class="card-tools">
-
+                            <button class="btn btn-primary" id="downloadPdf"> <i class="fas fa-download"></i>
+                                Export</button>
                         </div>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="row mb-4">
                         @csrf
+                        <div class="col-md-12 col-sm-12">
+                            @component('dashboard.components.formElements.select', [
+                                'label' => 'Jenis SPP',
+                                'id' => 'jenis_spp_filter',
+                                'name' => 'jenis_spp',
+                                'class' => 'select2 filter',
+                                'wajib' => '<sup class="text-danger">*</sup>',
+                            ])
+                                @slot('options')
+                                    <option value="SPP-GU">SPP-GU</option>
+                                    <option value="SPP-LS">SPP-LS</option>
+                                @endslot
+                            @endcomponent
+                        </div>
                         @if (
                             !in_array(Auth::user()->role, [
                                 'Bendahara Pengeluaran',
@@ -66,7 +81,7 @@
                                     'label' => 'Sekretariat Daerah',
                                     'id' => 'sekretariat_daerah',
                                     'name' => 'sekretariat_daerah',
-                                    'class' => 'select2',
+                                    'class' => 'select2 filter',
                                     'wajib' => '<sup class="text-danger">*</sup>',
                                 ])
                                     @slot('options')
@@ -83,7 +98,7 @@
                                 'label' => 'Tahun',
                                 'id' => 'tahun',
                                 'name' => 'tahun',
-                                'class' => 'select2',
+                                'class' => 'select2 filter',
                                 'wajib' => '<sup class="text-danger">*</sup>',
                             ])
                                 @slot('options')
@@ -98,7 +113,7 @@
                                 'label' => 'Program',
                                 'id' => 'program',
                                 'name' => 'program',
-                                'class' => 'select2',
+                                'class' => 'select2 filter',
                                 'attribute' => 'disabled',
                                 'wajib' => '<sup class="text-danger">*</sup>',
                             ])
@@ -110,18 +125,55 @@
                                 'label' => 'Kegiatan',
                                 'id' => 'kegiatan',
                                 'name' => 'kegiatan',
-                                'class' => 'select2',
+                                'class' => 'select2 filter',
                                 'attribute' => 'disabled',
                                 'wajib' => '<sup class="text-danger">*</sup>',
                             ])
                             @endcomponent
                         </div>
-                        <div class="col-6">
+                        <div class="col-md-6 col-sm-12">
+                            @component('dashboard.components.formElements.select', [
+                                'label' => 'Bulan Dari',
+                                'id' => 'bulan_dari_filter',
+                                'name' => 'bulan_dari',
+                                'class' => 'select2 filter',
+                                'wajib' => '<sup class="text-danger">*</sup>',
+                            ])
+                                @slot('options')
+                                    @foreach ($daftarBulan as $item)
+                                        <option value="{{ $item }}">{{ $item }}</option>
+                                    @endforeach
+                                @endslot
+                            @endcomponent
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            @component('dashboard.components.formElements.select', [
+                                'label' => 'Bulan Sampai',
+                                'id' => 'bulan_sampai_filter',
+                                'name' => 'bulan_sampai',
+                                'class' => 'select2 filter',
+                                'wajib' => '<sup class="text-danger">*</sup>',
+                            ])
+                                @slot('options')
+                                    @foreach ($daftarBulan as $item)
+                                        <option value="{{ $item }}">{{ $item }}</option>
+                                    @endforeach
+                                @endslot
+                            @endcomponent
+                        </div>
+                        <div
+                            class="{{ in_array(Auth::user()->role, [
+                                'Bendahara Pengeluaran',
+                                'Bendahara Pengeluaran Pembantu',
+                                'Bendahara Pengeluaran Pembantu Belanja Hibah',
+                            ])
+                                ? 'col-6'
+                                : 'col-12' }}">
                             @component('dashboard.components.formElements.select', [
                                 'label' => 'Model Statistik',
                                 'id' => 'model',
                                 'name' => 'model',
-                                'class' => 'select2',
+                                'class' => 'select2 filter',
                                 'wajib' => '<sup class="text-danger">*</sup>',
                             ])
                                 @slot('options')
@@ -132,9 +184,41 @@
                             @endcomponent
                         </div>
                     </div>
-                    <canvas id="statistik" height="50px" width="100px">
+                    <div id="canvas-statistik">
+                        @component('dashboard.components.widgets.info', [
+                            'judul' => 'Jenis SPP',
+                            'isi' => '-',
+                            'id' => 'info-jenis-spp',
+                        ])
+                        @endcomponent
+                        @component('dashboard.components.widgets.info', [
+                            'judul' => 'Sekretariat Daerah',
+                            'isi' => '-',
+                            'id' => 'info-sekretariat-daerah',
+                        ])
+                        @endcomponent
+                        @component('dashboard.components.widgets.info', [
+                            'judul' => 'Tahun',
+                            'isi' => '-',
+                            'id' => 'info-tahun',
+                        ])
+                        @endcomponent
+                        @component('dashboard.components.widgets.info', [
+                            'judul' => 'Program',
+                            'isi' => '-',
+                            'id' => 'info-program',
+                        ])
+                        @endcomponent
+                        @component('dashboard.components.widgets.info', [
+                            'judul' => 'Kegiatan',
+                            'isi' => '-',
+                            'id' => 'info-kegiatan',
+                        ])
+                        @endcomponent
+                        <canvas id="statistik" height="50px" width="100%">
 
-                    </canvas>
+                        </canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -146,6 +230,9 @@
         integrity="sha512-sW/w8s4RWTdFFSduOTGtk4isV1+190E/GghVffMA9XczdJ2MDzSzLEubKAs5h0wzgSJOQTRYyaz73L3d6RtJSg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2  "></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.debug.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+
 
     <script>
         var role = "{{ Auth::user()->role }}";
@@ -381,34 +468,83 @@
             var tahun = $('#tahun').val();
             var SekretariatDaerah = roleAdmin.includes(role) ? $('#sekretariat_daerah').val() :
                 "{{ Auth::user()->profil->sekretariat_daerah_id }}";
+            var program = $('#program').val();
             var kegiatan = $('#kegiatan').val();
             var model = $('#model').val();
+            var bulanDari = $('#bulan_dari_filter').val();
+            var bulanSampai = $('#bulan_sampai_filter').val();
+            var jenisSpp = $('#jenis_spp_filter').val();
+
+            if (jenisSpp) {
+                $('#info-jenis-spp').html($('#jenis_spp_filter').find(":selected").text());
+            } else {
+                $('#info-jenis-spp').html('-');
+            }
+
+            if (SekretariatDaerah) {
+                $('#info-sekretariat-daerah').html($('#sekretariat_daerah').find(":selected").text());
+            } else {
+                $('#info-sekretariat-daerah').html('-');
+            }
+
+            if (tahun) {
+                $('#info-tahun').html($('#tahun').find(":selected").text());
+            } else {
+                $('#info-tahun').html('-');
+            }
+
+            if (program) {
+                $('#info-program').html($('#program').find(":selected").text());
+            } else {
+                $('#info-program').html('-');
+            }
+
+            if (kegiatan) {
+                $('#info-kegiatan').html($('#kegiatan').find(":selected").text());
+            } else {
+                $('#info-kegiatan').html('-');
+            }
 
             resetChart();
 
-            if ((tahun != '') && (SekretariatDaerah != '') && (kegiatan != '') && (model != '')) {
-                $.ajax({
-                    url: "{{ url('statistik-dpa/get-data-statistik') }}",
-                    type: "POST",
-                    data: {
-                        '_token': '{{ csrf_token() }}',
-                        tahun_id: tahun,
-                        sekretariat_daerah_id: SekretariatDaerah,
-                        kegiatan_dpa_id: kegiatan
-                    },
-                    success: function(response) {
-                        if (model == "Bar Chart") {
-                            setConfigStatistikBar(response.bulan, response.data, response.judul, response
-                                .jumlah_anggaran);
-                        } else if (model == "Line Chart") {
-                            setConfigStatistikLine(response.bulan, response.data, response.judul, response
-                                .jumlah_anggaran);
-                        } else {
-                            setConfigStatistikPie(response.bulan, response.data, response.judul, response
-                                .jumlah_anggaran);
+            var daftarBulan = @json($daftarBulan);
+            var monthToNumber = function(monthName) {
+                return daftarBulan.indexOf(monthName) + 1;
+            };
+
+            var bulanDariNumber = monthToNumber(bulanDari);
+            var bulanSampaiNumber = monthToNumber(bulanSampai);
+
+            if ((tahun != '') && (SekretariatDaerah != '') && (kegiatan != '') && (model != '') && (program != '') && (
+                    bulanDari != '') && (bulanSampai != '') && (jenisSpp != '')) {
+                if (bulanDariNumber <= bulanSampaiNumber) {
+                    $.ajax({
+                        url: "{{ url('statistik-dpa/get-data-statistik') }}",
+                        type: "POST",
+                        data: {
+                            '_token': '{{ csrf_token() }}',
+                            tahun_id: tahun,
+                            sekretariat_daerah_id: SekretariatDaerah,
+                            kegiatan_dpa_id: kegiatan,
+                            bulan_dari: bulanDari,
+                            bulan_sampai: bulanSampai,
+                            jenis_spp: jenisSpp
+                        },
+                        success: function(response) {
+                            if (model == "Bar Chart") {
+                                setConfigStatistikBar(response.bulan, response.data, response.judul, response
+                                    .jumlah_anggaran);
+                            } else if (model == "Line Chart") {
+                                setConfigStatistikLine(response.bulan, response.data, response.judul, response
+                                    .jumlah_anggaran);
+                            } else {
+                                setConfigStatistikPie(response.bulan, response.data, response.judul, response
+                                    .jumlah_anggaran);
+                            }
                         }
-                    }
-                })
+                    })
+                }
+
             };
         }
 
@@ -483,17 +619,54 @@
             })
         })
 
-        $("#kegiatan").on('change', function() {
+        $(".filter").on('change', function() {
             getDataStatistik();
         })
 
-        $('#sekretariat_daerah').on('change', function() {
-            getDataStatistik();
-        })
+        $("#downloadPdf").click(function() {
+            var tahun = $('#tahun').val();
+            var SekretariatDaerah = roleAdmin.includes(role) ? $('#sekretariat_daerah').val() :
+                "{{ Auth::user()->profil->sekretariat_daerah_id }}";
+            var program = $('#program').val();
+            var kegiatan = $('#kegiatan').val();
+            var model = $('#model').val();
+            var bulanDari = $('#bulan_dari_filter').val();
+            var bulanSampai = $('#bulan_sampai_filter').val();
+            var jenisSpp = $('#jenis_spp_filter').val();
 
-        $('#model').on('change', function() {
-            getDataStatistik();
-        })
+            var daftarBulan = @json($daftarBulan);
+            var monthToNumber = function(monthName) {
+                return daftarBulan.indexOf(monthName) + 1;
+            };
+
+            var bulanDariNumber = monthToNumber(bulanDari);
+            var bulanSampaiNumber = monthToNumber(bulanSampai);
+
+            if ((tahun != '') && (SekretariatDaerah != '') && (kegiatan != '') && (model != '') && (program !=
+                    '') && (
+                    bulanDari != '') && (bulanSampai != '') && (jenisSpp != '')) {
+                if (bulanDariNumber <= bulanSampaiNumber) {
+                    html2canvas(document.querySelector("#canvas-statistik")).then(canvas => {
+                        var dataURL = canvas.toDataURL();
+                        var width = canvas.width;
+                        var printWindow = window.open("");
+                        $(printWindow.document.body)
+                            .html("<img id='Image' src=" + dataURL + " style='" + width + "'></img>")
+                            .ready(function() {
+                                printWindow.focus();
+                                printWindow.print();
+                            });
+                    });
+
+                    return;
+                }
+            }
+            swal("Periksa Kembali Data", "Pastikan anda memilih seluruh filter", {
+                icon: "error",
+                buttons: false,
+                timer: 3000,
+            });
+        });
     </script>
 
     <script>

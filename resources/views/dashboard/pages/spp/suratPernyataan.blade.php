@@ -81,7 +81,7 @@
                 <p>PPK Sekretariat Daerah
                 </p>
                 <p>Provinsi Sulawesi Tengah,</p>
-                <img src="{{ Storage::url('tanda_tangan/' . $ppk->profil->tanda_tangan) }}" alt=""
+                <img src="{{ storage_path('app/public/tanda_tangan/' . $ppk->profil->tanda_tangan) }}" alt=""
                     class="tanda-tangan">
                 <p class="fw-bold text-underline">{{ $ppk->profil->nama }}</p>
                 <p class="fw-bold">NIP. {{ $ppk->profil->nip }}</p>

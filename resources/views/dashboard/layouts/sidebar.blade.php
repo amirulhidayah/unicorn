@@ -9,6 +9,12 @@
                         <p>Dashboard</p>
                     </a>
                 </li>
+                <li class="nav-item" id="scan-qrcode">
+                    <a href="{{ url('/scan-qrcode') }}">
+                        <i class="fas fa-qrcode"></i>
+                        <p>Scan QrCode</p>
+                    </a>
+                </li>
                 <li class="nav-section">
                     <span class="sidebar-mini-icon">
                         <i class="fa fa-ellipsis-h"></i>

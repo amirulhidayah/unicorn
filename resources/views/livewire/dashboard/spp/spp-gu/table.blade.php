@@ -425,6 +425,10 @@
                                 $actionBtn .= '<a href="' . url('spp-gu/create/' . $data->id) . '" class="btn btn-primary btn-sm mr-1" value="' . $data->id . '" > <i class="fas fa-plus-circle"></i> Upload Tahap SPP</a>';
                             }
 
+                            if ($data->tahap != 'SPJ') {
+                                $actionBtn .= '<a href="' . url('spp-gu/qrcode-spj/' . $data->id) . '" class="btn btn-primary btn-sm my-1 mr-1"> <i class="fas fa-qrcode"></i> QRCode SPJ</a>';
+                            }
+
                             if (($data->sekretariat_daerah_id == Auth::user()->profil->sekretariat_daerah_id && in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) || Auth::user()->role == 'Admin') {
                                 if ($data->status_validasi_asn != 0 && $data->status_validasi_ppk != 0 && ($data->status_validasi_asn == 2 || $data->status_validasi_ppk == 2)) {
                                     $actionBtn .= '<div class="d-flex justify-content-center mb-1"><a href="' . url('/surat-penolakan/spp-gu/' . $data->id . '/' . $data->tahap_riwayat) . '" class="btn btn-primary btn-sm my-1 mr-1"><i class="fas fa-envelope"></i> Surat Pengembalian</a>';

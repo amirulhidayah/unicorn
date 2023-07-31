@@ -119,7 +119,7 @@
             <td width="50%" style="text-align: center">
                 <p>&nbsp;</p>
                 <p>PPK Biro</p>
-                <img src="{{ Storage::url('tanda_tangan/' . $ppk->profil->tanda_tangan) }}" alt=""
+                <img src="{{ storage_path('app/public/tanda_tangan/' . $ppk->profil->tanda_tangan) }}" alt=""
                     class="tanda-tangan">
                 <p class="nama-ttd"><u>{{ $ppk->profil->nama }}</u></p>
                 <p class="nip-ttd">NIP. {{ $ppk->profil->nip }}</p>
@@ -127,7 +127,7 @@
             <td width="50%" style="text-align: center">
                 <p>Palu, {{ $hariIni }}</p>
                 <p>Kuasa Pengguna Anggaran</p>
-                <img src="{{ Storage::url('tanda_tangan/' . $kuasaPenggunaAnggaran->profil->tanda_tangan) }}"
+                <img src="{{ storage_path('app/public/tanda_tangan/' . $kuasaPenggunaAnggaran->profil->tanda_tangan) }}"
                     alt="" class="tanda-tangan">
                 <p class="nama-ttd"><u>{{ $kuasaPenggunaAnggaran->profil->nama }}</u></p>
                 <p class="nip-ttd">NIP. {{ $kuasaPenggunaAnggaran->profil->nip }}</p>

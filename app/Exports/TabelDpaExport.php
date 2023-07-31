@@ -28,9 +28,9 @@ class TabelDpaExport implements FromView, ShouldAutoSize, WithStyles
         $array = $this->array;
         $export = true;
         if ($this->jenisSpp == "SPP-GU") {
-            return view('dashboard.components.widgets.tabelSpdDebug', compact(['array', 'export']));
+            return view('dashboard.components.widgets.tabelSpdSppGu', compact(['array', 'export']));
         } else {
-            return view('dashboard.components.widgets.tabelSpdSppLsDebug', compact(['array', 'export']));
+            return view('dashboard.components.widgets.tabelSpdSppLs', compact(['array', 'export']));
         }
     }
 

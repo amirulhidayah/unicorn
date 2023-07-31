@@ -55,6 +55,8 @@
                                     'label' => 'Import DPA',
                                 ])
                                 @endcomponent
+                                <button class="btn btn-primary" id="btn-export"> <i class="fas fa-file-export"></i> Export
+                                    DPA</button>
 
                                 @component('dashboard.components.buttons.add', [
                                     'id' => 'btn-tambah',
@@ -64,13 +66,15 @@
                                 ])
                                 @endcomponent
                             @endif
-
-                            <button class="btn btn-primary" id="btn-export"> <i class="fas fa-file-export"></i> Export
-                                DPA</button>
                         </div>
                     </div>
                 </div>
                 <div class="card-body">
+                    @if (count($errors) > 0)
+                        <div class="alert alert-danger" role="alert">
+                            Pastikan anda memilih seluruh filter
+                        </div>
+                    @endif
                     <form id="form-export" action="{{ url('/tabel-dpa/export') }}" method="POST"
                         enctype="multipart/form-data">
                         <div class="row align-items-end mb-4">
@@ -79,7 +83,7 @@
                                 @component('dashboard.components.formElements.select', [
                                     'label' => 'Jenis SPP',
                                     'id' => 'jenis_spp_filter',
-                                    'name' => 'jenis_spp',
+                                    'name' => 'jenis_spp_filter',
                                     'class' => 'select2 filter',
                                     'wajib' => '<sup class="text-danger">*</sup>',
                                 ])
@@ -113,11 +117,18 @@
                                 </div>
                             @endif
 
-                            <div class="col-md-6 col-sm-12">
+                            <div
+                                class="{{ in_array(Auth::user()->role, [
+                                    'Bendahara Pengeluaran',
+                                    'Bendahara Pengeluaran Pembantu',
+                                    'Bendahara Pengeluaran Pembantu Belanja Hibah',
+                                ])
+                                    ? 'col-12'
+                                    : 'col-6' }}">
                                 @component('dashboard.components.formElements.select', [
                                     'label' => 'Tahun',
                                     'id' => 'tahun_filter',
-                                    'name' => 'tahun',
+                                    'name' => 'tahun_filter',
                                     'class' => 'select2 filter',
                                     'wajib' => '<sup class="text-danger">*</sup>',
                                 ])
@@ -132,7 +143,7 @@
                                 @component('dashboard.components.formElements.select', [
                                     'label' => 'Bulan Dari',
                                     'id' => 'bulan_dari_filter',
-                                    'name' => 'bulan_dari',
+                                    'name' => 'bulan_dari_filter',
                                     'class' => 'select2 filter',
                                     'wajib' => '<sup class="text-danger">*</sup>',
                                 ])
@@ -147,7 +158,7 @@
                                 @component('dashboard.components.formElements.select', [
                                     'label' => 'Bulan Sampai',
                                     'id' => 'bulan_sampai_filter',
-                                    'name' => 'bulan_sampai',
+                                    'name' => 'bulan_sampai_filter',
                                     'class' => 'select2 filter',
                                     'wajib' => '<sup class="text-danger">*</sup>',
                                 ])
@@ -331,6 +342,10 @@
 @push('script')
     <script>
         var tipe = '';
+        var role = "{{ Auth::user()->role }}";
+        var roleAdmin = ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'];
+        var kegiatanEdit = null;
+        var programEdit = null;
 
         function resetFormTambah() {
             $('#form-tambah').trigger("reset");
@@ -340,14 +355,42 @@
         $('#btn-tambah').click(function() {
             aksiTambah = 'tambah';
             tipe = 'tambah';
-            idKegiatan = '';
+            kegiatanEdit = null;
+            programEdit = null;
             resetFormTambah();
             $('#modal-tambah').modal('show');
             $('#modal-tambah-title').html('Tambah Dokumen Pelaksana Anggaran');
         })
 
         $('#btn-export').click(function() {
-            $('#form-export').submit();
+            var tahun = $('#tahun_filter').val();
+            var sekretariatDaerah = roleAdmin.includes(role) ? $('#sekretariat_daerah').val() :
+                "{{ Auth::user()->profil->sekretariat_daerah_id }}";
+            var bulanDari = $('#bulan_dari_filter').val();
+            var bulanSampai = $('#bulan_sampai_filter').val();
+            var jenisSpp = $('#jenis_spp_filter').val();
+
+            var daftarBulan = @json($daftarBulan);
+            var monthToNumber = function(monthName) {
+                return daftarBulan.indexOf(monthName) + 1;
+            };
+
+            var bulanDariNumber = monthToNumber(bulanDari);
+            var bulanSampaiNumber = monthToNumber(bulanSampai);
+
+            if ((tahun != '') && (sekretariatDaerah != '') && (
+                    bulanDari != '') && (bulanSampai != '') && (jenisSpp != '')) {
+                if (bulanDariNumber <= bulanSampaiNumber) {
+                    $('#form-export').submit();
+                    return
+                }
+            }
+
+            swal("Periksa Kembali Data", "Pastikan anda memilih seluruh filter", {
+                icon: "error",
+                buttons: false,
+                timer: 3000,
+            });
         })
 
         $('#btn-import').click(function() {
@@ -529,6 +572,9 @@
                 },
                 success: function(response) {
                     $('#tabel-spd').html(response);
+                },
+                error: function(response) {
+                    $('#tabel-spd').html('');
                 }
             })
         }
@@ -577,6 +623,13 @@
                                     timer: 1000,
                                 });
                             }
+                        },
+                        error: function(response) {
+                            swal("Gagal", "Data Gagal Dihapus", {
+                                icon: "error",
+                                buttons: false,
+                                timer: 1000,
+                            });
                         }
                     })
                 }
@@ -594,9 +647,8 @@
                 type: "POST",
                 data: {
                     '_token': '{{ csrf_token() }}',
-                    tipe: tipe,
                     program: program,
-                    id: idKegiatan,
+                    id: kegiatanEdit,
                 },
                 success: function(response) {
                     $('#kegiatan').removeAttr('disabled');
@@ -607,6 +659,9 @@
                             $('#kegiatan').append('<option value="' + value.id + '">' + value
                                 .nama + " (" + value.no_rek + ")" + '</option>');
                         })
+                        if (kegiatanEdit) {
+                            $('#kegiatan').val(kegiatanEdit).trigger('change');
+                        }
                     } else {
                         $('#kegiatan').html('');
                     }
@@ -626,34 +681,31 @@
                 },
                 success: function(response) {
                     aksiTambah = 'ubah';
-                    tipe = 'ubah';
-                    idKegiatan = response.kegiatan.id;
+                    kegiatanEdit = response.kegiatan_dpa.id;
+                    programEdit = response.kegiatan_dpa.program_dpa_id;
                     resetFormTambah();
+
                     $('#modal-tambah-title').html('Ubah Dokumen Pelaksana Anggaran');
                     $('#sekretariat_daerah_tambah').val(response.sekretariat_daerah_id).trigger(
                         'change');
                     $('#tahun_tambah').val(response.tahun_id).trigger('change');
                     $('#jumlah_anggaran').val(response.jumlah_anggaran).trigger("input");
-                    getProgram(tipe, response.kegiatan.program_dpa_id);
-                    setTimeout(function() {
-                        $('#program').val(response.kegiatan.program_dpa_id).trigger('change');
-                    }, 1000);
-                    setTimeout(function() {
-                        $('#kegiatan').val(response.kegiatan_dpa_id).trigger('change');
-                    }, 1500);
+
+                    getProgram();
+                    getKegiatan();
+
                     $('#modal-tambah').modal('show');
                 },
             })
         })
 
-        function getProgram(tipe, id) {
+        function getProgram() {
             $.ajax({
                 url: "{{ url('list/program-dpa') }}",
                 type: "POST",
                 data: {
                     '_token': '{{ csrf_token() }}',
-                    'tipe': tipe,
-                    'id': id
+                    'id': programEdit,
                 },
                 success: function(response) {
                     if (response.length > 0) {
@@ -663,6 +715,9 @@
                             $('.program').append('<option value="' + value.id + '">' + value
                                 .nama + " (" + value.no_rek + ")" + '</option>');
                         })
+                        if (programEdit) {
+                            $('.program').val(programEdit).trigger('change');
+                        }
                     } else {
                         $('.program').html('');
                     }

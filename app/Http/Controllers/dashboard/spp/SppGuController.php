@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class SppGuController extends Controller
 {
@@ -685,7 +686,6 @@ class SppGuController extends Controller
         }
     }
 
-
     public function storeSpm(Request $request, SppGu $sppGu)
     {
         if (!(($sppGu->status_validasi_ppk == 1 && $sppGu->status_validasi_asn == 1 && $sppGu->status_validasi_akhir == 1 && !$sppGu->dokumen_arsip_sp2d))) {
@@ -836,5 +836,12 @@ class SppGuController extends Controller
         return response()->json([
             'status' => 'success',
         ]);
+    }
+
+    public function qrcodeSpj(SppGu $sppGu)
+    {
+        $perencanaanAnggaran = 'Rp. ' . number_format($sppGu->perencanaan_anggaran, 0, ',', '.');
+        $pdf = PDF::loadView('dashboard.pages.spp.sppGu.qrcode', compact(['sppGu', 'perencanaanAnggaran']));
+        return $pdf->download('QR CODE-SPJ-SPP-GU-' . Carbon::now()  . '.pdf');
     }
 }

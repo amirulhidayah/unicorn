@@ -18,60 +18,112 @@ class StatistikDpaController extends Controller
     {
         $tahun = Tahun::orderBy('tahun', 'asc')->get();
         $SekretariatDaerah = SekretariatDaerah::orderBY('nama', 'asc')->get();
-        return view('dashboard.pages.dpa.statistik.index', compact('tahun', 'SekretariatDaerah'));
+
+        $daftarBulan = [
+            'Januari',
+            'Februari',
+            'Maret',
+            'April',
+            'Mei',
+            'Juni',
+            'Juli',
+            'Agustus',
+            'September',
+            'Oktober',
+            'November',
+            'Desember'
+        ];
+
+        return view('dashboard.pages.dpa.statistik.index', compact('tahun', 'daftarBulan', 'SekretariatDaerah'));
     }
 
     public function getDataStatistik(Request $request)
     {
+        $jenisSpp = $request->jenis_spp;
         $role = Auth::user()->role;
-        $tahun_id = $request->tahun_id;
-        $kegiatan_dpa_id = $request->kegiatan_dpa_id;
-        $sekretariat_daerah_id = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->sekretariat_daerah_id : Auth::user()->profil->sekretariat_daerah_id;
+        $tahunId = $request->tahun_id;
+        $kegiatanDpaId = $request->kegiatan_dpa_id;
+        $sekretariatDaerahId = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->sekretariat_daerah_id : Auth::user()->profil->sekretariat_daerah_id;
 
-        $kegiatan = KegiatanDpa::where('id', $kegiatan_dpa_id)->first();
+        $arrayBulan = [
+            'Januari',
+            'Februari',
+            'Maret',
+            'April',
+            'Mei',
+            'Juni',
+            'Juli',
+            'Agustus',
+            'September',
+            'Oktober',
+            'November',
+            'Desember'
+        ];
 
+        $bulanDari = $request->bulan_dari;
+        $bulanSampai = $request->bulan_sampai;
+
+        $bulanDariIndex = array_search($bulanDari, $arrayBulan);
+        $bulanSampaiIndex = array_search($bulanSampai, $arrayBulan);
+
+        $listBulan = array_slice($arrayBulan, $bulanDariIndex, $bulanSampaiIndex - $bulanDariIndex + 1);
+
+        $kegiatan = KegiatanDpa::where('id', $kegiatanDpaId)->first();
         $judul = $kegiatan ? $kegiatan->nama : 'Kegiatan Belum Dipilih';
 
-        $spd = Spd::where('kegiatan_dpa_id', $kegiatan_dpa_id)->where('sekretariat_daerah_id', $sekretariat_daerah_id)->where('tahun_id', $tahun_id)->first();
-
-        $bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-
         $anggaranDigunakan = [];
-        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'Januari');
-        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'Februari');
-        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'Maret');
-        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'April');
-        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'Mei');
-        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'Juni');
-        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'Juli');
-        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'Agustus');
-        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'September');
-        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'Oktober');
-        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'November');
-        $anggaranDigunakan[] = $this->anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, 'Desember');
+        $jumlahAnggaran = 0;
+        if ($jenisSpp == "SPP-GU") {
+            foreach ($listBulan as $bulan) {
+                $jumlahAnggaran += SppGu::where('kegiatan_dpa_id', $kegiatanDpaId)->where('sekretariat_daerah_id', $sekretariatDaerahId)->where('tahap', 'Selesai')->where('tahun_id', $tahunId)->where('bulan', $bulan)->first()->perencanaan_anggaran ?? 0;
+                $anggaranDigunakan[] = SppGu::where('sekretariat_daerah_id', $sekretariatDaerahId)
+                    ->orderBy('created_at', 'asc')
+                    ->where('tahun_id', $tahunId)
+                    ->where('kegiatan_dpa_id', $kegiatanDpaId)
+                    ->where('tahap', 'Selesai')
+                    ->where('bulan', $bulan)
+                    ->sum('anggaran_digunakan');
+            }
+        } else {
+            $kegiatan = KegiatanDpa::where('id', $kegiatanDpaId)->first();
+            $judul = $kegiatan ? $kegiatan->nama : 'Kegiatan Belum Dipilih';
+            $spd = Spd::where('kegiatan_dpa_id', $kegiatanDpaId)->where('sekretariat_daerah_id', $sekretariatDaerahId)->where('tahun_id', $tahunId)->first();
+            $jumlahAnggaran = $spd->jumlah_anggaran ?? 0;
+            foreach ($listBulan as $bulan) {
+                $anggaranDigunakan[] = SppLs::where('sekretariat_daerah_id', $sekretariatDaerahId)
+                    ->orderBy('created_at', 'asc')
+                    ->where('tahun_id', $tahunId)
+                    ->where('kegiatan_dpa_id', $kegiatanDpaId)
+                    ->where('status_validasi_akhir', 1)
+                    ->where('bulan', $bulan)
+                    ->sum('anggaran_digunakan');
+            }
+        }
 
         return response()->json([
             'judul' => $judul,
-            'bulan' => $bulan,
-            'jumlah_anggaran' => $spd->jumlah_anggaran,
+            'bulan' => $listBulan,
+            'jumlah_anggaran' => $jumlahAnggaran,
             'data' => $anggaranDigunakan
         ]);
     }
 
-    private function anggaranDigunakan($sekretariat_daerah_id, $tahun_id, $kegiatan_dpa_id, $bulan)
+    private function anggaranDigunakan($jenisSpp, $sekretariatDaerahId, $tahunId, $kegiatanDpaId, $bulan)
     {
-        $sppLs = SppLs::where('sekretariat_daerah_id', $sekretariat_daerah_id)
+        if ($jenisSpp == "SPP-GU") {
+        }
+        $sppLs = SppLs::where('sekretariat_daerah_id', $sekretariatDaerahId)
             ->orderBy('created_at', 'asc')
-            ->where('tahun_id', $tahun_id)
-            ->where('kegiatan_dpa_id', $kegiatan_dpa_id)
+            ->where('tahun_id', $tahunId)
+            ->where('kegiatan_dpa_id', $kegiatanDpaId)
             ->where('status_validasi_akhir', 1)
             ->where('bulan', $bulan)
             ->sum('anggaran_digunakan');
 
-        // $sppGu = SppGu::where('sekretariat_daerah_id', $sekretariat_daerah_id)
+        // $sppGu = SppGu::where('sekretariat_daerah_id', $sekretariatDaerahId)
         //     ->orderBy('created_at', 'asc')
-        //     ->where('tahun_id', $tahun_id)
-        //     ->where('kegiatan_dpa_id', $kegiatan_dpa_id)
+        //     ->where('tahun_id', $tahunId)
+        //     ->where('kegiatan_dpa_id', $kegiatanDpaId)
         //     ->where('status_validasi_akhir', 1)
         //     ->where('bulan', $bulan)
         //     ->sum('anggaran_digunakan');

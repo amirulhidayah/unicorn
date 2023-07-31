@@ -10,6 +10,9 @@
                     @foreach ($array['bulan'] as $bulan)
                         <th scope="col" colspan="2">{{ $bulan }}</th>
                     @endforeach
+                    @if (!isset($export))
+                        <th rowspan="2">Aksi</th>
+                    @endif
                 </tr>
                 <tr>
                     @foreach ($array['bulan'] as $bulan)
@@ -21,17 +24,18 @@
                         </td>
                     @endforeach
                 </tr>
+
             </thead>
             <tbody>
                 @foreach ($array['data'] as $data)
                     <tr>
-                        <td colspan="{{ 4 + 2 * count($array['bulan']) }}" class="fw-bold">
+                        <td colspan="{{ (!isset($export) ? 5 : 6) + 2 * count($array['bulan']) }}" class="fw-bold">
                             {{ $data['sekretariat_daerah'] }}</td>
                     </tr>
                     @foreach ($data['program'] as $program)
                         <tr>
                             <td colspan="2">{{ $program['nama'] }}</td>
-                            <td colspan="{{ 2 + 2 * count($array['bulan']) }}">
+                            <td colspan="{{ (!isset($export) ? 3 : 4) + 2 * count($array['bulan']) }}">
                                 {{ $program['no_rek'] }}</td>
                         </tr>
                         @foreach ($program['kegiatan'] as $kegiatan)
@@ -50,6 +54,15 @@
                                         {{ 'Rp. ' . number_format($bulan['sisa_anggaran'], 0, ',', '.') }}
                                     </td>
                                 @endforeach
+                                @if (!isset($export))
+                                    <td>
+                                        <button id="btn-edit" class="btn btn-warning btn-sm mr-1"
+                                            value="{{ $kegiatan['id'] }}"><i class="fas fa-edit"></i> Ubah</button>
+                                        <button id="btn-delete" class="btn btn-danger btn-sm mr-1"
+                                            value="{{ $kegiatan['id'] }}"> <i class="fas fa-trash-alt"></i>
+                                            Hapus</button>
+                                    </td>
+                                @endif
                             </tr>
                         @endforeach
                         <tr>
@@ -58,12 +71,19 @@
                             </td>
                             <td> {{ 'Rp. ' . number_format($program['jumlah_anggaran'], 0, ',', '.') }}
                             </td>
-                            @foreach ($program['total_bulan']['bulan'] as $total)
-                                <td> {{ 'Rp. ' . number_format($total['anggaran_digunakan'], 0, ',', '.') }}
-                                </td>
-                                <td> {{ 'Rp. ' . number_format($total['sisa_anggaran'], 0, ',', '.') }}
-                                </td>
-                            @endforeach
+                            @if (isset($program['total_bulan']['bulan']))
+                                @foreach ($program['total_bulan']['bulan'] as $total)
+                                    <td> {{ 'Rp. ' . number_format($total['anggaran_digunakan'], 0, ',', '.') }}
+                                    </td>
+                                    <td> {{ 'Rp. ' . number_format($total['sisa_anggaran'], 0, ',', '.') }}
+                                    </td>
+                                @endforeach
+                            @endif
+                            @if (!isset($export))
+                                <td></td>
+                            @endif
+
+
                         </tr>
                     @endforeach
                 @endforeach

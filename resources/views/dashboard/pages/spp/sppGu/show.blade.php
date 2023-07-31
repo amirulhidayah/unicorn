@@ -100,14 +100,33 @@
                             @endif
 
                         </div>
-                        <div class="col-lg-6">
-                            @component('dashboard.components.widgets.listDokumen', [
-                                'dokumenSpp' => $daftarDokumenSppGu,
-                                'spp' => $sppGu,
-                                'tipe' => $tipe,
-                            ])
-                            @endcomponent
-                        </div>
+                        @if ($sppGu->tahap == 'Selesai')
+                            <div class="col-lg-6">
+                                <p class="h4 my-0 fw-bold mb-3">Dokumen Tahap SPJ</p>
+                                @component('dashboard.components.widgets.listDokumen', [
+                                    'dokumenSpp' => $daftarDokumenSppGu->where('tahap', 'SPJ'),
+                                    'spp' => $sppGu,
+                                    'tipe' => $tipe,
+                                ])
+                                @endcomponent
+                                <p class="h4 my-0 fw-bold mb-3">Dokumen Tahap SPP</p>
+                                @component('dashboard.components.widgets.listDokumen', [
+                                    'dokumenSpp' => $daftarDokumenSppGu->where('tahap', 'SPP'),
+                                    'spp' => $sppGu,
+                                    'tipe' => $tipe,
+                                ])
+                                @endcomponent
+                            </div>
+                        @else
+                            <div class="col-lg-6">
+                                @component('dashboard.components.widgets.listDokumen', [
+                                    'dokumenSpp' => $daftarDokumenSppGu,
+                                    'spp' => $sppGu,
+                                    'tipe' => $tipe,
+                                ])
+                                @endcomponent
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
