@@ -1,30 +1,4 @@
 <div>
-    <div>
-        <div class="row mb-3" wire:ignore>
-            <div class="col-12">
-                @component('dashboard.components.formElements.select', [
-                    'label' => 'Kategori',
-                    'id' => 'kategori_filter',
-                    'name' => 'kategori_filter',
-                    'class' => 'select2 select2-filter',
-                    'wajib' => '<sup class="text-danger">*</sup>',
-                ])
-                    @slot('options')
-                        <option value="Semua">
-                            Semua
-                        </option>
-                        <option value="SPJ">
-                            SPJ
-                        </option>
-                        <option value="SPP">
-                            SPP
-                        </option>
-                    @endslot
-                @endcomponent
-            </div>
-
-        </div>
-    </div>
     @component('dashboard.components.livewire.table', [
         'th' => [
             [
@@ -33,9 +7,6 @@
             ],
             [
                 'title' => 'Nama',
-            ],
-            [
-                'title' => 'Kategori',
             ],
             [
                 'title' => 'Aksi',
@@ -53,13 +24,6 @@
                         <div class="d-flex">
                             <div class="d-flex flex-column justify-content-center">
                                 <h6 class="mb-0 text-xs">{{ $data->nama }}</h6>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex">
-                            <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-xs">{{ $data->kategori }}</h6>
                             </div>
                         </div>
                     </td>

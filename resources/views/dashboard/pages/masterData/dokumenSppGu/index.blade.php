@@ -81,20 +81,6 @@
                                 ])
                                 @endcomponent
                             </div>
-                            <div class="col-lg-12">
-                                @component('dashboard.components.formElements.select', [
-                                    'label' => 'Kategori',
-                                    'id' => 'kategori',
-                                    'name' => 'kategori',
-                                    'class' => 'select2',
-                                    'wajib' => '<sup class="text-danger">*</sup>',
-                                ])
-                                    @slot('options')
-                                        <option value="Awal">Awal</option>
-                                        <option value="Akhir">Akhir</option>
-                                    @endslot
-                                @endcomponent
-                            </div>
                         </div>
 
                     </div>

@@ -25,12 +25,10 @@ class DokumenSppLsController extends Controller
             $request->all(),
             [
                 'nama' => ['required', Rule::unique('daftar_dokumen_spp_ls')->withoutTrashed()],
-                'kategori' => 'required',
             ],
             [
                 'nama.required' => 'Nama Dokumen tidak boleh kosong',
                 'nama.unique' => 'Nama Dokumen sudah ada',
-                'kategori.required' => 'Kategori Dokumen tidak boleh kosong',
             ]
         );
 
@@ -42,7 +40,6 @@ class DokumenSppLsController extends Controller
             DB::transaction(function () use ($request) {
                 $daftarDokumenSppLs = new DaftarDokumenSppLs();
                 $daftarDokumenSppLs->nama = $request->nama;
-                $daftarDokumenSppLs->kategori = $request->kategori;
                 $daftarDokumenSppLs->save();
             });
         } catch (QueryException $error) {
@@ -63,12 +60,10 @@ class DokumenSppLsController extends Controller
             $request->all(),
             [
                 'nama' => ['required', Rule::unique('daftar_dokumen_spp_ls')->ignore($daftarDokumenSppLs->id)->withoutTrashed()],
-                'kategori' => 'required',
             ],
             [
                 'nama.required' => 'Nama Dokumen tidak boleh kosong',
                 'nama.unique' => 'Nama Dokumen sudah ada',
-                'kategori.required' => 'Kategori Dokumen tidak boleh kosong',
             ]
         );
 
@@ -79,7 +74,6 @@ class DokumenSppLsController extends Controller
         try {
             DB::transaction(function () use ($request, $daftarDokumenSppLs) {
                 $daftarDokumenSppLs->nama = $request->nama;
-                $daftarDokumenSppLs->kategori = $request->kategori;
                 $daftarDokumenSppLs->save();
             });
         } catch (QueryException $error) {

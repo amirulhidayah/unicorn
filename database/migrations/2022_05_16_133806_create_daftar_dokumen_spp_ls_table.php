@@ -16,7 +16,6 @@ class CreateDaftarDokumenSppLsTable extends Migration
         Schema::create('daftar_dokumen_spp_ls', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('nama');
-            $table->string('kategori');
             $table->softDeletes();
             $table->timestamps();
         });
