@@ -6,8 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\SekretariatDaerah;
 use App\Models\DaftarDokumenSppUp;
 use App\Models\DokumenSppUp;
-use App\Models\ProgramSpp;
-use App\Models\RiwayatSppLs;
+use App\Models\Program;
 use App\Models\RiwayatSppUp;
 use App\Models\SppUp;
 use App\Models\Tahun;
@@ -40,7 +39,7 @@ class SppUpController extends Controller
 
         $daftarDokumenSppUp = DaftarDokumenSppUp::orderBy('created_at', 'asc')->get();
         $daftarTahun = Tahun::orderBy('tahun', 'asc')->get();
-        $daftarProgram = ProgramSpp::orderBy('nama', 'asc')->get();
+        $daftarProgram = Program::orderBy('nama', 'asc')->get();
         $daftarSekretariatDaerah = SekretariatDaerah::orderBy('nama', 'asc')->get();
         return view('dashboard.pages.spp.sppUp.create', compact(['daftarDokumenSppUp', 'daftarTahun', 'daftarProgram', 'daftarSekretariatDaerah']));
     }
@@ -110,7 +109,7 @@ class SppUpController extends Controller
                 $sppUp = new SppUp();
                 $sppUp->sekretariat_daerah_id = $role == "Admin" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
                 $sppUp->tahun_id = $request->tahun;
-                $sppUp->kegiatan_spp_id = $request->kegiatan;
+                $sppUp->kegiatan_id = $request->kegiatan;
                 $sppUp->jumlah_anggaran = str_replace(".", "", $request->jumlah_anggaran);
                 $sppUp->user_id = Auth::user()->id;
                 $sppUp->nomor_surat = $request->nomor_surat;

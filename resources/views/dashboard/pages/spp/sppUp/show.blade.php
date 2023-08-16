@@ -58,7 +58,7 @@
                             ])
                             @endcomponent
                             @component('dashboard.components.widgets.info', [
-                                'judul' => 'Nomor Surat',
+                                'judul' => 'Nomor Surat Permintaan Pembayaran (SPP)',
                                 'isi' => $sppUp->nomor_surat,
                             ])
                             @endcomponent
@@ -69,12 +69,12 @@
                             @endcomponent
                             @component('dashboard.components.widgets.info', [
                                 'judul' => 'Program',
-                                'isi' => $sppUp->kegiatanSpp->programSpp->nama . ' (' . $sppUp->kegiatanSpp->programSpp->no_rek . ')',
+                                'isi' => $sppUp->kegiatan->program->nama . ' (' . $sppUp->kegiatan->program->no_rek . ')',
                             ])
                             @endcomponent
                             @component('dashboard.components.widgets.info', [
                                 'judul' => 'Kegiatan',
-                                'isi' => $sppUp->kegiatanSpp->nama . ' (' . $sppUp->kegiatanSpp->no_rek . ')',
+                                'isi' => $sppUp->kegiatan->nama . ' (' . $sppUp->kegiatan->no_rek . ')',
                             ])
                             @endcomponent
                             @component('dashboard.components.widgets.info', [

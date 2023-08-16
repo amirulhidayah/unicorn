@@ -24,9 +24,9 @@ class SppUp extends Model
     }
 
 
-    public function kegiatanSpp()
+    public function kegiatan()
     {
-        return $this->belongsTo(KegiatanSpp::class, 'kegiatan_spp_id', 'id')->withTrashed();
+        return $this->belongsTo(Kegiatan::class, 'kegiatan_id', 'id')->withTrashed();
     }
 
     public function tahun()
@@ -34,7 +34,7 @@ class SppUp extends Model
         return $this->belongsTo(Tahun::class, 'tahun_id', 'id')->withTrashed();
     }
 
-    public function SekretariatDaerah()
+    public function sekretariatDaerah()
     {
         return $this->belongsTo(SekretariatDaerah::class, 'sekretariat_daerah_id', 'id')->withTrashed();
     }

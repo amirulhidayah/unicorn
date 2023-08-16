@@ -24,16 +24,7 @@ class ListController extends Controller
         $id = $request->id;
         $SekretariatDaerah = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
 
-        $program = Program::with(['kegiatan'])->whereHas('kegiatan', function ($query) use ($tahun, $SekretariatDaerah) {
-            $query->whereHas('spd', function ($query) use ($tahun, $SekretariatDaerah) {
-                if ($tahun) {
-                    $query->where('tahun_id', $tahun);
-                }
-                if ($SekretariatDaerah) {
-                    $query->where('sekretariat_daerah_id', $SekretariatDaerah);
-                }
-            });
-        })->orderBy('no_rek', 'asc')->get();
+        $program = Program::with(['kegiatan'])->orderBy('no_rek', 'asc')->get();
 
         if ($id) {
             $programHapus = Program::where('id', $id)->withTrashed()->first();

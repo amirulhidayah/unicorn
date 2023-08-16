@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\SekretariatDaerah;
 use App\Models\DaftarDokumenSppTu;
 use App\Models\DokumenSppTu;
-use App\Models\ProgramSpp;
+use App\Models\Program;
 use App\Models\RiwayatSppTu;
 use App\Models\SppTu;
 use App\Models\Tahun;
@@ -42,7 +42,7 @@ class SppTuController extends Controller
 
         $daftarDokumenSppTu = DaftarDokumenSppTu::orderBy('created_at', 'asc')->get();
         $daftarTahun = Tahun::orderBy('tahun', 'asc')->get();
-        $daftarProgram = ProgramSpp::orderBy('nama', 'asc')->get();
+        $daftarProgram = Program::orderBy('nama', 'asc')->get();
         $daftarSekretariatDaerah = SekretariatDaerah::orderBy('nama', 'asc')->get();
 
         return view('dashboard.pages.spp.sppTu.create', compact(['daftarDokumenSppTu', 'daftarTahun', 'daftarProgram', 'daftarSekretariatDaerah']));
@@ -114,7 +114,7 @@ class SppTuController extends Controller
                 $sppTu = new SppTu();
                 $sppTu->sekretariat_daerah_id = $role == "Admin" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
                 $sppTu->tahun_id = $request->tahun;
-                $sppTu->kegiatan_spp_id = $request->kegiatan;
+                $sppTu->kegiatan_id = $request->kegiatan;
                 $sppTu->user_id = Auth::user()->id;
                 $sppTu->nomor_surat = $request->nomor_surat;
                 $sppTu->bulan = $request->bulan;

@@ -108,13 +108,13 @@
 
                                 <div class="col-12">
                                     @component('dashboard.components.formElements.input', [
-                                        'label' => 'Nomor Surat',
+                                        'label' => 'Nomor Surat Permintaan Pembayaran (SPP)',
                                         'type' => 'text',
                                         'id' => 'nomor_surat',
                                         'class' => '',
                                         'name' => 'nomor_surat',
                                         'wajib' => '<sup class="text-danger">*</sup>',
-                                        'placeholder' => 'Masukkan Nomor Surat',
+                                        'placeholder' => 'Masukkan Nomor Surat Permintaan Pembayaran (SPP)',
                                     ])
                                     @endcomponent
                                 </div>
@@ -375,7 +375,7 @@
 
         $(document).ready(function() {
             $('#spp-tu').addClass('active');
-            getProgramSpp();
+            getProgram();
         })
 
         function hapus(id) {
@@ -503,7 +503,7 @@
                 success: function(response) {
                     if (response.status == 'success') {
                         $('#modal-tambah-program').modal('hide');
-                        getProgramSpp();
+                        getProgram();
                         swal("Berhasil", "Data Berhasil Tersimpan", {
                             icon: "success",
                             buttons: false,
@@ -531,7 +531,7 @@
         $('#form-tambah-kegiatan').submit(function(e) {
             e.preventDefault();
             $.ajax({
-                url: "{{ url('master-data/kegiatan-spp/') }}" + "/" + idProgram,
+                url: "{{ url('master-data/kegiatan/') }}" + "/" + idProgram,
                 type: 'POST',
                 data: $(this).serialize(),
                 success: function(response) {
@@ -558,9 +558,9 @@
             })
         })
 
-        function getProgramSpp() {
+        function getProgram() {
             $.ajax({
-                url: "{{ url('list/program-spp') }}",
+                url: "{{ url('list/program') }}",
                 type: "POST",
                 data: {
                     '_token': '{{ csrf_token() }}',
@@ -593,7 +593,7 @@
             var program = $('#program').val();
             var tahun = $('#tahun').val();
             $.ajax({
-                url: "{{ url('list/kegiatan-spp') }}",
+                url: "{{ url('list/kegiatan') }}",
                 type: "POST",
                 data: {
                     '_token': '{{ csrf_token() }}',

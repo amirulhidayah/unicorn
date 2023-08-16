@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\KategoriSppLs;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
@@ -54,10 +55,10 @@ class DatabaseSeeder extends Seeder
         $this->call(SpdTableSeeder::class);
         $this->call(KegiatanTableSeeder::class);
         $this->call(ProgramTableSeeder::class);
-        $this->call(SppUpTableSeeder::class);
+        // $this->call(SppUpTableSeeder::class);
         $this->call(RiwayatSppUpTableSeeder::class);
         $this->call(DokumenSppUpTableSeeder::class);
-        $this->call(SppTuTableSeeder::class);
+        // $this->call(SppTuTableSeeder::class);
         $this->call(RiwayatSppTuTableSeeder::class);
         $this->call(DokumenSppTuTableSeeder::class);
         // $this->call(SppLsTableSeeder::class);
@@ -69,5 +70,6 @@ class DatabaseSeeder extends Seeder
         // $this->call(DokumenSppGuTableSeeder::class);
         // $this->call(SppGuRiwayatSppGuTableSeeder::class);
         // $this->call(SppLsRiwayatSppLsTableSeeder::class);
+        $this->call(KategoriSppLsSeeder::class);
     }
 }

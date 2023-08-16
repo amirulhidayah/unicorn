@@ -113,6 +113,12 @@
                             <p>Program</p>
                         </a>
                     </li>
+                    <li class="nav-item" id="master-kategori-spp-ls">
+                        <a href="{{ url('/master-data/kategori-spp-ls') }}">
+                            <i class="far fa-list-alt"></i>
+                            <p>Kategori SPP LS</p>
+                        </a>
+                    </li>
                 @endif
 
                 @if (Auth::user()->role == 'Admin')

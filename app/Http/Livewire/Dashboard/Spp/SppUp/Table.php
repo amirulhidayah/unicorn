@@ -113,7 +113,7 @@ class Table extends Component
             }
 
             if ($cari) {
-                $query->whereHas('kegiatanSpp', function ($query) use ($cari) {
+                $query->whereHas('kegiatan', function ($query) use ($cari) {
                     $query->where('nama', 'like', "%" . $cari . "%");
                     $query->orWhere('no_rek', 'like', "%" . $cari . "%");
                     $query->orWhereHas('programSpp', function ($query) use ($cari) {

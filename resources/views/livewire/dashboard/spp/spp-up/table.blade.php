@@ -216,7 +216,7 @@
                         <div class="d-flex">
                             <div class="d-flex flex-column justify-content-center">
                                 <h6 class="mb-0 text-xs">
-                                    {{ $data->kegiatanSpp->nama . ' (' . $data->kegiatanSpp->no_rek . ')' }}
+                                    {{ $data->kegiatan->nama . ' (' . $data->kegiatan->no_rek . ')' }}
                                 </h6>
                             </div>
                         </div>
@@ -225,7 +225,7 @@
                         <div class="d-flex">
                             <div class="d-flex flex-column justify-content-center">
                                 <h6 class="mb-0 text-xs">
-                                    {{ $data->kegiatanSpp->programSpp->nama . ' (' . $data->kegiatanSpp->programSpp->no_rek . ')' }}
+                                    {{ $data->kegiatan->program->nama . ' (' . $data->kegiatan->program->no_rek . ')' }}
                                 </h6>
                             </div>
                         </div>

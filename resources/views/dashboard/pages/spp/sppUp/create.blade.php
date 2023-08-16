@@ -108,13 +108,13 @@
 
                                 <div class="col-12">
                                     @component('dashboard.components.formElements.input', [
-                                        'label' => 'Nomor Surat',
+                                        'label' => 'Nomor Surat Permintaan Pembayaran (SPP)',
                                         'type' => 'text',
                                         'id' => 'nomor_surat',
                                         'class' => '',
                                         'name' => 'nomor_surat',
                                         'wajib' => '<sup class="text-danger">*</sup>',
-                                        'placeholder' => 'Masukkan Nomor Surat',
+                                        'placeholder' => 'Masukkan Nomor Surat Permintaan Pembayaran (SPP)',
                                     ])
                                     @endcomponent
                                 </div>
@@ -349,7 +349,7 @@
 
         $(document).ready(function() {
             $('#spp-up').addClass('active');
-            getProgramSpp();
+            getProgram();
         })
 
         function hapus(id) {
@@ -472,13 +472,13 @@
         $('#form-tambah-program').submit(function(e) {
             e.preventDefault();
             $.ajax({
-                url: "{{ url('master-data/program-spp') }}",
+                url: "{{ url('master-data/program') }}",
                 type: 'POST',
                 data: $(this).serialize(),
                 success: function(response) {
                     if (response.status == 'success') {
                         $('#modal-tambah-program').modal('hide');
-                        getProgramSpp();
+                        getProgram();
                         swal("Berhasil", "Data Berhasil Tersimpan", {
                             icon: "success",
                             buttons: false,
@@ -501,7 +501,7 @@
         $('#form-tambah-kegiatan').submit(function(e) {
             e.preventDefault();
             $.ajax({
-                url: "{{ url('master-data/kegiatan-spp/') }}" + "/" + idProgram,
+                url: "{{ url('master-data/kegiatan/') }}" + "/" + idProgram,
                 type: 'POST',
                 data: $(this).serialize(),
                 success: function(response) {
@@ -528,9 +528,9 @@
             })
         })
 
-        function getProgramSpp() {
+        function getProgram() {
             $.ajax({
-                url: "{{ url('list/program-spp') }}",
+                url: "{{ url('list/program') }}",
                 type: "POST",
                 data: {
                     '_token': '{{ csrf_token() }}',
@@ -541,7 +541,7 @@
                         $('.program').append('<option value="">Pilih Program</option>');
                         $.each(response, function(key, value) {
                             $('.program').append('<option value="' + value.id + '">' + value
-                                .nama + '</option>');
+                                .nama + " (" + value.no_rek + ')</option>');
                         })
                     } else {
                         $('.program').html('');
@@ -559,7 +559,7 @@
             var program = $('#program').val();
             var tahun = $('#tahun').val();
             $.ajax({
-                url: "{{ url('list/kegiatan-spp') }}",
+                url: "{{ url('list/kegiatan') }}",
                 type: "POST",
                 data: {
                     '_token': '{{ csrf_token() }}',
@@ -575,7 +575,7 @@
                         $('#kegiatan').append('<option value="">Pilih kegiatan</option>');
                         $.each(response, function(key, value) {
                             $('#kegiatan').append('<option value="' + value.id + '">' + value
-                                .nama + '</option>');
+                                .nama + " (" + value.no_rek + ')</option>');
                         })
                     } else {
                         $('#kegiatan').html('');

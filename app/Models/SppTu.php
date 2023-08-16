@@ -23,9 +23,9 @@ class SppTu extends Model
         return $this->hasMany(DokumenSppTu::class, 'spp_tu_id', 'id')->orderBy('created_at', 'asc');
     }
 
-    public function kegiatanSpp()
+    public function kegiatan()
     {
-        return $this->belongsTo(KegiatanSpp::class, 'kegiatan_spp_id', 'id')->withTrashed();
+        return $this->belongsTo(Kegiatan::class, 'kegiatan_id', 'id')->withTrashed();
     }
 
     public function tahun()

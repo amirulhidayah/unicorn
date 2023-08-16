@@ -12,6 +12,7 @@ use App\Http\Controllers\dashboard\masterData\DokumenSppGuController;
 use App\Http\Controllers\dashboard\masterData\DokumenSppLsController;
 use App\Http\Controllers\dashboard\masterData\DokumenSppTuController;
 use App\Http\Controllers\dashboard\masterData\DokumenSppUpController;
+use App\Http\Controllers\dashboard\masterData\KategoriSppLsController;
 use App\Http\Controllers\dashboard\masterData\KegiatanController;
 use App\Http\Controllers\dashboard\masterData\ProgramController;
 use App\Http\Controllers\dashboard\masterData\ProgramSppController;
@@ -30,6 +31,7 @@ use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\ScanqrcodeController;
 use App\Http\Controllers\UnduhController;
 use App\Models\DaftarDokumenSppUp;
+use App\Models\KategoriSppLs;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -62,6 +64,9 @@ Route::group(['middleware' => ['auth']], function () {
             'daftar-dokumen-spp-ls' => 'daftar-dokumen-spp-ls'
         ]);
         Route::resource('/master-data/daftar-dokumen-spp-gu', DokumenSppGuController::class);
+        Route::resource('/master-data/kategori-spp-ls', KategoriSppLsController::class)->parameters([
+            'kategori-spp-ls' => 'kategori-spp-ls'
+        ]);
 
         Route::resource('/master-data/program', ProgramController::class)->parameters([
             'program' => 'program'
