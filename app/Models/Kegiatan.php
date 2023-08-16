@@ -7,30 +7,30 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class KegiatanDpa extends Model
+class Kegiatan extends Model
 {
     use HasFactory;
     use TraitUuid;
     use SoftDeletes;
 
-    protected $table = 'kegiatan_dpa';
+    protected $table = 'kegiatan';
 
     public function spd()
     {
-        return $this->hasMany(Spd::class, 'kegiatan_dpa_id')->withTrashed();
+        return $this->hasMany(Spd::class, 'kegiatan_id')->withTrashed();
     }
 
     public function sppGu()
     {
-        return $this->hasMany(SppGu::class, 'kegiatan_dpa_id');
+        return $this->hasMany(SppGu::class, 'kegiatan_id');
     }
     public function sppLs()
     {
-        return $this->hasMany(SppLs::class, 'kegiatan_dpa_id');
+        return $this->hasMany(SppLs::class, 'kegiatan_id');
     }
 
-    public function programDpa()
+    public function program()
     {
-        return $this->belongsTo(ProgramDpa::class, 'program_dpa_id')->withTrashed();
+        return $this->belongsTo(Program::class, 'program_id')->withTrashed();
     }
 }

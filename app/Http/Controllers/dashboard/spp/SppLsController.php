@@ -121,7 +121,7 @@ class SppLsController extends Controller
                 $sppLs->user_id = Auth::user()->id;
                 $sppLs->sekretariat_daerah_id = $role == "Admin" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
                 $sppLs->tahun_id = $request->tahun;
-                $sppLs->kegiatan_dpa_id = $request->kegiatan;
+                $sppLs->kegiatan_id = $request->kegiatan;
                 $sppLs->bulan = $request->bulan;
                 $sppLs->kategori = $request->kategori;
                 $sppLs->anggaran_digunakan = str_replace(".", "", $request->anggaran_digunakan);
@@ -181,8 +181,8 @@ class SppLsController extends Controller
             abort(403, 'Anda tidak memiliki akses halaman tersebut!');
         }
 
-        $spd = Spd::where('kegiatan_dpa_id', $sppLs->kegiatan_dpa_id)->where('sekretariat_daerah_id', $sppLs->sekretariat_daerah_id)->where('tahun_id', $sppLs->tahun_id)->first();
-        $jumlahAnggaranHitung = $this->_getJumlahAnggaran($sppLs->sekretariat_daerah_id, $sppLs->kegiatan_dpa_id, $sppLs->bulan, $sppLs->tahun_id);
+        $spd = Spd::where('kegiatan_id', $sppLs->kegiatan_id)->where('sekretariat_daerah_id', $sppLs->sekretariat_daerah_id)->where('tahun_id', $sppLs->tahun_id)->first();
+        $jumlahAnggaranHitung = $this->_getJumlahAnggaran($sppLs->sekretariat_daerah_id, $sppLs->kegiatan_id, $sppLs->bulan, $sppLs->tahun_id);
         $jumlahAnggaran = 'Rp. ' . number_format($jumlahAnggaranHitung, 0, ',', '.');
         $anggaranDigunakan = 'Rp. ' . number_format($sppLs->anggaran_digunakan, 0, ',', '.');
 
@@ -257,7 +257,7 @@ class SppLsController extends Controller
         }
 
         if ($request->anggaran_digunakan) {
-            $jumlahAnggaran = $this->_getJumlahAnggaran($sppLs->sekretariat_daerah_id, $sppLs->kegiatan_dpa_id, $sppLs->bulan, $sppLs->tahun_id);
+            $jumlahAnggaran = $this->_getJumlahAnggaran($sppLs->sekretariat_daerah_id, $sppLs->kegiatan_id, $sppLs->bulan, $sppLs->tahun_id);
             if ($request->anggaran_digunakan > $jumlahAnggaran) {
                 $validator->after(function ($validator) {
                     $validator->errors()->add('anggaran_digunakan', 'Anggaran melebihi anggaran yang telah ditentukan');
@@ -693,14 +693,14 @@ class SppLsController extends Controller
         $role = Auth::user()->role;
         $sekretariatDaerah = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $sekretariatDaerah : Auth::user()->profil->sekretariat_daerah_id;
 
-        $spd = Spd::where('kegiatan_dpa_id', $kegiatan)->where('sekretariat_daerah_id', $sekretariatDaerah)->where('tahun_id', $tahun)->first();
+        $spd = Spd::where('kegiatan_id', $kegiatan)->where('sekretariat_daerah_id', $sekretariatDaerah)->where('tahun_id', $tahun)->first();
 
         $jumlahAnggaran = $spd->jumlah_anggaran ?? 0;
 
         $sppLs = SppLs::where('sekretariat_daerah_id', $sekretariatDaerah)
             ->orderBy('created_at', 'asc')
             ->where('tahun_id', $tahun)
-            ->where('kegiatan_dpa_id', $kegiatan)
+            ->where('kegiatan_id', $kegiatan)
             ->where('status_validasi_akhir', 1)
             ->whereNotNull('dokumen_spm')
             ->whereNotNull('dokumen_arsip_sp2d');

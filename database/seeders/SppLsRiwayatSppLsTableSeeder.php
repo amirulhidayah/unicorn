@@ -39,7 +39,7 @@ class SppLsRiwayatSppLsTableSeeder extends Seeder
             })->get();
 
             foreach ($kegiatanDpa as $kegiatan) {
-                $spd = Spd::where('sekretariat_daerah_id', $sekretariatDaerah->id)->where('tahun_id', $tahun)->where('kegiatan_dpa_id', $kegiatan->id)->first();
+                $spd = Spd::where('sekretariat_daerah_id', $sekretariatDaerah->id)->where('tahun_id', $tahun)->where('kegiatan_id', $kegiatan->id)->first();
                 if ($spd) {
                     $jumlahAnggaran = $spd->jumlah_anggaran;
                     $anggaranDigunakan = 0; // Initialize the array
@@ -62,7 +62,7 @@ class SppLsRiwayatSppLsTableSeeder extends Seeder
                         $sppLs->dokumen_arsip_sp2d = '1690352111.pdf';
                         $sppLs->dokumen_spm = '1690352105.pdf';
                         $sppLs->kategori = 'Belanja Hibah';
-                        $sppLs->kegiatan_dpa_id = $kegiatan->id;
+                        $sppLs->kegiatan_id = $kegiatan->id;
                         $sppLs->nomor_surat = 'SPP-LS';
                         $sppLs->sekretariat_daerah_id = $sekretariatDaerah->id;
                         $sppLs->status_validasi_akhir = 1;

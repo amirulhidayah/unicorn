@@ -14,16 +14,16 @@ class SppGuTableSeeder extends Seeder
      */
     public function run()
     {
-        
+
 
         \DB::table('spp_gu')->delete();
-        
-        \DB::table('spp_gu')->insert(array (
-            0 => 
-            array (
+
+        \DB::table('spp_gu')->insert(array(
+            0 =>
+            array(
                 'id' => '0d88eae1-15f1-4676-b7e7-854240041a16',
                 'tahun_id' => '8fef08db-e1bf-4a1f-8bd2-9809d5e60426',
-                'kegiatan_dpa_id' => '35d37341-1b52-41ca-811d-1eb53d045837',
+                'kegiatan_id' => '35d37341-1b52-41ca-811d-1eb53d045837',
                 'sekretariat_daerah_id' => '68c37c05-84a4-493b-9419-35cb6d10a319',
                 'tahap_riwayat' => 2,
                 'bulan' => 'Januari',
@@ -47,7 +47,5 @@ class SppGuTableSeeder extends Seeder
                 'updated_at' => '2023-07-24 06:09:03',
             ),
         ));
-        
-        
     }
 }

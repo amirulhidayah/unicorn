@@ -175,6 +175,11 @@
             color: #777777;
             border-color: #ddd;
         }
+
+        .sidebar .nav>.nav-item a p,
+        .sidebar[data-background-color="white"] .nav>.nav-item a p {
+            white-space: normal;
+        }
     </style>
 
     @stack('style')

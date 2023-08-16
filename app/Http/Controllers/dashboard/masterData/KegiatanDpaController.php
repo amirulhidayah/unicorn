@@ -42,7 +42,7 @@ class KegiatanDpaController extends Controller
         try {
             DB::transaction(function () use ($request) {
                 $kegiatanDpa = new KegiatanDpa();
-                $kegiatanDpa->program_dpa_id = $request->program;
+                $kegiatanDpa->program_id = $request->program;
                 $kegiatanDpa->nama = $request->nama;
                 $kegiatanDpa->no_rek = $request->no_rek;
                 $kegiatanDpa->save();
@@ -82,7 +82,7 @@ class KegiatanDpaController extends Controller
 
         try {
             DB::transaction(function () use ($request, $kegiatanDpa) {
-                $kegiatanDpa->program_dpa_id = $request->program;
+                $kegiatanDpa->program_id = $request->program;
                 $kegiatanDpa->nama = $request->nama;
                 $kegiatanDpa->no_rek = $request->no_rek;
                 $kegiatanDpa->save();

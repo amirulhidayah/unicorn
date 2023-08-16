@@ -3,6 +3,7 @@
 use App\Http\Controllers\AppendController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\dashboard\dpa\StatistikDpaController;
+use App\Http\Controllers\dashboard\dpa\SuratPenyediaanDanaController;
 use App\Http\Controllers\dashboard\dpa\TabelDpaController;
 use App\Http\Controllers\dashboard\masterData\AkunController;
 use App\Http\Controllers\dashboard\masterData\AkunLainnyaController;
@@ -78,7 +79,8 @@ Route::group(['middleware' => ['auth']], function () {
             'akun-lainnya' => 'user'
         ]);
 
-        Route::get('/tabel-dpa/format-import', [TabelDpaController::class, 'formatImport']);
+        Route::get('/surat-penyediaan-dana/format-import', [SuratPenyediaanDanaController::class, 'formatImport']);
+        Route::post('/surat-penyediaan-dana/import', [SuratPenyediaanDanaController::class, 'importSpd']);
         Route::post('/tabel-dpa/import', [TabelDpaController::class, 'importSpd']);
     });
 
@@ -219,6 +221,11 @@ Route::group(['middleware' => ['auth']], function () {
         'tabel-dpa' => 'spd'
     ]);
 
+    Route::post('/surat-penyediaan-dana/tabel', [SuratPenyediaanDanaController::class, 'getTabel']);
+    Route::resource('/surat-penyediaan-dana', SuratPenyediaanDanaController::class)->parameters([
+        'surat-penyediaan-dana' => 'spd'
+    ]);
+
     Route::get('/statistik-dpa', [StatistikDpaController::class, 'index']);
     Route::post('/statistik-dpa/get-data-statistik', [StatistikDpaController::class, 'getDataStatistik']);
 
@@ -226,10 +233,8 @@ Route::group(['middleware' => ['auth']], function () {
 
     // List
     Route::post('/list/dokumen-spp-ls', [ListController::class, 'dokumenSppLs']);
-    Route::post('/list/program-dpa', [ListController::class, 'programDpa']);
-    Route::post('/list/kegiatan-dpa', [ListController::class, 'kegiatanDpa']);
-    Route::post('/list/program-spp', [ListController::class, 'programSpp']);
-    Route::post('/list/kegiatan-spp', [ListController::class, 'kegiatanSpp']);
+    Route::post('/list/program', [ListController::class, 'program']);
+    Route::post('/list/kegiatan', [ListController::class, 'kegiatan']);
 
     Route::get('/profil', [ProfilController::class, 'index']);
     Route::put('/profil', [ProfilController::class, 'update']);

@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.main')
 
 @section('title')
-    Dokumen Pelaksana Anggaran
+    Surat Penyediaan Dana (SPD)
 @endsection
 
 @push('style')
@@ -29,7 +29,7 @@
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">Dokumen Pelaksana Anggaran</a>
+            <a href="#">Surat Penyediaan Dana (SPD)</a>
         </li>
         <li class="separator">
             <i class="flaticon-right-arrow"></i>
@@ -46,23 +46,21 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-head-row">
-                        <div class="card-title">Dokumen Pelaksana Anggaran</div>
+                        <div class="card-title">Surat Penyediaan Dana (SPD)</div>
                         <div class="card-tools">
                             @if (Auth::user()->role == 'Admin')
                                 @component('dashboard.components.buttons.import', [
                                     'id' => 'btn-import',
                                     'class' => '',
-                                    'label' => 'Import DPA',
+                                    'label' => 'Import SPD',
                                 ])
                                 @endcomponent
-                                <button class="btn btn-primary" id="btn-export"> <i class="fas fa-file-export"></i> Export
-                                    DPA</button>
 
                                 @component('dashboard.components.buttons.add', [
                                     'id' => 'btn-tambah',
                                     'class' => '',
                                     'url' => '#',
-                                    'label' => 'Tambah DPA',
+                                    'label' => 'Tambah SPD',
                                 ])
                                 @endcomponent
                             @endif
@@ -75,24 +73,10 @@
                             Pastikan anda memilih seluruh filter
                         </div>
                     @endif
-                    <form id="form-export" action="{{ url('/tabel-dpa/export') }}" method="POST"
+                    <form id="form-export" action="{{ url('/surat-penyediaan-dana/export') }}" method="POST"
                         enctype="multipart/form-data">
                         <div class="row align-items-end mb-4">
                             @csrf
-                            <div class="col-md-12 col-sm-12">
-                                @component('dashboard.components.formElements.select', [
-                                    'label' => 'Jenis SPP',
-                                    'id' => 'jenis_spp_filter',
-                                    'name' => 'jenis_spp_filter',
-                                    'class' => 'select2 filter',
-                                    'wajib' => '<sup class="text-danger">*</sup>',
-                                ])
-                                    @slot('options')
-                                        <option value="SPP-GU">SPP-GU</option>
-                                        <option value="SPP-LS">SPP-LS</option>
-                                    @endslot
-                                @endcomponent
-                            </div>
                             @if (
                                 !in_array(Auth::user()->role, [
                                     'Bendahara Pengeluaran',
@@ -102,9 +86,9 @@
                                 <div class="col-md-6 col-sm-12">
                                     @component('dashboard.components.formElements.select', [
                                         'label' => 'Sekretariat Daerah',
-                                        'id' => 'sekretariat_daerah',
+                                        'id' => 'sekretariat_daerah_filter',
                                         'class' => 'select2 filter',
-                                        'name' => 'sekretariat_daerah',
+                                        'name' => 'sekretariat_daerah_filter',
                                         'wajib' => '<sup class="text-danger">*</sup>',
                                     ])
                                         @slot('options')
@@ -139,36 +123,6 @@
                                     @endslot
                                 @endcomponent
                             </div>
-                            <div class="col-md-6 col-sm-12">
-                                @component('dashboard.components.formElements.select', [
-                                    'label' => 'Bulan Dari',
-                                    'id' => 'bulan_dari_filter',
-                                    'name' => 'bulan_dari_filter',
-                                    'class' => 'select2 filter',
-                                    'wajib' => '<sup class="text-danger">*</sup>',
-                                ])
-                                    @slot('options')
-                                        @foreach ($daftarBulan as $item)
-                                            <option value="{{ $item }}">{{ $item }}</option>
-                                        @endforeach
-                                    @endslot
-                                @endcomponent
-                            </div>
-                            <div class="col-md-6 col-sm-12">
-                                @component('dashboard.components.formElements.select', [
-                                    'label' => 'Bulan Sampai',
-                                    'id' => 'bulan_sampai_filter',
-                                    'name' => 'bulan_sampai_filter',
-                                    'class' => 'select2 filter',
-                                    'wajib' => '<sup class="text-danger">*</sup>',
-                                ])
-                                    @slot('options')
-                                        @foreach ($daftarBulan as $item)
-                                            <option value="{{ $item }}">{{ $item }}</option>
-                                        @endforeach
-                                    @endslot
-                                @endcomponent
-                            </div>
                         </div>
                     </form>
                     <div id="tabel-spd">
@@ -183,7 +137,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Import DPA</h5>
+                    <h5 class="modal-title">Import SPD</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -192,21 +146,20 @@
                     @csrf
                     <div class="modal-body">
                         <ol class="pl-3">
-                            <li>Download Format Excel Berikut dan Sesuaikan Data DPA Sesuai Format Excel yang
+                            <li>Download Format Excel Berikut dan Sesuaikan Data SPD Sesuai Format Excel yang
                                 Didownload
                                 <br>
-                                <a href="{{ url('tabel-dpa/format-import') }}" class="btn btn-sm btn-primary mt-2"><i
-                                        class="fas fa-file-excel"></i> Format Import
+                                <a href="{{ url('surat-penyediaan-dana/format-import') }}"
+                                    class="btn btn-sm btn-primary mt-2"><i class="fas fa-file-excel"></i> Format Import
                                     Excel</a>
                             </li>
-                            <li class="mt-2">Pilih Tahun DPA</li>
+                            <li class="mt-2">Pilih Tahun SPD</li>
                             @component('dashboard.components.formElements.select', [
-                                'id' => 'tahun',
-                                'name' => 'tahun',
-                                'label' => 'Tahun DPA',
+                                'id' => 'tahun_import',
+                                'name' => 'tahun_import',
+                                'label' => 'Tahun SPD',
                                 'class' => 'select2',
                                 'options' => $tahun,
-                                // 'attribute' => 'required',
                                 'wajib' => '<sup class="text-danger">*</sup>',
                             ])
                                 @slot('options')
@@ -215,29 +168,26 @@
                                     @endforeach
                                 @endslot
                             @endcomponent
-                            <li class="mt-2">Pilih File Excel yang Didalamnya sudah terdapat file DPA yang sudah
+                            <li class="mt-2">Pilih File Excel yang Didalamnya sudah terdapat file SPD yang sudah
                                 disesuaikan dengan format
                                 yang diberikan</li>
                             @component('dashboard.components.formElements.input', [
                                 'id' => 'file_spd',
                                 'name' => 'file_spd',
                                 'type' => 'file',
-                                'label' => 'File DPA',
+                                'label' => 'File SPD',
                                 'class' => 'form-control',
-                                // 'attribute' => 'required',
                                 'wajib' => '<sup class="text-danger">*</sup>',
                             ])
                             @endcomponent
                         </ol>
-                        {{-- <label for=""></label>
-                    <button class="btn btn-success">Format Import Excel</button> --}}
                     </div>
                     <div class="modal-footer">
                         @component('dashboard.components.buttons.close')
                         @endcomponent
                         @component('dashboard.components.buttons.submit', [
                             'id' => 'btn-submit',
-                            'label' => 'Import DPA',
+                            'label' => 'Import SPD',
                         ])
                         @endcomponent
                     </div>
@@ -252,7 +202,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modal-tambah-title">Tambah Dokumen Pelaksana Anggaran (DPA)</h5>
+                        <h5 class="modal-title" id="modal-tambah-title">Tambah Surat Penyediaan Dana (SPD) (DPA)</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -262,7 +212,7 @@
                             <div class="col-12">
                                 @component('dashboard.components.formElements.select', [
                                     'label' => 'Tahun',
-                                    'id' => 'tahun_tambah',
+                                    'id' => 'tahun',
                                     'name' => 'tahun',
                                     'class' => 'select2',
                                     'wajib' => '<sup class="text-danger">*</sup>',
@@ -359,38 +309,7 @@
             programEdit = null;
             resetFormTambah();
             $('#modal-tambah').modal('show');
-            $('#modal-tambah-title').html('Tambah Dokumen Pelaksana Anggaran');
-        })
-
-        $('#btn-export').click(function() {
-            var tahun = $('#tahun_filter').val();
-            var sekretariatDaerah = roleAdmin.includes(role) ? $('#sekretariat_daerah').val() :
-                "{{ Auth::user()->profil->sekretariat_daerah_id }}";
-            var bulanDari = $('#bulan_dari_filter').val();
-            var bulanSampai = $('#bulan_sampai_filter').val();
-            var jenisSpp = $('#jenis_spp_filter').val();
-
-            var daftarBulan = @json($daftarBulan);
-            var monthToNumber = function(monthName) {
-                return daftarBulan.indexOf(monthName) + 1;
-            };
-
-            var bulanDariNumber = monthToNumber(bulanDari);
-            var bulanSampaiNumber = monthToNumber(bulanSampai);
-
-            if ((tahun != '') && (sekretariatDaerah != '') && (
-                    bulanDari != '') && (bulanSampai != '') && (jenisSpp != '')) {
-                if (bulanDariNumber <= bulanSampaiNumber) {
-                    $('#form-export').submit();
-                    return
-                }
-            }
-
-            swal("Periksa Kembali Data", "Pastikan anda memilih seluruh filter", {
-                icon: "error",
-                buttons: false,
-                timer: 3000,
-            });
+            $('#modal-tambah-title').html('Tambah Surat Penyediaan Dana (SPD)');
         })
 
         $('#btn-import').click(function() {
@@ -420,7 +339,7 @@
             }).then((Update) => {
                 if (Update) {
                     $.ajax({
-                        url: "{{ url('tabel-dpa/import') }}",
+                        url: "{{ url('surat-penyediaan-dana/import') }}",
                         type: 'POST',
                         data: formData,
                         cache: false,
@@ -434,7 +353,7 @@
                                     buttons: false,
                                     timer: 1000,
                                 });
-                                window.location.replace("{{ url('/tabel-dpa') }}");
+                                getTabelSpd();
                             } else {
                                 printErrorMsg(response.error);
                             }
@@ -473,23 +392,23 @@
                 if (Update) {
                     if (aksiTambah == 'tambah') {
                         $.ajax({
-                            url: "{{ url('/tabel-dpa') }}",
+                            url: "{{ url('/surat-penyediaan-dana') }}",
                             type: 'POST',
                             data: $(this).serialize(),
                             success: function(response) {
                                 if (response.status == 'success') {
                                     $('#modal-tambah').modal('hide');
-                                    tabelSpd();
+                                    getTabelSpd();
                                     swal("Berhasil", "Data Berhasil Tersimpan", {
                                         icon: "success",
                                         buttons: false,
                                         timer: 1000,
                                     });
                                 } else if (response.status == 'unique') {
-                                    swal("Gagal", "Data DPA Sudah Ada", {
+                                    swal("Gagal Menyimpan", "Data Sudah Ada", {
                                         icon: "error",
                                         buttons: false,
-                                        timer: 1000,
+                                        timer: 3000,
                                     });
                                 } else {
                                     printErrorMsg(response.error);
@@ -505,13 +424,13 @@
                         })
                     } else {
                         $.ajax({
-                            url: "{{ url('/tabel-dpa') }}" + '/' + idEdit,
+                            url: "{{ url('/surat-penyediaan-dana') }}" + '/' + idEdit,
                             type: 'PUT',
                             data: $(this).serialize(),
                             success: function(response) {
                                 if (response.status == 'success') {
                                     $('#modal-tambah').modal('hide');
-                                    tabelSpd();
+                                    getTabelSpd();
                                     swal("Berhasil", "Data Berhasil Diubah", {
                                         icon: "success",
                                         buttons: false,
@@ -545,30 +464,24 @@
 
     <script>
         $(document).ready(function() {
-            $('#tabel-dpa').addClass('active');
-            getProgram('tambah', '');
-            tabelSpd();
+            $('#surat-penyediaan-dana').addClass('active');
+            getProgram();
+            getTabelSpd();
         })
 
         $('.filter').change(function() {
-            tabelSpd();
+            getTabelSpd();
         })
 
-        function tabelSpd() {
+        function getTabelSpd() {
             var tahun = $('#tahun_filter').val();
-            var sekretariatDaerah = $('#sekretariat_daerah').val();
-            var bulanDari = $('#bulan_dari_filter').val();
-            var bulanSampai = $('#bulan_sampai_filter').val();
-            var jenisSpp = $('#jenis_spp_filter').val();
+            var sekretariatDaerah = $('#sekretariat_daerah_filter').val();
             $.ajax({
-                url: "{{ url('tabel-dpa/tabel-dpa') }}",
+                url: "{{ url('surat-penyediaan-dana/tabel') }}",
                 type: 'POST',
                 data: {
                     'tahun': tahun,
                     'sekretariat_daerah': sekretariatDaerah,
-                    'bulan_dari': bulanDari,
-                    'bulan_sampai': bulanSampai,
-                    'jenis_spp': jenisSpp
                 },
                 success: function(response) {
                     $('#tabel-spd').html(response);
@@ -602,7 +515,7 @@
             }).then((Delete) => {
                 if (Delete) {
                     $.ajax({
-                        url: "{{ url('tabel-dpa') }}" + '/' + id,
+                        url: "{{ url('surat-penyediaan-dana') }}" + '/' + id,
                         type: 'DELETE',
                         data: {
                             '_token': '{{ csrf_token() }}'
@@ -614,7 +527,7 @@
                                     buttons: false,
                                     timer: 1000,
                                 }).then(function() {
-                                    tabelSpd();
+                                    getTabelSpd();
                                 })
                             } else {
                                 swal("Gagal", "Data Gagal Dihapus", {
@@ -640,10 +553,40 @@
             getKegiatan('');
         })
 
+        $(document).on('click', '#btn-edit', function() {
+            let id = $(this).val();
+            idEdit = id;
+            $('#form-tambah').trigger("reset");
+            $.ajax({
+                url: "{{ url('surat-penyediaan-dana') }}" + '/' + id + '/edit',
+                type: "GET",
+                data: {
+                    id: id
+                },
+                success: function(response) {
+                    aksiTambah = 'ubah';
+                    kegiatanEdit = response.kegiatan_id;
+                    programEdit = response.kegiatan.program_id;
+                    resetFormTambah();
+
+                    $('#modal-tambah-title').html('Ubah Surat Penyediaan Dana (SPD)');
+                    $('#sekretariat_daerah_tambah').val(response.sekretariat_daerah_id).trigger(
+                        'change');
+                    $('#tahun').val(response.tahun_id).trigger('change');
+                    $('#jumlah_anggaran').val(response.jumlah_anggaran).trigger("input");
+
+                    getProgram();
+                    getKegiatan();
+
+                    $('#modal-tambah').modal('show');
+                },
+            })
+        })
+
         function getKegiatan() {
             var program = $('#program').val();
             $.ajax({
-                url: "{{ url('list/kegiatan-dpa') }}",
+                url: "{{ url('list/kegiatan') }}",
                 type: "POST",
                 data: {
                     '_token': '{{ csrf_token() }}',
@@ -669,39 +612,9 @@
             })
         }
 
-        $(document).on('click', '#btn-edit', function() {
-            let id = $(this).val();
-            idEdit = id;
-            $('#form-tambah').trigger("reset");
-            $.ajax({
-                url: "{{ url('tabel-dpa') }}" + '/' + id + '/edit',
-                type: "GET",
-                data: {
-                    id: id
-                },
-                success: function(response) {
-                    aksiTambah = 'ubah';
-                    kegiatanEdit = response.kegiatan_dpa.id;
-                    programEdit = response.kegiatan_dpa.program_id;
-                    resetFormTambah();
-
-                    $('#modal-tambah-title').html('Ubah Dokumen Pelaksana Anggaran');
-                    $('#sekretariat_daerah_tambah').val(response.sekretariat_daerah_id).trigger(
-                        'change');
-                    $('#tahun_tambah').val(response.tahun_id).trigger('change');
-                    $('#jumlah_anggaran').val(response.jumlah_anggaran).trigger("input");
-
-                    getProgram();
-                    getKegiatan();
-
-                    $('#modal-tambah').modal('show');
-                },
-            })
-        })
-
         function getProgram() {
             $.ajax({
-                url: "{{ url('list/program-dpa') }}",
+                url: "{{ url('list/program') }}",
                 type: "POST",
                 data: {
                     '_token': '{{ csrf_token() }}',

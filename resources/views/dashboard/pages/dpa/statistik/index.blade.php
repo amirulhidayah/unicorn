@@ -525,7 +525,7 @@
                             '_token': '{{ csrf_token() }}',
                             tahun_id: tahun,
                             sekretariat_daerah_id: SekretariatDaerah,
-                            kegiatan_dpa_id: kegiatan,
+                            kegiatan_id: kegiatan,
                             bulan_dari: bulanDari,
                             bulan_sampai: bulanSampai,
                             jenis_spp: jenisSpp

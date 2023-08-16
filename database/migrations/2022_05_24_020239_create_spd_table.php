@@ -15,7 +15,7 @@ class CreateSpdTable extends Migration
     {
         Schema::create('spd', function (Blueprint $table) {
             $table->id();
-            $table->uuid('kegiatan_dpa_id');
+            $table->uuid('kegiatan_id');
             $table->uuid('sekretariat_daerah_id');
             $table->uuid('tahun_id');
             $table->bigInteger('jumlah_anggaran');

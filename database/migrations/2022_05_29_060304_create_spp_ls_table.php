@@ -16,7 +16,7 @@ class CreateSppLsTable extends Migration
         Schema::create('spp_ls', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('tahun_id');
-            $table->uuid('kegiatan_dpa_id');
+            $table->uuid('kegiatan_id');
             $table->uuid('sekretariat_daerah_id');
             $table->integer('tahap_riwayat')->default(1);
             $table->string('kategori');

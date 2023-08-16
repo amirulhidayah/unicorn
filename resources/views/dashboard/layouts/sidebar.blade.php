@@ -21,10 +21,16 @@
                     </span>
                     <h4 class="text-section">Dokumen Pelaksana Anggaran (DPA)</h4>
                 </li>
-                <li class="nav-item" id="tabel-dpa">
+                <li class="nav-item" id="surat-penyediaan-dana">
+                    <a href="{{ url('surat-penyediaan-dana') }}">
+                        <i class="fas fa-table"></i>
+                        <p>Surat Penyediaan Dana</p>
+                    </a>
+                </li>
+                <li class="nav-item" id="tabel-pelaksanaan-anggaran">
                     <a href="{{ url('tabel-dpa') }}">
                         <i class="fas fa-table"></i>
-                        <p>Tabel</p>
+                        <p>Tabel Pelaksanaan Anggaran</p>
                     </a>
                 </li>
                 <li class="nav-item" id="statistik-dpa">

@@ -52,10 +52,8 @@ class DatabaseSeeder extends Seeder
         $this->call(UsersTableSeeder::class);
         $this->call(ProfilTableSeeder::class);
         $this->call(SpdTableSeeder::class);
-        $this->call(KegiatanDpaTableSeeder::class);
-        $this->call(ProgramDpaTableSeeder::class);
-        $this->call(KegiatanSppTableSeeder::class);
-        $this->call(ProgramSppTableSeeder::class);
+        $this->call(KegiatanTableSeeder::class);
+        $this->call(ProgramTableSeeder::class);
         $this->call(SppUpTableSeeder::class);
         $this->call(RiwayatSppUpTableSeeder::class);
         $this->call(DokumenSppUpTableSeeder::class);

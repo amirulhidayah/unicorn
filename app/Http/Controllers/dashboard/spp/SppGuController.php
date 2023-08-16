@@ -130,7 +130,7 @@ class SppGuController extends Controller
                 $sppGu->user_id = Auth::user()->id;
                 $sppGu->sekretariat_daerah_id = $role == "Admin" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
                 $sppGu->tahun_id = $request->tahun;
-                $sppGu->kegiatan_dpa_id = $request->kegiatan;
+                $sppGu->kegiatan_id = $request->kegiatan;
                 $sppGu->bulan = $request->bulan;
                 $sppGu->perencanaan_anggaran = str_replace(".", "", $request->perencanaan_anggaran);
                 $sppGu->nomor_surat = $request->nomor_surat;

@@ -173,12 +173,12 @@
                         @php
                             $daftarSpd = \App\Models\Spd::with(['SekretariatDaerah', 'kegiatan', 'tahun'])
                                 ->whereHas('kegiatan', function ($query) use ($program) {
-                                    $query->where('program_dpa_id', $program->id);
+                                    $query->where('program_id', $program->id);
                                 })
                                 ->where('sekretariat_daerah_id', $SekretariatDaerah->id)
                                 ->where('tahun_id', $tahun)
                                 ->get();
-                            
+
                             $totalJumlahAnggaran = 0;
                         @endphp
                         @foreach ($daftarSpd as $spd)
@@ -203,19 +203,19 @@
                                         $sppLs = \App\Models\SppLs::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'Januari')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $sppGu = \App\Models\SppGu::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'Januari')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $totalJanuari = $sppLs + $sppGu;
                                         echo 'Rp. ' . number_format($totalJanuari, 0, ',', '.');
                                     @endphp
@@ -233,19 +233,19 @@
                                         $sppLs = \App\Models\SppLs::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'Februari')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $sppGu = \App\Models\SppGu::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'Februari')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $totalFebruari = $sppLs + $sppGu;
                                         echo 'Rp. ' . number_format($totalFebruari, 0, ',', '.');
                                     @endphp
@@ -263,19 +263,19 @@
                                         $sppLs = \App\Models\SppLs::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'Maret')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $sppGu = \App\Models\SppGu::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'Maret')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $totalMaret = $sppLs + $sppGu;
                                         echo 'Rp. ' . number_format($totalMaret, 0, ',', '.');
                                     @endphp
@@ -293,19 +293,19 @@
                                         $sppLs = \App\Models\SppLs::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'April')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $sppGu = \App\Models\SppGu::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'April')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $totalApril = $sppLs + $sppGu;
                                         echo 'Rp. ' . number_format($totalApril, 0, ',', '.');
                                     @endphp
@@ -323,19 +323,19 @@
                                         $sppLs = \App\Models\SppLs::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'Mei')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $sppGu = \App\Models\SppGu::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'Mei')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $totalMei = $sppLs + $sppGu;
                                         echo 'Rp. ' . number_format($totalMei, 0, ',', '.');
                                     @endphp
@@ -353,19 +353,19 @@
                                         $sppLs = \App\Models\SppLs::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'Juni')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $sppGu = \App\Models\SppGu::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'Juni')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $totalJuni = $sppLs + $sppGu;
                                         echo 'Rp. ' . number_format($totalJuni, 0, ',', '.');
                                     @endphp
@@ -383,19 +383,19 @@
                                         $sppLs = \App\Models\SppLs::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'Juli')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $sppGu = \App\Models\SppGu::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'Juli')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $totalJuli = $sppLs + $sppGu;
                                         echo 'Rp. ' . number_format($totalJuli, 0, ',', '.');
                                     @endphp
@@ -413,19 +413,19 @@
                                         $sppLs = \App\Models\SppLs::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'Agustus')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $sppGu = \App\Models\SppGu::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'Agustus')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $totalAgustus = $sppLs + $sppGu;
                                         echo 'Rp. ' . number_format($totalAgustus, 0, ',', '.');
                                     @endphp
@@ -443,19 +443,19 @@
                                         $sppLs = \App\Models\SppLs::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'September')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $sppGu = \App\Models\SppGu::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'September')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $totalSeptember = $sppLs + $sppGu;
                                         echo 'Rp. ' . number_format($totalSeptember, 0, ',', '.');
                                     @endphp
@@ -473,19 +473,19 @@
                                         $sppLs = \App\Models\SppLs::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'Oktober')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $sppGu = \App\Models\SppGu::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'Oktober')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $totalOktober = $sppLs + $sppGu;
                                         echo 'Rp. ' . number_format($totalOktober, 0, ',', '.');
                                     @endphp
@@ -503,19 +503,19 @@
                                         $sppLs = \App\Models\SppLs::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'November')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $sppGu = \App\Models\SppGu::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'November')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $totalNovember = $sppLs + $sppGu;
                                         echo 'Rp. ' . number_format($totalNovember, 0, ',', '.');
                                     @endphp
@@ -533,19 +533,19 @@
                                         $sppLs = \App\Models\SppLs::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'Desember')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $sppGu = \App\Models\SppGu::where('sekretariat_daerah_id', $spd->sekretariat_daerah_id)
                                             ->orderBy('created_at', 'asc')
                                             ->where('tahun_id', $spd->tahun_id)
-                                            ->where('kegiatan_dpa_id', $spd->kegiatan_dpa_id)
+                                            ->where('kegiatan_id', $spd->kegiatan_id)
                                             ->where('status_validasi_akhir', 1)
                                             ->where('bulan', 'Desember')
                                             ->sum('anggaran_digunakan');
-                                        
+
                                         $totalDesember = $sppLs + $sppGu;
                                         echo 'Rp. ' . number_format($totalDesember, 0, ',', '.');
                                     @endphp

@@ -79,7 +79,7 @@ class TabelDpaController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
-        $cekSpd = Spd::where('kegiatan_dpa_id', $request->kegiatan)->where('sekretariat_daerah_id', $request->sekretariat_daerah)->where('tahun_id', $request->tahun)->first();
+        $cekSpd = Spd::where('kegiatan_id', $request->kegiatan)->where('sekretariat_daerah_id', $request->sekretariat_daerah)->where('tahun_id', $request->tahun)->first();
 
         if ($cekSpd) {
             return response()->json(['status' => 'unique']);
@@ -88,7 +88,7 @@ class TabelDpaController extends Controller
         try {
             DB::transaction(function () use ($request) {
                 $spd = new Spd();
-                $spd->kegiatan_dpa_id = $request->kegiatan;
+                $spd->kegiatan_id = $request->kegiatan;
                 $spd->tahun_id = $request->tahun;
                 $spd->sekretariat_daerah_id = $request->sekretariat_daerah;
                 $spd->jumlah_anggaran = preg_replace("/[^0-9]/", "", $request->jumlah_anggaran);
@@ -138,7 +138,7 @@ class TabelDpaController extends Controller
 
         try {
             DB::transaction(function () use ($request, $spd) {
-                $spd->kegiatan_dpa_id = $request->kegiatan;
+                $spd->kegiatan_id = $request->kegiatan;
                 $spd->tahun_id = $request->tahun;
                 $spd->sekretariat_daerah_id = $request->sekretariat_daerah;
                 $spd->jumlah_anggaran = preg_replace("/[^0-9]/", "", $request->jumlah_anggaran);
@@ -148,7 +148,7 @@ class TabelDpaController extends Controller
             return throw new Exception($error);
         }
 
-        $cekSpd = Spd::where('kegiatan_dpa_id', $request->kegiatan)->where('sekretariat_daerah_id', $request->sekretariat_daerah)->where('tahun_id', $request->tahun)->where('id', '!=', $spd->id)->first();
+        $cekSpd = Spd::where('kegiatan_id', $request->kegiatan)->where('sekretariat_daerah_id', $request->sekretariat_daerah)->where('tahun_id', $request->tahun)->where('id', '!=', $spd->id)->first();
 
         if ($cekSpd) {
             return response()->json(['status' => 'unique']);
@@ -208,14 +208,14 @@ class TabelDpaController extends Controller
 
         $SekretariatDaerah = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
 
-        $spd = Spd::where('kegiatan_dpa_id', $kegiatan)->where('sekretariat_daerah_id', $SekretariatDaerah)->where('tahun_id', $tahun)->first();
+        $spd = Spd::where('kegiatan_id', $kegiatan)->where('sekretariat_daerah_id', $SekretariatDaerah)->where('tahun_id', $tahun)->first();
 
         $jumlahAnggaran = $spd->jumlah_anggaran ?? 0;
 
         $sppLs = SppLs::where('sekretariat_daerah_id', $SekretariatDaerah)
             ->orderBy('created_at', 'asc')
             ->where('tahun_id', $tahun)
-            ->where('kegiatan_dpa_id', $kegiatan)
+            ->where('kegiatan_id', $kegiatan)
             ->where('status_validasi_akhir', 1)
             ->whereNotNull('dokumen_spm')
             ->whereNotNull('dokumen_arsip_sp2d');
@@ -327,7 +327,7 @@ class TabelDpaController extends Controller
                 $programData = [];
                 foreach ($programDpa as $program) {
                     $kegiatanData = [];
-                    $kegiatanDpa = KegiatanDpa::where('program_dpa_id', $program->id)->whereHas('sppGu', function ($query) use ($sekretariatDaerah, $tahun) {
+                    $kegiatanDpa = KegiatanDpa::where('program_id', $program->id)->whereHas('sppGu', function ($query) use ($sekretariatDaerah, $tahun) {
                         $query->where('tahun_id', $tahun);
                         $query->where('sekretariat_daerah_id', $sekretariatDaerah->id);
                     })->orderBy('no_rek', 'asc')->get();
@@ -335,7 +335,7 @@ class TabelDpaController extends Controller
                     foreach ($kegiatanDpa as $kegiatan) {
                         $bulanData = [];
                         foreach ($listBulan as $bulan) {
-                            $sppGu = SppGu::where('kegiatan_dpa_id', $kegiatan->id)->where('bulan', $bulan)->where('tahap', 'Selesai')->where('tahun_id', $tahun)->first();
+                            $sppGu = SppGu::where('kegiatan_id', $kegiatan->id)->where('bulan', $bulan)->where('tahap', 'Selesai')->where('tahun_id', $tahun)->first();
 
                             $bulanData[] = [
                                 'nama' => $bulan,
@@ -462,17 +462,17 @@ class TabelDpaController extends Controller
             $programData = [];
             foreach ($programDpa as $program) {
                 $kegiatanData = [];
-                $kegiatanDpa = KegiatanDpa::where('program_dpa_id', $program->id)->whereHas('spd', function ($query) use ($sekretariatDaerah, $tahun) {
+                $kegiatanDpa = KegiatanDpa::where('program_id', $program->id)->whereHas('spd', function ($query) use ($sekretariatDaerah, $tahun) {
                     $query->where('tahun_id', $tahun);
                     $query->where('sekretariat_daerah_id', $sekretariatDaerah->id);
                 })->orderBy('no_rek', 'asc')->get();
 
                 foreach ($kegiatanDpa as $kegiatan) {
                     $bulanData = [];
-                    $spd = Spd::where('sekretariat_daerah_id', $sekretariatDaerah->id)->where('tahun_id', $tahun)->where('kegiatan_dpa_id', $kegiatan->id)->first();
+                    $spd = Spd::where('sekretariat_daerah_id', $sekretariatDaerah->id)->where('tahun_id', $tahun)->where('kegiatan_id', $kegiatan->id)->first();
                     $sisaAnggaran = $spd->jumlah_anggaran ?? 0;
                     foreach ($listBulan as $bulan) {
-                        $sppLs = SppLs::where('kegiatan_dpa_id', $kegiatan->id)->where('bulan', $bulan)->whereNotNull('dokumen_spm')
+                        $sppLs = SppLs::where('kegiatan_id', $kegiatan->id)->where('bulan', $bulan)->whereNotNull('dokumen_spm')
                             ->whereNotNull('dokumen_arsip_sp2d')->where('tahun_id', $tahun)->first();
 
                         $sisaAnggaran -= ($sppLs ? $sppLs->anggaran_digunakan : 0);

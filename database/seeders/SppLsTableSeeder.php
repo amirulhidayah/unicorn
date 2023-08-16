@@ -14,13 +14,13 @@ class SppLsTableSeeder extends Seeder
      */
     public function run()
     {
-        
+
 
         \DB::table('spp_ls')->delete();
-        
-        \DB::table('spp_ls')->insert(array (
-            0 => 
-            array (
+
+        \DB::table('spp_ls')->insert(array(
+            0 =>
+            array(
                 'alasan_validasi_asn' => NULL,
                 'alasan_validasi_ppk' => NULL,
                 'anggaran_digunakan' => 230000,
@@ -30,7 +30,7 @@ class SppLsTableSeeder extends Seeder
                 'dokumen_spm' => '1690352105.pdf',
                 'id' => '2586e4f1-d998-4f27-8def-1e935b1ccc3f',
                 'kategori' => 'Belanja Hibah',
-                'kegiatan_dpa_id' => '35d37341-1b52-41ca-811d-1eb53d045837',
+                'kegiatan_id' => '35d37341-1b52-41ca-811d-1eb53d045837',
                 'nomor_surat' => 'SPP-LS',
                 'sekretariat_daerah_id' => '68d47270-c3fd-44a0-9033-0d5c4259a756',
                 'status_validasi_akhir' => 1,
@@ -46,7 +46,5 @@ class SppLsTableSeeder extends Seeder
                 'user_id' => 'efac625e-df6e-4c75-8b6a-27cece457709',
             ),
         ));
-        
-        
     }
 }

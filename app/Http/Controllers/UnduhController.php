@@ -48,7 +48,7 @@ class UnduhController extends Controller
     {
         $tahapRiwayat = $request->tahapRiwayat;
 
-        $spd = Spd::where('kegiatan_dpa_id', $sppLs->kegiatan_dpa_id)->where('tahun_id', $sppLs->tahun_id)->where('sekretariat_daerah_id', $sppLs->sekretariat_daerah_id)->first();
+        $spd = Spd::where('kegiatan_id', $sppLs->kegiatan_id)->where('tahun_id', $sppLs->tahun_id)->where('sekretariat_daerah_id', $sppLs->sekretariat_daerah_id)->first();
 
         $riwayatSppLs = RiwayatSppLs::whereNotNull('tahap_riwayat')->where('spp_ls_id', $sppLs->id)->whereNotNull('nomor_surat')->where('tahap_riwayat', $tahapRiwayat)->first();
         $riwayatSppLsAsn = RiwayatSppLs::whereNotNull('tahap_riwayat')->where('role', 'ASN Sub Bagian Keuangan')->where('spp_ls_id', $sppLs->id)->where('tahap_riwayat', $tahapRiwayat)->first();
@@ -67,7 +67,7 @@ class UnduhController extends Controller
     {
         $tahapRiwayat = $request->tahapRiwayat;
 
-        $spd = Spd::where('kegiatan_dpa_id', $sppGu->kegiatan_dpa_id)->where('tahun_id', $sppGu->tahun_id)->where('sekretariat_daerah_id', $sppGu->sekretariat_daerah_id)->first();
+        $spd = Spd::where('kegiatan_id', $sppGu->kegiatan_id)->where('tahun_id', $sppGu->tahun_id)->where('sekretariat_daerah_id', $sppGu->sekretariat_daerah_id)->first();
 
         $riwayatSppGu = RiwayatSppGu::whereNotNull('tahap_riwayat')->where('spp_gu_id', $sppGu->id)->whereNotNull('nomor_surat')->where('tahap_riwayat', $tahapRiwayat)->first();
         $riwayatSppGuAsn = RiwayatSppGu::whereNotNull('tahap_riwayat')->where('role', 'ASN Sub Bagian Keuangan')->where('spp_gu_id', $sppGu->id)->where('tahap_riwayat', $tahapRiwayat)->first();

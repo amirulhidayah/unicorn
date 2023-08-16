@@ -4,11 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DaftarDokumenSppLs;
 use App\Models\Kegiatan;
-use App\Models\KegiatanDpa;
-use App\Models\KegiatanSpp;
 use App\Models\Program;
-use App\Models\ProgramDpa;
-use App\Models\ProgramSpp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,15 +17,14 @@ class ListController extends Controller
         return response()->json($daftarDokumenSppLs);
     }
 
-    public function programDpa(Request $request)
+    public function program(Request $request)
     {
         $role = Auth::user()->role;
         $tahun = $request->tahun;
-        $tipe = $request->tipe;
         $id = $request->id;
         $SekretariatDaerah = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
 
-        $program = ProgramDpa::with(['kegiatanDpa'])->whereHas('kegiatanDpa', function ($query) use ($tahun, $SekretariatDaerah) {
+        $program = Program::with(['kegiatan'])->whereHas('kegiatan', function ($query) use ($tahun, $SekretariatDaerah) {
             $query->whereHas('spd', function ($query) use ($tahun, $SekretariatDaerah) {
                 if ($tahun) {
                     $query->where('tahun_id', $tahun);
@@ -41,7 +36,7 @@ class ListController extends Controller
         })->orderBy('no_rek', 'asc')->get();
 
         if ($id) {
-            $programHapus = ProgramDpa::where('id', $id)->withTrashed()->first();
+            $programHapus = Program::where('id', $id)->withTrashed()->first();
             if ($programHapus->trashed()) {
                 $program->push($programHapus);
             }
@@ -50,34 +45,19 @@ class ListController extends Controller
         return response()->json($program);
     }
 
-    public function kegiatanDpa(Request $request)
+    public function kegiatan(Request $request)
     {
         $program = $request->program;
         $id = $request->id;
 
-        $kegiatan = KegiatanDpa::where('program_dpa_id', $program)->orderBy('no_rek', 'asc')->get();
+        $kegiatan = Kegiatan::where('program_id', $program)->orderBy('no_rek', 'asc')->get();
 
         if ($id) {
-            $kegiatanHapus = KegiatanDpa::where('id', $id)->where('program_dpa_id', $program)->withTrashed()->first();
+            $kegiatanHapus = Kegiatan::where('id', $id)->where('program_id', $program)->withTrashed()->first();
             if ($kegiatanHapus->trashed()) {
                 $kegiatan->push($kegiatanHapus);
             }
         }
-        return response()->json($kegiatan);
-    }
-
-    public function programSpp()
-    {
-        $program = ProgramSpp::orderBy('no_rek', 'asc')->get();
-
-        return response()->json($program);
-    }
-
-    public function kegiatanSpp(Request $request)
-    {
-        $program = $request->program;
-        $kegiatan = KegiatanSpp::where('program_spp_id', $program)->orderBy('no_rek', 'asc')->get();
-
         return response()->json($kegiatan);
     }
 }

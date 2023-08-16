@@ -42,7 +42,7 @@ class StatistikDpaController extends Controller
         $jenisSpp = $request->jenis_spp;
         $role = Auth::user()->role;
         $tahunId = $request->tahun_id;
-        $kegiatanDpaId = $request->kegiatan_dpa_id;
+        $kegiatanDpaId = $request->kegiatan_id;
         $sekretariatDaerahId = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->sekretariat_daerah_id : Auth::user()->profil->sekretariat_daerah_id;
 
         $arrayBulan = [
@@ -75,11 +75,11 @@ class StatistikDpaController extends Controller
         $jumlahAnggaran = 0;
         if ($jenisSpp == "SPP-GU") {
             foreach ($listBulan as $bulan) {
-                $jumlahAnggaran += SppGu::where('kegiatan_dpa_id', $kegiatanDpaId)->where('sekretariat_daerah_id', $sekretariatDaerahId)->where('tahap', 'Selesai')->where('tahun_id', $tahunId)->where('bulan', $bulan)->first()->perencanaan_anggaran ?? 0;
+                $jumlahAnggaran += SppGu::where('kegiatan_id', $kegiatanDpaId)->where('sekretariat_daerah_id', $sekretariatDaerahId)->where('tahap', 'Selesai')->where('tahun_id', $tahunId)->where('bulan', $bulan)->first()->perencanaan_anggaran ?? 0;
                 $anggaranDigunakan[] = SppGu::where('sekretariat_daerah_id', $sekretariatDaerahId)
                     ->orderBy('created_at', 'asc')
                     ->where('tahun_id', $tahunId)
-                    ->where('kegiatan_dpa_id', $kegiatanDpaId)
+                    ->where('kegiatan_id', $kegiatanDpaId)
                     ->where('tahap', 'Selesai')
                     ->where('bulan', $bulan)
                     ->sum('anggaran_digunakan');
@@ -87,13 +87,13 @@ class StatistikDpaController extends Controller
         } else {
             $kegiatan = KegiatanDpa::where('id', $kegiatanDpaId)->first();
             $judul = $kegiatan ? $kegiatan->nama : 'Kegiatan Belum Dipilih';
-            $spd = Spd::where('kegiatan_dpa_id', $kegiatanDpaId)->where('sekretariat_daerah_id', $sekretariatDaerahId)->where('tahun_id', $tahunId)->first();
+            $spd = Spd::where('kegiatan_id', $kegiatanDpaId)->where('sekretariat_daerah_id', $sekretariatDaerahId)->where('tahun_id', $tahunId)->first();
             $jumlahAnggaran = $spd->jumlah_anggaran ?? 0;
             foreach ($listBulan as $bulan) {
                 $anggaranDigunakan[] = SppLs::where('sekretariat_daerah_id', $sekretariatDaerahId)
                     ->orderBy('created_at', 'asc')
                     ->where('tahun_id', $tahunId)
-                    ->where('kegiatan_dpa_id', $kegiatanDpaId)
+                    ->where('kegiatan_id', $kegiatanDpaId)
                     ->where('status_validasi_akhir', 1)
                     ->where('bulan', $bulan)
                     ->sum('anggaran_digunakan');
@@ -115,7 +115,7 @@ class StatistikDpaController extends Controller
         $sppLs = SppLs::where('sekretariat_daerah_id', $sekretariatDaerahId)
             ->orderBy('created_at', 'asc')
             ->where('tahun_id', $tahunId)
-            ->where('kegiatan_dpa_id', $kegiatanDpaId)
+            ->where('kegiatan_id', $kegiatanDpaId)
             ->where('status_validasi_akhir', 1)
             ->where('bulan', $bulan)
             ->sum('anggaran_digunakan');
@@ -123,7 +123,7 @@ class StatistikDpaController extends Controller
         // $sppGu = SppGu::where('sekretariat_daerah_id', $sekretariatDaerahId)
         //     ->orderBy('created_at', 'asc')
         //     ->where('tahun_id', $tahunId)
-        //     ->where('kegiatan_dpa_id', $kegiatanDpaId)
+        //     ->where('kegiatan_id', $kegiatanDpaId)
         //     ->where('status_validasi_akhir', 1)
         //     ->where('bulan', $bulan)
         //     ->sum('anggaran_digunakan');

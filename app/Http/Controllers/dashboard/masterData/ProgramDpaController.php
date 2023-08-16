@@ -96,7 +96,7 @@ class ProgramDpaController extends Controller
         try {
             DB::transaction(function () use ($programDpa) {
                 $programDpa->delete();
-                KegiatanDpa::where('program_dpa_id', $programDpa->id)->delete();
+                KegiatanDpa::where('program_id', $programDpa->id)->delete();
             });
         } catch (QueryException $error) {
             return throw new Exception($error);

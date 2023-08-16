@@ -14,9 +14,9 @@ class Spd extends Model
 
     protected $table = 'spd';
 
-    public function kegiatanDpa()
+    public function kegiatan()
     {
-        return $this->belongsTo(KegiatanDpa::class, 'kegiatan_dpa_id')->withTrashed();
+        return $this->belongsTo(Kegiatan::class, 'kegiatan_id')->withTrashed();
     }
 
     public function SekretariatDaerah()

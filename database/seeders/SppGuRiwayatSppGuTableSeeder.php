@@ -44,7 +44,7 @@ class SppGuRiwayatSppGuTableSeeder extends Seeder
 
                     $sppGu = new SppGu();
                     $sppGu->tahun_id = '8fef08db-e1bf-4a1f-8bd2-9809d5e60426';
-                    $sppGu->kegiatan_dpa_id = $kegiatan->id;
+                    $sppGu->kegiatan_id = $kegiatan->id;
                     $sppGu->sekretariat_daerah_id = $sekretariatDaerah->id;
                     $sppGu->tahap_riwayat = 2;
                     $sppGu->bulan = $bulan[$i];
