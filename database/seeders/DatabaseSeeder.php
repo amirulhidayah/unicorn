@@ -48,8 +48,8 @@ class DatabaseSeeder extends Seeder
         $this->call(DaftarDokumenSppUpTableSeeder::class);
         $this->call(DaftarDokumenSppTuTableSeeder::class);
         $this->call(DaftarDokumenSppLsTableSeeder::class);
-        $this->call(TahunTableSeeder::class);
         $this->call(DaftarDokumenSppGuTableSeeder::class);
+        $this->call(TahunTableSeeder::class);
         $this->call(UsersTableSeeder::class);
         $this->call(ProfilTableSeeder::class);
         $this->call(SpdTableSeeder::class);
