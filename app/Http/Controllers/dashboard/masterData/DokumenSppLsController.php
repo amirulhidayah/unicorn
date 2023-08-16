@@ -16,23 +16,7 @@ class DokumenSppLsController extends Controller
 {
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $data = DaftarDokumenSppLs::orderBy('created_at', 'desc')->get();
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function ($row) {
-                    $actionBtn = '<button id="btn-edit" class="btn btn-warning btn-sm mr-1" value="' . $row->id . '" ><i class="fas fa-edit"></i> Ubah</button><button id="btn-delete" class="btn btn-danger btn-sm mr-1" value="' . $row->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
-                    return $actionBtn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }
         return view('dashboard.pages.masterData.dokumenSppLs.index');
-    }
-
-    public function create()
-    {
-        //
     }
 
     public function store(Request $request)
@@ -66,11 +50,6 @@ class DokumenSppLsController extends Controller
         }
 
         return response()->json(['status' => 'success']);
-    }
-
-    public function show(DaftarDokumenSppLs $daftarDokumenSppLs)
-    {
-        //
     }
 
     public function edit(DaftarDokumenSppLs $daftarDokumenSppLs, Request $request)

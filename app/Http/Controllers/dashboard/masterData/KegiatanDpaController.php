@@ -17,23 +17,7 @@ class KegiatanDpaController extends Controller
     public function index(Request $request)
     {
         $idProgram = $request->program;
-        if ($request->ajax()) {
-            $data = KegiatanDpa::where('program_dpa_id', $idProgram)->orderBy('no_rek', 'asc')->get();
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function ($row) {
-                    $actionBtn = '<button id="btn-edit" class="btn btn-warning btn-sm mr-1" value="' . $row->id . '" ><i class="fas fa-edit"></i> Ubah</button><button id="btn-delete" class="btn btn-danger btn-sm mr-1" value="' . $row->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
-                    return $actionBtn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }
         return view('dashboard.pages.masterData.kegiatanDpa.index', compact('idProgram'));
-    }
-
-    public function create()
-    {
-        //
     }
 
     public function store(Request $request)
@@ -68,11 +52,6 @@ class KegiatanDpaController extends Controller
         }
 
         return response()->json(['status' => 'success']);
-    }
-
-    public function show(KegiatanDpa $kegiatanDpa)
-    {
-        //
     }
 
     public function edit(Request $request)

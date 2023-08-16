@@ -69,7 +69,7 @@ class DatabaseSeeder extends Seeder
         // $this->call(SppGuTableSeeder::class);
         // $this->call(RiwayatSppGuTableSeeder::class);
         // $this->call(DokumenSppGuTableSeeder::class);
-        $this->call(SppGuRiwayatSppGuTableSeeder::class);
-        $this->call(SppLsRiwayatSppLsTableSeeder::class);
+        // $this->call(SppGuRiwayatSppGuTableSeeder::class);
+        // $this->call(SppLsRiwayatSppLsTableSeeder::class);
     }
 }

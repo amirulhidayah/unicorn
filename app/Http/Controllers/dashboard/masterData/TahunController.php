@@ -16,17 +16,6 @@ class TahunController extends Controller
 {
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $data = Tahun::orderBy('created_at', 'asc')->get();
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function ($row) {
-                    $actionBtn = '<button id="btn-edit" class="btn btn-warning btn-sm mr-1" value="' . $row->id . '" ><i class="fas fa-edit"></i> Ubah</button><button id="btn-delete" class="btn btn-danger btn-sm mr-1" value="' . $row->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
-                    return $actionBtn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }
         return view('dashboard.pages.masterData.tahun.index');
     }
 

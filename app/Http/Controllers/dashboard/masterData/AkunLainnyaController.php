@@ -124,11 +124,6 @@ class AkunLainnyaController extends Controller
         ]);
     }
 
-    public function show(User $user)
-    {
-        //
-    }
-
     public function edit(User $user)
     {
         return view('dashboard.pages.masterData.akunLainnya.edit', compact(['user']));

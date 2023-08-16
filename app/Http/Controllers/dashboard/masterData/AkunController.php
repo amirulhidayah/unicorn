@@ -19,29 +19,6 @@ class AkunController extends Controller
 {
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $data = User::orderBy('created_at', 'desc')->whereIn('role', ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])->get();
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('nama', function ($row) {
-                    return $row->profil->nama;
-                })
-                ->addColumn('sekretariat_daerah', function ($row) {
-                    return $row->profil->SekretariatDaerah->nama ?? '-';
-                })
-                ->addColumn('role', function ($row) {
-                    return $row->role;
-                })
-                ->addColumn('foto', function ($row) {
-                    return '<img src="' . Storage::url('profil/' . $row->profil->foto) . '" class="img-fluid" width="80px" alt="Responsive image">';
-                })
-                ->addColumn('action', function ($row) {
-                    $actionBtn = '<a class="btn btn-warning btn-sm mr-1" href="' . url('/master-data/akun/' . $row->id . '/edit') . '" ><i class="fas fa-edit"></i> Ubah</a><button id="btn-delete" class="btn btn-danger btn-sm mr-1" value="' . $row->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
-                    return $actionBtn;
-                })
-                ->rawColumns(['action', 'foto'])
-                ->make(true);
-        }
         return view('dashboard.pages.masterData.akun.index');
     }
 

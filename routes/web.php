@@ -232,7 +232,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/list/kegiatan-spp', [ListController::class, 'kegiatanSpp']);
 
     Route::get('/profil', [ProfilController::class, 'index']);
-    Route::put('/profil/{user}', [ProfilController::class, 'update']);
+    Route::put('/profil', [ProfilController::class, 'update']);
 
     Route::get('/dashboard', [DashboardController::class, 'index']);
     Route::get('/scan-qrcode', [ScanqrcodeController::class, 'index']);

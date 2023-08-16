@@ -17,7 +17,15 @@ class SppLsRiwayatSppLsTableSeeder extends Seeder
             'Januari',
             'Februari',
             'Maret',
-            'April'
+            'April',
+            'Mei',
+            'Juni',
+            'Juli',
+            'Agustus',
+            'September',
+            'Oktober',
+            'November',
+            'Desember'
         ];
 
         $tahun = '8fef08db-e1bf-4a1f-8bd2-9809d5e60426';

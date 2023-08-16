@@ -62,52 +62,48 @@
                                     datanya</small>
                             </div>
                             <div class="col-sm-12 col-lg-6">
-                                @component('dashboard.components.formElements.input',
-                                    [
-                                        'label' => 'Email',
-                                        'type' => 'text',
-                                        'id' => 'email',
-                                        'name' => 'email',
-                                        'wajib' => '<sup class="text-danger">*</sup>',
-                                        'placeholder' => 'Masukkan Alamat Email',
-                                        'value' => Auth::user()->email,
-                                    ])
+                                @component('dashboard.components.formElements.input', [
+                                    'label' => 'Username',
+                                    'type' => 'text',
+                                    'id' => 'username',
+                                    'name' => 'username',
+                                    'wajib' => '<sup class="text-danger">*</sup>',
+                                    'placeholder' => 'Masukkan Username',
+                                    'value' => Auth::user()->username,
+                                ])
                                 @endcomponent
                             </div>
                             <div class="col-sm-12 col-lg-6">
-                                @component('dashboard.components.formElements.input',
-                                    [
-                                        'label' => 'Password',
-                                        'type' => 'text',
-                                        'id' => 'password',
-                                        'name' => 'password',
-                                        'wajib' => '<sup class="text-danger">*</sup>',
-                                        'placeholder' => 'Masukkan Password',
-                                    ])
+                                @component('dashboard.components.formElements.input', [
+                                    'label' => 'Password',
+                                    'type' => 'text',
+                                    'id' => 'password',
+                                    'name' => 'password',
+                                    'wajib' => '<sup class="text-danger">*</sup>',
+                                    'placeholder' => 'Masukkan Password',
+                                ])
                                 @endcomponent
                             </div>
                             <div class="col-sm-12 col-lg-6">
-                                @component('dashboard.components.formElements.input',
-                                    [
-                                        'label' => 'Nama Lengkap',
-                                        'type' => 'text',
-                                        'id' => 'nama',
-                                        'name' => 'nama',
-                                        'wajib' => '<sup class="text-danger">*</sup>',
-                                        'placeholder' => 'Masukkan Nama Lengkap',
-                                        'value' => Auth::user()->profil->nama,
-                                    ])
+                                @component('dashboard.components.formElements.input', [
+                                    'label' => 'Nama Lengkap',
+                                    'type' => 'text',
+                                    'id' => 'nama',
+                                    'name' => 'nama',
+                                    'wajib' => '<sup class="text-danger">*</sup>',
+                                    'placeholder' => 'Masukkan Nama Lengkap',
+                                    'value' => Auth::user()->profil->nama,
+                                ])
                                 @endcomponent
                             </div>
                             <div class="col-sm-12 col-lg-6">
-                                @component('dashboard.components.formElements.select',
-                                    [
-                                        'label' => 'Jenis Kelamin',
-                                        'id' => 'jenis_kelamin',
-                                        'name' => 'jenis_kelamin',
-                                        'class' => 'select2',
-                                        'wajib' => '<sup class="text-danger">*</sup>',
-                                    ])
+                                @component('dashboard.components.formElements.select', [
+                                    'label' => 'Jenis Kelamin',
+                                    'id' => 'jenis_kelamin',
+                                    'name' => 'jenis_kelamin',
+                                    'class' => 'select2',
+                                    'wajib' => '<sup class="text-danger">*</sup>',
+                                ])
                                     @slot('options')
                                         <option value="Laki-Laki">Laki-Laki</option>
                                         <option value="Perempuan">Perempuan</option>
@@ -115,44 +111,41 @@
                                 @endcomponent
                             </div>
                             <div class="col-sm-12 col-lg-12">
-                                @component('dashboard.components.formElements.input',
-                                    [
-                                        'label' => 'Alamat',
-                                        'type' => 'text',
-                                        'id' => 'alamat',
-                                        'name' => 'alamat',
-                                        'wajib' => '<sup class="text-danger">*</sup>',
-                                        'placeholder' => 'Masukkan Alamat',
-                                        'value' => Auth::user()->profil->alamat,
-                                    ])
+                                @component('dashboard.components.formElements.input', [
+                                    'label' => 'Alamat',
+                                    'type' => 'text',
+                                    'id' => 'alamat',
+                                    'name' => 'alamat',
+                                    'wajib' => '<sup class="text-danger">*</sup>',
+                                    'placeholder' => 'Masukkan Alamat',
+                                    'value' => Auth::user()->profil->alamat,
+                                ])
                                 @endcomponent
                             </div>
                             <div class="col-sm-12 col-lg-6">
-                                @component('dashboard.components.formElements.input',
-                                    [
-                                        'label' => 'Nomor Hp',
-                                        'type' => 'text',
-                                        'id' => 'nomor_hp',
-                                        'name' => 'nomor_hp',
-                                        'class' => 'numerik',
-                                        'wajib' => '<sup class="text-danger">*</sup>',
-                                        'placeholder' => 'Masukkan Nomor Hp',
-                                        'value' => Auth::user()->profil->nomor_hp,
-                                    ])
+                                @component('dashboard.components.formElements.input', [
+                                    'label' => 'Nomor Hp',
+                                    'type' => 'text',
+                                    'id' => 'nomor_hp',
+                                    'name' => 'nomor_hp',
+                                    'class' => 'numerik',
+                                    'wajib' => '<sup class="text-danger">*</sup>',
+                                    'placeholder' => 'Masukkan Nomor Hp',
+                                    'value' => Auth::user()->profil->nomor_hp,
+                                ])
                                 @endcomponent
                             </div>
                             <div class="col-sm-12 col-lg-6">
-                                @component('dashboard.components.formElements.input',
-                                    [
-                                        'label' => 'NIP',
-                                        'type' => 'text',
-                                        'id' => 'nip',
-                                        'name' => 'nip',
-                                        'wajib' => '',
-                                        'class' => 'numerik',
-                                        'placeholder' => 'Masukkan NIP',
-                                        'value' => Auth::user()->profil->nip,
-                                    ])
+                                @component('dashboard.components.formElements.input', [
+                                    'label' => 'NIP',
+                                    'type' => 'text',
+                                    'id' => 'nip',
+                                    'name' => 'nip',
+                                    'wajib' => '',
+                                    'class' => 'numerik',
+                                    'placeholder' => 'Masukkan NIP',
+                                    'value' => Auth::user()->profil->nip,
+                                ])
                                 @endcomponent
                             </div>
                             <div class="col-sm-12 col-lg-6 mt-3">
@@ -189,10 +182,9 @@
                                 <span class="text-danger error-text tanda_tangan-error"></span>
                             </div>
                             <div class="col-12 text-right">
-                                @component('dashboard.components.buttons.submit',
-                                    [
-                                        'label' => 'Simpan',
-                                    ])
+                                @component('dashboard.components.buttons.submit', [
+                                    'label' => 'Simpan',
+                                ])
                                 @endcomponent
                             </div>
                         </div>
@@ -232,7 +224,7 @@
                 if (Update) {
                     $.ajax({
                         type: "POST",
-                        url: "{{ url('/profil/' . Auth::user()->id) }}",
+                        url: "{{ url('/profil/') }}",
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         },
@@ -242,11 +234,12 @@
                         contentType: false,
                         success: function(response) {
                             if (response.status == 'success') {
-                                swal("Berhasil", "Profil Berhasil Disimpan", {
-                                    icon: "success",
-                                    buttons: false,
-                                    timer: 1000,
-                                }).then(function() {
+                                swal("Berhasil",
+                                    "Profil Berhasil Disimpan, Silahkan Login Kembali", {
+                                        icon: "success",
+                                        buttons: false,
+                                        timer: 3000,
+                                    }).then(function() {
                                     window.location.href =
                                         "{{ url('/logout') }}";
                                 })
@@ -339,12 +332,6 @@
         function FadeInAlert(text) {
             $(".alert").show();
             $(".alert").text(text).addClass("loading");
-        }
-
-        const printErrorMsg = (msg) => {
-            $.each(msg, function(key, value) {
-                $('.' + key + '-error').text(value);
-            });
         }
     </script>
 @endpush

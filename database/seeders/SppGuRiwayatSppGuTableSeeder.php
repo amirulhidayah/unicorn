@@ -12,27 +12,19 @@ class SppGuRiwayatSppGuTableSeeder extends Seeder
 {
     public function run()
     {
-        // $bulan = [
-        //     'Januari',
-        //     'Februari',
-        //     'Maret',
-        //     'April',
-        //     'Mei',
-        //     'Juni',
-        //     'Juli',
-        //     'Agustus',
-        //     'September',
-        //     'Oktober',
-        //     'November',
-        //     'Desember'
-        // ];
-
         $bulan = [
             'Januari',
             'Februari',
             'Maret',
             'April',
             'Mei',
+            'Juni',
+            'Juli',
+            'Agustus',
+            'September',
+            'Oktober',
+            'November',
+            'Desember'
         ];
 
         $tahun = '8fef08db-e1bf-4a1f-8bd2-9809d5e60426';

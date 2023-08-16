@@ -19,11 +19,6 @@ class DokumenSppUpController extends Controller
         return view('dashboard.pages.masterData.dokumenSppUp.index');
     }
 
-    public function create()
-    {
-        //
-    }
-
     public function store(Request $request)
     {
         $validator = Validator::make(
@@ -53,11 +48,6 @@ class DokumenSppUpController extends Controller
 
 
         return response()->json(['status' => 'success']);
-    }
-
-    public function show(DaftarDokumenSppUp $daftarDokumenSppUp)
-    {
-        //
     }
 
     public function edit(DaftarDokumenSppUp $daftarDokumenSppUp)

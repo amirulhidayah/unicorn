@@ -14,30 +14,9 @@ use Illuminate\Validation\Rule;
 
 class DokumenSppGuController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $data = DaftarDokumenSppGu::orderBy('created_at', 'desc')->get();
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function ($row) {
-                    $actionBtn = '<button id="btn-edit" class="btn btn-warning btn-sm mr-1" value="' . $row->id . '" ><i class="fas fa-edit"></i> Ubah</button><button id="btn-delete" class="btn btn-danger btn-sm mr-1" value="' . $row->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
-                    return $actionBtn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }
         return view('dashboard.pages.masterData.dokumenSppGu.index');
-    }
-
-    public function create()
-    {
-        //
     }
 
     public function store(Request $request)
@@ -71,11 +50,6 @@ class DokumenSppGuController extends Controller
         }
 
         return response()->json(['status' => 'success']);
-    }
-
-    public function show(DaftarDokumenSppGu $daftarDokumenSppGu)
-    {
-        //
     }
 
     public function edit(DaftarDokumenSppGu $daftarDokumenSppGu)

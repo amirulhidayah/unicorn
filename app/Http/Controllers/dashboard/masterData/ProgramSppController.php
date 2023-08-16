@@ -17,23 +17,7 @@ class ProgramSppController extends Controller
 {
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $data = ProgramSpp::orderBy('no_rek', 'asc')->get();
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function ($row) {
-                    $actionBtn = '<a href="' . url('master-data/kegiatan-spp/' . $row->id) . '" class="btn btn-primary btn-sm mr-1" value="' . $row->id . '" ><i class="fas fa-eye"></i> Lihat Kegiatan</a><button id="btn-edit" class="btn btn-warning btn-sm mr-1" value="' . $row->id . '" ><i class="fas fa-edit"></i> Ubah</button><button id="btn-delete" class="btn btn-danger btn-sm mr-1" value="' . $row->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
-                    return $actionBtn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }
         return view('dashboard.pages.masterData.programSpp.index');
-    }
-
-    public function create()
-    {
-        //
     }
 
     public function store(Request $request)
@@ -67,11 +51,6 @@ class ProgramSppController extends Controller
         }
 
         return response()->json(['status' => 'success']);
-    }
-
-    public function show(ProgramSpp $programSpp)
-    {
-        //
     }
 
     public function edit(ProgramSpp $programSpp)
