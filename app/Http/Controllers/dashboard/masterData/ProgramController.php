@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\dashboard\masterData;
 
 use App\Http\Controllers\Controller;
-use App\Models\KegiatanSpp;
-use App\Models\ProgramSpp;
+use App\Models\Kegiatan;
+use App\Models\Program;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -13,11 +13,11 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-class ProgramSppController extends Controller
+class ProgramController extends Controller
 {
     public function index(Request $request)
     {
-        return view('dashboard.pages.masterData.programSpp.index');
+        return view('dashboard.pages.masterData.program.index');
     }
 
     public function store(Request $request)
@@ -26,7 +26,7 @@ class ProgramSppController extends Controller
             $request->all(),
             [
                 'nama' => 'required',
-                'no_rek' => ['required', $request->no_rek ? Rule::unique('program_spp')->withoutTrashed() : ''],
+                'no_rek' => ['required', Rule::unique('program')->withoutTrashed()],
             ],
             [
                 'nama.required' => 'Nama Dokumen tidak boleh kosong',
@@ -41,10 +41,10 @@ class ProgramSppController extends Controller
 
         try {
             DB::transaction(function () use ($request) {
-                $programSpp = new ProgramSpp();
-                $programSpp->nama = $request->nama;
-                $programSpp->no_rek = $request->no_rek;
-                $programSpp->save();
+                $program = new Program();
+                $program->nama = $request->nama;
+                $program->no_rek = $request->no_rek;
+                $program->save();
             });
         } catch (QueryException $error) {
             return throw new Exception($error);
@@ -53,18 +53,18 @@ class ProgramSppController extends Controller
         return response()->json(['status' => 'success']);
     }
 
-    public function edit(ProgramSpp $programSpp)
+    public function edit(Program $program)
     {
-        return response()->json($programSpp);
+        return response()->json($program);
     }
 
-    public function update(Request $request, ProgramSpp $programSpp)
+    public function update(Request $request, Program $program)
     {
         $validator = Validator::make(
             $request->all(),
             [
                 'nama' => 'required',
-                'no_rek' => ['required', Rule::unique('program_spp')->ignore($programSpp->id)->withoutTrashed()],
+                'no_rek' => ['required', Rule::unique('program')->ignore($program->id)->withoutTrashed()],
             ],
             [
                 'nama.required' => 'Nama Dokumen tidak boleh kosong',
@@ -78,10 +78,10 @@ class ProgramSppController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($request, $programSpp) {
-                $programSpp->nama = $request->nama;
-                $programSpp->no_rek = $request->no_rek;
-                $programSpp->save();
+            DB::transaction(function () use ($program, $request) {
+                $program->nama = $request->nama;
+                $program->no_rek = $request->no_rek;
+                $program->save();
             });
         } catch (QueryException $error) {
             return throw new Exception($error);
@@ -90,12 +90,12 @@ class ProgramSppController extends Controller
         return response()->json(['status' => 'success']);
     }
 
-    public function destroy(ProgramSpp $programSpp)
+    public function destroy(Program $program)
     {
         try {
-            DB::transaction(function () use ($programSpp) {
-                $programSpp->delete();
-                KegiatanSpp::where('program_spp_id', $programSpp->id)->delete();
+            DB::transaction(function () use ($program) {
+                $program->delete();
+                Kegiatan::where('program_id', $program->id)->delete();
             });
         } catch (QueryException $error) {
             return throw new Exception($error);

@@ -4,8 +4,6 @@ namespace App\Http\Controllers\dashboard\masterData;
 
 use App\Http\Controllers\Controller;
 use App\Models\Kegiatan;
-use App\Models\KegiatanDpa;
-use App\Models\ProgramDpa;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -14,11 +12,12 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-class ProgramDpaController extends Controller
+class KegiatanController extends Controller
 {
     public function index(Request $request)
     {
-        return view('dashboard.pages.masterData.programDpa.index');
+        $idProgram = $request->program;
+        return view('dashboard.pages.masterData.kegiatan.index', compact('idProgram'));
     }
 
     public function store(Request $request)
@@ -27,12 +26,12 @@ class ProgramDpaController extends Controller
             $request->all(),
             [
                 'nama' => 'required',
-                'no_rek' => ['required', Rule::unique('program_dpa')->withoutTrashed()],
+                'no_rek' => ['required', Rule::unique('kegiatan')->withoutTrashed()],
             ],
             [
                 'nama.required' => 'Nama Dokumen tidak boleh kosong',
-                'no_rek.required' => 'Nomor Rekening tidak boleh kosong',
-                'no_rek.unique' => 'Nomor Rekening sudah ada',
+                'no_rek.required' => 'Nomor Rekening Kegiatan SKPD tidak boleh kosong',
+                'no_rek.unique' => 'Nomor Rekening Kegiatan SKPD sudah ada',
             ]
         );
 
@@ -42,10 +41,11 @@ class ProgramDpaController extends Controller
 
         try {
             DB::transaction(function () use ($request) {
-                $programDpa = new ProgramDpa();
-                $programDpa->nama = $request->nama;
-                $programDpa->no_rek = $request->no_rek;
-                $programDpa->save();
+                $kegiatan = new Kegiatan();
+                $kegiatan->program_id = $request->program;
+                $kegiatan->nama = $request->nama;
+                $kegiatan->no_rek = $request->no_rek;
+                $kegiatan->save();
             });
         } catch (QueryException $error) {
             return throw new Exception($error);
@@ -54,23 +54,25 @@ class ProgramDpaController extends Controller
         return response()->json(['status' => 'success']);
     }
 
-    public function edit(ProgramDpa $programDpa)
+    public function edit(Request $request)
     {
-        return response()->json($programDpa);
+        $kegiatan = Kegiatan::find($request->kegiatan);
+        return response()->json($kegiatan);
     }
 
-    public function update(Request $request, ProgramDpa $programDpa)
+    public function update(Request $request)
     {
+        $kegiatan = Kegiatan::find($request->kegiatan);
         $validator = Validator::make(
             $request->all(),
             [
                 'nama' => 'required',
-                'no_rek' => ['required', Rule::unique('program_dpa')->ignore($programDpa->id)->withoutTrashed()],
+                'no_rek' => ['required', Rule::unique('kegiatan')->ignore($kegiatan->id)->withoutTrashed()],
             ],
             [
                 'nama.required' => 'Nama Dokumen tidak boleh kosong',
-                'no_rek.required' => 'Nomor Rekening tidak boleh kosong',
-                'no_rek.unique' => 'Nomor Rekening sudah ada',
+                'no_rek.required' => 'Nomor Rekening Kegiatan SKPD tidak boleh kosong',
+                'no_rek.unique' => 'Nomor Rekening Kegiatan SKPD sudah ada',
             ]
         );
 
@@ -79,10 +81,11 @@ class ProgramDpaController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($programDpa, $request) {
-                $programDpa->nama = $request->nama;
-                $programDpa->no_rek = $request->no_rek;
-                $programDpa->save();
+            DB::transaction(function () use ($request, $kegiatan) {
+                $kegiatan->program_id = $request->program;
+                $kegiatan->nama = $request->nama;
+                $kegiatan->no_rek = $request->no_rek;
+                $kegiatan->save();
             });
         } catch (QueryException $error) {
             return throw new Exception($error);
@@ -91,12 +94,11 @@ class ProgramDpaController extends Controller
         return response()->json(['status' => 'success']);
     }
 
-    public function destroy(ProgramDpa $programDpa)
+    public function destroy(Request $request)
     {
         try {
-            DB::transaction(function () use ($programDpa) {
-                $programDpa->delete();
-                KegiatanDpa::where('program_id', $programDpa->id)->delete();
+            DB::transaction(function () use ($request) {
+                Kegiatan::where('id', $request->kegiatan)->delete();
             });
         } catch (QueryException $error) {
             return throw new Exception($error);

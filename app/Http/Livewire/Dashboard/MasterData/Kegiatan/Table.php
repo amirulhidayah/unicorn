@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Livewire\Dashboard\MasterData\KegiatanDpa;
+namespace App\Http\Livewire\Dashboard\MasterData\Kegiatan;
 
-use App\Models\KegiatanDpa;
+use App\Models\Kegiatan;
 use Illuminate\Support\Facades\Request;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -20,7 +20,7 @@ class Table extends Component
 
     public function getData($pagination = true)
     {
-        $datas = KegiatanDpa::where('program_id', $this->idProgram)->where('nama', 'like', '%' . $this->cari . '%')->orderBy('created_at', 'desc')->when($pagination, function ($query) {
+        $datas = Kegiatan::where('program_id', $this->idProgram)->where('nama', 'like', '%' . $this->cari . '%')->orderBy('created_at', 'desc')->when($pagination, function ($query) {
             return $query->paginate($this->totalPagination);
         }, function ($query) {
             return $query->get();
@@ -49,7 +49,7 @@ class Table extends Component
 
     public function render()
     {
-        return view('livewire.dashboard.master-data.kegiatan-dpa.table', [
+        return view('livewire.dashboard.master-data.kegiatan.table', [
             'datas' =>  $this->getData()
         ]);
     }

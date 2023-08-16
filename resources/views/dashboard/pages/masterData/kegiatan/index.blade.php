@@ -49,7 +49,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col">
-                            @livewire('dashboard.master-data.kegiatan-dpa.table')
+                            @livewire('dashboard.master-data.kegiatan.table')
                         </div>
                     </div>
                 </div>
@@ -130,7 +130,7 @@
             idEdit = id;
 
             $.ajax({
-                url: "{{ url('master-data/kegiatan-dpa/' . $idProgram . '/') }}" + '/' + id + '/edit',
+                url: "{{ url('master-data/kegiatan/' . $idProgram . '/') }}" + '/' + id + '/edit',
                 type: "GET",
                 data: {
                     id: id
@@ -168,7 +168,7 @@
                 if (Update) {
                     if (aksiTambah == 'tambah') {
                         $.ajax({
-                            url: "{{ url('master-data/kegiatan-dpa/' . $idProgram . '/') }}",
+                            url: "{{ url('master-data/kegiatan/' . $idProgram . '/') }}",
                             type: 'POST',
                             data: $(this).serialize(),
                             success: function(response) {
@@ -195,7 +195,7 @@
                         })
                     } else {
                         $.ajax({
-                            url: "{{ url('master-data/kegiatan-dpa/' . $idProgram . '/') }}" +
+                            url: "{{ url('master-data/kegiatan/' . $idProgram . '/') }}" +
                                 '/' + idEdit,
                             type: 'PUT',
                             data: $(this).serialize(),
@@ -248,7 +248,7 @@
             }).then((Delete) => {
                 if (Delete) {
                     $.ajax({
-                        url: "{{ url('master-data/kegiatan-dpa/' . $idProgram . '/') }}" + '/' +
+                        url: "{{ url('master-data/kegiatan/' . $idProgram . '/') }}" + '/' +
                             id,
                         type: 'DELETE',
                         data: {
@@ -279,7 +279,7 @@
 
     <script>
         $(document).ready(function() {
-            $('#master-program-dpa').addClass('active');
+            $('#master-program').addClass('active');
         })
     </script>
 @endpush

@@ -12,9 +12,8 @@ use App\Http\Controllers\dashboard\masterData\DokumenSppGuController;
 use App\Http\Controllers\dashboard\masterData\DokumenSppLsController;
 use App\Http\Controllers\dashboard\masterData\DokumenSppTuController;
 use App\Http\Controllers\dashboard\masterData\DokumenSppUpController;
-use App\Http\Controllers\dashboard\masterData\KegiatanDpaController;
-use App\Http\Controllers\dashboard\masterData\KegiatanSppController;
-use App\Http\Controllers\dashboard\masterData\ProgramDpaController;
+use App\Http\Controllers\dashboard\masterData\KegiatanController;
+use App\Http\Controllers\dashboard\masterData\ProgramController;
 use App\Http\Controllers\dashboard\masterData\ProgramSppController;
 use App\Http\Controllers\dashboard\masterData\TahunController;
 use App\Http\Controllers\dashboard\masterData\TentangController;
@@ -64,12 +63,12 @@ Route::group(['middleware' => ['auth']], function () {
         ]);
         Route::resource('/master-data/daftar-dokumen-spp-gu', DokumenSppGuController::class);
 
-        Route::resource('/master-data/program-dpa', ProgramDpaController::class)->parameters([
-            'program-dpa' => 'program_dpa'
+        Route::resource('/master-data/program', ProgramController::class)->parameters([
+            'program' => 'program'
         ]);
 
-        Route::resource('/master-data/kegiatan-dpa/{program}', KegiatanDpaController::class)->parameters([
-            '{program}' => 'kegiatan_dpa'
+        Route::resource('/master-data/kegiatan/{program}', KegiatanController::class)->parameters([
+            '{program}' => 'kegiatan'
         ]);
 
         Route::resource('/master-data/akun', AkunController::class)->parameters([

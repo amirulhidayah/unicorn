@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.main')
 
 @section('title')
-    Daftar Program DPA
+    Daftar Program
 @endsection
 
 @push('style')
@@ -24,7 +24,7 @@
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">Daftar Program DPA</a>
+            <a href="#">Daftar Program</a>
         </li>
     </ul>
 @endsection
@@ -35,7 +35,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-head-row">
-                        <div class="card-title">Data Daftar Program DPA</div>
+                        <div class="card-title">Data Daftar Program</div>
                         <div class="card-tools">
                             @component('dashboard.components.buttons.add', [
                                 'id' => 'btn-tambah',
@@ -49,7 +49,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col">
-                            @livewire('dashboard.master-data.program-dpa.table')
+                            @livewire('dashboard.master-data.program.table')
                         </div>
                     </div>
                 </div>
@@ -63,7 +63,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modal-tambah-title">Tambah Daftar Program DPA</h5>
+                        <h5 class="modal-title" id="modal-tambah-title">Tambah Daftar Program</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -129,7 +129,7 @@
             idEdit = id;
 
             $.ajax({
-                url: "{{ url('master-data/program-dpa') }}" + '/' + id + '/edit',
+                url: "{{ url('master-data/program') }}" + '/' + id + '/edit',
                 type: "GET",
                 data: {
                     id: id
@@ -167,7 +167,7 @@
                 if (Update) {
                     if (aksiTambah == 'tambah') {
                         $.ajax({
-                            url: "{{ url('master-data/program-dpa') }}",
+                            url: "{{ url('master-data/program') }}",
                             type: 'POST',
                             data: $(this).serialize(),
                             success: function(response) {
@@ -194,7 +194,7 @@
                         })
                     } else {
                         $.ajax({
-                            url: "{{ url('master-data/program-dpa') }}" + '/' + idEdit,
+                            url: "{{ url('master-data/program') }}" + '/' + idEdit,
                             type: 'PUT',
                             data: $(this).serialize(),
                             success: function(response) {
@@ -246,7 +246,7 @@
             }).then((Delete) => {
                 if (Delete) {
                     $.ajax({
-                        url: "{{ url('master-data/program-dpa') }}" + '/' + id,
+                        url: "{{ url('master-data/program') }}" + '/' + id,
                         type: 'DELETE',
                         data: {
                             '_token': '{{ csrf_token() }}'
@@ -276,7 +276,7 @@
 
     <script>
         $(document).ready(function() {
-            $('#master-program-dpa').addClass('active');
+            $('#master-program').addClass('active');
         })
     </script>
 @endpush

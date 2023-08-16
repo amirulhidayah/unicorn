@@ -107,23 +107,10 @@
                             <p>Dokumen SPP GU</p>
                         </a>
                     </li>
-                    <li class="nav-item" id="master-program-dpa">
-                        <a href="{{ url('/master-data/program-dpa') }}">
+                    <li class="nav-item" id="master-program">
+                        <a href="{{ url('/master-data/program') }}">
                             <i class="far fa-list-alt"></i>
-                            <p>Program (DPA)</p>
-                        </a>
-                    </li>
-                @endif
-                @if (in_array(Auth::user()->role, [
-                        'Admin',
-                        'Bendahara Pengeluaran',
-                        'Bendahara Pengeluaran Pembantu',
-                        'Bendahara Pengeluaran Pembantu Belanja Hibah',
-                    ]))
-                    <li class="nav-item" id="master-program-spp">
-                        <a href="{{ url('/master-data/program-spp') }}">
-                            <i class="far fa-list-alt"></i>
-                            <p>Program (SPP)</p>
+                            <p>Program</p>
                         </a>
                     </li>
                 @endif

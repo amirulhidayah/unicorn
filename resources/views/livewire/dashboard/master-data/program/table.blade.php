@@ -38,7 +38,7 @@
                         </div>
                     </td>
                     <td class="text-start">
-                        <a href="{{ url('master-data/kegiatan-dpa/' . $data->id) }}" class="btn btn-primary btn-sm"
+                        <a href="{{ url('master-data/kegiatan/' . $data->id) }}" class="btn btn-primary btn-sm"
                             value="{{ $data->id }}"><i class="fas fa-eye"></i> Lihat Kegiatan</a>
                         @component('dashboard.components.buttons.edit', [
                             'class' => 'btn-sm',
