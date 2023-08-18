@@ -25,6 +25,7 @@ use App\Http\Controllers\dashboard\spp\SppTuController;
 use App\Http\Controllers\dashboard\spp\SppUpController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\GetDataController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ListController;
 use App\Http\Controllers\ProfilController;
@@ -258,7 +259,11 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::prefix('append')->group(function () {
         Route::get('spp', [AppendController::class, 'spp']);
-        Route::get('sppLs', [AppendController::class, 'sppLs']);
+        Route::get('spp-ls', [AppendController::class, 'sppLs']);
+    });
+
+    Route::prefix('get')->group(function () {
+        Route::post('spd', [GetDataController::class, 'spd']);
     });
 });
 

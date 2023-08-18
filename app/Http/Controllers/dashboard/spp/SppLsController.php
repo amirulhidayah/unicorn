@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\dashboard\spp;
 
 use App\Http\Controllers\Controller;
+use App\Models\DaftarDokumenSppLs;
 use App\Models\SekretariatDaerah;
 use App\Models\DokumenSppLs;
+use App\Models\KategoriSppLs;
+use App\Models\KegiatanSppLs;
+use App\Models\Program;
 use App\Models\RiwayatSppLs;
 use App\Models\Spd;
 use App\Models\SppGu;
@@ -42,7 +46,17 @@ class SppLsController extends Controller
 
         $daftarTahun = Tahun::orderBy('tahun', 'asc')->get();
         $daftarSekretariatDaerah = SekretariatDaerah::orderBy('nama', 'asc')->get();
-        return view('dashboard.pages.spp.sppLs.create', compact(['daftarTahun', 'daftarSekretariatDaerah']));
+        $daftarDokumenSppLs = DaftarDokumenSppLs::orderBy('nama', 'asc')->get();
+        $daftarKategori = KategoriSppLs::orderBy('nama', 'asc')->get();
+
+        $sekretariatDaerahId = '68c37c05-84a4-493b-9419-35cb6d10a319';
+        $daftarProgram = Program::orderBy('no_rek', 'asc')->whereHas('kegiatan', function ($query) use ($sekretariatDaerahId) {
+            $query->whereHas('spd', function ($query) use ($sekretariatDaerahId) {
+                $query->where('sekretariat_daerah_id', $sekretariatDaerahId);
+            });
+        })->get();
+
+        return view('dashboard.pages.spp.sppLs.create', compact(['daftarTahun', 'daftarSekretariatDaerah', 'daftarProgram', 'daftarDokumenSppLs', 'daftarKategori']));
     }
 
     public function store(Request $request)
@@ -59,16 +73,15 @@ class SppLsController extends Controller
         $rules = [
             'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
             'kategori' => 'required',
+            'nomor_surat' => 'required',
             'tahun' => 'required',
-            'program' => 'required',
-            'kegiatan' => 'required',
             'bulan' => 'required',
-            'anggaran_digunakan' => 'required',
         ];
 
         $messages = [
             'sekretariat_daerah.required' => 'Biro Organisasi Tidak Boleh Kosong',
             'kategori.required' => 'Kategori Tidak Boleh Kosong',
+            'nomor_surat.required' => 'Nomor Surat Permintaan Pembayaran (SPP) Tidak Boleh Kosong',
             'tahun.required' => 'Tahun Tidak Boleh Kosong',
             'program.required' => 'Program Tidak Boleh Kosong',
             'kegiatan.required' => 'Kegiatan Tidak Boleh Kosong',
@@ -92,6 +105,27 @@ class SppLsController extends Controller
             }
         }
 
+        if ($request->program) {
+            foreach ($request->program as $nama) {
+                $rules["$nama"] = 'required';
+                $messages["$nama.required"] = "Program tidak boleh kosong";
+            }
+        }
+
+        if ($request->kegiatan) {
+            foreach ($request->kegiatan as $nama) {
+                $rules["$nama"] = 'required';
+                $messages["$nama.required"] = "Kegiatan tidak boleh kosong";
+            }
+        }
+
+        if ($request->anggaranDigunakan) {
+            foreach ($request->anggaranDigunakan as $nama) {
+                $rules["$nama"] = 'required';
+                $messages["$nama.required"] = "Anggaran digunakan tidak boleh kosong";
+            }
+        }
+
         $validator = Validator::make($request->all(), $rules, $messages);
 
         if (!$request->fileDokumen) {
@@ -100,12 +134,22 @@ class SppLsController extends Controller
             });
         }
 
-        if ($request->anggaran_digunakan && $request->kegiatan && $request->bulan && $request->tahun) {
-            $jumlahAnggaran = $this->_getJumlahAnggaran($request->sekretariat_daerah, $request->kegiatan, $request->bulan, $request->tahun);
-            if ($request->anggaran_digunakan > $jumlahAnggaran) {
-                $validator->after(function ($validator) {
-                    $validator->errors()->add('anggaran_digunakan', 'Anggaran melebihi anggaran yang telah ditentukan');
-                });
+        if (!$request->program) {
+            $validator->after(function ($validator) {
+                $validator->errors()->add('programDanKegiatanHitung', 'Program dan Kegiatan Minimal 1');
+            });
+        }
+
+        $arrayJumlahAnggaran = json_decode($request->arrayJumlahAnggaran, true);
+        if ($request->anggaranDigunakan) {
+            foreach ($request->anggaranDigunakan as $index => $nama) {
+                $anggaranDigunakan = str_replace('.', '', $request["$nama"]);
+                $jumlahAnggaran = $arrayJumlahAnggaran[$index]['jumlah_anggaran'];
+                if ($anggaranDigunakan > $jumlahAnggaran) {
+                    $validator->after(function ($validator) use ($nama) {
+                        $validator->errors()->add($nama, 'Anggaran Digunakan Melebihi Jumlah Anggaran');
+                    });
+                }
             }
         }
 
@@ -121,10 +165,8 @@ class SppLsController extends Controller
                 $sppLs->user_id = Auth::user()->id;
                 $sppLs->sekretariat_daerah_id = $role == "Admin" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
                 $sppLs->tahun_id = $request->tahun;
-                $sppLs->kegiatan_id = $request->kegiatan;
                 $sppLs->bulan = $request->bulan;
-                $sppLs->kategori = $request->kategori;
-                $sppLs->anggaran_digunakan = str_replace(".", "", $request->anggaran_digunakan);
+                $sppLs->kategori_spp_ls_id = $request->kategori;
                 $sppLs->nomor_surat = $request->nomor_surat;
                 $sppLs->save();
 
@@ -140,10 +182,18 @@ class SppLsController extends Controller
                     $dokumenSppLs->save();
                 }
 
+                foreach ($request->anggaranDigunakan as $index => $nama) {
+                    $anggaranDigunakan = str_replace('.', '', $request["$nama"]);
+                    $kegiatanSppLs = new KegiatanSppLs();
+                    $kegiatanSppLs->spp_ls_id = $sppLs->id;
+                    $kegiatanSppLs->kegiatan_id = $request[$request->kegiatan[$index]];
+                    $kegiatanSppLs->anggaran_digunakan = $anggaranDigunakan;
+                    $kegiatanSppLs->save();
+                }
+
                 $riwayatSppLs = new RiwayatSppLs();
                 $riwayatSppLs->spp_ls_id = $sppLs->id;
                 $riwayatSppLs->user_id = Auth::user()->id;
-                $riwayatSppLs->anggaran_digunakan = str_replace(".", "", $request->anggaran_digunakan);
                 $riwayatSppLs->status = 'Dibuat';
                 $riwayatSppLs->save();
             });

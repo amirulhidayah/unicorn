@@ -203,13 +203,10 @@
                 'class' => 'text-center',
             ],
             [
+                'title' => 'Nomor Surat',
+            ],
+            [
                 'title' => 'Tanggal',
-            ],
-            [
-                'title' => 'Kegiatan',
-            ],
-            [
-                'title' => 'Program',
             ],
             [
                 'title' => 'Sekretariat Daerah',
@@ -220,9 +217,9 @@
             [
                 'title' => 'Periode',
             ],
-            [
-                'title' => 'Anggaran Digunakan',
-            ],
+            // [
+            //     'title' => 'Anggaran Digunakan',
+            // ],
             [
                 'title' => 'Verifikasi ASN Sub Bagian Keuangan',
                 'class' => 'text-center',
@@ -260,6 +257,15 @@
                         <div class="d-flex">
                             <div class="d-flex flex-column justify-content-center">
                                 <h6 class="mb-0 text-xs">
+                                    {{ $data->nomor_surat }}
+                                </h6>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex">
+                            <div class="d-flex flex-column justify-content-center">
+                                <h6 class="mb-0 text-xs">
                                     {{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('d F Y') }}</h6>
                             </div>
                         </div>
@@ -268,7 +274,7 @@
                         <div class="d-flex">
                             <div class="d-flex flex-column justify-content-center">
                                 <h6 class="mb-0 text-xs">
-                                    {{ $data->kegiatan->nama . ' (' . $data->kegiatan->no_rek . ')' }}
+                                    {{ $data->sekretariatDaerah->nama }}
                                 </h6>
                             </div>
                         </div>
@@ -277,25 +283,7 @@
                         <div class="d-flex">
                             <div class="d-flex flex-column justify-content-center">
                                 <h6 class="mb-0 text-xs">
-                                    {{ $data->kegiatan->program->nama . ' (' . $data->kegiatan->program->no_rek . ')' }}
-                                </h6>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex">
-                            <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-xs">
-                                    {{ $data->SekretariatDaerah->nama }}
-                                </h6>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex">
-                            <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-xs">
-                                    {{ $data->kategori }}
+                                    {{ $data->kategoriSppLs->nama }}
                                 </h6>
                             </div>
                         </div>
@@ -305,7 +293,7 @@
                             {{ $data->bulan . ', ' . $data->tahun->tahun }}
                         </h6>
                     </td>
-                    <td>
+                    {{-- <td>
                         <div class="d-flex">
                             <div class="d-flex flex-column justify-content-center">
                                 <h6 class="mb-0 text-xs text-nowrap">
@@ -313,7 +301,7 @@
                                 </h6>
                             </div>
                         </div>
-                    </td>
+                    </td> --}}
                     <td>
                         <h6 class="mb-0 text-xs text-center">
                             @if ($data->status_validasi_asn == 0)

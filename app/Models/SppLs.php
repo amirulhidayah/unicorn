@@ -23,7 +23,7 @@ class SppLs extends Model
         return $this->belongsTo(Tahun::class)->withTrashed();
     }
 
-    public function SekretariatDaerah()
+    public function sekretariatDaerah()
     {
         return $this->belongsTo(SekretariatDaerah::class)->withTrashed();
     }
@@ -36,5 +36,10 @@ class SppLs extends Model
     public function riwayatSppLs()
     {
         return $this->hasMany(RiwayatSppLs::class, 'spp_ls_id', 'id')->orderBy('created_at', 'asc');
+    }
+
+    public function kategoriSppLs()
+    {
+        return $this->belongsTo(KategoriSppLs::class);
     }
 }
