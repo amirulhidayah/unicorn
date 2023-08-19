@@ -7,6 +7,7 @@ use App\Models\DaftarDokumenSppLs;
 use App\Models\SekretariatDaerah;
 use App\Models\DokumenSppLs;
 use App\Models\KategoriSppLs;
+use App\Models\Kegiatan;
 use App\Models\KegiatanSppLs;
 use App\Models\Program;
 use App\Models\RiwayatSppLs;
@@ -14,6 +15,8 @@ use App\Models\Spd;
 use App\Models\SppGu;
 use App\Models\SppLs;
 use App\Models\Tahun;
+use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\QueryException;
@@ -49,14 +52,7 @@ class SppLsController extends Controller
         $daftarDokumenSppLs = DaftarDokumenSppLs::orderBy('nama', 'asc')->get();
         $daftarKategori = KategoriSppLs::orderBy('nama', 'asc')->get();
 
-        $sekretariatDaerahId = '68c37c05-84a4-493b-9419-35cb6d10a319';
-        $daftarProgram = Program::orderBy('no_rek', 'asc')->whereHas('kegiatan', function ($query) use ($sekretariatDaerahId) {
-            $query->whereHas('spd', function ($query) use ($sekretariatDaerahId) {
-                $query->where('sekretariat_daerah_id', $sekretariatDaerahId);
-            });
-        })->get();
-
-        return view('dashboard.pages.spp.sppLs.create', compact(['daftarTahun', 'daftarSekretariatDaerah', 'daftarProgram', 'daftarDokumenSppLs', 'daftarKategori']));
+        return view('dashboard.pages.spp.sppLs.create', compact(['daftarTahun', 'daftarSekretariatDaerah', 'daftarDokumenSppLs', 'daftarKategori']));
     }
 
     public function store(Request $request)
@@ -83,10 +79,7 @@ class SppLsController extends Controller
             'kategori.required' => 'Kategori Tidak Boleh Kosong',
             'nomor_surat.required' => 'Nomor Surat Permintaan Pembayaran (SPP) Tidak Boleh Kosong',
             'tahun.required' => 'Tahun Tidak Boleh Kosong',
-            'program.required' => 'Program Tidak Boleh Kosong',
-            'kegiatan.required' => 'Kegiatan Tidak Boleh Kosong',
             'bulan.required' => 'Bulan Tidak Boleh Kosong',
-            'anggaran_digunakan.required' => 'Anggaran Digunakan Tidak Boleh Kosong',
         ];
 
         if ($request->fileDokumen) {
@@ -143,12 +136,14 @@ class SppLsController extends Controller
         $arrayJumlahAnggaran = json_decode($request->arrayJumlahAnggaran, true);
         if ($request->anggaranDigunakan) {
             foreach ($request->anggaranDigunakan as $index => $nama) {
-                $anggaranDigunakan = str_replace('.', '', $request["$nama"]);
-                $jumlahAnggaran = $arrayJumlahAnggaran[$index]['jumlah_anggaran'];
-                if ($anggaranDigunakan > $jumlahAnggaran) {
-                    $validator->after(function ($validator) use ($nama) {
-                        $validator->errors()->add($nama, 'Anggaran Digunakan Melebihi Jumlah Anggaran');
-                    });
+                if (isset($arrayJumlahAnggaran[$index]['jumlah_anggaran'])) {
+                    $anggaranDigunakan = str_replace('.', '', $request["$nama"]);
+                    $jumlahAnggaran = $arrayJumlahAnggaran[$index]['jumlah_anggaran'];
+                    if ($anggaranDigunakan > $jumlahAnggaran) {
+                        $validator->after(function ($validator) use ($nama) {
+                            $validator->errors()->add($nama, 'Anggaran Digunakan Melebihi Jumlah Anggaran');
+                        });
+                    }
                 }
             }
         }
@@ -214,11 +209,41 @@ class SppLsController extends Controller
     {
         $tipe = 'spp_ls';
 
-        $anggaranDigunakan = 'Rp. ' . number_format($sppLs->anggaran_digunakan, 0, ',', '.');
-
         $role = Auth::user()->role;
         if ((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) || Auth::user()->profil->sekretariat_daerah_id == $sppLs->sekretariat_daerah_id) {
-            return view('dashboard.pages.spp.sppLs.show', compact(['sppLs', 'tipe', 'anggaranDigunakan']));
+            $totalJumlahAnggaran = 0;
+            $totalAnggaranDigunakan = 0;
+            $totalSisaAnggaran = 0;
+            $programDanKegiatan = [];
+            $totalProgramDanKegiatan = [];
+
+            foreach ($sppLs->kegiatanSppLs as $kegiatanSppLs) {
+                $program = $kegiatanSppLs->kegiatan->program->nama . ' (' . $kegiatanSppLs->kegiatan->program->no_rek . ')';
+                $kegiatan = $kegiatanSppLs->kegiatan->nama . ' (' . $kegiatanSppLs->kegiatan->no_rek . ')';
+                $jumlahAnggaran = jumlah_anggaran($sppLs->sekretariat_daerah_id, $kegiatanSppLs->kegiatan_id, $sppLs->bulan_id, $sppLs->tahun_id, $sppLs->id);
+                $anggaranDigunakan = $kegiatanSppLs->anggaran_digunakan;
+                $sisaAnggaran = $jumlahAnggaran - $anggaranDigunakan;
+
+                $programDanKegiatan[] = [
+                    'program' => $program,
+                    'kegiatan' => $kegiatan,
+                    'jumlah_anggaran' => $jumlahAnggaran,
+                    'anggaran_digunakan' => $anggaranDigunakan,
+                    'sisa_anggaran' => $sisaAnggaran
+                ];
+
+                $totalJumlahAnggaran += $jumlahAnggaran;
+                $totalAnggaranDigunakan += $anggaranDigunakan;
+                $totalSisaAnggaran += $sisaAnggaran;
+            }
+
+            $totalProgramDanKegiatan = [
+                'total_jumlah_anggaran' => $totalJumlahAnggaran,
+                'total_anggaran_digunakan' => $totalAnggaranDigunakan,
+                'total_sisa_anggaran' => $totalSisaAnggaran,
+            ];
+
+            return view('dashboard.pages.spp.sppLs.show', compact(['sppLs', 'tipe', 'programDanKegiatan', 'totalProgramDanKegiatan']));
         } else {
             abort(403, 'Anda tidak memiliki akses halaman tersebut!');
         }
@@ -231,13 +256,37 @@ class SppLsController extends Controller
             abort(403, 'Anda tidak memiliki akses halaman tersebut!');
         }
 
-        $spd = Spd::where('kegiatan_id', $sppLs->kegiatan_id)->where('sekretariat_daerah_id', $sppLs->sekretariat_daerah_id)->where('tahun_id', $sppLs->tahun_id)->first();
-        $jumlahAnggaranHitung = $this->_getJumlahAnggaran($sppLs->sekretariat_daerah_id, $sppLs->kegiatan_id, $sppLs->bulan, $sppLs->tahun_id);
-        $jumlahAnggaran = 'Rp. ' . number_format($jumlahAnggaranHitung, 0, ',', '.');
-        $anggaranDigunakan = 'Rp. ' . number_format($sppLs->anggaran_digunakan, 0, ',', '.');
+        $daftarTahun = Tahun::orderBy('tahun', 'asc')->get();
+        $daftarSekretariatDaerah = SekretariatDaerah::orderBy('nama', 'asc')->get();
+        $daftarDokumenSppLs = DaftarDokumenSppLs::orderBy('nama', 'asc')->get();
+        $daftarKategori = KategoriSppLs::orderBy('nama', 'asc')->get();
 
+        $daftarProgram = Program::orderBy('no_rek', 'asc')->whereHas('kegiatan', function ($query) use ($sppLs) {
+            $query->whereHas('spd', function ($query) use ($sppLs) {
+                $query->where('sekretariat_daerah_id', $sppLs->sekretariat_daerah_id);
+            });
+        })->orderBy('no_rek', 'asc')->get();
 
-        return view('dashboard.pages.spp.sppLs.edit', compact(['sppLs', 'request', 'jumlahAnggaran', 'anggaranDigunakan', 'jumlahAnggaranHitung']));
+        $programDanKegiatan = null;
+        $arrayJumlahAnggaran = [];
+        foreach ($sppLs->kegiatanSppLs as $kegiatanSppLs) {
+            $jumlahAnggaran = jumlah_anggaran($sppLs->sekretariat_daerah_id, $kegiatanSppLs->kegiatan_id, $sppLs->bulan_id, $sppLs->tahun_id, $sppLs->id);
+
+            $daftarKegiatan = Kegiatan::where('program_id', $kegiatanSppLs->kegiatan->program_id)->whereHas('spd', function ($query) use ($sppLs) {
+                $query->where('tahun_id', $sppLs->tahun_id);
+                $query->where('sekretariat_daerah_id', $sppLs->sekretariat_daerah_id);
+            })->orderBy('no_rek', 'asc')->get();
+
+            $dataKey = Str::random(5) . rand(111, 999) . Str::random(5);
+            $programDanKegiatan .= view('dashboard.components.dynamicForm.sppLs', compact(['jumlahAnggaran', 'daftarProgram', 'daftarKegiatan', 'kegiatanSppLs', 'dataKey']))->render();
+
+            $arrayJumlahAnggaran[] = [
+                'key' => $dataKey,
+                'jumlah_anggaran' => $jumlahAnggaran ?? 0
+            ];
+        }
+
+        return view('dashboard.pages.spp.sppLs.edit', compact(['sppLs', 'daftarTahun', 'daftarSekretariatDaerah', 'daftarProgram', 'daftarDokumenSppLs', 'daftarKategori', 'programDanKegiatan', 'arrayJumlahAnggaran']));
     }
 
     public function update(Request $request, SppLs $sppLs)
@@ -254,15 +303,22 @@ class SppLsController extends Controller
         }
 
         $rules = [
-            'surat_penolakan' => $suratPenolakan . '|mimes:pdf|max:5120',
-            'anggaran_digunakan' => 'required',
+            'surat_pengembalian' => $suratPenolakan . '|mimes:pdf',
+            'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
+            'kategori' => 'required',
+            'nomor_surat' => 'required',
+            'tahun' => 'required',
+            'bulan' => 'required',
         ];
 
         $messages = [
-            'surat_penolakan.required' => 'Surat Penolakan tidak boleh kosong',
-            'surat_penolakan.mimes' => 'Dokumen Harus Berupa File PDF',
-            'surat_penolakan.max' => "Dokumen Tidak Boleh Lebih Dari 5 Mb",
-            'anggaran_digunakan.required' => 'Anggaran yang digunakan tidak boleh kosong',
+            'surat_pengembalian.required' => 'Surat Penolakan tidak boleh kosong',
+            'surat_pengembalian.mimes' => 'Dokumen Harus Berupa File PDF',
+            'sekretariat_daerah.required' => 'Biro Organisasi Tidak Boleh Kosong',
+            'kategori.required' => 'Kategori Tidak Boleh Kosong',
+            'nomor_surat.required' => 'Nomor Surat Permintaan Pembayaran (SPP) Tidak Boleh Kosong',
+            'tahun.required' => 'Tahun Tidak Boleh Kosong',
+            'bulan.required' => 'Bulan Tidak Boleh Kosong',
         ];
 
         if ($request->fileDokumenUpdate) {
@@ -306,12 +362,22 @@ class SppLsController extends Controller
             });
         }
 
-        if ($request->anggaran_digunakan) {
-            $jumlahAnggaran = $this->_getJumlahAnggaran($sppLs->sekretariat_daerah_id, $sppLs->kegiatan_id, $sppLs->bulan, $sppLs->tahun_id);
-            if ($request->anggaran_digunakan > $jumlahAnggaran) {
-                $validator->after(function ($validator) {
-                    $validator->errors()->add('anggaran_digunakan', 'Anggaran melebihi anggaran yang telah ditentukan');
-                });
+        if (!$request->program) {
+            $validator->after(function ($validator) {
+                $validator->errors()->add('programDanKegiatanHitung', 'Program dan Kegiatan Minimal 1');
+            });
+        }
+
+        $arrayJumlahAnggaran = json_decode($request->arrayJumlahAnggaran, true);
+        if ($request->anggaranDigunakan) {
+            foreach ($request->anggaranDigunakan as $index => $nama) {
+                $anggaranDigunakan = str_replace('.', '', $request["$nama"]);
+                $jumlahAnggaran = $arrayJumlahAnggaran[$index]['jumlah_anggaran'];
+                if ($anggaranDigunakan > $jumlahAnggaran) {
+                    $validator->after(function ($validator) use ($nama) {
+                        $validator->errors()->add($nama, 'Anggaran Digunakan Melebihi Jumlah Anggaran');
+                    });
+                }
             }
         }
 
@@ -323,9 +389,28 @@ class SppLsController extends Controller
         $arrayFileDokumenSebelumnya = [];
         $arrayFileDokumenUpdate = [];
         $arrayFileDokumenHapus = [];
+        $arrayKegiatan = [];
+        foreach ($request->kegiatan as $index => $nama) {
+            $arrayKegiatan[] = $request["$nama"];
+        }
 
         try {
-            DB::transaction(function () use ($request, &$arrayFileDokumen, &$arrayFileDokumenSebelumnya, &$arrayFileDokumenUpdate, &$arrayFileDokumenHapus, $sppLs) {
+            DB::transaction(function () use ($request, &$arrayFileDokumen, &$arrayFileDokumenSebelumnya, &$arrayFileDokumenUpdate, &$arrayFileDokumenHapus, $arrayKegiatan, $sppLs, $role) {
+
+                $kegiatanSppLs = KegiatanSppLs::whereNotIn('kegiatan_id', $arrayKegiatan)->where('spp_ls_id', $sppLs->id)->delete();
+
+                foreach ($request->anggaranDigunakan as $index => $nama) {
+                    $anggaranDigunakan = str_replace('.', '', $request["$nama"]);
+                    $kegiatanSppLs = KegiatanSppLs::where('spp_ls_id', $sppLs->id)->where('kegiatan_id', $request[$request->kegiatan[$index]])->first();
+                    if (!$kegiatanSppLs) {
+                        $kegiatanSppLs = new KegiatanSppLs();
+                    }
+                    $kegiatanSppLs->spp_ls_id = $sppLs->id;
+                    $kegiatanSppLs->kegiatan_id = $request[$request->kegiatan[$index]];
+                    $kegiatanSppLs->anggaran_digunakan = $anggaranDigunakan;
+                    $kegiatanSppLs->save();
+                }
+
                 if ($request->fileDokumenUpdate) {
                     $daftarDokumenSppLs = DokumenSppLs::where('spp_ls_id', $sppLs->id)->whereNotIn('id', $request->fileDokumenUpdate)->get();
                     foreach ($daftarDokumenSppLs as $dokumen) {
@@ -366,24 +451,21 @@ class SppLsController extends Controller
                 if (($sppLs->status_validasi_asn == 2 || $sppLs->status_validasi_ppk == 2)) {
                     $riwayatSppUp = new RiwayatSppLs();
 
-                    if ($request->file('surat_penolakan')) {
-                        $namaFileBerkas = "Surat Penolakan" . "-"  . Carbon::now()->format('YmdHs') . rand(1, 9999) . ".pdf";
-                        $request->file('surat_penolakan')->storeAs(
-                            'surat_penolakan_spp_ls',
+                    if ($request->file('surat_pengembalian')) {
+                        $namaFileBerkas = "surat-pengembalian" . "-"  . Carbon::now()->format('YmdHs') . rand(1, 9999) . ".pdf";
+                        $request->file('surat_pengembalian')->storeAs(
+                            'surat_pengembalian_spp_ls',
                             $namaFileBerkas
                         );
-                        $riwayatSppUp->surat_penolakan = $namaFileBerkas;
-                        $sppLs->surat_penolakan = $namaFileBerkas;
+                        $riwayatSppUp->surat_pengembalian = $namaFileBerkas;
+                        $sppLs->surat_pengembalian = $namaFileBerkas;
+                        $sppLs->surat_penolakan = null;
                     }
 
                     $riwayatSppUp->spp_ls_id = $sppLs->id;
                     $riwayatSppUp->user_id = Auth::user()->id;
                     $riwayatSppUp->status = 'Diperbaiki';
-                    $riwayatSppUp->anggaran_digunakan = str_replace(".", "", $request->anggaran_digunakan);
                     $riwayatSppUp->save();
-                }
-
-                if (($sppLs->status_validasi_asn == 2 || $sppLs->status_validasi_ppk == 2)) {
                     $sppLs->tahap_riwayat = $sppLs->tahap_riwayat + 1;
                 }
 
@@ -397,7 +479,11 @@ class SppLsController extends Controller
                     $sppLs->alasan_validasi_asn = null;
                 }
 
-                $sppLs->anggaran_digunakan = str_replace(".", "", $request->anggaran_digunakan);
+                $sppLs->sekretariat_daerah_id = $role == "Admin" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
+                $sppLs->tahun_id = $request->tahun;
+                $sppLs->bulan = $request->bulan;
+                $sppLs->kategori_spp_ls_id = $request->kategori;
+                $sppLs->nomor_surat = $request->nomor_surat;
                 $sppLs->save();
             });
         } catch (QueryException $error) {
@@ -452,6 +538,7 @@ class SppLsController extends Controller
                     $sppLs->delete();
                     $riwayatSppLs = RiwayatSppLs::where('spp_ls_id', $sppLs->id)->delete();
                     $dokumenSppLs = DokumenSppLs::where('spp_ls_id', $sppLs->id)->delete();
+                    $kegiatanSppLs = KegiatanSppLs::where('spp_ls_id', $sppLs->id)->delete();
                 }
             );
         } catch (QueryException $error) {
@@ -516,7 +603,6 @@ class SppLsController extends Controller
                         $sppLs->status_validasi_asn = $request->verifikasi;
                         $sppLs->alasan_validasi_asn = $request->alasan;
                         $sppLs->tanggal_validasi_asn = Carbon::now();
-
                         $riwayatTerakhir = RiwayatSppLs::where('role', 'ASN Sub Bagian Keuangan')->where('spp_ls_id', $sppLs->id)->where('tahap_riwayat', $sppLs->tahap_riwayat)->orderBy('created_at', 'desc')->delete();
                     } else {
                         $sppLs->status_validasi_ppk = $request->verifikasi;
@@ -532,7 +618,6 @@ class SppLsController extends Controller
                     $riwayatSppLs->spp_ls_id = $sppLs->id;
                     $riwayatSppLs->user_id = Auth::user()->id;
                     $riwayatSppLs->tahap_riwayat = $sppLs->tahap_riwayat;
-                    $riwayatSppLs->anggaran_digunakan = str_replace(".", "", $sppLs->anggaran_digunakan);
                     $riwayatSppLs->status = $request->verifikasi == '1' ? 'Disetujui' : 'Ditolak';
                     if ($request->verifikasi == 2) {
                         $nomorSurat = DB::table('riwayat_spp_ls')
@@ -546,6 +631,69 @@ class SppLsController extends Controller
                     $riwayatSppLs->alasan = $request->alasan;
                     $riwayatSppLs->role = Auth::user()->role;
                     $riwayatSppLs->save();
+
+                    if (($sppLs->status_validasi_asn == 2 || $sppLs->status_validasi_ppk == 2) && ($sppLs->status_validasi_asn != 0 && $sppLs->status_validasi_ppk != 0)) {
+                        $tahapRiwayat = $request->tahapRiwayat;
+
+                        $spd = Spd::where('kegiatan_id', $sppLs->kegiatan_id)->where('tahun_id', $sppLs->tahun_id)->where('sekretariat_daerah_id', $sppLs->sekretariat_daerah_id)->first();
+
+                        $totalJumlahAnggaran = 0;
+                        $totalAnggaranDigunakan = 0;
+                        $totalSisaAnggaran = 0;
+                        $programDanKegiatan = [];
+                        $totalProgramDanKegiatan = [];
+
+                        foreach ($sppLs->kegiatanSppLs as $kegiatanSppLs) {
+                            $program = $kegiatanSppLs->kegiatan->program->nama . ' (' . $kegiatanSppLs->kegiatan->program->no_rek . ')';
+                            $kegiatan = $kegiatanSppLs->kegiatan->nama . ' (' . $kegiatanSppLs->kegiatan->no_rek . ')';
+                            $jumlahAnggaran = jumlah_anggaran($sppLs->sekretariat_daerah_id, $kegiatanSppLs->kegiatan_id, $sppLs->bulan_id, $sppLs->tahun_id, $sppLs->id);
+                            $anggaranDigunakan = $kegiatanSppLs->anggaran_digunakan;
+                            $sisaAnggaran = $jumlahAnggaran - $anggaranDigunakan;
+
+                            $programDanKegiatan[] = [
+                                'program' => $program,
+                                'kegiatan' => $kegiatan,
+                                'jumlah_anggaran' => $jumlahAnggaran,
+                                'anggaran_digunakan' => $anggaranDigunakan,
+                                'sisa_anggaran' => $sisaAnggaran
+                            ];
+
+                            $totalJumlahAnggaran += $jumlahAnggaran;
+                            $totalAnggaranDigunakan += $anggaranDigunakan;
+                            $totalSisaAnggaran += $sisaAnggaran;
+                        }
+
+                        $totalProgramDanKegiatan = [
+                            'total_jumlah_anggaran' => $totalJumlahAnggaran,
+                            'total_anggaran_digunakan' => $totalAnggaranDigunakan,
+                            'total_sisa_anggaran' => $totalSisaAnggaran,
+                        ];
+
+                        $hariIni = Carbon::now()->translatedFormat('d F Y');
+                        $riwayatSppLs = RiwayatSppLs::where('spp_ls_id', $sppLs->id)->where('tahap_riwayat', $sppLs->tahap_riwayat)->where('status', 'Ditolak')->orderBy('updated_at', 'desc')->first();
+                        $ppk = User::where('role', 'PPK')->where('is_aktif', 1)->first();
+                        $kuasaPenggunaAnggaran = User::where('role', 'Kuasa Pengguna Anggaran')->where('is_aktif', 1)->first();
+
+                        $pdf = Pdf::loadView('dashboard.pages.spp.sppLs.suratPenolakan', compact(['sppLs', 'riwayatSppLs', 'hariIni', 'ppk', 'kuasaPenggunaAnggaran', 'spd', 'programDanKegiatan', 'totalProgramDanKegiatan']))->setPaper('f4', 'portrait');
+                        $fileName = 'surat-penolakan-' . time() . '.pdf';
+                        Storage::put('surat_penolakan_spp_ls/' . $fileName, $pdf->output());
+
+
+
+                        $riwayatSppLs = RiwayatSppLs::where('spp_ls_id', $sppLs->id)->where('tahap_riwayat', $sppLs->tahap_riwayat)->where('status', 'Ditolak')->get();
+                        foreach ($riwayatSppLs as $riwayat) {
+                            if (Storage::exists('surat_penolakan_spp_ls/' . $riwayat->surat_penolakan)) {
+                                Storage::delete('surat_penolakan_spp_ls/' . $riwayat->surat_penolakan);
+                            }
+
+                            $riwayat->surat_penolakan = $fileName;
+                            $riwayat->save();
+                        }
+
+                        $sppLs = SppLs::where('id', $sppLs->id)->first();
+                        $sppLs->surat_penolakan = $fileName;
+                        $sppLs->save();
+                    }
                 }
             );
         } catch (QueryException $error) {
@@ -572,7 +720,6 @@ class SppLsController extends Controller
 
                     $riwayatSppLs = new RiwayatSppLs();
                     $riwayatSppLs->spp_ls_id = $sppLs->id;
-                    $riwayatSppLs->anggaran_digunakan = $sppLs->anggaran_digunakan;
                     $riwayatSppLs->user_id = Auth::user()->id;
                     $riwayatSppLs->status = 'Diselesaikan';
                     $riwayatSppLs->save();
@@ -747,43 +894,43 @@ class SppLsController extends Controller
 
         $jumlahAnggaran = $spd->jumlah_anggaran ?? 0;
 
-        $sppLs = SppLs::where('sekretariat_daerah_id', $sekretariatDaerah)
+        $daftarSppLs = SppLs::where('sekretariat_daerah_id', $sekretariatDaerah)
             ->orderBy('created_at', 'asc')
             ->where('tahun_id', $tahun)
-            ->where('kegiatan_id', $kegiatan)
-            ->where('status_validasi_akhir', 1)
-            ->whereNotNull('dokumen_spm')
-            ->whereNotNull('dokumen_arsip_sp2d');
+            ->where('kegiatan_id', $kegiatan);
 
         if ($bulan == 'Januari') {
-            $sppLs = $sppLs->where('bulan', 'Januari');
+            $daftarSppLs = $daftarSppLs->where('bulan', 'Januari');
         } else if ($bulan == 'Februari') {
-            $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari']);
+            $daftarSppLs = $daftarSppLs->whereIn('bulan', ['Januari', 'Februari']);
         } else if ($bulan == 'Maret') {
-            $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret']);
+            $daftarSppLs = $daftarSppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret']);
         } else if ($bulan == 'April') {
-            $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April']);
+            $daftarSppLs = $daftarSppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April']);
         } else if ($bulan == 'Mei') {
-            $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei']);
+            $daftarSppLs = $daftarSppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei']);
         } else if ($bulan == 'Juni') {
-            $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni']);
+            $daftarSppLs = $daftarSppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni']);
         } else if ($bulan == 'Juli') {
-            $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli']);
+            $daftarSppLs = $daftarSppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli']);
         } else if ($bulan == 'Agustus') {
-            $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus']);
+            $daftarSppLs = $daftarSppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus']);
         } else if ($bulan == 'September') {
-            $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September']);
+            $daftarSppLs = $daftarSppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September']);
         } else if ($bulan == 'Oktober') {
-            $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober']);
+            $daftarSppLs = $daftarSppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober']);
         } else if ($bulan == 'November') {
-            $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November']);
+            $daftarSppLs = $daftarSppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November']);
         } else if ($bulan == 'Desember') {
-            $sppLs = $sppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']);
+            $daftarSppLs = $daftarSppLs->whereIn('bulan', ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']);
         }
 
-        $sppLs = $sppLs->sum('anggaran_digunakan');
-
-        $totalSpp = ($sppLs);
+        $daftarSppLs = $daftarSppLs->sum('anggaran_digunakan');
+        $anggaranDigunakan = 0;
+        foreach ($daftarSppLs as $sppLs) {
+            $anggaranDigunakan += $sppLs->kegiatanSppLs->sum('anggaran_digunakan');
+        }
+        $totalSpp = $anggaranDigunakan;
         $jumlahAnggaran = (($spd->jumlah_anggaran ?? 0) - $totalSpp);
 
         return $jumlahAnggaran;

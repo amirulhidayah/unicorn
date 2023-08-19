@@ -61,9 +61,6 @@ class DatabaseSeeder extends Seeder
         // $this->call(SppTuTableSeeder::class);
         $this->call(RiwayatSppTuTableSeeder::class);
         $this->call(DokumenSppTuTableSeeder::class);
-        // $this->call(SppLsTableSeeder::class);
-        // $this->call(RiwayatSppLsTableSeeder::class);
-        // $this->call(DokumenSppLsTableSeeder::class);
         $this->call(TentangSeeder::class);
         // $this->call(SppGuTableSeeder::class);
         // $this->call(RiwayatSppGuTableSeeder::class);
@@ -71,5 +68,9 @@ class DatabaseSeeder extends Seeder
         // $this->call(SppGuRiwayatSppGuTableSeeder::class);
         // $this->call(SppLsRiwayatSppLsTableSeeder::class);
         $this->call(KategoriSppLsSeeder::class);
+        $this->call(DokumenSppLsTableSeeder::class);
+        $this->call(KegiatanSppLsTableSeeder::class);
+        $this->call(RiwayatSppLsTableSeeder::class);
+        $this->call(SppLsTableSeeder::class);
     }
 }

@@ -29,8 +29,8 @@ class AppendController extends Controller
         $role = Auth::user()->role;
         $tahun = $request->tahun;
         $bulan = $request->bulan;
-        $id = $request->id;
         $sekretariatDaerah = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
+        $id = $request->id;
         $daftarProgram = [];
 
         try {

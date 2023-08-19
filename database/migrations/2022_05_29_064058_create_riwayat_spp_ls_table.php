@@ -17,12 +17,12 @@ class CreateRiwayatSppLsTable extends Migration
             $table->uuid('id')->primary();
             $table->uuid('spp_ls_id');
             $table->uuid('user_id');
-            // $table->bigInteger('anggaran_digunakan')->nullable();
             $table->integer('tahap_riwayat')->default(1);
             $table->string('role')->nullable();
             $table->string('nomor_surat')->nullable();
             $table->text('alasan')->nullable();
             $table->text('surat_penolakan')->nullable();
+            $table->text('surat_pengembalian')->nullable();
             $table->string('status');
             $table->timestamps();
         });

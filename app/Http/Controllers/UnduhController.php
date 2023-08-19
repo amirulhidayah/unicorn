@@ -50,6 +50,38 @@ class UnduhController extends Controller
 
         $spd = Spd::where('kegiatan_id', $sppLs->kegiatan_id)->where('tahun_id', $sppLs->tahun_id)->where('sekretariat_daerah_id', $sppLs->sekretariat_daerah_id)->first();
 
+        $totalJumlahAnggaran = 0;
+        $totalAnggaranDigunakan = 0;
+        $totalSisaAnggaran = 0;
+        $programDanKegiatan = [];
+        $totalProgramDanKegiatan = [];
+
+        foreach ($sppLs->kegiatanSppLs as $kegiatanSppLs) {
+            $program = $kegiatanSppLs->kegiatan->program->nama . ' (' . $kegiatanSppLs->kegiatan->program->no_rek . ')';
+            $kegiatan = $kegiatanSppLs->kegiatan->nama . ' (' . $kegiatanSppLs->kegiatan->no_rek . ')';
+            $jumlahAnggaran = jumlah_anggaran($sppLs->sekretariat_daerah_id, $kegiatanSppLs->kegiatan_id, $sppLs->bulan_id, $sppLs->tahun_id, $sppLs->id);
+            $anggaranDigunakan = $kegiatanSppLs->anggaran_digunakan;
+            $sisaAnggaran = $jumlahAnggaran - $anggaranDigunakan;
+
+            $programDanKegiatan[] = [
+                'program' => $program,
+                'kegiatan' => $kegiatan,
+                'jumlah_anggaran' => $jumlahAnggaran,
+                'anggaran_digunakan' => $anggaranDigunakan,
+                'sisa_anggaran' => $sisaAnggaran
+            ];
+
+            $totalJumlahAnggaran += $jumlahAnggaran;
+            $totalAnggaranDigunakan += $anggaranDigunakan;
+            $totalSisaAnggaran += $sisaAnggaran;
+        }
+
+        $totalProgramDanKegiatan = [
+            'total_jumlah_anggaran' => $totalJumlahAnggaran,
+            'total_anggaran_digunakan' => $totalAnggaranDigunakan,
+            'total_sisa_anggaran' => $totalSisaAnggaran,
+        ];
+
         $riwayatSppLs = RiwayatSppLs::whereNotNull('tahap_riwayat')->where('spp_ls_id', $sppLs->id)->whereNotNull('nomor_surat')->where('tahap_riwayat', $tahapRiwayat)->first();
         $riwayatSppLsAsn = RiwayatSppLs::whereNotNull('tahap_riwayat')->where('role', 'ASN Sub Bagian Keuangan')->where('spp_ls_id', $sppLs->id)->where('tahap_riwayat', $tahapRiwayat)->first();
         $riwayatSppLsPpk = RiwayatSppLs::whereNotNull('tahap_riwayat')->where('role', 'PPK')->where('spp_ls_id', $sppLs->id)->where('tahap_riwayat', $tahapRiwayat)->first();
@@ -59,7 +91,7 @@ class UnduhController extends Controller
         $ppk = User::where('role', 'PPK')->where('is_aktif', 1)->first();
         $kuasaPenggunaAnggaran = User::where('role', 'Kuasa Pengguna Anggaran')->where('is_aktif', 1)->first();
 
-        $pdf = PDF::loadView('dashboard.pages.spp.sppLs.suratPenolakan', compact(['riwayatSppLs', 'riwayatSppLsAsn', 'riwayatSppLsPpk', 'hariIni', 'ppk', 'kuasaPenggunaAnggaran', 'spd']))->setPaper('f4', 'portrait');
+        $pdf = PDF::loadView('dashboard.pages.spp.sppLs.suratPenolakan', compact(['riwayatSppLs', 'riwayatSppLsAsn', 'riwayatSppLsPpk', 'hariIni', 'ppk', 'kuasaPenggunaAnggaran', 'spd', 'programDanKegiatan', 'totalProgramDanKegiatan']))->setPaper('f4', 'portrait');
         return $pdf->download('Surat-Penolakan-' . $riwayatSppLs->nomor_surat . '-' . Carbon::now()  . '.pdf');
     }
 

@@ -240,6 +240,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/list/dokumen-spp-ls', [ListController::class, 'dokumenSppLs']);
     Route::post('/list/program', [ListController::class, 'program']);
     Route::post('/list/kegiatan', [ListController::class, 'kegiatan']);
+    Route::post('/list/kegiatan-spd', [ListController::class, 'kegiatanSpd']);
 
     Route::get('/profil', [ProfilController::class, 'index']);
     Route::put('/profil', [ProfilController::class, 'update']);

@@ -10,4 +10,14 @@ class KegiatanSppLs extends Model
 {
     use HasFactory, TraitUuid;
     protected $table = 'kegiatan_spp_ls';
+
+    public function kegiatan()
+    {
+        return $this->belongsTo(Kegiatan::class);
+    }
+
+    public function sppLs()
+    {
+        return $this->belongsTo(SppLs::class);
+    }
 }

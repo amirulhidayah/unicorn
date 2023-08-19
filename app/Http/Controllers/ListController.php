@@ -51,4 +51,26 @@ class ListController extends Controller
         }
         return response()->json($kegiatan);
     }
+
+    public function kegiatanSpd(Request $request)
+    {
+        $program = $request->program;
+        $role = Auth::user()->role;
+        $tahun = $request->tahun;
+        $sekretariatDaerah = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
+        $id = $request->id;
+
+        $kegiatan = Kegiatan::where('program_id', $program)->whereHas('spd', function ($query) use ($tahun, $sekretariatDaerah) {
+            $query->where('tahun_id', $tahun);
+            $query->where('sekretariat_daerah_id', $sekretariatDaerah);
+        })->orderBy('no_rek', 'asc')->get();
+
+        if ($id) {
+            $kegiatanHapus = Kegiatan::where('id', $id)->where('program_id', $program)->withTrashed()->first();
+            if ($kegiatanHapus->trashed()) {
+                $kegiatan->push($kegiatanHapus);
+            }
+        }
+        return response()->json($kegiatan);
+    }
 }

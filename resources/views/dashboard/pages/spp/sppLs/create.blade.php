@@ -124,10 +124,10 @@
                                 </div>
                             @else
                                 <div class="col-12">
-                                    <label for="exampleFormControlInput1">Sekretariat Daerah</label>
+                                    <label class="form-label my-2 fw-bold">Sekretariat Daerah</label>
                                     <br>
                                     <label for="exampleFormControlInput1"
-                                        class="badge badge-primary text-light my-2">{{ Auth::user()->profil->SekretariatDaerah->nama }}</label>
+                                        class="badge badge-primary text-light mb-2">{{ Auth::user()->profil->SekretariatDaerah->nama }}</label>
                                     <br>
                                 </div>
                             @endif
@@ -335,11 +335,13 @@
             let $anggaranDigunakan = $('#anggaran-digunakan-' + key);
             let $sisaAnggaran = $('#sisa-anggaran-' + key);
             $.ajax({
-                url: "{{ url('list/kegiatan') }}",
+                url: "{{ url('list/kegiatan-spd') }}",
                 type: "POST",
                 data: {
                     '_token': '{{ csrf_token() }}',
-                    program: value,
+                    'program': value,
+                    'sekretariat_daerah': $('#sekretariat_daerah').val(),
+                    'tahun': $('#tahun').val(),
                 },
                 success: function(response) {
                     if (response.length > 0) {
@@ -394,21 +396,24 @@
                 type: "POST",
                 data: {
                     '_token': '{{ csrf_token() }}',
-                    id: value,
+                    'kegiatan': value,
+                    'bulan': $('#bulan').val(),
+                    'tahun': $('#tahun').val(),
+                    'sekretariat_daerah': $('#sekretariat_daerah').val(),
                 },
                 success: function(response) {
-                    if (response.status == 'success' && response.data) {
+                    if (response.status == 'success' && response.jumlah_anggaran) {
                         if (existingObjectIndex !== -1) {
-                            arrayJumlahAnggaran[existingObjectIndex].jumlah_anggaran = response.data
+                            arrayJumlahAnggaran[existingObjectIndex].jumlah_anggaran = response
                                 .jumlah_anggaran;
                         } else {
                             arrayJumlahAnggaran.push({
                                 key: key,
-                                jumlah_anggaran: response.data.jumlah_anggaran
+                                jumlah_anggaran: response.jumlah_anggaran
                             });
                         }
-                        $jumlahAnggaran.html(formatRupiah(response.data.jumlah_anggaran));
-                        $sisaAnggaran.html(formatRupiah(response.data.jumlah_anggaran));
+                        $jumlahAnggaran.html(formatRupiah(response.jumlah_anggaran));
+                        $sisaAnggaran.html(formatRupiah(response.jumlah_anggaran));
                         $anggaranDigunakan.val(0);
                         hitungTotal();
                     } else {
@@ -444,9 +449,9 @@
             let sisaAnggaran = jumlahAnggaran.jumlah_anggaran - value;
             if (sisaAnggaran < 0) {
                 simbol = '-';
-                // $('.anggaran-digunakan-' + key + '-error').html('Anggaran Digunakan Melebihi Jumlah Anggaran');
+                $('.anggaran-digunakan-' + key + '-error').html('Anggaran Digunakan Melebihi Jumlah Anggaran');
             } else {
-                // $('.anggaran-digunakan-' + key + '-error').html('');
+                $('.anggaran-digunakan-' + key + '-error').html('');
             }
             $sisaAnggaran.html(simbol + formatRupiah(sisaAnggaran));
             hitungTotal();

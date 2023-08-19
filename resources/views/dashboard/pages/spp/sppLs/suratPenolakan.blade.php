@@ -35,6 +35,17 @@
             margin-top: -3px;
             font-weight: bold;
         }
+
+        #program-dan-kegiatan,
+        #program-dan-kegiatan td,
+        #program-dan-kegiatan tr,
+        #program-dan-kegiatan th {
+            border: 2px solid black;
+            border-collapse: collapse;
+            font-size: 12px;
+            padding: 3px;
+            margin: 0;
+        }
     </style>
 </head>
 
@@ -66,25 +77,58 @@
             <td width="20%">
                 <p>- SPP-TU Nomor</p>
                 <p>- Tanggal</p>
-                <p>- SPJ Kegiatan</p>
+                <p>- SPP Kegiatan</p>
                 {{-- <p>- Jumlah Anggaran : Rp. {{ number_format($riwayatSppLs->anggaran_digunakan, 0, ',', '.') }}</p> --}}
             </td>
             <td width="50%">
-                <p> : {{ $riwayatSppLs->sppLs->nomor_surat }}</p>
-                <p> : {{ \Carbon\Carbon::parse($riwayatSppLs->created_at)->translatedFormat('d F Y') }}</p>
-                <p> : {{ $riwayatSppLs->sppLs->kegiatan->nama }}</p>
-            </td>
-            <td width="5%">
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-                <p>Jumlah</p>
-            </td>
-            <td width="25%">
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-                <p> : Rp. {{ number_format($riwayatSppLs->anggaran_digunakan, 0, ',', '.') }}</p>
+                <p> : {{ $sppLs->nomor_surat }}</p>
+                <p> : {{ \Carbon\Carbon::parse($sppLs->created_at)->translatedFormat('d F Y') }}</p>
+                <p> : </p>
             </td>
         </tr>
+    </table>
+
+    <table id="program-dan-kegiatan">
+        <thead>
+            <tr>
+                <th scope="col">Program</th>
+                <th scope="col">Kegiatan</th>
+                <th scope="col">Jumlah Anggaran</th>
+                <th scope="col">Anggaran Digunakan</th>
+                <th scope="col">Sisa Anggaran</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($programDanKegiatan as $kegiatanSppLs)
+                <tr>
+                    <td>{{ $kegiatanSppLs['program'] }}
+                    </td>
+                    <td>{{ $kegiatanSppLs['kegiatan'] }}
+                    </td>
+                    <td style="vertical-align: middle;text-align:center">
+                        {{ number_format($kegiatanSppLs['jumlah_anggaran'] ?? 0, 0, ',', '.') }}
+                    </td>
+                    <td style="vertical-align: middle;text-align:center">
+                        {{ number_format($kegiatanSppLs['anggaran_digunakan'] ?? 0, 0, ',', '.') }}
+                    </td>
+                    <td style="vertical-align: middle;text-align:center">
+                        {{ number_format($kegiatanSppLs['sisa_anggaran'] ?? 0, 0, ',', '.') }}
+                    </td>
+                </tr>
+            @endforeach
+            <tr>
+                <td colspan="2" style="text-align: center;font-weight :bold">Total</td>
+                <td style="vertical-align: middle;text-align:center">
+                    {{ number_format($totalProgramDanKegiatan['total_jumlah_anggaran'] ?? 0, 0, ',', '.') }}
+                </td>
+                <td style="vertical-align: middle;text-align:center">
+                    {{ number_format($totalProgramDanKegiatan['total_anggaran_digunakan'] ?? 0, 0, ',', '.') }}
+                </td>
+                <td style="vertical-align: middle;text-align:center">
+                    {{ number_format($totalProgramDanKegiatan['total_sisa_anggaran'] ?? 0, 0, ',', '.') }}
+                </td>
+            </tr>
+        </tbody>
     </table>
 
     <p style="margin-top: 10px">Dikembalikan karena tidak memenuhi syarat untuk diproses. Adapun kekurangannya adalah
@@ -96,7 +140,7 @@
     <table style="border: 2px solid black;" width="100%">
         <tr>
             <td width="100%" style="padding: 13px">
-                <p>{{ $riwayatSppLsAsn->alasan ?? '' }}</p>
+                <p>{{ $sppLs->alasan_validasi_asn ?? '-' }}</p>
             </td>
         </tr>
     </table>
@@ -107,7 +151,7 @@
     <table style="border: 2px solid black;" width="100%">
         <tr>
             <td width="100%" style="padding: 13px">
-                <p>{{ $riwayatSppLsPpk->alasan ?? '' }}</p>
+                <p>{{ $sppLs->alasan_validasi_ppk ?? '-' }}</p>
             </td>
         </tr>
     </table>

@@ -107,7 +107,8 @@
                         $timelineBadgeBgColor = 'bg-danger';
                         $timelineBadgeIcon = 'fas fa-times';
                         if ($riwayat->tahap_riwayat != $spp->tahap_riwayat || ($spp->status_validasi_asn != null && $spp->status_validasi_ppk != null)) {
-                            $surat = '<a href="' . url('/surat-penolakan' . '/' . $tipeSuratPenolakan . '/' . $spp->id . '/' . $riwayat->tahap_riwayat) . '" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> Surat Penolakan</a>';
+                            // $surat = '<a href="' . url('/surat-penolakan' . '/' . $tipeSuratPenolakan . '/' . $spp->id . '/' . $riwayat->tahap_riwayat) . '" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> Surat Penolakan</a>';
+                            $surat = '<button onclick="openPdfInFullscreen(' . "'" . Storage::url('surat_penolakan_' . $tipeSuratPengembalian . '/' . $riwayat->surat_penolakan) . "'" . ')" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> Surat Penolakan</button>';
                         }
                         $catatan = $riwayat->alasan;
                     } elseif ($riwayat->status == 'Diperbaiki') {
@@ -115,7 +116,8 @@
                         $timelineBody = $riwayat->profil->nama . ' (' . $riwayat->user->role . ') ' . ' memperbaiki dokumen';
                         $timelineBadgeBgColor = 'bg-warning';
                         $timelineBadgeIcon = 'fas fa-pencil-alt';
-                        $surat = '<button onclick="openPdfInFullscreen(' . "'" . Storage::url('surat_penolakan_' . $tipeSuratPengembalian . '/' . $riwayat->surat_penolakan) . "'" . ')" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> Surat Pengembalian</button>';
+                        // $surat = '<button onclick="openPdfInFullscreen(' . "'" . Storage::url('surat_penolakan_' . $tipeSuratPengembalian . '/' . $riwayat->surat_penolakan) . "'" . ')" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> Surat Pengembalian</button>';
+                        $surat = '<button onclick="openPdfInFullscreen(' . "'" . Storage::url('surat_pengembalian_' . $tipeSuratPengembalian . '/' . $riwayat->surat_pengembalian) . "'" . ')" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> Surat Pengembalian</button>';
                     } elseif ($riwayat->status == 'Upload SPM') {
                         $timelineMode = 'timeline-inverted';
                         $timelineTitle = 'Upload SPM';

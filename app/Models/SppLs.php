@@ -42,4 +42,9 @@ class SppLs extends Model
     {
         return $this->belongsTo(KategoriSppLs::class);
     }
+
+    public function kegiatanSppLs()
+    {
+        return $this->hasMany(KegiatanSppLs::class);
+    }
 }

@@ -7,20 +7,23 @@ use App\Models\Spd;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class GetDataController extends Controller
 {
     public function spd(Request $request)
     {
-        $id = $request->id;
-        $tahun = '8fef08db-e1bf-4a1f-8bd2-9809d5e60426';
-        $sekretariatDaerah = '68c37c05-84a4-493b-9419-35cb6d10a319';
+        $role = Auth::user()->role;
+        $kegiatan = $request->kegiatan;
+        $tahun = $request->tahun;
+        $bulan = $request->bulan;
+        $sekretariatDaerah = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
 
         try {
-            $spd = Spd::where('kegiatan_id', $id)->where('tahun_id', $tahun)->first();
+            $jumlahAnggaran = jumlah_anggaran($sekretariatDaerah, $kegiatan, $bulan, $tahun);
             return response()->json([
                 'status' => 'success',
-                'data' => $spd
+                'jumlah_anggaran' => $jumlahAnggaran
             ]);
         } catch (QueryException $error) {
             return throw new Exception($error);
