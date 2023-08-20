@@ -232,8 +232,8 @@
                                     @endforelse
                                 </div>
 
-                                <div class="card bg-primary" id="card-tambah">
-                                    <div class="card-body text-light text-center">
+                                <div class="card bg-white border border-black" id="card-tambah">
+                                    <div class="card-body text-dark  text-center">
                                         <i class="fas fa-plus-circle fa-2xl" style="font-size: 75px"></i>
                                         <p class="my-0 fw-bold">Tambah Dokumen</p>
                                     </div>

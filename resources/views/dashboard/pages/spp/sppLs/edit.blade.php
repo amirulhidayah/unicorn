@@ -79,6 +79,28 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
+                            <div class="col-6">
+                                @if ($sppLs->alasan_validasi_asn != null)
+                                    @component('dashboard.components.widgets.alert', [
+                                        'oleh' => 'asn',
+                                        'tanggal' => $sppLs->tanggal_validasi_asn,
+                                        'isi' => $sppLs->alasan_validasi_asn,
+                                    ])
+                                    @endcomponent
+                                @endif
+                            </div>
+
+                            <div class="col-6">
+                                @if ($sppLs->alasan_validasi_ppk != null)
+                                    @component('dashboard.components.widgets.alert', [
+                                        'oleh' => 'ppk',
+                                        'tanggal' => $sppLs->tanggal_validasi_ppk,
+                                        'isi' => $sppLs->alasan_validasi_ppk,
+                                    ])
+                                    @endcomponent
+                                @endif
+                            </div>
+
                             <div class="col-12">
                                 @component('dashboard.components.formElements.select', [
                                     'label' => 'Kategori',

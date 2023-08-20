@@ -176,16 +176,6 @@
 
                             </div>
                             <div class="col-md-6">
-                                <div class="card" id="card-keterangan-upload">
-                                    <div class="card-body text-center">
-                                        <i class="fas fa-file-upload" style="font-size: 75px"></i>
-                                        <p class="my-0">Upload Dokumen</p>
-                                        <p class="my-0">Ukuran Maksimum File Adalah <span class="text-danger">5
-                                                MB</span> Dengan Tipe File
-                                            <span class="text-danger">PDF</span>
-                                        </p>
-                                    </div>
-                                </div>
                                 <div id="list-upload">
                                     <small class="text-danger error-text dokumenFileHitung-error"
                                         id="dokumenFileHitung-error"></small>
@@ -207,8 +197,8 @@
                                     @endforelse
                                 </div>
 
-                                <div class="card bg-primary" id="card-tambah">
-                                    <div class="card-body text-light text-center">
+                                <div class="card bg-light" id="card-tambah">
+                                    <div class="card-body text-dark text-center">
                                         <i class="fas fa-plus-circle fa-2xl" style="font-size: 75px"></i>
                                         <p class="my-0 fw-bold">Tambah Dokumen</p>
                                     </div>

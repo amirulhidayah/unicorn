@@ -66,13 +66,13 @@
             <td width="20%">
                 <p>- SPP-TU Nomor</p>
                 <p>- Tanggal</p>
-                <p>- SPJ Kegiatan</p>
+                <p>- SPP Kegiatan</p>
                 {{-- <p>- Jumlah Anggaran : Rp. {{ number_format($riwayatSppTu->jumlah_anggaran, 0, ',', '.') }}</p> --}}
             </td>
             <td width="50%">
-                <p> : {{ $riwayatSppTu->sppTu->nomor_surat }}</p>
-                <p> : {{ \Carbon\Carbon::parse($riwayatSppTu->created_at)->translatedFormat('d F Y') }}</p>
-                <p> : {{ $riwayatSppTu->sppTu->kegiatan->nama }},</p>
+                <p> : {{ $sppTu->nomor_surat }}</p>
+                <p> : {{ \Carbon\Carbon::parse($sppTu->created_at)->translatedFormat('d F Y') }}</p>
+                <p> : {{ $sppTu->kegiatan->nama . ' (' . $sppTu->kegiatan->no_rek . ')' }},</p>
             </td>
             <td width="5%">
                 <p>&nbsp;</p>
@@ -82,7 +82,7 @@
             <td width="25%">
                 <p>&nbsp;</p>
                 <p>&nbsp;</p>
-                <p> : Rp. {{ number_format($riwayatSppTu->jumlah_anggaran, 0, ',', '.') }}</p>
+                <p> : Rp. {{ number_format($sppTu->jumlah_anggaran, 0, ',', '.') }}</p>
             </td>
         </tr>
     </table>
@@ -96,7 +96,7 @@
     <table style="border: 2px solid black;" width="100%">
         <tr>
             <td width="100%" style="padding: 13px">
-                <p>{{ $riwayatSppTuAsn->alasan ?? '' }}</p>
+                <p>{{ $sppTu->alasan_validasi_asn ?? '-' }}</p>
             </td>
         </tr>
     </table>
@@ -107,7 +107,7 @@
     <table style="border: 2px solid black;" width="100%">
         <tr>
             <td width="100%" style="padding: 13px">
-                <p>{{ $riwayatSppTuPpk->alasan ?? '' }}</p>
+                <p>{{ $sppTu->alasan_validasi_ppk ?? '-' }}</p>
             </td>
         </tr>
     </table>

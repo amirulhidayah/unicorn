@@ -24,6 +24,7 @@ class CreateSppTuTable extends Migration
             $table->string('nomor_surat');
             $table->uuid('user_id');
             $table->text('surat_penolakan')->nullable();
+            $table->text('surat_pengembalian')->nullable();
             $table->integer('status_validasi_asn')->default(0);
             $table->text('alasan_validasi_asn')->nullable();
             $table->integer('status_validasi_ppk')->default(0);

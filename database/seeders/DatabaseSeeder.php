@@ -25,6 +25,10 @@ class DatabaseSeeder extends Seeder
         Storage::deleteDirectory('/surat_penolakan_spp_ls');
         Storage::deleteDirectory('/surat_penolakan_spp_tu');
         Storage::deleteDirectory('/surat_penolakan_spp_up');
+        Storage::deleteDirectory('/surat_pengembalian_spp_gu');
+        Storage::deleteDirectory('/surat_pengembalian_spp_ls');
+        Storage::deleteDirectory('/surat_pengembalian_spp_tu');
+        Storage::deleteDirectory('/surat_pengembalian_spp_up');
         Storage::deleteDirectory('/tanda_tangan');
 
         Storage::makeDirectory('/dokumen_spp_gu');
@@ -36,6 +40,10 @@ class DatabaseSeeder extends Seeder
         Storage::makeDirectory('/surat_penolakan_spp_ls');
         Storage::makeDirectory('/surat_penolakan_spp_tu');
         Storage::makeDirectory('/surat_penolakan_spp_up');
+        Storage::makeDirectory('/surat_pengembalian_spp_gu');
+        Storage::makeDirectory('/surat_pengembalian_spp_ls');
+        Storage::makeDirectory('/surat_pengembalian_spp_tu');
+        Storage::makeDirectory('/surat_pengembalian_spp_up');
         Storage::makeDirectory('/tanda_tangan');
 
         File::copyDirectory(
@@ -56,11 +64,11 @@ class DatabaseSeeder extends Seeder
         $this->call(KegiatanTableSeeder::class);
         $this->call(ProgramTableSeeder::class);
         // $this->call(SppUpTableSeeder::class);
-        $this->call(RiwayatSppUpTableSeeder::class);
-        $this->call(DokumenSppUpTableSeeder::class);
+        // $this->call(RiwayatSppUpTableSeeder::class);
+        // $this->call(DokumenSppUpTableSeeder::class);
         // $this->call(SppTuTableSeeder::class);
-        $this->call(RiwayatSppTuTableSeeder::class);
-        $this->call(DokumenSppTuTableSeeder::class);
+        // $this->call(RiwayatSppTuTableSeeder::class);
+        // $this->call(DokumenSppTuTableSeeder::class);
         $this->call(TentangSeeder::class);
         // $this->call(SppGuTableSeeder::class);
         // $this->call(RiwayatSppGuTableSeeder::class);

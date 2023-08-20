@@ -10,6 +10,8 @@ use App\Models\Program;
 use App\Models\RiwayatSppTu;
 use App\Models\SppTu;
 use App\Models\Tahun;
+use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\QueryException;
@@ -82,10 +84,9 @@ class SppTuController extends Controller
 
         if ($request->fileDokumen) {
             foreach ($request->fileDokumen as $dokumen) {
-                $rules["$dokumen"] = 'required|mimes:pdf|max:5120';
+                $rules["$dokumen"] = 'required|mimes:pdf';
                 $messages["$dokumen.required"] = "File tidak boleh kosong";
                 $messages["$dokumen.mimes"] = "File harus berupa file pdf";
-                $messages["$dokumen.max"] = "File tidak boleh lebih dari 5 MB";
             }
         }
 
@@ -136,7 +137,6 @@ class SppTuController extends Controller
                 $riwayatSppTu = new RiwayatSppTu();
                 $riwayatSppTu->spp_tu_id = $sppTu->id;
                 $riwayatSppTu->user_id = Auth::user()->id;
-                $riwayatSppTu->jumlah_anggaran = str_replace(".", "", $request->jumlah_anggaran);
                 $riwayatSppTu->status = 'Dibuat';
                 $riwayatSppTu->save();
             });
@@ -190,24 +190,22 @@ class SppTuController extends Controller
         }
 
         $rules = [
-            'surat_penolakan' => $suratPenolakan . '|mimes:pdf|max:5120',
+            'surat_pengembalian' => $suratPenolakan . '|mimes:pdf',
             'jumlah_anggaran' => 'required',
         ];
 
         $messages = [
-            'surat_penolakan.required' => 'Surat Penolakan tidak boleh kosong',
-            'surat_penolakan.mimes' => 'Dokumen Harus Berupa File PDF',
-            'surat_penolakan.max' => "Dokumen Tidak Boleh Lebih Dari 5 Mb",
+            'surat_pengembalian.required' => 'Surat Penolakan tidak boleh kosong',
+            'surat_pengembalian.mimes' => 'Dokumen Harus Berupa File PDF',
             'jumlah_anggaran.required' => 'Jumlah Anggaran tidak boleh kosong',
         ];
 
         if ($request->fileDokumenUpdate) {
             foreach ($request->fileDokumenUpdate as $dokumen) {
                 $dokumen = "'" . $dokumen . "'";
-                $rules["$dokumen"] = $request["$dokumen"] ? 'required|mimes:pdf|max:5120' : 'nullable';
+                $rules["$dokumen"] = $request["$dokumen"] ? 'required|mimes:pdf' : 'nullable';
                 $messages["$dokumen.required"] = "File tidak boleh kosong";
                 $messages["$dokumen.mimes"] = "File harus berupa file pdf";
-                $messages["$dokumen.max"] = "File tidak boleh lebih dari 5 MB";
             }
         }
 
@@ -220,10 +218,9 @@ class SppTuController extends Controller
 
         if ($request->fileDokumen) {
             foreach ($request->fileDokumen as $dokumen) {
-                $rules["$dokumen"] = 'required|mimes:pdf|max:5120';
+                $rules["$dokumen"] = 'required|mimes:pdf';
                 $messages["$dokumen.required"] = "File tidak boleh kosong";
                 $messages["$dokumen.mimes"] = "File harus berupa file pdf";
-                $messages["$dokumen.max"] = "File tidak boleh lebih dari 5 MB";
             }
         }
 
@@ -251,8 +248,10 @@ class SppTuController extends Controller
         $arrayFileDokumenUpdate = [];
         $arrayFileDokumenHapus = [];
 
+        $namaFileSuratPengembalian = '';
+
         try {
-            DB::transaction(function () use ($request, &$arrayFileDokumen, &$arrayFileDokumenSebelumnya, &$arrayFileDokumenUpdate, &$arrayFileDokumenHapus, $sppTu) {
+            DB::transaction(function () use ($request, &$arrayFileDokumen, &$arrayFileDokumenSebelumnya, &$arrayFileDokumenUpdate, &$arrayFileDokumenHapus, &$namaFileSuratPengembalian, $sppTu) {
                 if ($request->fileDokumenUpdate) {
                     $daftarDokumenSppTu = DokumenSppTu::where('spp_tu_id', $sppTu->id)->whereNotIn('id', $request->fileDokumenUpdate)->get();
                     foreach ($daftarDokumenSppTu as $dokumen) {
@@ -293,20 +292,20 @@ class SppTuController extends Controller
                 if (($sppTu->status_validasi_asn == 2 || $sppTu->status_validasi_ppk == 2)) {
                     $riwayatSppUp = new RiwayatSppTu();
 
-                    if ($request->file('surat_penolakan')) {
-                        $namaFileBerkas = "Surat Penolakan" . "-"  . Carbon::now()->format('YmdHs') . rand(1, 9999) . ".pdf";
-                        $request->file('surat_penolakan')->storeAs(
-                            'surat_penolakan_spp_tu',
-                            $namaFileBerkas
+                    if ($request->file('surat_pengembalian')) {
+                        $namaFileSuratPengembalian = "surat-pengembalian" . "-"  . Carbon::now()->format('YmdHs') . rand(1, 9999) . ".pdf";
+                        $request->file('surat_pengembalian')->storeAs(
+                            'surat_pengembalian_spp_tu',
+                            $namaFileSuratPengembalian
                         );
-                        $riwayatSppUp->surat_penolakan = $namaFileBerkas;
-                        $sppTu->surat_penolakan = $namaFileBerkas;
+                        $riwayatSppUp->surat_pengembalian = $namaFileSuratPengembalian;
+                        $sppTu->surat_pengembalian = $namaFileSuratPengembalian;
+                        $sppTu->surat_penolakan = null;
                     }
 
                     $riwayatSppUp->spp_tu_id = $sppTu->id;
                     $riwayatSppUp->user_id = Auth::user()->id;
                     $riwayatSppUp->status = 'Diperbaiki';
-                    $riwayatSppUp->jumlah_anggaran = str_replace(".", "", $request->jumlah_anggaran);
                     $riwayatSppUp->save();
                 }
 
@@ -340,6 +339,10 @@ class SppTuController extends Controller
                 }
             }
 
+            if (Storage::exists('surat_pengembalian_spp_tu/' . $namaFileSuratPengembalian)) {
+                Storage::delete('surat_pengembalian_spp_tu/' . $namaFileSuratPengembalian);
+            }
+
             return throw new Exception($error);
         }
 
@@ -364,13 +367,15 @@ class SppTuController extends Controller
             return throw new Exception('Gagal Diproses');
         }
 
-        $riwayatSppTu = RiwayatSppTu::where('spp_tu_id', $sppTu->id)->whereNotNull('surat_penolakan')->get();
+        $riwayatSppTu = RiwayatSppTu::where('spp_tu_id', $sppTu->id)->get();
 
         $arraySuratPenolakan = null;
+        $arraySuratPengembalian = null;
 
         $arrayDokumen = $sppTu->dokumenSppTu->pluck('dokumen');
         if ($riwayatSppTu) {
             $arraySuratPenolakan = $riwayatSppTu->pluck('surat_penolakan');
+            $arraySuratPengembalian = $riwayatSppTu->pluck('surat_pengembalian');
         }
 
         try {
@@ -383,6 +388,12 @@ class SppTuController extends Controller
             );
         } catch (QueryException $error) {
             return throw new Exception($error);
+        }
+
+        if (count($arraySuratPengembalian) > 0) {
+            foreach ($arraySuratPengembalian as $suratPengembalian) {
+                Storage::delete('surat_pengembalian_spp_tu/' . $suratPengembalian);
+            }
         }
 
         if (count($arraySuratPenolakan) > 0) {
@@ -435,19 +446,21 @@ class SppTuController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
+        $namaFileSuratPenolakan = '';
+
         try {
             DB::transaction(
-                function () use ($sppTu, $request) {
+                function () use ($sppTu, $request, &$namaFileSuratPenolakan) {
 
                     if (Auth::user()->role == "ASN Sub Bagian Keuangan") {
                         $sppTu->status_validasi_asn = $request->verifikasi;
-                        $sppTu->alasan_validasi_asn = $request->alasan;
+                        $sppTu->alasan_validasi_asn = $request->verifikasi != '1' ? $request->alasan : null;
                         $sppTu->tanggal_validasi_asn = Carbon::now();
 
                         $riwayatTerakhir = RiwayatSppTu::where('role', 'ASN Sub Bagian Keuangan')->where('spp_tu_id', $sppTu->id)->where('tahap_riwayat', $sppTu->tahap_riwayat)->orderBy('created_at', 'desc')->delete();
                     } else {
                         $sppTu->status_validasi_ppk = $request->verifikasi;
-                        $sppTu->alasan_validasi_ppk = $request->alasan;
+                        $sppTu->alasan_validasi_ppk = $request->verifikasi != '1' ? $request->alasan : null;
                         $sppTu->tanggal_validasi_ppk = Carbon::now();
                         $riwayatTerakhir = RiwayatSppTu::where('role', 'PPK')->where('spp_tu_id', $sppTu->id)->where('tahap_riwayat', $sppTu->tahap_riwayat)->orderBy('created_at', 'desc')->delete();
                     }
@@ -459,7 +472,6 @@ class SppTuController extends Controller
                     $riwayatSppTu->spp_tu_id = $sppTu->id;
                     $riwayatSppTu->user_id = Auth::user()->id;
                     $riwayatSppTu->tahap_riwayat = $sppTu->tahap_riwayat;
-                    $riwayatSppTu->jumlah_anggaran = str_replace(".", "", $sppTu->jumlah_anggaran);
                     $riwayatSppTu->status = $request->verifikasi == '1' ? 'Disetujui' : 'Ditolak';
                     if ($request->verifikasi == 2) {
                         $nomorSurat = DB::table('riwayat_spp_tu')
@@ -473,9 +485,39 @@ class SppTuController extends Controller
                     $riwayatSppTu->alasan = $request->alasan;
                     $riwayatSppTu->role = Auth::user()->role;
                     $riwayatSppTu->save();
+
+                    if (($sppTu->status_validasi_asn == 2 || $sppTu->status_validasi_ppk == 2) && ($sppTu->status_validasi_asn != 0 && $sppTu->status_validasi_ppk != 0)) {
+                        $tahapRiwayat = $sppTu->tahap_riwayat;
+                        $riwayatSppTu = RiwayatSppTu::where('spp_tu_id', $sppTu->id)->where('tahap_riwayat', $sppTu->tahap_riwayat)->where('status', 'Ditolak')->orderBy('updated_at', 'desc')->first();
+                        $hariIni = Carbon::now()->translatedFormat('d F Y');
+                        $ppk = User::where('role', 'PPK')->where('is_aktif', 1)->first();
+                        $kuasaPenggunaAnggaran = User::where('role', 'Kuasa Pengguna Anggaran')->where('is_aktif', 1)->first();
+                        $pdf = Pdf::loadView('dashboard.pages.spp.sppTu.suratPenolakan', compact(['sppTu', 'riwayatSppTu', 'hariIni', 'ppk', 'kuasaPenggunaAnggaran']))->setPaper('f4', 'portrait');
+
+                        $namaFileSuratPenolakan = 'surat-penolakan-' . time() . '.pdf';
+                        Storage::put('surat_penolakan_spp_tu/' . $namaFileSuratPenolakan, $pdf->output());
+
+                        $riwayatSppTu = RiwayatSppTu::where('spp_tu_id', $sppTu->id)->where('tahap_riwayat', $sppTu->tahap_riwayat)->where('status', 'Ditolak')->get();
+                        foreach ($riwayatSppTu as $riwayat) {
+                            if (Storage::exists('surat_penolakan_spp_tu/' . $riwayat->surat_penolakan)) {
+                                Storage::delete('surat_penolakan_spp_tu/' . $riwayat->surat_penolakan);
+                            }
+
+                            $riwayat->surat_penolakan = $namaFileSuratPenolakan;
+                            $riwayat->save();
+                        }
+
+                        $sppTu = SppTu::where('id', $sppTu->id)->first();
+                        $sppTu->surat_penolakan = $namaFileSuratPenolakan;
+                        $sppTu->save();
+                    }
                 }
             );
         } catch (QueryException $error) {
+            if (Storage::exists('surat_penolakan_spp_tu/' . $namaFileSuratPenolakan)) {
+                Storage::delete('surat_penolakan_spp_tu/' . $namaFileSuratPenolakan);
+            }
+
             return throw new Exception($error);
         }
 
@@ -493,13 +535,14 @@ class SppTuController extends Controller
         try {
             DB::transaction(
                 function () use ($sppTu) {
+                    $sppTu->surat_penolakan = NULL;
+                    $sppTu->surat_pengembalian = NULL;
                     $sppTu->status_validasi_akhir = 1;
                     $sppTu->tanggal_validasi_akhir = Carbon::now();
                     $sppTu->save();
 
                     $riwayatSppTu = new RiwayatSppTu();
                     $riwayatSppTu->spp_tu_id = $sppTu->id;
-                    $riwayatSppTu->jumlah_anggaran = $sppTu->jumlah_anggaran;
                     $riwayatSppTu->user_id = Auth::user()->id;
                     $riwayatSppTu->status = 'Diselesaikan';
                     $riwayatSppTu->save();

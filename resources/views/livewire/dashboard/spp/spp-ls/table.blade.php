@@ -203,7 +203,7 @@
                 'class' => 'text-center',
             ],
             [
-                'title' => 'Nomor Surat',
+                'title' => 'Nomor Surat Permintaan Pembayaran (SPP)',
             ],
             [
                 'title' => 'Tanggal',
@@ -393,7 +393,7 @@
 
                             if (($data->sekretariat_daerah_id == Auth::user()->profil->sekretariat_daerah_id && in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) || Auth::user()->role == 'Admin') {
                                 if ($data->status_validasi_asn != 0 && $data->status_validasi_ppk != 0 && ($data->status_validasi_asn == 2 || $data->status_validasi_ppk == 2)) {
-                                    $actionBtn .= '<div class="d-flex justify-content-center mb-1"><a href="' . url('/surat-penolakan/spp-ls/' . $data->id . '/' . $data->tahap_riwayat) . '" class="btn btn-primary btn-sm my-1 mr-1"><i class="fas fa-envelope"></i> Surat Pengembalian</a>';
+                                    $actionBtn .= '<a target="_blank" href="' . Storage::url('surat_penolakan_spp_ls/' . $data->surat_penolakan) . '" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> Surat Penolakan</a>';
 
                                     $actionBtn .= '<a href="' . url('spp-ls/' . $data->id . '/edit') . '" class="btn btn-primary btn-sm my-1 mr-1"><i class="fas fa-file-pdf"></i> Perbaiki</a></div>';
                                 }

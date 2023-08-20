@@ -137,17 +137,6 @@
                                     ])
                                     @endcomponent
                                 @endif
-
-                                <div class="card" id="card-keterangan-upload">
-                                    <div class="card-body text-center">
-                                        <i class="fas fa-file-upload" style="font-size: 75px"></i>
-                                        <p class="my-0">Upload Dokumen</p>
-                                        <p class="my-0">Ukuran Maksimum File Adalah <span class="text-danger">5
-                                                MB</span> Dengan Tipe File
-                                            <span class="text-danger">PDF</span>
-                                        </p>
-                                    </div>
-                                </div>
                                 <div id="list-upload">
                                     @if (!($sppUp->status_validasi_ppk == 0 && $sppUp->status_validasi_asn == 0))
                                         <div class="card box-upload" class="box-upload">
@@ -160,13 +149,13 @@
                                                     </div>
                                                     <div class="col-9">
                                                         <div class="mb-3 mt-2">
-                                                            <p class="fw-bold" style="font-size: 15px;">Surat Penolakan
+                                                            <p class="fw-bold" style="font-size: 15px;">Surat Pengembalian
                                                             </p>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <input name="surat_penolakan" class="form-control"
+                                                            <input name="surat_pengembalian" class="form-control"
                                                                 type="file" accept="application/pdf">
-                                                            <p class="text-danger error-text surat_penolakan-error my-0">
+                                                            <p class="text-danger error-text surat_pengembalian-error my-0">
                                                             </p>
                                                         </div>
                                                     </div>
@@ -190,8 +179,8 @@
                                     @endforeach
                                 </div>
 
-                                <div class="card bg-primary" id="card-tambah">
-                                    <div class="card-body text-light text-center">
+                                <div class="card bg-light" id="card-tambah">
+                                    <div class="card-body text-dark text-center">
                                         <i class="fas fa-plus-circle fa-2xl" style="font-size: 75px"></i>
                                         <p class="my-0 fw-bold">Tambah Dokumen</p>
                                     </div>
