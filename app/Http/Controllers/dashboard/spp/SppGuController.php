@@ -39,8 +39,9 @@ class SppGuController extends Controller
         }
 
         $daftarTahun = Tahun::orderBy('tahun', 'asc')->get();
-        $daftarDokumenSppGu = DaftarDokumenSppGu::where('kategori', 'SPJ')->get();
+        $daftarDokumenSppGu = DaftarDokumenSppGu::get();
         $daftarSekretariatDaerah = SekretariatDaerah::orderBy('nama', 'asc')->get();
+
         return view('dashboard.pages.spp.sppGu.create', compact(['daftarTahun', 'daftarDokumenSppGu', 'daftarSekretariatDaerah']));
     }
 

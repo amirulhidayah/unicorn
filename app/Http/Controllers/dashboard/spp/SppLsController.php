@@ -136,12 +136,14 @@ class SppLsController extends Controller
         if ($request->anggaranDigunakan) {
             foreach ($request->anggaranDigunakan as $index => $nama) {
                 if (isset($arrayJumlahAnggaran[$index]['jumlah_anggaran'])) {
-                    $anggaranDigunakan = str_replace('.', '', $request["$nama"]);
-                    $jumlahAnggaran = $arrayJumlahAnggaran[$index]['jumlah_anggaran'];
-                    if ($anggaranDigunakan > $jumlahAnggaran) {
-                        $validator->after(function ($validator) use ($nama) {
-                            $validator->errors()->add($nama, 'Anggaran Digunakan Melebihi Jumlah Anggaran');
-                        });
+                    if ($request["$nama"]) {
+                        $anggaranDigunakan = str_replace('.', '', $request["$nama"]);
+                        $jumlahAnggaran = $arrayJumlahAnggaran[$index]['jumlah_anggaran'];
+                        if ($anggaranDigunakan > $jumlahAnggaran) {
+                            $validator->after(function ($validator) use ($nama) {
+                                $validator->errors()->add($nama, 'Anggaran Digunakan Melebihi Jumlah Anggaran');
+                            });
+                        }
                     }
                 }
             }
@@ -344,6 +346,27 @@ class SppLsController extends Controller
             }
         }
 
+        if ($request->program) {
+            foreach ($request->program as $nama) {
+                $rules["$nama"] = 'required';
+                $messages["$nama.required"] = "Program tidak boleh kosong";
+            }
+        }
+
+        if ($request->kegiatan) {
+            foreach ($request->kegiatan as $nama) {
+                $rules["$nama"] = 'required';
+                $messages["$nama.required"] = "Kegiatan tidak boleh kosong";
+            }
+        }
+
+        if ($request->anggaranDigunakan) {
+            foreach ($request->anggaranDigunakan as $nama) {
+                $rules["$nama"] = 'required';
+                $messages["$nama.required"] = "Anggaran digunakan tidak boleh kosong";
+            }
+        }
+
         if ($request->namaFile) {
             foreach ($request->namaFile as $nama) {
                 $rules["$nama"] = 'required';
@@ -368,12 +391,14 @@ class SppLsController extends Controller
         $arrayJumlahAnggaran = json_decode($request->arrayJumlahAnggaran, true);
         if ($request->anggaranDigunakan) {
             foreach ($request->anggaranDigunakan as $index => $nama) {
-                $anggaranDigunakan = str_replace('.', '', $request["$nama"]);
-                $jumlahAnggaran = $arrayJumlahAnggaran[$index]['jumlah_anggaran'];
-                if ($anggaranDigunakan > $jumlahAnggaran) {
-                    $validator->after(function ($validator) use ($nama) {
-                        $validator->errors()->add($nama, 'Anggaran Digunakan Melebihi Jumlah Anggaran');
-                    });
+                if ($request["$nama"]) {
+                    $anggaranDigunakan = str_replace('.', '', $request["$nama"]);
+                    $jumlahAnggaran = $arrayJumlahAnggaran[$index]['jumlah_anggaran'];
+                    if ($anggaranDigunakan > $jumlahAnggaran) {
+                        $validator->after(function ($validator) use ($nama) {
+                            $validator->errors()->add($nama, 'Anggaran Digunakan Melebihi Jumlah Anggaran');
+                        });
+                    }
                 }
             }
         }

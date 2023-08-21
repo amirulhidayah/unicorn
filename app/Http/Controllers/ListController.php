@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DaftarDokumenSppLs;
 use App\Models\Kegiatan;
 use App\Models\Program;
+use App\Models\SpjGu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -72,5 +73,23 @@ class ListController extends Controller
             }
         }
         return response()->json($kegiatan);
+    }
+
+    public function spjGu(Request $request)
+    {
+        $role = Auth::user()->role;
+        $tahun = $request->tahun;
+        $sekretariatDaerah = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
+        $id = $request->id;
+
+        $spjGu = SpjGu::where('tahun_id', $tahun)->where('sekretariat_daerah_id', $sekretariatDaerah)->where('status_validasi_akhir', 1)->get();
+
+        if ($id) {
+            $spjGuHapus = SpjGu::where('id', $id)->where('tahun_id', $tahun)->where('sekretariat_daerah_id')->where('status_validasi_akhir', 1)->withTrashed()->first();
+            if ($spjGuHapus->trashed()) {
+                $spjGu->push($spjGuHapus);
+            }
+        }
+        return response()->json($spjGu);
     }
 }

@@ -19,6 +19,7 @@ use App\Http\Controllers\dashboard\masterData\ProgramSppController;
 use App\Http\Controllers\dashboard\masterData\TahunController;
 use App\Http\Controllers\dashboard\masterData\TentangController;
 use App\Http\Controllers\dashboard\spd\SpdController;
+use App\Http\Controllers\dashboard\spp\SpjGuController;
 use App\Http\Controllers\dashboard\spp\SppGuController;
 use App\Http\Controllers\dashboard\spp\SppLsController;
 use App\Http\Controllers\dashboard\spp\SppTuController;
@@ -117,6 +118,12 @@ Route::group(['middleware' => ['auth']], function () {
             'index',
             'show'
         );
+        Route::resource('/spj-gu', SpjGuController::class)->parameters([
+            'spj-gu' => 'spj-gu'
+        ])->except(
+            'index',
+            'show'
+        );
 
         // SPP GU
         Route::get('/spp-gu/create/{sppGu}', [SppGuController::class, 'createTahapSpp']);
@@ -133,6 +140,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/spp-up/riwayat/{sppUp}', [SppUpController::class, 'riwayat']);
     Route::get('/spp-tu/riwayat/{sppTu}', [SppTuController::class, 'riwayat']);
     Route::get('/spp-ls/riwayat/{sppLs}', [SppLsController::class, 'riwayat']);
+    Route::get('/spj-gu/riwayat/{spjGu}', [SpjGuController::class, 'riwayat']);
     Route::get('/spp-gu/riwayat/{sppGu}', [SppGuController::class, 'riwayat']);
 
     Route::resource('/spp-up', SppUpController::class)->only(
@@ -189,13 +197,21 @@ Route::group(['middleware' => ['auth']], function () {
         'index',
         'show'
     );
+    Route::resource('/spj-gu', SpjGuController::class)->parameters([
+        'spj-gu' => 'spj-gu'
+    ])->only(
+        'index',
+        'show'
+    );
 
     Route::group(['middleware' => ['role:PPK|ASN Sub Bagian Keuangan']], function () {
         Route::put('/spp-ls/verifikasi/{sppLs}', [SppLsController::class, 'verifikasi']);
+        Route::put('/spj-gu/verifikasi/{spjGu}', [SpjGuController::class, 'verifikasi']);
     });
 
     Route::group(['middleware' => ['role:PPK']], function () {
         Route::put('/spp-ls/verifikasi-akhir/{sppLs}', [SppLsController::class, 'verifikasiAkhir']);
+        Route::put('/spj-gu/verifikasi-akhir/{spjGu}', [SpjGuController::class, 'verifikasiAkhir']);
     });
 
     Route::get('/surat-penolakan/spp-ls/{sppLs}/{tahapRiwayat}', [UnduhController::class, 'suratPenolakanSppLs']);
@@ -241,6 +257,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/list/program', [ListController::class, 'program']);
     Route::post('/list/kegiatan', [ListController::class, 'kegiatan']);
     Route::post('/list/kegiatan-spd', [ListController::class, 'kegiatanSpd']);
+    Route::post('/list/spjGu', [ListController::class, 'spjGu']);
 
     Route::get('/profil', [ProfilController::class, 'index']);
     Route::put('/profil', [ProfilController::class, 'update']);
@@ -261,6 +278,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::prefix('append')->group(function () {
         Route::get('spp', [AppendController::class, 'spp']);
         Route::get('spp-ls', [AppendController::class, 'sppLs']);
+        Route::get('spj-gu', [AppendController::class, 'spjGu']);
+        Route::get('spp-gu', [AppendController::class, 'sppGu']);
     });
 
     Route::prefix('get')->group(function () {

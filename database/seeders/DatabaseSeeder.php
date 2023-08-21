@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        Storage::deleteDirectory('/dokumen_spj_gu');
         Storage::deleteDirectory('/dokumen_spp_gu');
         Storage::deleteDirectory('/dokumen_spp_ls');
         Storage::deleteDirectory('/dokumen_spp_tu');
@@ -31,6 +32,7 @@ class DatabaseSeeder extends Seeder
         Storage::deleteDirectory('/surat_pengembalian_spp_up');
         Storage::deleteDirectory('/tanda_tangan');
 
+        Storage::makeDirectory('/dokumen_spj_gu');
         Storage::makeDirectory('/dokumen_spp_gu');
         Storage::makeDirectory('/dokumen_spp_ls');
         Storage::makeDirectory('/dokumen_spp_tu');

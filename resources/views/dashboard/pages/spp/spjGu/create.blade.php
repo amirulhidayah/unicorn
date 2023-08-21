@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.main')
 
 @section('title')
-    SPP LS
+    SPJ GU
 @endsection
 
 @push('style')
@@ -54,80 +54,39 @@
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">SPP</a>
+            <a href="#">SPP GU</a>
         </li>
         <li class="separator">
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">SPP LS</a>
+            <a href="#">SPJ</a>
         </li>
     </ul>
 @endsection
 
 @section('content')
-    <form id="form-tambah" enctype="multipart/form-data">
+    <form method="POST" id="form-tambah" enctype="multipart/form-data" action="{{ url('spj-gu') }}">
         {{ csrf_field() }}
-        @method('PUT')
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
                         <div class="card-head-row">
-                            <div class="card-title">Edit SPP LS</div>
+                            <div class="card-title">Buat SPJ</div>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-6">
-                                @if ($sppLs->alasan_validasi_asn != null)
-                                    @component('dashboard.components.widgets.alert', [
-                                        'oleh' => 'asn',
-                                        'tanggal' => $sppLs->tanggal_validasi_asn,
-                                        'isi' => $sppLs->alasan_validasi_asn,
-                                    ])
-                                    @endcomponent
-                                @endif
-                            </div>
-
-                            <div class="col-6">
-                                @if ($sppLs->alasan_validasi_ppk != null)
-                                    @component('dashboard.components.widgets.alert', [
-                                        'oleh' => 'ppk',
-                                        'tanggal' => $sppLs->tanggal_validasi_ppk,
-                                        'isi' => $sppLs->alasan_validasi_ppk,
-                                    ])
-                                    @endcomponent
-                                @endif
-                            </div>
-
-                            <div class="col-12">
-                                @component('dashboard.components.formElements.select', [
-                                    'label' => 'Kategori',
-                                    'id' => 'kategori',
-                                    'name' => 'kategori',
-                                    'class' => 'select2',
-                                    'wajib' => '<sup class="text-danger">*</sup>',
-                                ])
-                                    @slot('options')
-                                        @foreach ($daftarKategori as $kategori)
-                                            <option value="{{ $kategori->id }}"
-                                                {{ $kategori->id == $sppLs->kategori_spp_ls_id ? 'selected' : '' }}>
-                                                {{ $kategori->nama }}</option>
-                                        @endforeach
-                                    @endslot
-                                @endcomponent
-                            </div>
                             <div class="col-12">
                                 @component('dashboard.components.formElements.input', [
-                                    'label' => 'Nomor Surat Permintaan Pembayaran (SPP)',
+                                    'label' => 'Nomor Surat Pertanggungjawaban (SPJ)',
                                     'type' => 'text',
                                     'id' => 'nomor_surat',
                                     'class' => '',
                                     'name' => 'nomor_surat',
                                     'wajib' => '<sup class="text-danger">*</sup>',
-                                    'placeholder' => 'Masukkan Nomor Surat Permintaan Pembayaran (SPP)',
-                                    'value' => $sppLs->nomor_surat,
+                                    'placeholder' => 'Masukkan Nomor Surat Pertanggungjawaban (SPJ)',
                                 ])
                                 @endcomponent
                             </div>
@@ -141,10 +100,8 @@
                                         'wajib' => '<sup class="text-danger">*</sup>',
                                     ])
                                         @slot('options')
-                                            @foreach ($daftarSekretariatDaerah as $sekretariatDaerah)
-                                                <option value="{{ $sekretariatDaerah->id }}"
-                                                    {{ $sekretariatDaerah->id == $sppLs->sekretariat_daerah_id ? 'selected' : '' }}>
-                                                    {{ $sekretariatDaerah->nama }}
+                                            @foreach ($daftarSekretariatDaerah as $SekretariatDaerah)
+                                                <option value="{{ $SekretariatDaerah->id }}">{{ $SekretariatDaerah->nama }}
                                                 </option>
                                             @endforeach
                                         @endslot
@@ -169,8 +126,7 @@
                                 ])
                                     @slot('options')
                                         @foreach ($daftarTahun as $tahun)
-                                            <option value="{{ $tahun->id }}"
-                                                {{ $tahun->id == $sppLs->tahun_id ? 'selected' : '' }}>{{ $tahun->tahun }}</option>
+                                            <option value="{{ $tahun->id }}">{{ $tahun->tahun }}</option>
                                         @endforeach
                                     @endslot
                                 @endcomponent
@@ -214,11 +170,12 @@
                                                 <th scope="col">Jumlah Anggaran</th>
                                                 <th scope="col">Anggaran Digunakan</th>
                                                 <th scope="col">Sisa Anggaran</th>
+                                                <th scope="col">Dokumen</th>
                                                 <th scope="col" class="text-center">Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody id="body-program">
-                                            {!! $programDanKegiatan !!}
+
                                         </tbody>
                                         <tfoot>
                                             <tr id="jumlah">
@@ -227,9 +184,10 @@
                                                 <td id="total-anggaran-digunakan">-</td>
                                                 <td id="total-sisa-anggaran">-</td>
                                                 <td></td>
+                                                <td></td>
                                             </tr>
                                             <tr>
-                                                <td colspan="6" style="padding: 0px 10px !important">
+                                                <td colspan="7" style="padding: 0px 10px !important">
                                                     <button class="btn btn-light fw-bold col-12" type="button"
                                                         id="btn-tambah-program-kegiatan"><i class="fas fa-plus-circle"></i>
                                                         Tambah Program &
@@ -239,70 +197,15 @@
 
                                         </tfoot>
                                     </table>
+
                                 </div>
                             </div>
-                            <div class="col-md-12">
-                                <label for="TextInput" class="form-label mt-2 mb-3 fw-bold">Dokumen Pendukung<sup
-                                        class="text-danger">*</sup></label>
-                                <small class="text-danger error-text dokumenFileHitung-error"
-                                    id="dokumenFileHitung-error"></small>
-                                <div id="list-upload" class="row">
-                                    @if (!($sppLs->status_validasi_ppk == 0 && $sppLs->status_validasi_asn == 0))
-                                        <div class="col-12">
-                                            <div class="card box-upload" class="box-upload">
-                                                <div class="card-body">
-                                                    <div class="row">
-                                                        <!-- <div class="d-flex border rounded shadow shadow-lg p-2 "> -->
-                                                        <div class="col-3 d-flex align-items-center justify-content-center">
-                                                            <img src="{{ asset('assets/dashboard/img/pdf.png') }}"
-                                                                alt="" width="70px">
-                                                        </div>
-                                                        <div class="col-9">
-                                                            <div class="mb-3 mt-2">
-                                                                <p class="fw-bold" style="font-size: 15px;">Surat
-                                                                    Pengembalian
-                                                                </p>
-                                                            </div>
-                                                            <div class="mb-3">
-                                                                <input name="surat_pengembalian" class="form-control"
-                                                                    type="file" accept="application/pdf">
-                                                                <p
-                                                                    class="text-danger error-text surat_pengembalian-error my-0">
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="fw-bold card-footer bg-primary text-light text-center p-0">
-                                                    ! Wajib Dimasukan</div>
-                                            </div>
-                                        </div>
-                                    @endif
-                                    @foreach ($sppLs->dokumenSppLs as $dokumen)
-                                        @component('dashboard.components.dynamicForm.spp', [
-                                            'labelNama' => $dokumen->nama_dokumen,
-                                            'nameFileDokumen' => $dokumen->id,
-                                            'class' => 'col-4',
-                                            'classDokumen' => 'file_dokumen_update',
-                                            'classNama' => 'nama_file_update',
-                                        ])
-                                        @endcomponent
-                                    @endforeach
-                                </div>
 
-                                <div class="card bg-light border border-black" id="card-tambah">
-                                    <div class="card-body text-dark text-center">
-                                        <i class="fas fa-plus-circle fa-2xl" style="font-size: 75px"></i>
-                                        <p class="my-0 fw-bold">Tambah Dokumen</p>
-                                    </div>
-                                </div>
-
-                                <button type="submit" class="btn btn-success col-12 text-light fw-bold"><i
-                                        class="far fa-paper-plane"></i>
-                                    Upload
-                                    Dokumen</button>
-                            </div>
                         </div>
+                        <button type="submit" class="btn btn-success col-12 text-light fw-bold"><i
+                                class="far fa-paper-plane"></i>
+                            Upload
+                            Dokumen</button>
                     </div>
                 </div>
             </div>
@@ -314,11 +217,13 @@
     <script>
         var totalList = 1;
         var jumlahAnggaran = 0;
-        let arrayJumlahAnggaran = {!! json_encode($arrayJumlahAnggaran) !!};
+        let arrayJumlahAnggaran = [];
 
         $(document).ready(function() {
-            $('#bulan').val('{{ $sppLs->bulan }}').trigger('change.select2');
-            $('#spp-ls').addClass('active');
+            $('#menu-spp-gu').collapse('show');
+            $('#spp-gu').addClass('active');
+            $('#spp-gu-spj').addClass('active');
+            $('#btn-tambah-program-kegiatan').click();
             cekProgramKegiatan();
             hitungTotal();
         })
@@ -347,7 +252,7 @@
 
         $('#btn-tambah-program-kegiatan').click(function() {
             $.ajax({
-                url: "{{ url('append/spp-ls') }}",
+                url: "{{ url('append/spj-gu') }}",
                 type: "GET",
                 data: {
                     '_token': '{{ csrf_token() }}',
@@ -555,6 +460,7 @@
 
         $('#form-tambah').submit(function(e) {
             e.preventDefault();
+            resetError();
             var formData = new FormData(this);
 
             $('.program').each(function() {
@@ -572,17 +478,7 @@
                 formData.append('anggaranDigunakan[]', nama);
             });
 
-            $('.file_dokumen_update').each(function() {
-                var nama = $(this).attr('name');
-                formData.append('fileDokumenUpdate[]', nama);
-            });
-
-            $('.nama_file_update').each(function() {
-                var nama = $(this).attr('name');
-                formData.append('namaFileUpdate[]', nama);
-            });
-
-            $('.file_dokumen').each(function() {
+            $('.file-dokumen').each(function() {
                 var nama = $(this).attr('name');
                 formData.append('fileDokumen[]', nama);
             });
@@ -613,21 +509,20 @@
             }).then((Update) => {
                 if (Update) {
                     $.ajax({
-                        url: "{{ url('spp-ls/' . $sppLs->id) }}",
+                        url: "{{ url('spj-gu') }}",
                         type: "POST",
                         data: formData,
                         async: false,
                         success: function(response) {
-                            console.log(response);
                             if (response.status == "success") {
                                 swal("Berhasil",
-                                    "Dokumen berhasil diubah", {
+                                    "Dokumen berhasil ditambahkan", {
                                         button: false,
                                         icon: "success",
                                     });
                                 setTimeout(
                                     function() {
-                                        $(location).attr('href', "{{ url('spp-ls') }}");
+                                        $(location).attr('href', "{{ url('spj-gu') }}");
                                     }, 2000);
                             } else {
                                 swal("Periksa Kembali Data Anda", {
@@ -639,10 +534,10 @@
                             }
                         },
                         error: function(response) {
-                            swal("Terjadi Kesalahan", {
+                            swal("Gagal", "Terjadi Kesalahan", {
+                                icon: "error",
                                 buttons: false,
-                                timer: 1500,
-                                icon: "warning",
+                                timer: 1000,
                             });
                         },
                         cache: false,
@@ -651,7 +546,6 @@
                     });
                 }
             });
-
         })
 
         function resetProgramDanKegiatan() {

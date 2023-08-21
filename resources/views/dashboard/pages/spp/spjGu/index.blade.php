@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.main')
 
 @section('title')
-    SPP GU
+    SPJ GU
 @endsection
 
 @push('style')
@@ -18,13 +18,13 @@
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">SPP</a>
+            <a href="#">SPP GU</a>
         </li>
         <li class="separator">
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">SPP GU</a>
+            <a href="#">SPJ</a>
         </li>
     </ul>
 @endsection
@@ -35,7 +35,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-head-row">
-                        <div class="card-title">Data SPP GU</div>
+                        <div class="card-title">Data SPJ GU</div>
                         <div class="card-tools">
                             @if (in_array(Auth::user()->role, [
                                     'Admin',
@@ -46,7 +46,7 @@
                                 @component('dashboard.components.buttons.add', [
                                     'id' => 'btn-tambah',
                                     'class' => '',
-                                    'url' => url('spp-gu/create'),
+                                    'url' => url('spj-gu/create'),
                                 ])
                                 @endcomponent
                             @endif
@@ -56,7 +56,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col">
-                            @livewire('dashboard.spp.spp-gu.table')
+                            @livewire('dashboard.spp.spj-gu.table')
                         </div>
                     </div>
                 </div>
@@ -64,10 +64,10 @@
         </div>
     </div>
 
-    @component('dashboard.components.widgets.spmSp2d', [
-        'spp' => 'spp-gu',
-    ])
-    @endcomponent
+    {{-- @component('dashboard.components.widgets.spmSp2d', [
+    'spp' => 'spj-gu',
+])
+    @endcomponent --}}
 @endsection
 
 @push('script')
@@ -93,7 +93,7 @@
             }).then((Delete) => {
                 if (Delete) {
                     $.ajax({
-                        url: "{{ url('spp-gu') }}" + '/' + id,
+                        url: "{{ url('spj-gu') }}" + '/' + id,
                         type: 'DELETE',
                         data: {
                             '_token': '{{ csrf_token() }}'
@@ -141,7 +141,7 @@
             }).then((Delete) => {
                 if (Delete) {
                     $.ajax({
-                        url: "{{ url('spp-gu/verifikasi-akhir/') }}" + '/' + id,
+                        url: "{{ url('spj-gu/verifikasi-akhir/') }}" + '/' + id,
                         type: 'PUT',
                         data: {
                             '_token': '{{ csrf_token() }}'
@@ -173,7 +173,7 @@
         $(document).ready(function() {
             $('#menu-spp-gu').collapse('show');
             $('#spp-gu').addClass('active');
-            $('#spp-gu-spp').addClass('active');
+            $('#spp-gu-spj').addClass('active');
         })
     </script>
 @endpush

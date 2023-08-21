@@ -64,15 +64,15 @@
                     </a>
                 </li>
                 <li class="nav-item" id="spp-gu">
-                    <a data-toggle="collapse" href="#menu-akun">
+                    <a data-toggle="collapse" href="#menu-spp-gu">
                         <i class="far fa-envelope"></i>
                         <p>SPP GU</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse" id="menu-akun">
+                    <div class="collapse" id="menu-spp-gu">
                         <ul class="nav nav-collapse">
-                            <li id="akun-sekretariat">
-                                <a href="{{ url('master-data/akun') }}">
+                            <li id="spp-gu-spj">
+                                <a href="{{ url('spj-gu') }}">
                                     <span class="sub-item">SPJ</span>
                                 </a>
                             </li>
