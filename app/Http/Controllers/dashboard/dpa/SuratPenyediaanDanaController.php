@@ -222,7 +222,7 @@ class SuratPenyediaanDanaController extends Controller
         return Excel::download(new FormatImport, 'Format Import SPD.xlsx');
     }
 
-    public function importSpd(Request $request)
+    public function import(Request $request)
     {
         $validator = Validator::make(
             $request->all(),

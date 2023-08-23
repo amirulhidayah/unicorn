@@ -14,7 +14,7 @@ class FormatImport implements FromView
      */
     public function view(): View
     {
-        $SekretariatDaerah = SekretariatDaerah::orderBy('nama', 'asc')->get();
-        return view('dashboard.pages.dpa.tabel.formatImport', compact(['SekretariatDaerah']));
+        $sekretariatDaerah = SekretariatDaerah::orderBy('nama', 'asc')->get();
+        return view('dashboard.pages.dpa.tabelPelaksanaanAnggaran.formatImport', compact(['sekretariatDaerah']));
     }
 }

@@ -145,7 +145,7 @@
             @endif
             <div class="col-md-6 col-sm-12">
                 @component('dashboard.components.formElements.select', [
-                    'label' => 'Status Upload SKM',
+                    'label' => 'Status Upload SPM',
                     'id' => 'status_upload_skm',
                     'name' => 'status_upload_skm',
                     'class' => 'select2 select2-filter',
@@ -185,6 +185,9 @@
                 'title' => 'Tanggal',
             ],
             [
+                'title' => 'Nomor Surat Pertanggungjawaban (SPJ)',
+            ],
+            [
                 'title' => 'Nomor Surat Permintaan Pembayaran (SPP)',
             ],
             [
@@ -200,10 +203,6 @@
             ],
             [
                 'title' => 'Status Verifikasi Akhir',
-                'class' => 'text-center',
-            ],
-            [
-                'title' => 'Tahap',
                 'class' => 'text-center',
             ],
             [
@@ -248,7 +247,7 @@
                         <div class="d-flex">
                             <div class="d-flex flex-column justify-content-center">
                                 <h6 class="mb-0 text-xs">
-                                    {{ $data->SekretariatDaerah->nama }}
+                                    {{ $data->spjGu->nomor_surat }}
                                 </h6>
                             </div>
                         </div>
@@ -256,17 +255,8 @@
                     <td>
                         <div class="d-flex">
                             <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-xs text-nowrap">
-                                    {{ 'Rp. ' . number_format($data->perencanaan_anggaran, 0, ',', '.') }}
-                                </h6>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex">
-                            <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-xs text-nowrap">
-                                    {{ 'Rp. ' . number_format($data->anggaran_digunakan, 0, ',', '.') }}
+                                <h6 class="mb-0 text-xs">
+                                    {{ $data->spjGu->sekretariatDaerah->nama }}
                                 </h6>
                             </div>
                         </div>
@@ -304,22 +294,11 @@
                     </td>
                     <td>
                         <h6 class="mb-0 text-xs text-center">
-                            @if ($data->tahap == 'SPJ')
-                                <span class="badge badge-primary">SPJ</span>
-                            @elseif ($data->tahap == 'SPP' && $data->status_validasi_akhir == 0)
-                                <span class="badge badge-primary">SPP</span>
-                            @else
-                                <span class="badge badge-success">Selesai</span>
-                            @endif
-                        </h6>
-                    </td>
-                    <td>
-                        <h6 class="mb-0 text-xs text-center">
                             @if (!$data->dokumen_spm)
                                 <span class="badge badge-primary text-light">Belum Ada</span>
                             @else
                                 <button
-                                    onclick="openPdfInFullscreen('{{ Storage::url('dokumen_spm_spp_ls/' . $data->dokumen_spm) }}')"
+                                    onclick="openPdfInFullscreen('{{ Storage::url('dokumen_spm_spp_gu/' . $data->dokumen_spm) }}')"
                                     target="_blank" class="btn btn-success btn-sm mr-1"><i class="fas fa-envelope"></i>
                                     SPM</button>
                             @endif
@@ -344,7 +323,7 @@
                                 <span class="badge badge-primary text-light">Belum Ada</span>
                             @else
                                 <button
-                                    onclick="openPdfInFullscreen('{{ Storage::url('dokumen_arsip_sp2d_spp_ls/' . $data->dokumen_arsip_sp2d) }}')"
+                                    onclick="openPdfInFullscreen('{{ Storage::url('dokumen_arsip_sp2d_spp_gu/' . $data->dokumen_arsip_sp2d) }}')"
                                     target="_blank" class="btn btn-success btn-sm mr-1"><i class="fas fa-envelope"></i> Arsip
                                     SP2D</button>
                             @endif
@@ -371,17 +350,9 @@
                         @php
                             $actionBtn = '';
 
-                            if (in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']) && $data->status_validasi_asn == 1 && $data->status_validasi_ppk == 1 && $data->tahap == 'SPJ') {
-                                $actionBtn .= '<a href="' . url('spp-gu/create/' . $data->id) . '" class="btn btn-primary btn-sm mr-1" value="' . $data->id . '" > <i class="fas fa-plus-circle"></i> Upload Tahap SPP</a>';
-                            }
-
-                            if ($data->tahap != 'SPJ') {
-                                $actionBtn .= '<a href="' . url('spp-gu/qrcode-spj/' . $data->id) . '" class="btn btn-primary btn-sm my-1 mr-1"> <i class="fas fa-qrcode"></i> QRCode SPJ</a>';
-                            }
-
-                            if (($data->sekretariat_daerah_id == Auth::user()->profil->sekretariat_daerah_id && in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) || Auth::user()->role == 'Admin') {
+                            if (($data->spjGu->sekretariat_daerah_id == Auth::user()->profil->sekretariat_daerah_id && in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) || Auth::user()->role == 'Admin') {
                                 if ($data->status_validasi_asn != 0 && $data->status_validasi_ppk != 0 && ($data->status_validasi_asn == 2 || $data->status_validasi_ppk == 2)) {
-                                    $actionBtn .= '<div class="d-flex justify-content-center mb-1"><a href="' . url('/surat-penolakan/spp-gu/' . $data->id . '/' . $data->tahap_riwayat) . '" class="btn btn-primary btn-sm my-1 mr-1"><i class="fas fa-envelope"></i> Surat Pengembalian</a>';
+                                    $actionBtn .= '<a target="_blank" href="' . Storage::url('surat_penolakan_spp_gu/' . $data->surat_penolakan) . '" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> Surat Penolakan</a>';
 
                                     $actionBtn .= '<a href="' . url('spp-gu/' . $data->id . '/edit') . '" class="btn btn-primary btn-sm my-1 mr-1"><i class="fas fa-file-pdf"></i> Perbaiki</a></div>';
                                 }
@@ -395,18 +366,18 @@
                                 $actionBtn .= '<a class="btn btn-primary text-light btn-sm mr-1 my-1" href="' . url('spp-gu/' . $data->id) . '"><i class="far fa-check-circle"></i> Lihat</a>';
                             }
 
-                            if (($data->sekretariat_daerah_id == Auth::user()->profil->sekretariat_daerah_id && in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']) && count($data->riwayatSppGu) > 1) || Auth::user()->role == 'Admin') {
+                            if (($data->spjGu->sekretariat_daerah_id == Auth::user()->profil->sekretariat_daerah_id && in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']) && count($data->riwayatSppLs) > 1) || Auth::user()->role == 'Admin') {
                                 if ($data->status_validasi_asn == 0 && $data->status_validasi_ppk == 0) {
                                     $actionBtn .= '<a href="' . url('spp-gu/' . $data->id . '/edit') . '" class="btn btn-primary btn-sm my-1 mr-1"><i class="fas fa-pen"></i> Ubah</a></div>';
                                 }
                             }
 
-                            if ((in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']) && $data->sekretariat_daerah_id == Auth::user()->profil->sekretariat_daerah_id && $data->status_validasi_asn == 0 && $data->status_validasi_ppk == 0 && $data->tahap == 'SPJ') || Auth::user()->role == 'Admin') {
+                            if ((in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']) && $data->spjGu->sekretariat_daerah_id == Auth::user()->profil->sekretariat_daerah_id && $data->status_validasi_asn == 0 && $data->status_validasi_ppk == 0) || Auth::user()->role == 'Admin') {
                                 $actionBtn .= '<button id="btn-delete" class="btn btn-danger btn-sm mr-1 my-1" value="' . $data->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
                             }
 
                             if (Auth::user()->role == 'PPK') {
-                                if ($data->tahap == 'SPP' && $data->status_validasi_ppk == 1 && $data->status_validasi_akhir == 0 && $data->status_validasi_asn == 1 && Auth::user()->is_aktif == 1) {
+                                if ($data->status_validasi_ppk == 1 && $data->status_validasi_akhir == 0 && $data->status_validasi_asn == 1 && Auth::user()->is_aktif == 1) {
                                     $actionBtn .= '<button id="btn-verifikasi" class="btn btn-success btn-sm mr-1 my-1" value="' . $data->id . '" > <i class="far fa-check-circle"></i> Selesai</button>';
                                 }
                             }

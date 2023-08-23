@@ -28,15 +28,15 @@
                     </a>
                 </li>
                 <li class="nav-item" id="tabel-pelaksanaan-anggaran">
-                    <a href="{{ url('tabel-dpa') }}">
+                    <a href="{{ url('tabel-pelaksanaan-anggaran') }}">
                         <i class="fas fa-table"></i>
                         <p>Tabel Pelaksanaan Anggaran</p>
                     </a>
                 </li>
-                <li class="nav-item" id="statistik-dpa">
-                    <a href="{{ url('statistik-dpa') }}">
+                <li class="nav-item" id="statistik-pelaksanaan-anggaran">
+                    <a href="{{ url('statistik-pelaksanaan-anggaran') }}">
                         <i class="fas fa-chart-bar"></i>
-                        <p>Statistik</p>
+                        <p>Statistik Pelaksanaan Anggaran</p>
                     </a>
                 </li>
                 <li class="nav-section">

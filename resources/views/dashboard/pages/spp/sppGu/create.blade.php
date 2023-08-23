@@ -220,7 +220,6 @@
         })
 
         $('#spj_gu').change(function() {
-            getSpj();
             getSpp();
         })
 
@@ -233,7 +232,6 @@
                     'id': $('#spj_gu').val()
                 },
                 success: function(response) {
-                    console.log(response);
                     if (response.status == 'success') {
                         $('#append-spp-gu').html(response.html);
                     } else {

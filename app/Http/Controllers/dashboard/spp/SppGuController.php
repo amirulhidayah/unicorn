@@ -8,8 +8,11 @@ use App\Models\DaftarDokumenSppGu;
 use App\Models\DokumenSppGu;
 use App\Models\RiwayatSppGu;
 use App\Models\Spd;
+use App\Models\SpjGu;
 use App\Models\SppGu;
 use App\Models\Tahun;
+use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\QueryException;
@@ -20,7 +23,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Str;
-use Barryvdh\DomPDF\Facade as PDF;
 
 class SppGuController extends Controller
 {
@@ -45,27 +47,6 @@ class SppGuController extends Controller
         return view('dashboard.pages.spp.sppGu.create', compact(['daftarTahun', 'daftarDokumenSppGu', 'daftarSekretariatDaerah']));
     }
 
-    public function createTahapSpp(SppGu $sppGu)
-    {
-        $role = Auth::user()->role;
-
-        $totalSppLs = SppGu::where('id', $sppGu->id)->where('status_validasi_ppk', 0)->where('status_validasi_asn', 0)->where('tahap', 'SPJ')->count();
-        if (!(($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppGu->sekretariat_daerah_id) && $totalSppLs == 0)) {
-            return redirect(url('spp-gu'));
-        }
-
-        $daftarTahun = Tahun::orderBy('tahun', 'asc')->get();
-        $daftarDokumenSppGu = DaftarDokumenSppGu::where('kategori', 'SPP')->get();
-
-        $perencanaanAnggaranHitung = $sppGu->perencanaan_anggaran;
-        $perencanaanAnggaran = 'Rp. ' . number_format($sppGu->perencanaan_anggaran, 0, ',', '.');
-        $anggaranDigunakan = 'Rp. ' . number_format($sppGu->anggaran_digunakan, 0, ',', '.');
-
-        $role = Auth::user()->role;
-
-        return view('dashboard.pages.spp.sppGu.createTahapSpp', compact(['daftarTahun', 'daftarDokumenSppGu', 'sppGu', 'perencanaanAnggaran', 'perencanaanAnggaranHitung', 'anggaranDigunakan']));
-    }
-
     public function store(Request $request)
     {
         if (Auth::user()->role != "Admin") {
@@ -80,19 +61,15 @@ class SppGuController extends Controller
         $rules = [
             'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
             'tahun' => 'required',
-            'program' => 'required',
-            'kegiatan' => 'required',
-            'bulan' => 'required',
-            'perencanaan_anggaran' => 'required',
+            'nomor_surat' => 'required',
+            'spj_gu' => 'required',
         ];
 
         $messages = [
             'sekretariat_daerah.required' => 'Biro Organisasi Tidak Boleh Kosong',
+            'nomor_surat.required' => 'Nomor Surat Pertanggungjawaban (SPJ) Tidak Boleh Kosong',
+            'spj_gu.required' => 'Nomor Surat Permintaan Pembayaran (SPP) Tidak Boleh Kosong',
             'tahun.required' => 'Tahun Tidak Boleh Kosong',
-            'program.required' => 'Program Tidak Boleh Kosong',
-            'kegiatan.required' => 'Kegiatan Tidak Boleh Kosong',
-            'bulan.required' => 'Bulan Tidak Boleh Kosong',
-            'perencanaan_anggaran.required' => 'Perencanaan Tidak Boleh Kosong',
         ];
 
         if ($request->fileDokumen) {
@@ -129,11 +106,7 @@ class SppGuController extends Controller
             DB::transaction(function () use ($request, &$arrayFileDokumen, $role) {
                 $sppGu = new SppGu();
                 $sppGu->user_id = Auth::user()->id;
-                $sppGu->sekretariat_daerah_id = $role == "Admin" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
-                $sppGu->tahun_id = $request->tahun;
-                $sppGu->kegiatan_id = $request->kegiatan;
-                $sppGu->bulan = $request->bulan;
-                $sppGu->perencanaan_anggaran = str_replace(".", "", $request->perencanaan_anggaran);
+                $sppGu->spj_gu_id = $request->spj_gu;
                 $sppGu->nomor_surat = $request->nomor_surat;
                 $sppGu->save();
 
@@ -153,106 +126,7 @@ class SppGuController extends Controller
                 $riwayatSppGu = new RiwayatSppGu();
                 $riwayatSppGu->spp_gu_id = $sppGu->id;
                 $riwayatSppGu->user_id = Auth::user()->id;
-                $riwayatSppGu->perencanaan_anggaran = str_replace(".", "", $request->perencanaan_anggaran);
                 $riwayatSppGu->status = 'Dibuat';
-                $riwayatSppGu->save();
-            });
-        } catch (QueryException $error) {
-            foreach ($arrayFileDokumen as $nama) {
-                if (Storage::exists('dokumen_spp_gu/' . $nama)) {
-                    Storage::delete('dokumen_spp_gu/' . $nama);
-                }
-            }
-
-            return throw new Exception($error);
-        }
-
-        return response()->json(['status' => 'success']);
-    }
-
-    public function storeTahapSpp(SppGu $sppGu, Request $request)
-    {
-        $role = Auth::user()->role;
-
-        $totalSppLs = SppGu::where('id', $sppGu->id)->where('status_validasi_ppk', 0)->where('status_validasi_asn', 0)->where('tahap', 'SPJ')->count();
-        if (!(($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppGu->sekretariat_daerah_id) && $totalSppLs == 0)) {
-            return throw new Exception('Terjadi Kesalahan');
-        }
-
-        $rules = [
-            'anggaran_digunakan' => 'required',
-        ];
-
-        $messages = [
-            'anggaran_digunakan.required' => 'Anggaran yang digunakan Tidak Boleh Kosong',
-        ];
-
-        if ($request->fileDokumen) {
-            foreach ($request->fileDokumen as $dokumen) {
-                $rules["$dokumen"] = 'required|mimes:pdf|max:5120';
-                $messages["$dokumen.required"] = "File tidak boleh kosong";
-                $messages["$dokumen.mimes"] = "File harus berupa file pdf";
-                $messages["$dokumen.max"] = "File tidak boleh lebih dari 5 MB";
-            }
-        }
-
-        if ($request->namaFile) {
-            foreach ($request->namaFile as $nama) {
-                $rules["$nama"] = 'required';
-                $messages["$nama.required"] = "Nama tidak boleh kosong";
-            }
-        }
-
-        $validator = Validator::make($request->all(), $rules, $messages);
-
-        if (!$request->fileDokumen) {
-            $validator->after(function ($validator) {
-                $validator->errors()->add('dokumenFileHitung', 'Dokumen Minimal 1');
-            });
-        }
-
-        if ($request->anggaran_digunakan) {
-            if ($request->anggaran_digunakan > $sppGu->perencanaan_anggaran) {
-                $validator->after(function ($validator) {
-                    $validator->errors()->add('anggaran_digunakan', 'Anggaran melebihi anggaran yang telah ditentukan');
-                });
-            }
-        }
-
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()]);
-        }
-
-        $arrayFileDokumen = [];
-
-        try {
-            DB::transaction(function () use ($request, &$arrayFileDokumen, $sppGu) {
-                $sppGu->tahap = "SPP";
-                $sppGu->tahap_riwayat = $sppGu->tahap_riwayat + 1;
-                $sppGu->surat_penolakan = null;
-                $sppGu->status_validasi_asn = 0;
-                $sppGu->status_validasi_ppk = 0;
-                $sppGu->anggaran_digunakan = str_replace(".", "", $request->anggaran_digunakan);
-                $sppGu->save();
-
-                foreach ($request->fileDokumen as $index => $nama) {
-                    $namaFileBerkas = Str::slug($request[$request->namaFile[$index]], '-') . "-" . ($index + 1) . Carbon::now()->format('YmdHs') . rand(1, 9999) . ".pdf";
-                    $request->$nama->storeAs('dokumen_spp_gu', $namaFileBerkas);
-                    $arrayFileDokumen[] = $namaFileBerkas;
-
-                    $dokumenSppGu = new DokumenSppGu();
-                    $dokumenSppGu->nama_dokumen = $request[$request->namaFile[$index]];
-                    $dokumenSppGu->dokumen = $namaFileBerkas;
-                    $dokumenSppGu->spp_gu_id = $sppGu->id;
-                    $dokumenSppGu->tahap = "SPP";
-                    $dokumenSppGu->save();
-                }
-
-                $riwayatSppGu = new RiwayatSppGu();
-                $riwayatSppGu->spp_gu_id = $sppGu->id;
-                $riwayatSppGu->user_id = Auth::user()->id;
-                $riwayatSppGu->anggaran_digunakan = str_replace(".", "", $request->anggaran_digunakan);
-                $riwayatSppGu->status = 'Upload Tahap SPP';
                 $riwayatSppGu->save();
             });
         } catch (QueryException $error) {
@@ -276,23 +150,45 @@ class SppGuController extends Controller
         }
 
         $tipe = 'spp_gu';
-        $perencanaanAnggaran = 'Rp. ' . number_format($sppGu->perencanaan_anggaran, 0, ',', '.');
-        $anggaranDigunakan = 'Rp. ' . number_format($sppGu->anggaran_digunakan, 0, ',', '.');
+        $spjGu = SpjGu::where('id', $sppGu->spj_gu_id)->first();
+        if ($spjGu) {
+            $totalJumlahAnggaran = 0;
+            $totalAnggaranDigunakan = 0;
+            $totalSisaAnggaran = 0;
+            $programDanKegiatan = [];
+            $totalProgramDanKegiatan = [];
 
-        if ($sppGu->tahap == "SPJ") {
-            $tahap = '<span class="badge badge-primary">SPJ</span>';
-            $daftarDokumenSppGu = DokumenSppGu::where('spp_gu_id', $sppGu->id)->where('tahap', 'SPJ')->get();
-        } else if ($sppGu->tahap == "SPP" && $sppGu->status_validasi_akhir == 0) {
-            $tahap = '<span class="badge badge-primary">SPP</span>';
-            $daftarDokumenSppGu = DokumenSppGu::where('spp_gu_id', $sppGu->id)->where('tahap', 'SPP')->get();
-        } else {
-            $tahap = '<span class="badge badge-success">Selesai</span>';
-            $daftarDokumenSppGu = DokumenSppGu::where('spp_gu_id', $sppGu->id)->get();
+            foreach ($spjGu->kegiatanSpjGu as $kegiatanSpjGu) {
+                $program = $kegiatanSpjGu->kegiatan->program->nama . ' (' . $kegiatanSpjGu->kegiatan->program->no_rek . ')';
+                $kegiatan = $kegiatanSpjGu->kegiatan->nama . ' (' . $kegiatanSpjGu->kegiatan->no_rek . ')';
+                $jumlahAnggaran = jumlah_anggaran($spjGu->sekretariat_daerah_id, $kegiatanSpjGu->kegiatan_id, $spjGu->bulan_id, $spjGu->tahun_id, $spjGu->id);
+                $anggaranDigunakan = $kegiatanSpjGu->anggaran_digunakan;
+                $sisaAnggaran = $jumlahAnggaran - $anggaranDigunakan;
+
+                $programDanKegiatan[] = [
+                    'program' => $program,
+                    'kegiatan' => $kegiatan,
+                    'dokumen' => $kegiatanSpjGu->dokumen,
+                    'jumlah_anggaran' => $jumlahAnggaran,
+                    'anggaran_digunakan' => $anggaranDigunakan,
+                    'sisa_anggaran' => $sisaAnggaran
+                ];
+
+                $totalJumlahAnggaran += $jumlahAnggaran;
+                $totalAnggaranDigunakan += $anggaranDigunakan;
+                $totalSisaAnggaran += $sisaAnggaran;
+            }
+
+            $totalProgramDanKegiatan = [
+                'total_jumlah_anggaran' => $totalJumlahAnggaran,
+                'total_anggaran_digunakan' => $totalAnggaranDigunakan,
+                'total_sisa_anggaran' => $totalSisaAnggaran,
+            ];
         }
 
         $role = Auth::user()->role;
         if ((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) || Auth::user()->profil->sekretariat_daerah_id == $sppGu->sekretariat_daerah_id) {
-            return view('dashboard.pages.spp.sppGu.show', compact(['sppGu', 'tipe', 'perencanaanAnggaran', 'anggaranDigunakan', 'tahap', 'daftarDokumenSppGu']));
+            return view('dashboard.pages.spp.sppGu.show', compact(['sppGu', 'spjGu', 'totalProgramDanKegiatan', 'tipe', 'programDanKegiatan']));
         } else {
             abort(403, 'Anda tidak memiliki akses halaman tersebut!');
         }
@@ -305,28 +201,10 @@ class SppGuController extends Controller
             abort(403, 'Anda tidak memiliki akses halaman tersebut!');
         }
 
-        $perencanaanAnggaranHitung = $sppGu->perencanaan_anggaran;
-        $perencanaanAnggaran = 'Rp. ' . number_format($perencanaanAnggaranHitung, 0, ',', '.');
-        $anggaranDigunakan = 'Rp. ' . number_format($sppGu->anggaran_digunakan, 0, ',', '.');
+        $daftarTahun = Tahun::orderBy('tahun', 'asc')->get();
+        $daftarSekretariatDaerah = SekretariatDaerah::orderBy('nama', 'asc')->get();
 
-        if ($sppGu->tahap == "SPJ") {
-            $tahap = '<span class="badge badge-primary">SPJ</span>';
-            $daftarDokumenSppGu = DokumenSppGu::where('spp_gu_id', $sppGu->id)->where('tahap', 'SPJ')->get();
-        } else if ($sppGu->tahap == "SPP") {
-            $tahap = '<span class="badge badge-success">SPP</span>';
-            $daftarDokumenSppGu = DokumenSppGu::where('spp_gu_id', $sppGu->id)->where('tahap', 'SPP')->get();
-        } else {
-            $tahap = '';
-            $daftarDokumenSppGu = DokumenSppGu::where('spp_gu_id', $sppGu->id)->get();
-        }
-
-        $role = Auth::user()->role;
-
-        if (!($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppGu->sekretariat_daerah_id) && ($sppGu->status_validasi_asn == 2 || $sppGu->status_validasi_ppk == 2)) {
-            abort(403, 'Anda tidak memiliki akses halaman tersebut!');
-        }
-
-        return view('dashboard.pages.spp.sppGu.edit', compact(['sppGu', 'request', 'perencanaanAnggaran', 'anggaranDigunakan', 'perencanaanAnggaranHitung', 'daftarDokumenSppGu', 'tahap']));
+        return view('dashboard.pages.spp.sppGu.edit', compact(['sppGu', 'daftarTahun', 'daftarSekretariatDaerah']));
     }
 
     public function update(Request $request, SppGu $sppGu)
@@ -343,26 +221,28 @@ class SppGuController extends Controller
         }
 
         $rules = [
-            'surat_penolakan' => $suratPenolakan . '|mimes:pdf|max:5120',
-            'anggaran_digunakan' => $sppGu->tahap == "SPP" ? 'required' : 'nullable',
-            'perencanaan_anggaran' => $sppGu->tahap == "SPJ" ? 'required' : 'nullable',
+            'surat_pengembalian' => $suratPenolakan . '|mimes:pdf',
+            'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
+            'tahun' => 'required',
+            'nomor_surat' => 'required',
+            'spj_gu' => 'required',
         ];
 
         $messages = [
-            'surat_penolakan.required' => 'Surat Penolakan tidak boleh kosong',
-            'surat_penolakan.mimes' => 'Dokumen Harus Berupa File PDF',
-            'surat_penolakan.max' => "Dokumen Tidak Boleh Lebih Dari 5 Mb",
-            'anggaran_digunakan.required' => 'Anggaran yang digunakan tidak boleh kosong',
-            'perencanaan_anggaran.required' => 'Perencanaan anggaran tidak boleh kosong',
+            'sekretariat_daerah.required' => 'Biro Organisasi Tidak Boleh Kosong',
+            'surat_pengembalian.required' => 'Surat Penolakan tidak boleh kosong',
+            'surat_pengembalian.mimes' => 'Dokumen Harus Berupa File PDF',
+            'nomor_surat.required' => 'Nomor Surat Pertanggungjawaban (SPJ) Tidak Boleh Kosong',
+            'spj_gu.required' => 'Nomor Surat Permintaan Pembayaran (SPP) Tidak Boleh Kosong',
+            'tahun.required' => 'Tahun Tidak Boleh Kosong',
         ];
 
         if ($request->fileDokumenUpdate) {
             foreach ($request->fileDokumenUpdate as $dokumen) {
                 $dokumen = "'" . $dokumen . "'";
-                $rules["$dokumen"] = $request["$dokumen"] ? 'required|mimes:pdf|max:5120' : 'nullable';
+                $rules["$dokumen"] = $request["$dokumen"] ? 'required|mimes:pdf' : 'nullable';
                 $messages["$dokumen.required"] = "File tidak boleh kosong";
                 $messages["$dokumen.mimes"] = "File harus berupa file pdf";
-                $messages["$dokumen.max"] = "File tidak boleh lebih dari 5 MB";
             }
         }
 
@@ -375,10 +255,30 @@ class SppGuController extends Controller
 
         if ($request->fileDokumen) {
             foreach ($request->fileDokumen as $dokumen) {
-                $rules["$dokumen"] = 'required|mimes:pdf|max:5120';
+                $rules["$dokumen"] = 'required|mimes:pdf';
                 $messages["$dokumen.required"] = "File tidak boleh kosong";
                 $messages["$dokumen.mimes"] = "File harus berupa file pdf";
-                $messages["$dokumen.max"] = "File tidak boleh lebih dari 5 MB";
+            }
+        }
+
+        if ($request->program) {
+            foreach ($request->program as $nama) {
+                $rules["$nama"] = 'required';
+                $messages["$nama.required"] = "Program tidak boleh kosong";
+            }
+        }
+
+        if ($request->kegiatan) {
+            foreach ($request->kegiatan as $nama) {
+                $rules["$nama"] = 'required';
+                $messages["$nama.required"] = "Kegiatan tidak boleh kosong";
+            }
+        }
+
+        if ($request->anggaranDigunakan) {
+            foreach ($request->anggaranDigunakan as $nama) {
+                $rules["$nama"] = 'required';
+                $messages["$nama.required"] = "Anggaran digunakan tidak boleh kosong";
             }
         }
 
@@ -397,16 +297,6 @@ class SppGuController extends Controller
             });
         }
 
-        if ($sppGu->tahap == "SPP") {
-            if ($request->anggaran_digunakan) {
-                if ($request->anggaran_digunakan > $sppGu->perencanaan_anggaran) {
-                    $validator->after(function ($validator) {
-                        $validator->errors()->add('anggaran_digunakan', 'Anggaran melebihi anggaran yang telah ditentukan');
-                    });
-                }
-            }
-        }
-
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()]);
         }
@@ -416,10 +306,12 @@ class SppGuController extends Controller
         $arrayFileDokumenUpdate = [];
         $arrayFileDokumenHapus = [];
 
+        $namaFileSuratPengembalian = '';
+
         try {
-            DB::transaction(function () use ($request, &$arrayFileDokumen, &$arrayFileDokumenSebelumnya, &$arrayFileDokumenUpdate, &$arrayFileDokumenHapus, $sppGu) {
+            DB::transaction(function () use ($request, &$arrayFileDokumen, &$arrayFileDokumenSebelumnya, &$arrayFileDokumenUpdate, &$arrayFileDokumenHapus, &$namaFileSuratPengembalian, $sppGu, $role) {
                 if ($request->fileDokumenUpdate) {
-                    $daftarDokumenSppGu = DokumenSppGu::where('spp_gu_id', $sppGu->id)->where('tahap', $sppGu->tahap)->whereNotIn('id', $request->fileDokumenUpdate)->get();
+                    $daftarDokumenSppGu = DokumenSppGu::where('spp_gu_id', $sppGu->id)->whereNotIn('id', $request->fileDokumenUpdate)->get();
                     foreach ($daftarDokumenSppGu as $dokumen) {
                         $arrayFileDokumenHapus[] = $dokumen->dokumen;
                         $dokumen->delete();
@@ -434,6 +326,7 @@ class SppGuController extends Controller
                             $request->$id->storeAs('dokumen_spp_gu/', $namaFile);
                             $arrayFileDokumenUpdate[] = $namaFile;
                             $arrayFileDokumenSebelumnya[] = $dokumenSppGu->dokumen;
+
                             $dokumenSppGu->dokumen = $namaFile;
                         }
                         $dokumenSppGu->save();
@@ -449,7 +342,6 @@ class SppGuController extends Controller
                         $dokumenSppGu = new DokumenSppGu();
                         $dokumenSppGu->nama_dokumen = $request[$request->namaFile[$index]];
                         $dokumenSppGu->dokumen = $namaFileBerkas;
-                        $dokumenSppGu->tahap = $sppGu->tahap;
                         $dokumenSppGu->spp_gu_id = $sppGu->id;
                         $dokumenSppGu->save();
                     }
@@ -458,28 +350,21 @@ class SppGuController extends Controller
                 if (($sppGu->status_validasi_asn == 2 || $sppGu->status_validasi_ppk == 2)) {
                     $riwayatSppGu = new RiwayatSppGu();
 
-                    if ($request->file('surat_penolakan')) {
-                        $namaFileBerkas = "Surat Penolakan" . "-"  . Carbon::now()->format('YmdHs') . rand(1, 9999) . ".pdf";
-                        $request->file('surat_penolakan')->storeAs(
-                            'surat_penolakan_spp_gu',
-                            $namaFileBerkas
+                    if ($request->file('surat_pengembalian')) {
+                        $namaFileSuratPengembalian = "surat-pengembalian" . "-"  . Carbon::now()->format('YmdHs') . rand(1, 9999) . ".pdf";
+                        $request->file('surat_pengembalian')->storeAs(
+                            'surat_pengembalian_spp_gu',
+                            $namaFileSuratPengembalian
                         );
-                        $riwayatSppGu->surat_penolakan = $namaFileBerkas;
-                        $sppGu->surat_penolakan = $namaFileBerkas;
+                        $riwayatSppGu->surat_pengembalian = $namaFileSuratPengembalian;
+                        $sppGu->surat_pengembalian = $namaFileSuratPengembalian;
+                        $sppGu->surat_penolakan = null;
                     }
 
                     $riwayatSppGu->spp_gu_id = $sppGu->id;
                     $riwayatSppGu->user_id = Auth::user()->id;
                     $riwayatSppGu->status = 'Diperbaiki';
-                    if ($sppGu->tahap == "SPJ") {
-                        $riwayatSppGu->perencanaan_anggaran = str_replace(".", "", $request->perencanaan_anggaran);
-                    } else {
-                        $riwayatSppGu->anggaran_digunakan = str_replace(".", "", $request->anggaran_digunakan);
-                    }
                     $riwayatSppGu->save();
-                }
-
-                if (($sppGu->status_validasi_asn == 2 || $sppGu->status_validasi_ppk == 2)) {
                     $sppGu->tahap_riwayat = $sppGu->tahap_riwayat + 1;
                 }
 
@@ -493,11 +378,8 @@ class SppGuController extends Controller
                     $sppGu->alasan_validasi_asn = null;
                 }
 
-                if ($sppGu->tahap == "SPJ") {
-                    $sppGu->perencanaan_anggaran = str_replace(".", "", $request->perencanaan_anggaran);
-                } else {
-                    $sppGu->anggaran_digunakan = str_replace(".", "", $request->anggaran_digunakan);
-                }
+                $sppGu->spj_gu_id = $request->spj_gu;
+                $sppGu->nomor_surat = $request->nomor_surat;
                 $sppGu->save();
             });
         } catch (QueryException $error) {
@@ -511,6 +393,10 @@ class SppGuController extends Controller
                 if (Storage::exists('dokumen_spp_gu/' . $nama)) {
                     Storage::delete('dokumen_spp_gu/' . $nama);
                 }
+            }
+
+            if (Storage::exists('surat_pengembalian_spp_gu/' . $namaFileSuratPengembalian)) {
+                Storage::delete('surat_pengembalian_spp_gu/' . $namaFileSuratPengembalian);
             }
 
             return throw new Exception($error);
@@ -533,18 +419,23 @@ class SppGuController extends Controller
 
     public function destroy(SppGu $sppGu)
     {
-        if (!(Auth::user()->role == "Admin" || ($sppGu->status_validasi_asn == 0 && $sppGu->status_validasi_ppk == 0 && $sppGu->tahap == "SPJ"))) {
+        if (!(Auth::user()->role == "Admin" || ($sppGu->status_validasi_asn == 0 && $sppGu->status_validasi_ppk == 0))) {
             return throw new Exception('Gagal Diproses');
         }
 
-        $riwayatSppGu = RiwayatSppGu::where('spp_gu_id', $sppGu->id)->whereNotNull('surat_penolakan')->get();
+        $riwayatSppGu = RiwayatSppGu::where('spp_gu_id', $sppGu->id)->get();
 
         $arraySuratPenolakan = null;
+        $arraySuratPengembalian = null;
 
         $arrayDokumen = $sppGu->dokumenSppGu->pluck('dokumen');
         if ($riwayatSppGu) {
             $arraySuratPenolakan = $riwayatSppGu->pluck('surat_penolakan');
+            $arraySuratPengembalian = $riwayatSppGu->pluck('surat_pengembalian');
         }
+
+        $spm = $sppGu->dokumen_spm;
+        $sp2d = $sppGu->dokumen_sp2d;
 
         try {
             DB::transaction(
@@ -560,13 +451,36 @@ class SppGuController extends Controller
 
         if (count($arraySuratPenolakan) > 0) {
             foreach ($arraySuratPenolakan as $suratPenolakan) {
-                Storage::delete('surat_penolakan_spp_gu/' . $suratPenolakan);
+                if (Storage::exists('surat_penolakan_spp_gu/' . $suratPenolakan)) {
+                    Storage::delete('surat_penolakan_spp_gu/' . $suratPenolakan);
+                }
+            }
+        }
+        if (count($arraySuratPengembalian) > 0) {
+            foreach ($arraySuratPengembalian as $suratPengembalian) {
+                if (Storage::exists('surat_pengembalian_spp_gu/' . $suratPengembalian)) {
+                    Storage::delete('surat_pengembalian_spp_gu/' . $suratPengembalian);
+                }
             }
         }
 
         if (count($arrayDokumen) > 0) {
             foreach ($arrayDokumen as $dokumen) {
-                Storage::delete('dokumen_spp_gu/' . $dokumen);
+                if (Storage::exists('dokumen_spp_gu/' . $dokumen)) {
+                    Storage::delete('dokumen_spp_gu/' . $dokumen);
+                }
+            }
+        }
+
+        if ($spm) {
+            if (Storage::exists('dokumen_spm_spp_gu/' . $spm)) {
+                Storage::delete('dokumen_spm_spp_gu/' . $spm);
+            }
+        }
+
+        if ($sp2d) {
+            if (Storage::exists('dokumen_arsip_sp2d_spp_gu/' . $sp2d)) {
+                Storage::delete('dokumen_arsip_sp2d_spp_gu/' . $sp2d);
             }
         }
 
@@ -595,19 +509,20 @@ class SppGuController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }
 
+        $namaFileSuratPenolakan = '';
+
         try {
             DB::transaction(
-                function () use ($sppGu, $request) {
+                function () use ($sppGu, $request, &$namaFileSuratPenolakan) {
 
                     if (Auth::user()->role == "ASN Sub Bagian Keuangan") {
                         $sppGu->status_validasi_asn = $request->verifikasi;
-                        $sppGu->alasan_validasi_asn = $request->alasan;
+                        $sppGu->alasan_validasi_asn = $request->verifikasi != '1' ? $request->alasan : null;
                         $sppGu->tanggal_validasi_asn = Carbon::now();
-
                         $riwayatTerakhir = RiwayatSppGu::where('role', 'ASN Sub Bagian Keuangan')->where('spp_gu_id', $sppGu->id)->where('tahap_riwayat', $sppGu->tahap_riwayat)->orderBy('created_at', 'desc')->delete();
                     } else {
                         $sppGu->status_validasi_ppk = $request->verifikasi;
-                        $sppGu->alasan_validasi_ppk = $request->alasan;
+                        $sppGu->alasan_validasi_ppk = $request->verifikasi != '1' ? $request->alasan : null;
                         $sppGu->tanggal_validasi_ppk = Carbon::now();
                         $riwayatTerakhir = RiwayatSppGu::where('role', 'PPK')->where('spp_gu_id', $sppGu->id)->where('tahap_riwayat', $sppGu->tahap_riwayat)->orderBy('created_at', 'desc')->delete();
                     }
@@ -619,8 +534,6 @@ class SppGuController extends Controller
                     $riwayatSppGu->spp_gu_id = $sppGu->id;
                     $riwayatSppGu->user_id = Auth::user()->id;
                     $riwayatSppGu->tahap_riwayat = $sppGu->tahap_riwayat;
-                    $riwayatSppGu->perencanaan_anggaran = str_replace(".", "", $sppGu->perencanaan_anggaran);
-                    $riwayatSppGu->anggaran_digunakan = str_replace(".", "", $sppGu->anggaran_digunakan);
                     $riwayatSppGu->status = $request->verifikasi == '1' ? 'Disetujui' : 'Ditolak';
                     if ($request->verifikasi == 2) {
                         $nomorSurat = DB::table('riwayat_spp_gu')
@@ -634,9 +547,70 @@ class SppGuController extends Controller
                     $riwayatSppGu->alasan = $request->alasan;
                     $riwayatSppGu->role = Auth::user()->role;
                     $riwayatSppGu->save();
+
+                    if (($sppGu->status_validasi_asn == 2 || $sppGu->status_validasi_ppk == 2) && ($sppGu->status_validasi_asn != 0 && $sppGu->status_validasi_ppk != 0)) {
+                        $totalJumlahAnggaran = 0;
+                        $totalAnggaranDigunakan = 0;
+                        $totalSisaAnggaran = 0;
+                        $programDanKegiatan = [];
+                        $totalProgramDanKegiatan = [];
+
+                        foreach ($sppGu->spjGu->kegiatanSpjGu as $kegiatanSpjGu) {
+                            $program = $kegiatanSpjGu->kegiatan->program->nama . ' (' . $kegiatanSpjGu->kegiatan->program->no_rek . ')';
+                            $kegiatan = $kegiatanSpjGu->kegiatan->nama . ' (' . $kegiatanSpjGu->kegiatan->no_rek . ')';
+                            $jumlahAnggaran = jumlah_anggaran($sppGu->spjGu->sekretariat_daerah_id, $kegiatanSpjGu->kegiatan_id, $sppGu->spjGu->bulan_id, $sppGu->spjGu->tahun_id, $sppGu->spjGu->id);
+                            $anggaranDigunakan = $kegiatanSpjGu->anggaran_digunakan;
+                            $sisaAnggaran = $jumlahAnggaran - $anggaranDigunakan;
+
+                            $programDanKegiatan[] = [
+                                'program' => $program,
+                                'kegiatan' => $kegiatan,
+                                'jumlah_anggaran' => $jumlahAnggaran,
+                                'anggaran_digunakan' => $anggaranDigunakan,
+                                'sisa_anggaran' => $sisaAnggaran
+                            ];
+
+                            $totalJumlahAnggaran += $jumlahAnggaran;
+                            $totalAnggaranDigunakan += $anggaranDigunakan;
+                            $totalSisaAnggaran += $sisaAnggaran;
+                        }
+
+                        $totalProgramDanKegiatan = [
+                            'total_jumlah_anggaran' => $totalJumlahAnggaran,
+                            'total_anggaran_digunakan' => $totalAnggaranDigunakan,
+                            'total_sisa_anggaran' => $totalSisaAnggaran,
+                        ];
+
+                        $hariIni = Carbon::now()->translatedFormat('d F Y');
+                        $riwayatSppGu = RiwayatSppGu::where('spp_gu_id', $sppGu->id)->where('tahap_riwayat', $sppGu->tahap_riwayat)->where('status', 'Ditolak')->orderBy('updated_at', 'desc')->first();
+                        $ppk = User::where('role', 'PPK')->where('is_aktif', 1)->first();
+                        $kuasaPenggunaAnggaran = User::where('role', 'Kuasa Pengguna Anggaran')->where('is_aktif', 1)->first();
+
+                        $pdf = Pdf::loadView('dashboard.pages.spp.sppGu.suratPenolakan', compact(['sppGu', 'riwayatSppGu', 'hariIni', 'ppk', 'kuasaPenggunaAnggaran', 'programDanKegiatan', 'totalProgramDanKegiatan']))->setPaper('f4', 'portrait');
+                        $namaFileSuratPenolakan = 'surat-penolakan-' . time() . '.pdf';
+                        Storage::put('surat_penolakan_spp_gu/' . $namaFileSuratPenolakan, $pdf->output());
+
+                        $riwayatSppGu = RiwayatSppGu::where('spp_gu_id', $sppGu->id)->where('tahap_riwayat', $sppGu->tahap_riwayat)->where('status', 'Ditolak')->get();
+                        foreach ($riwayatSppGu as $riwayat) {
+                            if (Storage::exists('surat_penolakan_spp_gu/' . $riwayat->surat_penolakan)) {
+                                Storage::delete('surat_penolakan_spp_gu/' . $riwayat->surat_penolakan);
+                            }
+
+                            $riwayat->surat_penolakan = $namaFileSuratPenolakan;
+                            $riwayat->save();
+                        }
+
+                        $sppGu = SppGu::where('id', $sppGu->id)->first();
+                        $sppGu->surat_penolakan = $namaFileSuratPenolakan;
+                        $sppGu->save();
+                    }
                 }
             );
         } catch (QueryException $error) {
+            if (Storage::exists('surat_penolakan_spp_gu/' . $namaFileSuratPenolakan)) {
+                Storage::delete('surat_penolakan_spp_gu/' . $namaFileSuratPenolakan);
+            }
+
             return throw new Exception($error);
         }
 
@@ -645,7 +619,7 @@ class SppGuController extends Controller
 
     public function verifikasiAkhir(SppGu $sppGu)
     {
-        if (!($sppGu->status_validasi_ppk == 1 && $sppGu->status_validasi_akhir == 0 && $sppGu->status_validasi_asn == 1 && $sppGu->tahap == "SPP" && Auth::user()->is_aktif == 1)) {
+        if (!($sppGu->status_validasi_ppk == 1 && $sppGu->status_validasi_akhir == 0 && $sppGu->status_validasi_asn == 1 && Auth::user()->is_aktif == 1)) {
             return response()->json([
                 'status' => 'error'
             ]);
@@ -654,14 +628,14 @@ class SppGuController extends Controller
         try {
             DB::transaction(
                 function () use ($sppGu) {
-                    $sppGu->tahap = 'Selesai';
                     $sppGu->status_validasi_akhir = 1;
+                    $sppGu->surat_penolakan = NULL;
+                    $sppGu->surat_pengembalian = NULL;
                     $sppGu->tanggal_validasi_akhir = Carbon::now();
                     $sppGu->save();
 
                     $riwayatSppGu = new RiwayatSppGu();
                     $riwayatSppGu->spp_gu_id = $sppGu->id;
-                    $riwayatSppGu->anggaran_digunakan = $sppGu->anggaran_digunakan;
                     $riwayatSppGu->user_id = Auth::user()->id;
                     $riwayatSppGu->status = 'Diselesaikan';
                     $riwayatSppGu->save();
@@ -820,29 +794,5 @@ class SppGuController extends Controller
         return response()->json([
             'status' => 'success'
         ]);
-    }
-
-    public function cekSp2d()
-    {
-        if (Auth::user()->role != "Admin") {
-            $totalSppLs = SppGu::where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id)->where('status_validasi_ppk', 1)->where('status_validasi_asn', 1)->where('status_validasi_akhir', 1)->where('tahap', 'Selesai')->whereNotNull('dokumen_spm')->whereNull('dokumen_arsip_sp2d')->count();
-            if ($totalSppLs > 0) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Terdapat arsip SP2D yang belum diupload'
-                ]);
-            }
-        }
-
-        return response()->json([
-            'status' => 'success',
-        ]);
-    }
-
-    public function qrcodeSpj(SppGu $sppGu)
-    {
-        $perencanaanAnggaran = 'Rp. ' . number_format($sppGu->perencanaan_anggaran, 0, ',', '.');
-        $pdf = PDF::loadView('dashboard.pages.spp.sppGu.qrcode', compact(['sppGu', 'perencanaanAnggaran']));
-        return $pdf->download('QR CODE-SPJ-SPP-GU-' . Carbon::now()  . '.pdf');
     }
 }

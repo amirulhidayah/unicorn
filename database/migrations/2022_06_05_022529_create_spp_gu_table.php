@@ -15,9 +15,9 @@ class CreateSppGuTable extends Migration
     {
         Schema::create('spp_gu', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->uuid('user_id');
             $table->string('nomor_surat');
             $table->uuid('spj_gu_id');
-            $table->uuid('user_id');
             $table->integer('tahap_riwayat')->default(1);
             $table->text('surat_penolakan')->nullable();
             $table->text('surat_pengembalian')->nullable();

@@ -23,7 +23,7 @@ class SppGu extends Model
         return $this->belongsTo(Tahun::class)->withTrashed();
     }
 
-    public function SekretariatDaerah()
+    public function sekretariatDaerah()
     {
         return $this->belongsTo(SekretariatDaerah::class)->withTrashed();
     }
@@ -36,5 +36,10 @@ class SppGu extends Model
     public function riwayatSppGu()
     {
         return $this->hasMany(RiwayatSppGu::class, 'spp_gu_id', 'id')->orderBy('created_at', 'asc');
+    }
+
+    public function spjGu()
+    {
+        return $this->belongsTo(SpjGu::class);
     }
 }

@@ -53,6 +53,42 @@ class ListController extends Controller
         return response()->json($kegiatan);
     }
 
+    public function programSpd(Request $request)
+    {
+        $role = Auth::user()->role;
+        $tahun = $request->tahun;
+        $sekretariatDaerah = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
+        $id = $request->id;
+
+        $program = Program::with(['kegiatan'])->whereHas('kegiatan', function ($query) use ($tahun, $sekretariatDaerah) {
+            $query->whereHas('spd', function ($query) use ($tahun, $sekretariatDaerah) {
+                if ($tahun) {
+                    $query->where('tahun_id', $tahun);
+                }
+                if ($sekretariatDaerah) {
+                    $query->where('sekretariat_daerah_id', $sekretariatDaerah);
+                }
+            });
+        })->orderBy('no_rek', 'asc')->get();
+
+        if ($id) {
+            $programHapus = Program::with(['kegiatan'])->whereHas('kegiatan', function ($query) use ($tahun, $sekretariatDaerah) {
+                $query->whereHas('spd', function ($query) use ($tahun, $sekretariatDaerah) {
+                    if ($tahun) {
+                        $query->where('tahun_id', $tahun);
+                    }
+                    if ($sekretariatDaerah) {
+                        $query->where('sekretariat_daerah_id', $sekretariatDaerah);
+                    }
+                });
+            })->where('id', $id)->orderBy('no_rek', 'asc')->withTrashed()->first();
+            if ($programHapus->trashed()) {
+                $program->push($programHapus);
+            }
+        }
+        return response()->json($program);
+    }
+
     public function kegiatanSpd(Request $request)
     {
         $program = $request->program;

@@ -40,4 +40,9 @@ class SpjGu extends Model
     {
         return $this->hasMany(KegiatanSpjGu::class);
     }
+
+    public function sppGu()
+    {
+        return $this->hasOne(SppGu::class);
+    }
 }

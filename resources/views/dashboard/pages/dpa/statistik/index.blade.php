@@ -56,20 +56,6 @@
                 <div class="card-body">
                     <div class="row mb-4">
                         @csrf
-                        <div class="col-md-12 col-sm-12">
-                            @component('dashboard.components.formElements.select', [
-                                'label' => 'Jenis SPP',
-                                'id' => 'jenis_spp_filter',
-                                'name' => 'jenis_spp',
-                                'class' => 'select2 filter',
-                                'wajib' => '<sup class="text-danger">*</sup>',
-                            ])
-                                @slot('options')
-                                    <option value="SPP-GU">SPP-GU</option>
-                                    <option value="SPP-LS">SPP-LS</option>
-                                @endslot
-                            @endcomponent
-                        </div>
                         @if (
                             !in_array(Auth::user()->role, [
                                 'Bendahara Pengeluaran',
@@ -85,7 +71,7 @@
                                     'wajib' => '<sup class="text-danger">*</sup>',
                                 ])
                                     @slot('options')
-                                        @foreach ($SekretariatDaerah as $item)
+                                        @foreach ($sekretariatDaerah as $item)
                                             <option value="{{ $item->id }}">{{ $item->nama }}
                                             </option>
                                         @endforeach
@@ -185,12 +171,6 @@
                         </div>
                     </div>
                     <div id="canvas-statistik">
-                        @component('dashboard.components.widgets.info', [
-                            'judul' => 'Jenis SPP',
-                            'isi' => '-',
-                            'id' => 'info-jenis-spp',
-                        ])
-                        @endcomponent
                         @component('dashboard.components.widgets.info', [
                             'judul' => 'Sekretariat Daerah',
                             'isi' => '-',
@@ -466,22 +446,15 @@
 
         function getDataStatistik() {
             var tahun = $('#tahun').val();
-            var SekretariatDaerah = roleAdmin.includes(role) ? $('#sekretariat_daerah').val() :
+            var sekretariatDaerah = roleAdmin.includes(role) ? $('#sekretariat_daerah').val() :
                 "{{ Auth::user()->profil->sekretariat_daerah_id }}";
             var program = $('#program').val();
             var kegiatan = $('#kegiatan').val();
             var model = $('#model').val();
             var bulanDari = $('#bulan_dari_filter').val();
             var bulanSampai = $('#bulan_sampai_filter').val();
-            var jenisSpp = $('#jenis_spp_filter').val();
 
-            if (jenisSpp) {
-                $('#info-jenis-spp').html($('#jenis_spp_filter').find(":selected").text());
-            } else {
-                $('#info-jenis-spp').html('-');
-            }
-
-            if (SekretariatDaerah) {
+            if (sekretariatDaerah) {
                 $('#info-sekretariat-daerah').html($('#sekretariat_daerah').find(":selected").text());
             } else {
                 $('#info-sekretariat-daerah').html('-');
@@ -515,20 +488,19 @@
             var bulanDariNumber = monthToNumber(bulanDari);
             var bulanSampaiNumber = monthToNumber(bulanSampai);
 
-            if ((tahun != '') && (SekretariatDaerah != '') && (kegiatan != '') && (model != '') && (program != '') && (
-                    bulanDari != '') && (bulanSampai != '') && (jenisSpp != '')) {
+            if ((tahun != '') && (sekretariatDaerah != '') && (kegiatan != '') && (model != '') && (program != '') && (
+                    bulanDari != '') && (bulanSampai != '')) {
                 if (bulanDariNumber <= bulanSampaiNumber) {
                     $.ajax({
-                        url: "{{ url('statistik-dpa/get-data-statistik') }}",
+                        url: "{{ url('statistik-pelaksanaan-anggaran/get-data') }}",
                         type: "POST",
                         data: {
                             '_token': '{{ csrf_token() }}',
                             tahun_id: tahun,
-                            sekretariat_daerah_id: SekretariatDaerah,
+                            sekretariat_daerah_id: sekretariatDaerah,
                             kegiatan_id: kegiatan,
                             bulan_dari: bulanDari,
                             bulan_sampai: bulanSampai,
-                            jenis_spp: jenisSpp
                         },
                         success: function(response) {
                             if (model == "Bar Chart") {
@@ -562,16 +534,16 @@
     <script>
         $('#tahun').on('change', function() {
             var tahun = $(this).val();
-            var SekretariatDaerah = $('#sekretariat_daerah').val();
+            var sekretariatDaerah = $('#sekretariat_daerah').val();
             $('#kegiatan').html('').attr('disabled', true);
             getDataStatistik();
             $.ajax({
-                url: "{{ url('list/program-dpa') }}",
+                url: "{{ url('list/program-spd') }}",
                 type: "POST",
                 data: {
                     '_token': '{{ csrf_token() }}',
                     tahun: tahun,
-                    sekretariat_daerah: SekretariatDaerah
+                    sekretariat_daerah: sekretariatDaerah
                 },
                 success: function(response) {
                     $('#program').removeAttr('disabled');
@@ -592,16 +564,16 @@
         $('#program').on('change', function() {
             var program = $('#program').val();
             var tahun = $('#tahun').val();
-            var SekretariatDaerah = $('#sekretariat_daerah').val();
+            var sekretariatDaerah = $('#sekretariat_daerah').val();
             getDataStatistik();
             $.ajax({
-                url: "{{ url('list/kegiatan-dpa') }}",
+                url: "{{ url('list/kegiatan-spd') }}",
                 type: "POST",
                 data: {
                     '_token': '{{ csrf_token() }}',
                     tahun: tahun,
                     program: program,
-                    sekretariat_daerah: SekretariatDaerah
+                    sekretariat_daerah: sekretariatDaerah
                 },
                 success: function(response) {
                     $('#kegiatan').removeAttr('disabled');
@@ -625,14 +597,13 @@
 
         $("#downloadPdf").click(function() {
             var tahun = $('#tahun').val();
-            var SekretariatDaerah = roleAdmin.includes(role) ? $('#sekretariat_daerah').val() :
+            var sekretariatDaerah = roleAdmin.includes(role) ? $('#sekretariat_daerah').val() :
                 "{{ Auth::user()->profil->sekretariat_daerah_id }}";
             var program = $('#program').val();
             var kegiatan = $('#kegiatan').val();
             var model = $('#model').val();
             var bulanDari = $('#bulan_dari_filter').val();
             var bulanSampai = $('#bulan_sampai_filter').val();
-            var jenisSpp = $('#jenis_spp_filter').val();
 
             var daftarBulan = @json($daftarBulan);
             var monthToNumber = function(monthName) {
@@ -642,9 +613,9 @@
             var bulanDariNumber = monthToNumber(bulanDari);
             var bulanSampaiNumber = monthToNumber(bulanSampai);
 
-            if ((tahun != '') && (SekretariatDaerah != '') && (kegiatan != '') && (model != '') && (program !=
+            if ((tahun != '') && (sekretariatDaerah != '') && (kegiatan != '') && (model != '') && (program !=
                     '') && (
-                    bulanDari != '') && (bulanSampai != '') && (jenisSpp != '')) {
+                    bulanDari != '') && (bulanSampai != '')) {
                 if (bulanDariNumber <= bulanSampaiNumber) {
                     html2canvas(document.querySelector("#canvas-statistik")).then(canvas => {
                         var dataURL = canvas.toDataURL();
@@ -671,7 +642,7 @@
 
     <script>
         $(document).ready(function() {
-            $('#statistik-dpa').addClass('active');
+            $('#statistik-pelaksanaan-anggaran').addClass('active');
         })
     </script>
 @endpush

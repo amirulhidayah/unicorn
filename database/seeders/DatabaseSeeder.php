@@ -82,5 +82,8 @@ class DatabaseSeeder extends Seeder
         $this->call(KegiatanSppLsTableSeeder::class);
         $this->call(RiwayatSppLsTableSeeder::class);
         $this->call(SppLsTableSeeder::class);
+        $this->call(KegiatanSpjGuTableSeeder::class);
+        $this->call(RiwayatSpjGuTableSeeder::class);
+        $this->call(SpjGuTableSeeder::class);
     }
 }

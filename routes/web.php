@@ -2,9 +2,10 @@
 
 use App\Http\Controllers\AppendController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\dashboard\dpa\StatistikDpaController;
+use App\Http\Controllers\dashboard\dpa\StatistikPelaksanaanAnggaranController;
 use App\Http\Controllers\dashboard\dpa\SuratPenyediaanDanaController;
 use App\Http\Controllers\dashboard\dpa\TabelDpaController;
+use App\Http\Controllers\dashboard\dpa\TabelPelaksanaanAnggaranController;
 use App\Http\Controllers\dashboard\masterData\AkunController;
 use App\Http\Controllers\dashboard\masterData\AkunLainnyaController;
 use App\Http\Controllers\dashboard\masterData\SekretariatDaerahController;
@@ -15,7 +16,6 @@ use App\Http\Controllers\dashboard\masterData\DokumenSppUpController;
 use App\Http\Controllers\dashboard\masterData\KategoriSppLsController;
 use App\Http\Controllers\dashboard\masterData\KegiatanController;
 use App\Http\Controllers\dashboard\masterData\ProgramController;
-use App\Http\Controllers\dashboard\masterData\ProgramSppController;
 use App\Http\Controllers\dashboard\masterData\TahunController;
 use App\Http\Controllers\dashboard\masterData\TentangController;
 use App\Http\Controllers\dashboard\spd\SpdController;
@@ -86,17 +86,8 @@ Route::group(['middleware' => ['auth']], function () {
         ]);
 
         Route::get('/surat-penyediaan-dana/format-import', [SuratPenyediaanDanaController::class, 'formatImport']);
-        Route::post('/surat-penyediaan-dana/import', [SuratPenyediaanDanaController::class, 'importSpd']);
-        Route::post('/tabel-dpa/import', [TabelDpaController::class, 'importSpd']);
+        Route::post('/surat-penyediaan-dana/import', [SuratPenyediaanDanaController::class, 'import']);
     });
-
-    Route::resource('/master-data/program-spp', ProgramSppController::class)->parameters([
-        'program-spp' => 'programSpp'
-    ]);
-
-    Route::resource('/master-data/kegiatan-spp/{programSpp}', KegiatanSppController::class)->parameters([
-        '{programSpp}' => 'kegiatanSpp'
-    ]);
 
     Route::group(['middleware' => ['role:Admin|Bendahara Pengeluaran|Bendahara Pengeluaran Pembantu|Bendahara Pengeluaran Pembantu Belanja Hibah']], function () {
         // SPP UP
@@ -124,11 +115,9 @@ Route::group(['middleware' => ['auth']], function () {
             'index',
             'show'
         );
-
-        // SPP GU
-        Route::get('/spp-gu/create/{sppGu}', [SppGuController::class, 'createTahapSpp']);
-        Route::post('/spp-gu/{sppGu}', [SppGuController::class, 'storeTahapSpp']);
-        Route::resource('/spp-gu', SppGuController::class)->except(
+        Route::resource('/spp-gu', SppGuController::class)->parameters([
+            'spp-gu' => 'spp-gu'
+        ])->except(
             'index',
             'show'
         );
@@ -234,21 +223,17 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/surat-penolakan/spp-gu/{sppGu}/{tahapRiwayat}', [UnduhController::class, 'suratPenolakanSppGu']);
     Route::get('/surat-pernyataan/spp-gu/{sppGu}', [UnduhController::class, 'suratPernyataanSppGu']);
 
-    Route::post('/tabel-dpa/tabel-dpa', [TabelDpaController::class, 'tabelDpa']);
-    Route::get('/tabel-dpa/tabel-dpaDebug', [TabelDpaController::class, 'tabelDpaDebug']);
-    Route::post('/tabel-dpa/get-spd', [TabelDpaController::class, 'getSpd']);
-    Route::post('/tabel-dpa/export', [TabelDpaController::class, 'exportSpd']);
-    Route::resource('/tabel-dpa', TabelDpaController::class)->parameters([
-        'tabel-dpa' => 'spd'
-    ]);
+    Route::get('tabel-pelaksanaan-anggaran', [TabelPelaksanaanAnggaranController::class, 'index']);
+    Route::post('tabel-pelaksanaan-anggaran/tabel', [TabelPelaksanaanAnggaranController::class, 'getTable']);
+    Route::post('tabel-pelaksanaan-anggaran/export', [TabelPelaksanaanAnggaranController::class, 'export']);
 
     Route::post('/surat-penyediaan-dana/tabel', [SuratPenyediaanDanaController::class, 'getTabel']);
     Route::resource('/surat-penyediaan-dana', SuratPenyediaanDanaController::class)->parameters([
         'surat-penyediaan-dana' => 'spd'
     ]);
 
-    Route::get('/statistik-dpa', [StatistikDpaController::class, 'index']);
-    Route::post('/statistik-dpa/get-data-statistik', [StatistikDpaController::class, 'getDataStatistik']);
+    Route::get('/statistik-pelaksanaan-anggaran', [StatistikPelaksanaanAnggaranController::class, 'index']);
+    Route::post('/statistik-pelaksanaan-anggaran/get-data', [StatistikPelaksanaanAnggaranController::class, 'getData']);
 
     Route::get('/logout', [AuthController::class, 'logout']);
 
@@ -256,6 +241,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/list/dokumen-spp-ls', [ListController::class, 'dokumenSppLs']);
     Route::post('/list/program', [ListController::class, 'program']);
     Route::post('/list/kegiatan', [ListController::class, 'kegiatan']);
+    Route::post('/list/program-spd', [ListController::class, 'programSpd']);
     Route::post('/list/kegiatan-spd', [ListController::class, 'kegiatanSpd']);
     Route::post('/list/spjGu', [ListController::class, 'spjGu']);
 

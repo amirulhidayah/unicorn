@@ -145,7 +145,7 @@
             @endif
             <div class="col-md-6 col-sm-12">
                 @component('dashboard.components.formElements.select', [
-                    'label' => 'Status Upload SKM',
+                    'label' => 'Status Upload SPM',
                     'id' => 'status_upload_skm',
                     'name' => 'status_upload_skm',
                     'class' => 'select2 select2-filter',

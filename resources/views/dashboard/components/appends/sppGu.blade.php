@@ -1,7 +1,7 @@
  <div class="col-lg-12 my-3">
      <div class="border border-black rounded p-4">
          @component('dashboard.components.widgets.info', [
-             'judul' => 'Nomor Surat Permintaan Pembayaran (SPP)',
+             'judul' => 'Nomor Surat Pertanggungjawaban (SPJ)',
              'isi' => $spjGu->nomor_surat,
          ])
          @endcomponent
@@ -49,8 +49,8 @@
                              <td>
                                  <a target="_blank"
                                      href="{{ Storage::url('dokumen_spj_gu/' . $kegiatanSpjGu['dokumen']) }}"
-                                     class="btn btn-success btn-sm mt-1"><i class="fas fa-file-pdf"></i>
-                                     Download</a>
+                                     class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i>
+                                     Lihat</a>
                              </td>
                          </tr>
                      @endforeach

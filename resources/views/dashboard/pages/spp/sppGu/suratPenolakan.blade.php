@@ -35,6 +35,17 @@
             margin-top: -3px;
             font-weight: bold;
         }
+
+        #program-dan-kegiatan,
+        #program-dan-kegiatan td,
+        #program-dan-kegiatan tr,
+        #program-dan-kegiatan th {
+            border: 2px solid black;
+            border-collapse: collapse;
+            font-size: 12px;
+            padding: 3px;
+            margin: 0;
+        }
     </style>
 </head>
 
@@ -47,7 +58,7 @@
             </td>
             <td width="60%">
                 <p>{{ $riwayatSppGu->nomor_surat }}</p>
-                <p><b>Pengembalian SPJ/SPP</b></p>
+                <p><b>Pengembalian SPP</b></p>
             </td>
             <td width="30%">
                 <p>Palu,</p>
@@ -64,27 +75,62 @@
     <table width="100%">
         <tr>
             <td width="20%">
-                <p>- SPP-TU Nomor</p>
+                <p>- SPP-GU Nomor</p>
                 <p>- Tanggal</p>
+                <p>- SPJ-GU Nomor</p>
                 <p>- SPJ Kegiatan</p>
-                {{-- <p>- Jumlah Anggaran : Rp. {{ number_format($riwayatSppGu->anggaran_digunakan, 0, ',', '.') }}</p> --}}
+                {{-- <p>- Jumlah Anggaran : Rp. {{ number_format($riwayatSppLs->anggaran_digunakan, 0, ',', '.') }}</p> --}}
             </td>
             <td width="50%">
-                <p> : {{ $riwayatSppGu->sppGu->nomor_surat }}</p>
-                <p> : {{ \Carbon\Carbon::parse($riwayatSppGu->created_at)->translatedFormat('d F Y') }}</p>
-                <p> : {{ $riwayatSppGu->sppGu->kegiatanDpa->nama }},</p>
-            </td>
-            <td width="5%">
-                <p>Jumlah</p>
-                <p>&nbsp;</p>
-                <p>Jumlah</p>
-            </td>
-            <td width="25%">
-                <p> : Rp. {{ number_format($riwayatSppGu->anggaran_digunakan, 0, ',', '.') }}</p>
-                <p>&nbsp;</p>
-                <p> : Rp. {{ number_format($riwayatSppGu->perencanaan_anggaran, 0, ',', '.') }}</p>
+                <p> : {{ $sppGu->nomor_surat }}</p>
+                <p> : {{ \Carbon\Carbon::parse($sppGu->created_at)->translatedFormat('d F Y') }}</p>
+                <p> : {{ $sppGu->spjGu->nomor_surat }}</p>
+                <p> : </p>
             </td>
         </tr>
+    </table>
+
+    <table id="program-dan-kegiatan">
+        <thead>
+            <tr>
+                <th scope="col">Program</th>
+                <th scope="col">Kegiatan</th>
+                <th scope="col">Jumlah Anggaran</th>
+                <th scope="col">Anggaran Digunakan</th>
+                <th scope="col">Sisa Anggaran</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($programDanKegiatan as $kegiatanSpjGu)
+                <tr>
+                    <td>{{ $kegiatanSpjGu['program'] }}
+                    </td>
+                    <td>{{ $kegiatanSpjGu['kegiatan'] }}
+                    </td>
+                    <td style="vertical-align: middle;text-align:center">
+                        {{ number_format($kegiatanSpjGu['jumlah_anggaran'] ?? 0, 0, ',', '.') }}
+                    </td>
+                    <td style="vertical-align: middle;text-align:center">
+                        {{ number_format($kegiatanSpjGu['anggaran_digunakan'] ?? 0, 0, ',', '.') }}
+                    </td>
+                    <td style="vertical-align: middle;text-align:center">
+                        {{ number_format($kegiatanSpjGu['sisa_anggaran'] ?? 0, 0, ',', '.') }}
+                    </td>
+                </tr>
+            @endforeach
+            <tr>
+                <td colspan="2" style="text-align: center;font-weight :bold">Total</td>
+                <td style="vertical-align: middle;text-align:center">
+                    {{ number_format($totalProgramDanKegiatan['total_jumlah_anggaran'] ?? 0, 0, ',', '.') }}
+                </td>
+                <td style="vertical-align: middle;text-align:center">
+                    {{ number_format($totalProgramDanKegiatan['total_anggaran_digunakan'] ?? 0, 0, ',', '.') }}
+                </td>
+                <td style="vertical-align: middle;text-align:center">
+                    {{ number_format($totalProgramDanKegiatan['total_sisa_anggaran'] ?? 0, 0, ',', '.') }}
+                </td>
+            </tr>
+        </tbody>
     </table>
 
     <p style="margin-top: 10px">Dikembalikan karena tidak memenuhi syarat untuk diproses. Adapun kekurangannya adalah
@@ -96,7 +142,7 @@
     <table style="border: 2px solid black;" width="100%">
         <tr>
             <td width="100%" style="padding: 13px">
-                <p>{{ $riwayatSppGuAsn->alasan ?? '' }}</p>
+                <p>{{ $sppGu->alasan_validasi_asn ?? '-' }}</p>
             </td>
         </tr>
     </table>
@@ -107,7 +153,7 @@
     <table style="border: 2px solid black;" width="100%">
         <tr>
             <td width="100%" style="padding: 13px">
-                <p>{{ $riwayatSppGuPpk->alasan ?? '' }}</p>
+                <p>{{ $sppGu->alasan_validasi_ppk ?? '-' }}</p>
             </td>
         </tr>
     </table>
