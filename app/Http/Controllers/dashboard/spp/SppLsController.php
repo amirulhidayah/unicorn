@@ -313,7 +313,7 @@ class SppLsController extends Controller
         ];
 
         $messages = [
-            'surat_pengembalian.required' => 'Surat Penolakan tidak boleh kosong',
+            'surat_pengembalian.required' => 'Surat Pengembalian tidak boleh kosong',
             'surat_pengembalian.mimes' => 'Dokumen Harus Berupa File PDF',
             'sekretariat_daerah.required' => 'Biro Organisasi Tidak Boleh Kosong',
             'kategori.required' => 'Kategori Tidak Boleh Kosong',

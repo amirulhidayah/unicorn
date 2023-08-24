@@ -65,7 +65,7 @@
                 <p>Kepada Yth.</p>
                 <p>PPTK / Bendahara</p>
                 <br>
-                <p>Biro Umum</p>
+                <p>{{ $sppGu->sekretariatDaerah->nama }}</p>
                 <p>Di-Tempat</p>
             </td>
         </tr>

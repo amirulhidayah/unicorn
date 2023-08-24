@@ -35,6 +35,17 @@
             margin-top: -3px;
             font-weight: bold;
         }
+
+        #program-dan-kegiatan,
+        #program-dan-kegiatan td,
+        #program-dan-kegiatan tr,
+        #program-dan-kegiatan th {
+            border: 2px solid black;
+            border-collapse: collapse;
+            font-size: 12px;
+            padding: 3px;
+            margin: 0;
+        }
     </style>
 </head>
 
@@ -47,14 +58,14 @@
             </td>
             <td width="60%">
                 <p>{{ $riwayatSppTu->nomor_surat }}</p>
-                <p><b>Pengembalian SPJ/SPP</b></p>
+                <p><b>Pengembalian SPP</b></p>
             </td>
             <td width="30%">
                 <p>Palu,</p>
                 <p>Kepada Yth.</p>
                 <p>PPTK / Bendahara</p>
                 <br>
-                <p>Biro Umum</p>
+                <p>{{ $sppTu->sekretariatDaerah->nama }}</p>
                 <p>Di-Tempat</p>
             </td>
         </tr>
@@ -67,24 +78,43 @@
                 <p>- SPP-TU Nomor</p>
                 <p>- Tanggal</p>
                 <p>- SPP Kegiatan</p>
-                {{-- <p>- Jumlah Anggaran : Rp. {{ number_format($riwayatSppTu->jumlah_anggaran, 0, ',', '.') }}</p> --}}
+                {{-- <p>- Jumlah Anggaran : Rp. {{ number_format($riwayatSppTu->anggaran_digunakan, 0, ',', '.') }}</p> --}}
             </td>
             <td width="50%">
                 <p> : {{ $sppTu->nomor_surat }}</p>
                 <p> : {{ \Carbon\Carbon::parse($sppTu->created_at)->translatedFormat('d F Y') }}</p>
-                <p> : {{ $sppTu->kegiatan->nama . ' (' . $sppTu->kegiatan->no_rek . ')' }},</p>
-            </td>
-            <td width="5%">
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-                <p>Jumlah</p>
-            </td>
-            <td width="25%">
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-                <p> : Rp. {{ number_format($sppTu->jumlah_anggaran, 0, ',', '.') }}</p>
+                <p> : </p>
             </td>
         </tr>
+    </table>
+
+    <table id="program-dan-kegiatan">
+        <thead>
+            <tr>
+                <th scope="col">Program</th>
+                <th scope="col">Kegiatan</th>
+                <th scope="col">Jumlah Anggaran</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($programDanKegiatan as $kegiatanSppTu)
+                <tr>
+                    <td>{{ $kegiatanSppTu['program'] }}
+                    </td>
+                    <td>{{ $kegiatanSppTu['kegiatan'] }}
+                    </td>
+                    <td style="vertical-align: middle;text-align:center">
+                        {{ number_format($kegiatanSppTu['jumlah_anggaran'] ?? 0, 0, ',', '.') }}
+                    </td>
+                </tr>
+            @endforeach
+            <tr>
+                <td colspan="2" style="text-align: center;font-weight :bold">Total</td>
+                <td style="vertical-align: middle;text-align:center">
+                    {{ number_format($totalProgramDanKegiatan['total_jumlah_anggaran'] ?? 0, 0, ',', '.') }}
+                </td>
+            </tr>
+        </tbody>
     </table>
 
     <p style="margin-top: 10px">Dikembalikan karena tidak memenuhi syarat untuk diproses. Adapun kekurangannya adalah

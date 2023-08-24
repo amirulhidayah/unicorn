@@ -266,6 +266,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('spp-ls', [AppendController::class, 'sppLs']);
         Route::get('spj-gu', [AppendController::class, 'spjGu']);
         Route::get('spp-gu', [AppendController::class, 'sppGu']);
+        Route::get('spp-tu', [AppendController::class, 'sppTu']);
     });
 
     Route::prefix('get')->group(function () {

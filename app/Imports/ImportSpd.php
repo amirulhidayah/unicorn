@@ -51,20 +51,20 @@ class ImportSpd implements ToCollection, WithHeadingRow
                             $kegiatan->save();
                         }
 
-                        $SekretariatDaerah = SekretariatDaerah::where('nama', $row['Biro Organisasi'])->first();
+                        $sekretariatDaerah = SekretariatDaerah::where('nama', $row['Biro Organisasi'])->first();
 
                         $jumlah_anggaran = preg_replace("/[^0-9]/", "", $row['Jumlah Anggaran']);
 
-                        if ($SekretariatDaerah) {
-                            $cekSpd = Spd::where('kegiatan_id', $kegiatan->id)->where('sekretariat_daerah_id', $SekretariatDaerah->id)->where('tahun_id', $tahun)->first();
-                            if (!$cekSpd) {
+                        if ($sekretariatDaerah) {
+                            $spd = Spd::where('kegiatan_id', $kegiatan->id)->where('sekretariat_daerah_id', $sekretariatDaerah->id)->where('tahun_id', $tahun)->first();
+                            if (!$spd) {
                                 $spd = new Spd();
-                                $spd->kegiatan_id = $kegiatan->id;
-                                $spd->sekretariat_daerah_id = $SekretariatDaerah->id;
-                                $spd->tahun_id = $tahun;
-                                $spd->jumlah_anggaran = $jumlah_anggaran;
-                                $spd->save();
                             }
+                            $spd->kegiatan_id = $kegiatan->id;
+                            $spd->sekretariat_daerah_id = $sekretariatDaerah->id;
+                            $spd->tahun_id = $tahun;
+                            $spd->jumlah_anggaran = $jumlah_anggaran;
+                            $spd->save();
                         }
                     }
                 }

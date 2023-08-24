@@ -230,7 +230,7 @@ class SppGuController extends Controller
 
         $messages = [
             'sekretariat_daerah.required' => 'Biro Organisasi Tidak Boleh Kosong',
-            'surat_pengembalian.required' => 'Surat Penolakan tidak boleh kosong',
+            'surat_pengembalian.required' => 'Surat Pengembalian tidak boleh kosong',
             'surat_pengembalian.mimes' => 'Dokumen Harus Berupa File PDF',
             'nomor_surat.required' => 'Nomor Surat Pertanggungjawaban (SPJ) Tidak Boleh Kosong',
             'spj_gu.required' => 'Nomor Surat Permintaan Pembayaran (SPP) Tidak Boleh Kosong',

@@ -16,11 +16,9 @@ class CreateSppTuTable extends Migration
         Schema::create('spp_tu', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('tahun_id');
-            $table->uuid('kegiatan_id');
-            $table->bigInteger('jumlah_anggaran');
-            $table->string('bulan');
             $table->uuid('sekretariat_daerah_id');
             $table->integer('tahap_riwayat')->default(1);
+            $table->string('bulan');
             $table->string('nomor_surat');
             $table->uuid('user_id');
             $table->text('surat_penolakan')->nullable();

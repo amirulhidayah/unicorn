@@ -33,8 +33,13 @@ class SppTu extends Model
         return $this->belongsTo(Tahun::class, 'tahun_id', 'id')->withTrashed();
     }
 
-    public function SekretariatDaerah()
+    public function sekretariatDaerah()
     {
         return $this->belongsTo(SekretariatDaerah::class, 'sekretariat_daerah_id', 'id')->withTrashed();
+    }
+
+    public function kegiatanSppTu()
+    {
+        return $this->hasMany(KegiatanSppTu::class);
     }
 }

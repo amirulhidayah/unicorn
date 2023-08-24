@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\SekretariatDaerah;
 use App\Models\DaftarDokumenSppTu;
 use App\Models\DokumenSppTu;
+use App\Models\Kegiatan;
+use App\Models\KegiatanSppTu;
 use App\Models\Program;
 use App\Models\RiwayatSppTu;
 use App\Models\SppTu;
@@ -36,25 +38,24 @@ class SppTuController extends Controller
     public function create()
     {
         if (Auth::user()->role != "Admin") {
-            $totalSppTu = SppTu::where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id)->where('status_validasi_ppk', 1)->where('status_validasi_asn', 1)->whereNotNull('dokumen_spm')->whereNull('dokumen_arsip_sp2d')->count();
-            if ($totalSppTu > 0) {
+            $totalSppLs = SppTu::where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id)->where('status_validasi_ppk', 1)->where('status_validasi_asn', 1)->whereNotNull('dokumen_spm')->whereNull('dokumen_arsip_sp2d')->count();
+            if ($totalSppLs > 0) {
                 return redirect(url('spp-tu'))->with('error', 'Selesaikan Terlebih Dahulu Arsip SP2D');
             }
         }
 
-        $daftarDokumenSppTu = DaftarDokumenSppTu::orderBy('created_at', 'asc')->get();
         $daftarTahun = Tahun::orderBy('tahun', 'asc')->get();
-        $daftarProgram = Program::orderBy('nama', 'asc')->get();
         $daftarSekretariatDaerah = SekretariatDaerah::orderBy('nama', 'asc')->get();
+        $daftarDokumenSppTu = DaftarDokumenSppTu::orderBy('nama', 'asc')->get();
 
-        return view('dashboard.pages.spp.sppTu.create', compact(['daftarDokumenSppTu', 'daftarTahun', 'daftarProgram', 'daftarSekretariatDaerah']));
+        return view('dashboard.pages.spp.sppTu.create', compact(['daftarTahun', 'daftarSekretariatDaerah', 'daftarDokumenSppTu']));
     }
 
     public function store(Request $request)
     {
         if (Auth::user()->role != "Admin") {
-            $totalSppTu = SppTu::where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id)->where('status_validasi_ppk', 1)->where('status_validasi_asn', 1)->whereNotNull('dokumen_spm')->whereNull('dokumen_arsip_sp2d')->count();
-            if ($totalSppTu > 0) {
+            $totalSppLs = SppTu::where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id)->where('status_validasi_ppk', 1)->where('status_validasi_asn', 1)->whereNotNull('dokumen_spm')->whereNull('dokumen_arsip_sp2d')->count();
+            if ($totalSppLs > 0) {
                 return throw new Exception('Terjadi Kesalahan');
             }
         }
@@ -63,23 +64,16 @@ class SppTuController extends Controller
 
         $rules = [
             'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
-            'tahun' => 'required',
-            'program' => 'required',
-            'kegiatan' => 'required',
-            'jumlah_anggaran' => 'required',
-            'bulan' => 'required',
             'nomor_surat' => 'required',
+            'tahun' => 'required',
+            'bulan' => 'required',
         ];
 
         $messages = [
-            'nama_kegiatan.required' => 'Nama Kegiatan Tidak Boleh Kosong',
-            'tahun.required' => 'Tahun Tidak Boleh Kosong',
-            'program.required' => 'Program Tidak Boleh Kosong',
-            'kegiatan.required' => 'Kegiatan Tidak Boleh Kosong',
-            'jumlah_anggaran.required' => 'Jumlah Anggaran Tidak Boleh Kosong',
-            'bulan.required' => 'Bulan Tidak Boleh Kosong',
             'sekretariat_daerah.required' => 'Biro Organisasi Tidak Boleh Kosong',
-            'nomor_surat.required' => 'Nomor Surat Tidak Boleh Kosong',
+            'nomor_surat.required' => 'Nomor Surat Permintaan Pembayaran (SPP) Tidak Boleh Kosong',
+            'tahun.required' => 'Tahun Tidak Boleh Kosong',
+            'bulan.required' => 'Bulan Tidak Boleh Kosong',
         ];
 
         if ($request->fileDokumen) {
@@ -97,6 +91,27 @@ class SppTuController extends Controller
             }
         }
 
+        if ($request->program) {
+            foreach ($request->program as $nama) {
+                $rules["$nama"] = 'required';
+                $messages["$nama.required"] = "Program tidak boleh kosong";
+            }
+        }
+
+        if ($request->kegiatan) {
+            foreach ($request->kegiatan as $nama) {
+                $rules["$nama"] = 'required';
+                $messages["$nama.required"] = "Kegiatan tidak boleh kosong";
+            }
+        }
+
+        if ($request->jumlahAnggaran) {
+            foreach ($request->jumlahAnggaran as $nama) {
+                $rules["$nama"] = 'required';
+                $messages["$nama.required"] = "Jumlah anggaran tidak boleh kosong";
+            }
+        }
+
         $validator = Validator::make($request->all(), $rules, $messages);
 
         if (!$request->fileDokumen) {
@@ -105,21 +120,26 @@ class SppTuController extends Controller
             });
         }
 
+        if (!$request->program) {
+            $validator->after(function ($validator) {
+                $validator->errors()->add('programDanKegiatanHitung', 'Program dan Kegiatan Minimal 1');
+            });
+        }
+
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()]);
         }
 
         $arrayFileDokumen = [];
+
         try {
             DB::transaction(function () use ($request, &$arrayFileDokumen, $role) {
                 $sppTu = new SppTu();
+                $sppTu->user_id = Auth::user()->id;
                 $sppTu->sekretariat_daerah_id = $role == "Admin" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
                 $sppTu->tahun_id = $request->tahun;
-                $sppTu->kegiatan_id = $request->kegiatan;
-                $sppTu->user_id = Auth::user()->id;
-                $sppTu->nomor_surat = $request->nomor_surat;
                 $sppTu->bulan = $request->bulan;
-                $sppTu->jumlah_anggaran = str_replace(".", "", $request->jumlah_anggaran);
+                $sppTu->nomor_surat = $request->nomor_surat;
                 $sppTu->save();
 
                 foreach ($request->fileDokumen as $index => $nama) {
@@ -132,6 +152,15 @@ class SppTuController extends Controller
                     $dokumenSppTu->dokumen = $namaFileBerkas;
                     $dokumenSppTu->spp_tu_id = $sppTu->id;
                     $dokumenSppTu->save();
+                }
+
+                foreach ($request->jumlahAnggaran as $index => $nama) {
+                    $jumlahAnggaran = str_replace('.', '', $request["$nama"]);
+                    $kegiatanSppTu = new KegiatanSppTu();
+                    $kegiatanSppTu->spp_tu_id = $sppTu->id;
+                    $kegiatanSppTu->kegiatan_id = $request[$request->kegiatan[$index]];
+                    $kegiatanSppTu->jumlah_anggaran = $jumlahAnggaran;
+                    $kegiatanSppTu->save();
                 }
 
                 $riwayatSppTu = new RiwayatSppTu();
@@ -156,14 +185,35 @@ class SppTuController extends Controller
     public function show(SppTu $sppTu)
     {
         $tipe = 'spp_tu';
-        $jumlahAnggaran = 'Rp. ' . number_format($sppTu->jumlah_anggaran, 0, ',', '.');
 
         $role = Auth::user()->role;
-        if (!((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) || Auth::user()->profil->sekretariat_daerah_id == $sppTu->sekretariat_daerah_id)) {
+        if ((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) || Auth::user()->profil->sekretariat_daerah_id == $sppTu->sekretariat_daerah_id) {
+            $totalJumlahAnggaran = 0;
+            $programDanKegiatan = [];
+            $totalProgramDanKegiatan = [];
+
+            foreach ($sppTu->kegiatanSppTu as $kegiatanSppTu) {
+                $program = $kegiatanSppTu->kegiatan->program->nama . ' (' . $kegiatanSppTu->kegiatan->program->no_rek . ')';
+                $kegiatan = $kegiatanSppTu->kegiatan->nama . ' (' . $kegiatanSppTu->kegiatan->no_rek . ')';
+                $jumlahAnggaran = $kegiatanSppTu->jumlah_anggaran;
+
+                $programDanKegiatan[] = [
+                    'program' => $program,
+                    'kegiatan' => $kegiatan,
+                    'jumlah_anggaran' => $jumlahAnggaran,
+                ];
+
+                $totalJumlahAnggaran += $jumlahAnggaran;
+            }
+
+            $totalProgramDanKegiatan = [
+                'total_jumlah_anggaran' => $totalJumlahAnggaran,
+            ];
+
+            return view('dashboard.pages.spp.sppTu.show', compact(['sppTu', 'tipe', 'programDanKegiatan', 'totalProgramDanKegiatan']));
+        } else {
             abort(403, 'Anda tidak memiliki akses halaman tersebut!');
         }
-
-        return view('dashboard.pages.spp.sppTu.show', compact(['sppTu', 'tipe', 'jumlahAnggaran']));
     }
 
     public function edit(SppTu $sppTu, Request $request)
@@ -173,7 +223,28 @@ class SppTuController extends Controller
             abort(403, 'Anda tidak memiliki akses halaman tersebut!');
         }
 
-        return view('dashboard.pages.spp.sppTu.edit', compact(['sppTu', 'request']));
+        $daftarTahun = Tahun::orderBy('tahun', 'asc')->get();
+        $daftarSekretariatDaerah = SekretariatDaerah::orderBy('nama', 'asc')->get();
+        $daftarDokumenSppTu = DaftarDokumenSppTu::orderBy('nama', 'asc')->get();
+        $daftarProgram = Program::orderBy('no_rek', 'asc')->whereHas('kegiatan')->orderBy('no_rek', 'asc')->get();
+
+        $programDanKegiatan = null;
+        $arrayJumlahAnggaran = [];
+        foreach ($sppTu->kegiatanSppTu as $kegiatanSppTu) {
+            $jumlahAnggaran = $kegiatanSppTu->jumlah_anggaran;
+
+            $daftarKegiatan = Kegiatan::where('program_id', $kegiatanSppTu->kegiatan->program_id)->orderBy('no_rek', 'asc')->get();
+
+            $dataKey = Str::random(5) . rand(111, 999) . Str::random(5);
+            $programDanKegiatan .= view('dashboard.components.dynamicForm.sppTu', compact(['jumlahAnggaran', 'daftarProgram', 'daftarKegiatan', 'kegiatanSppTu', 'dataKey']))->render();
+
+            $arrayJumlahAnggaran[] = [
+                'key' => $dataKey,
+                'jumlah_anggaran' => $jumlahAnggaran ?? 0
+            ];
+        }
+
+        return view('dashboard.pages.spp.sppTu.edit', compact(['sppTu', 'daftarTahun', 'daftarSekretariatDaerah', 'daftarProgram', 'daftarDokumenSppTu',  'programDanKegiatan', 'arrayJumlahAnggaran']));
     }
 
     public function update(Request $request, SppTu $sppTu)
@@ -191,13 +262,19 @@ class SppTuController extends Controller
 
         $rules = [
             'surat_pengembalian' => $suratPenolakan . '|mimes:pdf',
-            'jumlah_anggaran' => 'required',
+            'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
+            'nomor_surat' => 'required',
+            'tahun' => 'required',
+            'bulan' => 'required',
         ];
 
         $messages = [
-            'surat_pengembalian.required' => 'Surat Penolakan tidak boleh kosong',
+            'surat_pengembalian.required' => 'Surat Pengembalian tidak boleh kosong',
             'surat_pengembalian.mimes' => 'Dokumen Harus Berupa File PDF',
-            'jumlah_anggaran.required' => 'Jumlah Anggaran tidak boleh kosong',
+            'sekretariat_daerah.required' => 'Biro Organisasi Tidak Boleh Kosong',
+            'nomor_surat.required' => 'Nomor Surat Permintaan Pembayaran (SPP) Tidak Boleh Kosong',
+            'tahun.required' => 'Tahun Tidak Boleh Kosong',
+            'bulan.required' => 'Bulan Tidak Boleh Kosong',
         ];
 
         if ($request->fileDokumenUpdate) {
@@ -224,6 +301,27 @@ class SppTuController extends Controller
             }
         }
 
+        if ($request->program) {
+            foreach ($request->program as $nama) {
+                $rules["$nama"] = 'required';
+                $messages["$nama.required"] = "Program tidak boleh kosong";
+            }
+        }
+
+        if ($request->kegiatan) {
+            foreach ($request->kegiatan as $nama) {
+                $rules["$nama"] = 'required';
+                $messages["$nama.required"] = "Kegiatan tidak boleh kosong";
+            }
+        }
+
+        if ($request->jumlahAnggaran) {
+            foreach ($request->jumlahAnggaran as $nama) {
+                $rules["$nama"] = 'required';
+                $messages["$nama.required"] = "Jumlah anggaran tidak boleh kosong";
+            }
+        }
+
         if ($request->namaFile) {
             foreach ($request->namaFile as $nama) {
                 $rules["$nama"] = 'required';
@@ -239,6 +337,12 @@ class SppTuController extends Controller
             });
         }
 
+        if (!$request->program) {
+            $validator->after(function ($validator) {
+                $validator->errors()->add('programDanKegiatanHitung', 'Program dan Kegiatan Minimal 1');
+            });
+        }
+
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()]);
         }
@@ -247,11 +351,30 @@ class SppTuController extends Controller
         $arrayFileDokumenSebelumnya = [];
         $arrayFileDokumenUpdate = [];
         $arrayFileDokumenHapus = [];
+        $arrayKegiatan = [];
+        foreach ($request->kegiatan as $index => $nama) {
+            $arrayKegiatan[] = $request["$nama"];
+        }
 
         $namaFileSuratPengembalian = '';
 
         try {
-            DB::transaction(function () use ($request, &$arrayFileDokumen, &$arrayFileDokumenSebelumnya, &$arrayFileDokumenUpdate, &$arrayFileDokumenHapus, &$namaFileSuratPengembalian, $sppTu) {
+            DB::transaction(function () use ($request, &$arrayFileDokumen, &$arrayFileDokumenSebelumnya, &$arrayFileDokumenUpdate, &$arrayFileDokumenHapus, &$namaFileSuratPengembalian, $arrayKegiatan, $sppTu, $role) {
+
+                $kegiatanSppTu = KegiatanSppTu::whereNotIn('kegiatan_id', $arrayKegiatan)->where('spp_tu_id', $sppTu->id)->delete();
+
+                foreach ($request->jumlahAnggaran as $index => $nama) {
+                    $jumlahAnggaran = str_replace('.', '', $request["$nama"]);
+                    $kegiatanSppTu = KegiatanSppTu::where('spp_tu_id', $sppTu->id)->where('kegiatan_id', $request[$request->kegiatan[$index]])->first();
+                    if (!$kegiatanSppTu) {
+                        $kegiatanSppTu = new KegiatanSppTu();
+                    }
+                    $kegiatanSppTu->spp_tu_id = $sppTu->id;
+                    $kegiatanSppTu->kegiatan_id = $request[$request->kegiatan[$index]];
+                    $kegiatanSppTu->jumlah_anggaran = $jumlahAnggaran;
+                    $kegiatanSppTu->save();
+                }
+
                 if ($request->fileDokumenUpdate) {
                     $daftarDokumenSppTu = DokumenSppTu::where('spp_tu_id', $sppTu->id)->whereNotIn('id', $request->fileDokumenUpdate)->get();
                     foreach ($daftarDokumenSppTu as $dokumen) {
@@ -290,7 +413,7 @@ class SppTuController extends Controller
                 }
 
                 if (($sppTu->status_validasi_asn == 2 || $sppTu->status_validasi_ppk == 2)) {
-                    $riwayatSppUp = new RiwayatSppTu();
+                    $riwayatSppTu = new RiwayatSppTu();
 
                     if ($request->file('surat_pengembalian')) {
                         $namaFileSuratPengembalian = "surat-pengembalian" . "-"  . Carbon::now()->format('YmdHs') . rand(1, 9999) . ".pdf";
@@ -298,18 +421,15 @@ class SppTuController extends Controller
                             'surat_pengembalian_spp_tu',
                             $namaFileSuratPengembalian
                         );
-                        $riwayatSppUp->surat_pengembalian = $namaFileSuratPengembalian;
+                        $riwayatSppTu->surat_pengembalian = $namaFileSuratPengembalian;
                         $sppTu->surat_pengembalian = $namaFileSuratPengembalian;
                         $sppTu->surat_penolakan = null;
                     }
 
-                    $riwayatSppUp->spp_tu_id = $sppTu->id;
-                    $riwayatSppUp->user_id = Auth::user()->id;
-                    $riwayatSppUp->status = 'Diperbaiki';
-                    $riwayatSppUp->save();
-                }
-
-                if (($sppTu->status_validasi_asn == 2 || $sppTu->status_validasi_ppk == 2)) {
+                    $riwayatSppTu->spp_tu_id = $sppTu->id;
+                    $riwayatSppTu->user_id = Auth::user()->id;
+                    $riwayatSppTu->status = 'Diperbaiki';
+                    $riwayatSppTu->save();
                     $sppTu->tahap_riwayat = $sppTu->tahap_riwayat + 1;
                 }
 
@@ -323,7 +443,10 @@ class SppTuController extends Controller
                     $sppTu->alasan_validasi_asn = null;
                 }
 
-                $sppTu->jumlah_anggaran = str_replace(".", "", $request->jumlah_anggaran);
+                $sppTu->sekretariat_daerah_id = $role == "Admin" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
+                $sppTu->tahun_id = $request->tahun;
+                $sppTu->bulan = $request->bulan;
+                $sppTu->nomor_surat = $request->nomor_surat;
                 $sppTu->save();
             });
         } catch (QueryException $error) {
@@ -383,22 +506,22 @@ class SppTuController extends Controller
                 function () use ($sppTu) {
                     $sppTu->delete();
                     $riwayatSppTu = RiwayatSppTu::where('spp_tu_id', $sppTu->id)->delete();
-                    $dokumenSppTu = DokumenSppTu::where('spp_tu_id', $sppTu->id)->delete();
+                    $dokumenSppLs = DokumenSppTu::where('spp_tu_id', $sppTu->id)->delete();
+                    $kegiatanSppLs = KegiatanSppTu::where('spp_tu_id', $sppTu->id)->delete();
                 }
             );
         } catch (QueryException $error) {
             return throw new Exception($error);
         }
 
-        if (count($arraySuratPengembalian) > 0) {
-            foreach ($arraySuratPengembalian as $suratPengembalian) {
-                Storage::delete('surat_pengembalian_spp_tu/' . $suratPengembalian);
-            }
-        }
-
         if (count($arraySuratPenolakan) > 0) {
             foreach ($arraySuratPenolakan as $suratPenolakan) {
                 Storage::delete('surat_penolakan_spp_tu/' . $suratPenolakan);
+            }
+        }
+        if (count($arraySuratPengembalian) > 0) {
+            foreach ($arraySuratPengembalian as $suratPengembalian) {
+                Storage::delete('surat_pengembalian_spp_tu/' . $suratPengembalian);
             }
         }
 
@@ -456,7 +579,6 @@ class SppTuController extends Controller
                         $sppTu->status_validasi_asn = $request->verifikasi;
                         $sppTu->alasan_validasi_asn = $request->verifikasi != '1' ? $request->alasan : null;
                         $sppTu->tanggal_validasi_asn = Carbon::now();
-
                         $riwayatTerakhir = RiwayatSppTu::where('role', 'ASN Sub Bagian Keuangan')->where('spp_tu_id', $sppTu->id)->where('tahap_riwayat', $sppTu->tahap_riwayat)->orderBy('created_at', 'desc')->delete();
                     } else {
                         $sppTu->status_validasi_ppk = $request->verifikasi;
@@ -487,13 +609,34 @@ class SppTuController extends Controller
                     $riwayatSppTu->save();
 
                     if (($sppTu->status_validasi_asn == 2 || $sppTu->status_validasi_ppk == 2) && ($sppTu->status_validasi_asn != 0 && $sppTu->status_validasi_ppk != 0)) {
-                        $tahapRiwayat = $sppTu->tahap_riwayat;
-                        $riwayatSppTu = RiwayatSppTu::where('spp_tu_id', $sppTu->id)->where('tahap_riwayat', $sppTu->tahap_riwayat)->where('status', 'Ditolak')->orderBy('updated_at', 'desc')->first();
+                        $programDanKegiatan = [];
+                        $totalProgramDanKegiatan = [];
+                        $totalJumlahAnggaran = 0;
+
+                        foreach ($sppTu->kegiatanSppTu as $kegiatanSppTu) {
+                            $program = $kegiatanSppTu->kegiatan->program->nama . ' (' . $kegiatanSppTu->kegiatan->program->no_rek . ')';
+                            $kegiatan = $kegiatanSppTu->kegiatan->nama . ' (' . $kegiatanSppTu->kegiatan->no_rek . ')';
+                            $jumlahAnggaran = $kegiatanSppTu->jumlah_anggaran;
+
+                            $programDanKegiatan[] = [
+                                'program' => $program,
+                                'kegiatan' => $kegiatan,
+                                'jumlah_anggaran' => $jumlahAnggaran,
+                            ];
+
+                            $totalJumlahAnggaran += $jumlahAnggaran;
+                        }
+
+                        $totalProgramDanKegiatan = [
+                            'total_jumlah_anggaran' => $totalJumlahAnggaran,
+                        ];
+
                         $hariIni = Carbon::now()->translatedFormat('d F Y');
+                        $riwayatSppTu = RiwayatSppTu::where('spp_tu_id', $sppTu->id)->where('tahap_riwayat', $sppTu->tahap_riwayat)->where('status', 'Ditolak')->orderBy('updated_at', 'desc')->first();
                         $ppk = User::where('role', 'PPK')->where('is_aktif', 1)->first();
                         $kuasaPenggunaAnggaran = User::where('role', 'Kuasa Pengguna Anggaran')->where('is_aktif', 1)->first();
-                        $pdf = Pdf::loadView('dashboard.pages.spp.sppTu.suratPenolakan', compact(['sppTu', 'riwayatSppTu', 'hariIni', 'ppk', 'kuasaPenggunaAnggaran']))->setPaper('f4', 'portrait');
 
+                        $pdf = Pdf::loadView('dashboard.pages.spp.sppTu.suratPenolakan', compact(['sppTu', 'riwayatSppTu', 'hariIni', 'ppk', 'kuasaPenggunaAnggaran', 'programDanKegiatan', 'totalProgramDanKegiatan']))->setPaper('f4', 'portrait');
                         $namaFileSuratPenolakan = 'surat-penolakan-' . time() . '.pdf';
                         Storage::put('surat_penolakan_spp_tu/' . $namaFileSuratPenolakan, $pdf->output());
 

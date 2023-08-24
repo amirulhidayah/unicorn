@@ -148,4 +148,25 @@ class AppendController extends Controller
             return throw new Exception($error);
         }
     }
+
+    public function sppTu(Request $request)
+    {
+        $role = Auth::user()->role;
+        $sekretariatDaerah = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
+        $daftarProgram = [];
+
+        try {
+            $daftarProgram = Program::with(['kegiatan'])->whereHas('kegiatan')->orderBy('no_rek', 'asc')->get();
+
+            $dataKey = Str::random(5) . rand(111, 999) . Str::random(5);
+            $html = view('dashboard.components.appends.sppTu', compact(['daftarProgram', 'dataKey']))->render();
+
+            return response()->json([
+                'status' => 'success',
+                'html' => $html
+            ]);
+        } catch (QueryException $error) {
+            return throw new Exception($error);
+        }
+    }
 }

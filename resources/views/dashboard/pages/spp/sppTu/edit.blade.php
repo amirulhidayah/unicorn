@@ -79,104 +79,188 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-6">
-                                @component('dashboard.components.widgets.info', [
-                                    'judul' => 'Sekretariat Daerah',
-                                    'isi' => $sppTu->SekretariatDaerah->nama,
-                                ])
-                                @endcomponent
-                                @component('dashboard.components.widgets.info', [
-                                    'judul' => 'Nomor Surat Permintaan Pembayaran (SPP)',
-                                    'isi' => $sppTu->nomor_surat,
-                                ])
-                                @endcomponent
-                                @component('dashboard.components.widgets.info', [
-                                    'judul' => 'Tahun',
-                                    'isi' => $sppTu->tahun->tahun,
-                                ])
-                                @endcomponent
-                                @component('dashboard.components.widgets.info', [
-                                    'judul' => 'Bulan',
-                                    'isi' => $sppTu->bulan,
-                                ])
-                                @endcomponent
-                                @component('dashboard.components.widgets.info', [
-                                    'judul' => 'Program',
-                                    'isi' => $sppTu->kegiatan->program->nama . ' (' . $sppTu->kegiatan->program->no_rek . ')',
-                                ])
-                                @endcomponent
-                                @component('dashboard.components.widgets.info', [
-                                    'judul' => 'Kegiatan',
-                                    'isi' => $sppTu->kegiatan->nama . ' (' . $sppTu->kegiatan->no_rek . ')',
-                                ])
-                                @endcomponent
-                                <div class="col-12">
-                                    @component('dashboard.components.formElements.input', [
-                                        'label' => 'Jumlah Anggaran',
-                                        'type' => 'text',
-                                        'id' => 'jumlah_anggaran',
-                                        'name' => 'jumlah_anggaran',
-                                        'class' => 'uang',
-                                        'value' => $sppTu->jumlah_anggaran,
-                                        'wajib' => '<sup class="text-danger">*</sup>',
-                                        'placeholder' => 'Masukkan Jumlah Anggaran',
-                                    ])
-                                    @endcomponent
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                @if ($sppTu->alasan_validasi_asn != null)
+                            @if ($sppTu->alasan_validasi_asn != null)
+                                <div class="col-6">
                                     @component('dashboard.components.widgets.alert', [
                                         'oleh' => 'asn',
                                         'tanggal' => $sppTu->tanggal_validasi_asn,
                                         'isi' => $sppTu->alasan_validasi_asn,
                                     ])
                                     @endcomponent
-                                @endif
+                                </div>
+                            @endif
 
-                                @if ($sppTu->alasan_validasi_ppk != null)
+                            @if ($sppTu->alasan_validasi_ppk != null)
+                                <div class="col-6">
                                     @component('dashboard.components.widgets.alert', [
                                         'oleh' => 'ppk',
                                         'tanggal' => $sppTu->tanggal_validasi_ppk,
                                         'isi' => $sppTu->alasan_validasi_ppk,
                                     ])
                                     @endcomponent
-                                @endif
-                                <div id="list-upload">
+                                </div>
+                            @endif
+                            <div class="col-12">
+                                @component('dashboard.components.formElements.input', [
+                                    'label' => 'Nomor Surat Permintaan Pembayaran (SPP)',
+                                    'type' => 'text',
+                                    'id' => 'nomor_surat',
+                                    'class' => '',
+                                    'name' => 'nomor_surat',
+                                    'wajib' => '<sup class="text-danger">*</sup>',
+                                    'placeholder' => 'Masukkan Nomor Surat Permintaan Pembayaran (SPP)',
+                                    'value' => $sppTu->nomor_surat,
+                                ])
+                                @endcomponent
+                            </div>
+                            @if (Auth::user()->role == 'Admin')
+                                <div class="col-12">
+                                    @component('dashboard.components.formElements.select', [
+                                        'label' => 'Sekretariat Daerah',
+                                        'id' => 'sekretariat_daerah',
+                                        'name' => 'sekretariat_daerah',
+                                        'class' => 'select2',
+                                        'wajib' => '<sup class="text-danger">*</sup>',
+                                    ])
+                                        @slot('options')
+                                            @foreach ($daftarSekretariatDaerah as $sekretariatDaerah)
+                                                <option value="{{ $sekretariatDaerah->id }}"
+                                                    {{ $sekretariatDaerah->id == $sppTu->sekretariat_daerah_id ? 'selected' : '' }}>
+                                                    {{ $sekretariatDaerah->nama }}
+                                                </option>
+                                            @endforeach
+                                        @endslot
+                                    @endcomponent
+                                </div>
+                            @else
+                                <div class="col-12">
+                                    <label class="form-label my-2 fw-bold">Sekretariat Daerah</label>
+                                    <br>
+                                    <label for="exampleFormControlInput1"
+                                        class="badge badge-primary text-light mb-2">{{ Auth::user()->profil->SekretariatDaerah->nama }}</label>
+                                    <br>
+                                </div>
+                            @endif
+                            <div class="col-12">
+                                @component('dashboard.components.formElements.select', [
+                                    'label' => 'Tahun',
+                                    'id' => 'tahun',
+                                    'name' => 'tahun',
+                                    'class' => 'select2',
+                                    'wajib' => '<sup class="text-danger">*</sup>',
+                                ])
+                                    @slot('options')
+                                        @foreach ($daftarTahun as $tahun)
+                                            <option value="{{ $tahun->id }}"
+                                                {{ $tahun->id == $sppTu->tahun_id ? 'selected' : '' }}>{{ $tahun->tahun }}</option>
+                                        @endforeach
+                                    @endslot
+                                @endcomponent
+                            </div>
+                            <div class="col-12">
+                                @component('dashboard.components.formElements.select', [
+                                    'label' => 'Bulan',
+                                    'id' => 'bulan',
+                                    'name' => 'bulan',
+                                    'class' => 'select2',
+                                    'wajib' => '<sup class="text-danger">*</sup>',
+                                ])
+                                    @slot('options')
+                                        <option value="Januari">Januari</option>
+                                        <option value="Februari">Februari</option>
+                                        <option value="Maret">Maret</option>
+                                        <option value="April">April</option>
+                                        <option value="Mei">Mei</option>
+                                        <option value="Juni">Juni</option>
+                                        <option value="Juli">Juli</option>
+                                        <option value="Agustus">Agustus</option>
+                                        <option value="September">September</option>
+                                        <option value="Oktober">Oktober</option>
+                                        <option value="November">November</option>
+                                        <option value="Desember">Desember</option>
+                                    @endslot
+                                @endcomponent
+                            </div>
+                            <div class="col-md-12">
+                                <label for="TextInput" class="form-label mt-2 mb-3 fw-bold">Program dan Kegiatan<sup
+                                        class="text-danger">*</sup></label>
+                                <br>
+                                <small class="text-danger error-text programDanKegiatanHitung-error"
+                                    id="programDanKegiatanHitung-error"></small>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Program</th>
+                                                <th scope="col">Kegiatan</th>
+                                                <th scope="col">Jumlah Anggaran</th>
+                                                <th scope="col" class="text-center">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="body-program">
+                                            {!! $programDanKegiatan !!}
+                                        </tbody>
+                                        <tfoot>
+                                            <tr id="jumlah">
+                                                <td colspan="2" class="fw-bold text-center">Total</td>
+                                                <td id="total-jumlah-anggaran">-</td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="6" style="padding: 0px 10px !important">
+                                                    <button class="btn btn-light fw-bold col-12" type="button"
+                                                        id="btn-tambah-program-kegiatan"><i class="fas fa-plus-circle"></i>
+                                                        Tambah Program &
+                                                        Kegiatan</button>
+                                                </td>
+                                            </tr>
+
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="TextInput" class="form-label mt-2 mb-3 fw-bold">Dokumen Pendukung<sup
+                                        class="text-danger">*</sup></label>
+                                <small class="text-danger error-text dokumenFileHitung-error"
+                                    id="dokumenFileHitung-error"></small>
+                                <div id="list-upload" class="row">
                                     @if (!($sppTu->status_validasi_ppk == 0 && $sppTu->status_validasi_asn == 0))
-                                        <div class="card box-upload" class="box-upload">
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <!-- <div class="d-flex border rounded shadow shadow-lg p-2 "> -->
-                                                    <div class="col-3 d-flex align-items-center justify-content-center">
-                                                        <img src="{{ asset('assets/dashboard/img/pdf.png') }}"
-                                                            alt="" width="70px">
-                                                    </div>
-                                                    <div class="col-9">
-                                                        <div class="mb-3 mt-2">
-                                                            <p class="fw-bold" style="font-size: 15px;">Surat Pengembalian
-                                                            </p>
+                                        <div class="col-12">
+                                            <div class="card box-upload" class="box-upload">
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <!-- <div class="d-flex border rounded shadow shadow-lg p-2 "> -->
+                                                        <div class="col-3 d-flex align-items-center justify-content-center">
+                                                            <img src="{{ asset('assets/dashboard/img/pdf.png') }}"
+                                                                alt="" width="70px">
                                                         </div>
-                                                        <div class="mb-3">
-                                                            <input name="surat_pengembalian" class="form-control"
-                                                                type="file" accept="application/pdf">
-                                                            <p class="text-danger error-text surat_pengembalian-error my-0">
-                                                            </p>
+                                                        <div class="col-9">
+                                                            <div class="mb-3 mt-2">
+                                                                <p class="fw-bold" style="font-size: 15px;">Surat
+                                                                    Pengembalian
+                                                                </p>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <input name="surat_pengembalian" class="form-control"
+                                                                    type="file" accept="application/pdf">
+                                                                <p
+                                                                    class="text-danger error-text surat_pengembalian-error my-0">
+                                                                </p>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="fw-bold card-footer bg-primary text-light text-center p-0">
+                                                    ! Wajib Dimasukan</div>
                                             </div>
-                                            <div class="fw-bold card-footer bg-primary text-light text-center p-0">
-                                                ! Wajib Dimasukan</div>
                                         </div>
                                     @endif
-                                    <hr>
-                                    <small class="text-danger error-text dokumenFileHitung-error"
-                                        id="dokumenFileHitung-error"></small>
                                     @foreach ($sppTu->dokumenSppTu as $dokumen)
                                         @component('dashboard.components.dynamicForm.spp', [
                                             'labelNama' => $dokumen->nama_dokumen,
                                             'nameFileDokumen' => $dokumen->id,
+                                            'class' => 'col-4',
                                             'classDokumen' => 'file_dokumen_update',
                                             'classNama' => 'nama_file_update',
                                         ])
@@ -206,19 +290,109 @@
 
 @push('script')
     <script>
-        var totalList = {{ count($sppTu->dokumenSppTu) }};
-        var arrayNamaFileUpdate = {{ json_encode($sppTu->dokumenSppTu->pluck('id')->toArray()) }};
-        var perbaiki = "{{ $request->perbaiki }}";
-        var arrayDokumenHapus = [];
-        var arrayDokumenUpdate = [];
+        var totalList = 1;
+        var jumlahAnggaran = 0;
 
         $(document).ready(function() {
+            $('#bulan').val('{{ $sppTu->bulan }}').trigger('change.select2');
             $('#spp-tu').addClass('active');
+            cekProgramKegiatan();
+            hitungTotal();
         })
 
         function hapus(id) {
             $("#box-upload-" + id).remove();
         }
+
+        $('#btn-tambah-program-kegiatan').click(function() {
+            $.ajax({
+                url: "{{ url('append/spp-tu') }}",
+                type: "GET",
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                },
+                success: function(response) {
+                    if (response.status == 'success') {
+                        $('#body-program').append(response.html);
+                        $('.select2').select2({
+                            placeholder: "- Pilih Salah Satu -",
+                            theme: "bootstrap",
+                        })
+                        $('.uang').mask('000.000.000.000.000.000.000', {
+                            reverse: true
+                        });
+                        cekProgramKegiatan();
+                    }
+                },
+                error: function(response) {
+                    swal("Gagal", "Terjadi Kesalahan", {
+                        icon: "error",
+                        buttons: false,
+                        timer: 1000,
+                    });
+                },
+            })
+        })
+
+        $(document).on("change", ".program", function() {
+            let value = $(this).val();
+            let key = $(this).attr("data-key");
+            var $kegiatan = $('#kegiatan-' + key);
+            let $jumlahAnggaran = $('#jumlah-anggaran-' + key);
+            $.ajax({
+                url: "{{ url('list/kegiatan') }}",
+                type: "POST",
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    'program': value,
+                },
+                success: function(response) {
+                    if (response.length > 0) {
+                        $kegiatan.html('');
+                        $kegiatan.append('<option value="">Pilih kegiatan</option>');
+                        $.each(response, function(key, value) {
+                            $kegiatan.append('<option value="' + value.id + '">' + value
+                                .nama + " (" + value.no_rek + ")" + '</option>');
+                        })
+                    } else {
+                        $kegiatan.html('');
+                    }
+
+                    $jumlahAnggaran.html(0);
+                    hitungTotal();
+                },
+                error: function(response) {
+                    swal("Gagal", "Terjadi Kesalahan", {
+                        icon: "error",
+                        buttons: false,
+                        timer: 1000,
+                    });
+                },
+            })
+        })
+
+        $(document).on("change", ".kegiatan", function() {
+            let value = $(this).val();
+
+            $('.kegiatan').not(this).each(function() {
+                if ($(this).val() === value) {
+                    $(this).val('').trigger('change.select2');
+                }
+            });
+        })
+
+        $(document).on("keyup", ".jumlah-anggaran", function() {
+            hitungTotal();
+        })
+
+        $(document).on("click", ".btn-delete-program-kegiatan", function() {
+            let key = $(this).attr("data-key");
+            let $targetElement = $('.program-kegiatan[data-key="' + key + '"]');
+
+            $targetElement.remove();
+            cekProgramKegiatan();
+            hitungTotal();
+        })
 
         $('#card-tambah').click(function() {
             $.ajax({
@@ -254,6 +428,21 @@
         $('#form-tambah').submit(function(e) {
             e.preventDefault();
             var formData = new FormData(this);
+
+            $('.program').each(function() {
+                var nama = $(this).attr('name');
+                formData.append('program[]', nama);
+            });
+
+            $('.kegiatan').each(function() {
+                var nama = $(this).attr('name');
+                formData.append('kegiatan[]', nama);
+            });
+
+            $('.jumlah-anggaran').each(function() {
+                var nama = $(this).attr('name');
+                formData.append('jumlahAnggaran[]', nama);
+            });
 
             $('.file_dokumen_update').each(function() {
                 var nama = $(this).attr('name');
@@ -319,10 +508,10 @@
                             }
                         },
                         error: function(response) {
-                            swal("Gagal", "Terjadi Kesalahan", {
-                                icon: "error",
+                            swal("Terjadi Kesalahan", {
                                 buttons: false,
-                                timer: 1000,
+                                timer: 1500,
+                                icon: "warning",
                             });
                         },
                         cache: false,
@@ -331,6 +520,53 @@
                     });
                 }
             });
+
         })
+
+        function resetProgramDanKegiatan() {
+            $('#body-program').html('');
+        }
+
+        function calculateTotalAnggaran() {
+            let totalJumlahAnggaran = 0;
+
+            $('.jumlah-anggaran').each(function() {
+                let value = $(this).val().replace(/\./g, '');
+                totalJumlahAnggaran += parseInt(value, 10);
+            });
+
+            return {
+                totalJumlahAnggaran,
+            };
+        }
+
+        function updateTotalDisplays() {
+            let {
+                totalJumlahAnggaran
+            } = calculateTotalAnggaran();
+
+            function safeFormatRupiah(value) {
+                try {
+                    return formatRupiah(value);
+                } catch (error) {
+                    return '0';
+                }
+            }
+
+            $('#total-jumlah-anggaran').html(safeFormatRupiah(totalJumlahAnggaran));
+        }
+
+        function hitungTotal() {
+            updateTotalDisplays();
+        }
+
+        function cekProgramKegiatan() {
+            let totalProgramKegiatan = $('.program-kegiatan').length;
+
+            if (totalProgramKegiatan == 0) {
+                return $('#jumlah').hide();
+            }
+            return $('#jumlah').show();
+        }
     </script>
 @endpush
