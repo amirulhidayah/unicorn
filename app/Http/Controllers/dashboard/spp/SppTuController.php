@@ -38,8 +38,8 @@ class SppTuController extends Controller
     public function create()
     {
         if (Auth::user()->role != "Admin") {
-            $totalSppLs = SppTu::where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id)->where('status_validasi_ppk', 1)->where('status_validasi_asn', 1)->whereNotNull('dokumen_spm')->whereNull('dokumen_arsip_sp2d')->count();
-            if ($totalSppLs > 0) {
+            $totalSpp = SppTu::where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id)->where('status_validasi_ppk', 1)->where('status_validasi_asn', 1)->whereNotNull('dokumen_spm')->whereNull('dokumen_arsip_sp2d')->count();
+            if ($totalSpp > 0) {
                 return redirect(url('spp-tu'))->with('error', 'Selesaikan Terlebih Dahulu Arsip SP2D');
             }
         }
@@ -54,8 +54,8 @@ class SppTuController extends Controller
     public function store(Request $request)
     {
         if (Auth::user()->role != "Admin") {
-            $totalSppLs = SppTu::where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id)->where('status_validasi_ppk', 1)->where('status_validasi_asn', 1)->whereNotNull('dokumen_spm')->whereNull('dokumen_arsip_sp2d')->count();
-            if ($totalSppLs > 0) {
+            $totalSpp = SppTu::where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id)->where('status_validasi_ppk', 1)->where('status_validasi_asn', 1)->whereNotNull('dokumen_spm')->whereNull('dokumen_arsip_sp2d')->count();
+            if ($totalSpp > 0) {
                 return throw new Exception('Terjadi Kesalahan');
             }
         }
@@ -501,6 +501,9 @@ class SppTuController extends Controller
             $arraySuratPengembalian = $riwayatSppTu->pluck('surat_pengembalian');
         }
 
+        $spm = $sppTu->dokumen_spm;
+        $sp2d = $sppTu->dokumen_sp2d;
+
         try {
             DB::transaction(
                 function () use ($sppTu) {
@@ -528,6 +531,18 @@ class SppTuController extends Controller
         if (count($arrayDokumen) > 0) {
             foreach ($arrayDokumen as $dokumen) {
                 Storage::delete('dokumen_spp_tu/' . $dokumen);
+            }
+        }
+
+        if ($spm) {
+            if (Storage::exists('dokumen_spm_spp_tu/' . $spm)) {
+                Storage::delete('dokumen_spm_spp_tu/' . $spm);
+            }
+        }
+
+        if ($sp2d) {
+            if (Storage::exists('dokumen_arsip_sp2d_spp_tu/' . $sp2d)) {
+                Storage::delete('dokumen_arsip_sp2d_spp_tu/' . $sp2d);
             }
         }
 

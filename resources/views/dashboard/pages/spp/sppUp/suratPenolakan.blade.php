@@ -35,6 +35,17 @@
             margin-top: -3px;
             font-weight: bold;
         }
+
+        #program-dan-kegiatan,
+        #program-dan-kegiatan td,
+        #program-dan-kegiatan tr,
+        #program-dan-kegiatan th {
+            border: 2px solid black;
+            border-collapse: collapse;
+            font-size: 12px;
+            padding: 3px;
+            margin: 0;
+        }
     </style>
 </head>
 
@@ -47,7 +58,7 @@
             </td>
             <td width="60%">
                 <p>{{ $riwayatSppUp->nomor_surat }}</p>
-                <p><b>Pengembalian SPJ/SPP</b></p>
+                <p><b>Pengembalian SPP</b></p>
             </td>
             <td width="30%">
                 <p>Palu,</p>
@@ -64,27 +75,47 @@
     <table width="100%">
         <tr>
             <td width="20%">
-                <p>- SPP-UP Nomor</p>
+                <p>- SPP-TU Nomor</p>
+                <p>- Periode</p>
                 <p>- Tanggal</p>
                 <p>- SPP Kegiatan</p>
-                {{-- <p>- Jumlah Anggaran : Rp. {{ number_format($riwayatSppUp->jumlah_anggaran, 0, ',', '.') }}</p> --}}
             </td>
             <td width="50%">
                 <p> : {{ $sppUp->nomor_surat }}</p>
+                <p> : {{ $sppUp->tahun->tahun }}</p>
                 <p> : {{ \Carbon\Carbon::parse($sppUp->created_at)->translatedFormat('d F Y') }}</p>
-                <p> : {{ $sppUp->kegiatan->nama . ' (' . $sppUp->kegiatan->no_rek . ')' }},</p>
-            </td>
-            <td width="5%">
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-                <p>Jumlah</p>
-            </td>
-            <td width="25%">
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-                <p> : Rp. {{ number_format($sppUp->jumlah_anggaran, 0, ',', '.') }}</p>
+                <p> : </p>
             </td>
         </tr>
+    </table>
+
+    <table id="program-dan-kegiatan">
+        <thead>
+            <tr>
+                <th scope="col">Program</th>
+                <th scope="col">Kegiatan</th>
+                <th scope="col">Jumlah Anggaran</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($programDanKegiatan as $kegiatanSppUp)
+                <tr>
+                    <td>{{ $kegiatanSppUp['program'] }}
+                    </td>
+                    <td>{{ $kegiatanSppUp['kegiatan'] }}
+                    </td>
+                    <td style="vertical-align: middle;text-align:center">
+                        {{ number_format($kegiatanSppUp['jumlah_anggaran'] ?? 0, 0, ',', '.') }}
+                    </td>
+                </tr>
+            @endforeach
+            <tr>
+                <td colspan="2" style="text-align: center;font-weight :bold">Total</td>
+                <td style="vertical-align: middle;text-align:center">
+                    {{ number_format($totalProgramDanKegiatan['total_jumlah_anggaran'] ?? 0, 0, ',', '.') }}
+                </td>
+            </tr>
+        </tbody>
     </table>
 
     <p style="margin-top: 10px">Dikembalikan karena tidak memenuhi syarat untuk diproses. Adapun kekurangannya adalah

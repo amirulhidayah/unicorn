@@ -41,8 +41,8 @@ class SppLsController extends Controller
     public function create()
     {
         if (Auth::user()->role != "Admin") {
-            $totalSppLs = SppLs::where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id)->where('status_validasi_ppk', 1)->where('status_validasi_asn', 1)->whereNotNull('dokumen_spm')->whereNull('dokumen_arsip_sp2d')->count();
-            if ($totalSppLs > 0) {
+            $totalSpp = SppLs::where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id)->where('status_validasi_ppk', 1)->where('status_validasi_asn', 1)->whereNotNull('dokumen_spm')->whereNull('dokumen_arsip_sp2d')->count();
+            if ($totalSpp > 0) {
                 return redirect(url('spp-ls'))->with('error', 'Selesaikan Terlebih Dahulu Arsip SP2D');
             }
         }
@@ -58,8 +58,8 @@ class SppLsController extends Controller
     public function store(Request $request)
     {
         if (Auth::user()->role != "Admin") {
-            $totalSppLs = SppLs::where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id)->where('status_validasi_ppk', 1)->where('status_validasi_asn', 1)->whereNotNull('dokumen_spm')->whereNull('dokumen_arsip_sp2d')->count();
-            if ($totalSppLs > 0) {
+            $totalSpp = SppLs::where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id)->where('status_validasi_ppk', 1)->where('status_validasi_asn', 1)->whereNotNull('dokumen_spm')->whereNull('dokumen_arsip_sp2d')->count();
+            if ($totalSpp > 0) {
                 return throw new Exception('Terjadi Kesalahan');
             }
         }
@@ -562,6 +562,9 @@ class SppLsController extends Controller
             $arraySuratPengembalian = $riwayatSppLs->pluck('surat_pengembalian');
         }
 
+        $spm = $sppLs->dokumen_spm;
+        $sp2d = $sppLs->dokumen_sp2d;
+
         try {
             DB::transaction(
                 function () use ($sppLs) {
@@ -589,6 +592,18 @@ class SppLsController extends Controller
         if (count($arrayDokumen) > 0) {
             foreach ($arrayDokumen as $dokumen) {
                 Storage::delete('dokumen_spp_ls/' . $dokumen);
+            }
+        }
+
+        if ($spm) {
+            if (Storage::exists('dokumen_spm_spp_ls/' . $spm)) {
+                Storage::delete('dokumen_spm_spp_ls/' . $spm);
+            }
+        }
+
+        if ($sp2d) {
+            if (Storage::exists('dokumen_arsip_sp2d_spp_ls/' . $sp2d)) {
+                Storage::delete('dokumen_arsip_sp2d_spp_ls/' . $sp2d);
             }
         }
 
@@ -908,8 +923,8 @@ class SppLsController extends Controller
     public function cekSp2d()
     {
         if (Auth::user()->role != "Admin") {
-            $totalSppLs = SppLs::where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id)->where('status_validasi_ppk', 1)->where('status_validasi_asn', 1)->whereNotNull('dokumen_spm')->whereNull('dokumen_arsip_sp2d')->count();
-            if ($totalSppLs > 0) {
+            $totalSpp = SppLs::where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id)->where('status_validasi_ppk', 1)->where('status_validasi_asn', 1)->whereNotNull('dokumen_spm')->whereNull('dokumen_arsip_sp2d')->count();
+            if ($totalSpp > 0) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Terdapat arsip SP2D yang belum diupload'

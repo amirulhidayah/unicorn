@@ -160,19 +160,10 @@
                 'title' => 'Tanggal',
             ],
             [
-                'title' => 'Kegiatan',
-            ],
-            [
-                'title' => 'Program',
-            ],
-            [
                 'title' => 'Sekretariat Daerah',
             ],
             [
                 'title' => 'Periode',
-            ],
-            [
-                'title' => 'Jumlah Anggaran',
             ],
             [
                 'title' => 'Verifikasi ASN Sub Bagian Keuangan',
@@ -228,25 +219,7 @@
                         <div class="d-flex">
                             <div class="d-flex flex-column justify-content-center">
                                 <h6 class="mb-0 text-xs">
-                                    {{ $data->kegiatan->nama . ' (' . $data->kegiatan->no_rek . ')' }}
-                                </h6>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex">
-                            <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-xs">
-                                    {{ $data->kegiatan->program->nama . ' (' . $data->kegiatan->program->no_rek . ')' }}
-                                </h6>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex">
-                            <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-xs">
-                                    {{ $data->SekretariatDaerah->nama }}
+                                    {{ $data->sekretariatDaerah->nama }}
                                 </h6>
                             </div>
                         </div>
@@ -255,15 +228,6 @@
                         <h6 class="mb-0 text-xs text-nowrap">
                             {{ $data->tahun->tahun }}
                         </h6>
-                    </td>
-                    <td>
-                        <div class="d-flex">
-                            <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-xs text-nowrap">
-                                    {{ 'Rp. ' . number_format($data->jumlah_anggaran, 0, ',', '.') }}
-                                </h6>
-                            </div>
-                        </div>
                     </td>
                     <td>
                         <h6 class="mb-0 text-xs text-center">
@@ -356,7 +320,7 @@
 
                             if (($data->sekretariat_daerah_id == Auth::user()->profil->sekretariat_daerah_id && in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) || Auth::user()->role == 'Admin') {
                                 if ($data->status_validasi_asn != 0 && $data->status_validasi_ppk != 0 && ($data->status_validasi_asn == 2 || $data->status_validasi_ppk == 2)) {
-                                    $actionBtn .= '<a target="_blank" href="' . Storage::url('surat_penolakan_spp_up/' . $data->surat_penolakan) . '" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> Surat Penolakan</a>';
+                                    $actionBtn .= '<a target="_blank" href="' . Storage::url('surat_penolakan_spp_up/' . $data->surat_penolakan) . '" class="btn btn-primary btn-sm mr-1"><i class="fas fa-file-pdf"></i> Surat Penolakan</a>';
                                     $actionBtn .= '<a href="' . url('spp-up/' . $data->id . '/edit') . '" class="btn btn-primary btn-sm my-1 mr-1"><i class="fas fa-file-pdf"></i> Perbaiki</a></div>';
                                 }
                             }

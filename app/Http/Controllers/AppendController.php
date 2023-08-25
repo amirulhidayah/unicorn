@@ -149,7 +149,7 @@ class AppendController extends Controller
         }
     }
 
-    public function sppTu(Request $request)
+    public function sppUpTu(Request $request)
     {
         $role = Auth::user()->role;
         $sekretariatDaerah = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;

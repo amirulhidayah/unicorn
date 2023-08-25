@@ -16,37 +16,61 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        Storage::deleteDirectory('/dokumen_arsip_sp2d_spp_gu');
+        Storage::deleteDirectory('/dokumen_arsip_sp2d_spp_ls');
+        Storage::deleteDirectory('/dokumen_arsip_sp2d_spp_tu');
+        Storage::deleteDirectory('/dokumen_arsip_sp2d_spp_up');
         Storage::deleteDirectory('/dokumen_spj_gu');
+        Storage::deleteDirectory('/dokumen_spm_spp_gu');
+        Storage::deleteDirectory('/dokumen_spm_spp_ls');
+        Storage::deleteDirectory('/dokumen_spm_spp_tu');
+        Storage::deleteDirectory('/dokumen_spm_spp_up');
         Storage::deleteDirectory('/dokumen_spp_gu');
         Storage::deleteDirectory('/dokumen_spp_ls');
         Storage::deleteDirectory('/dokumen_spp_tu');
         Storage::deleteDirectory('/dokumen_spp_up');
+        Storage::deleteDirectory('/photos');
         Storage::deleteDirectory('/profil');
-        Storage::deleteDirectory('/surat_penolakan_spp_gu');
-        Storage::deleteDirectory('/surat_penolakan_spp_ls');
-        Storage::deleteDirectory('/surat_penolakan_spp_tu');
-        Storage::deleteDirectory('/surat_penolakan_spp_up');
+        Storage::deleteDirectory('/surat_pengembalian_spj_gu');
         Storage::deleteDirectory('/surat_pengembalian_spp_gu');
         Storage::deleteDirectory('/surat_pengembalian_spp_ls');
         Storage::deleteDirectory('/surat_pengembalian_spp_tu');
         Storage::deleteDirectory('/surat_pengembalian_spp_up');
+        Storage::deleteDirectory('/surat_penolakan_spj_gu');
+        Storage::deleteDirectory('/surat_penolakan_spp_gu');
+        Storage::deleteDirectory('/surat_penolakan_spp_ls');
+        Storage::deleteDirectory('/surat_penolakan_spp_tu');
+        Storage::deleteDirectory('/surat_penolakan_spp_up');
         Storage::deleteDirectory('/tanda_tangan');
+        Storage::deleteDirectory('/tentang');
 
+        Storage::makeDirectory('/dokumen_arsip_sp2d_spp_gu');
+        Storage::makeDirectory('/dokumen_arsip_sp2d_spp_ls');
+        Storage::makeDirectory('/dokumen_arsip_sp2d_spp_tu');
+        Storage::makeDirectory('/dokumen_arsip_sp2d_spp_up');
         Storage::makeDirectory('/dokumen_spj_gu');
+        Storage::makeDirectory('/dokumen_spm_spp_gu');
+        Storage::makeDirectory('/dokumen_spm_spp_ls');
+        Storage::makeDirectory('/dokumen_spm_spp_tu');
+        Storage::makeDirectory('/dokumen_spm_spp_up');
         Storage::makeDirectory('/dokumen_spp_gu');
         Storage::makeDirectory('/dokumen_spp_ls');
         Storage::makeDirectory('/dokumen_spp_tu');
         Storage::makeDirectory('/dokumen_spp_up');
+        Storage::makeDirectory('/photos');
         Storage::makeDirectory('/profil');
-        Storage::makeDirectory('/surat_penolakan_spp_gu');
-        Storage::makeDirectory('/surat_penolakan_spp_ls');
-        Storage::makeDirectory('/surat_penolakan_spp_tu');
-        Storage::makeDirectory('/surat_penolakan_spp_up');
+        Storage::makeDirectory('/surat_pengembalian_spj_gu');
         Storage::makeDirectory('/surat_pengembalian_spp_gu');
         Storage::makeDirectory('/surat_pengembalian_spp_ls');
         Storage::makeDirectory('/surat_pengembalian_spp_tu');
         Storage::makeDirectory('/surat_pengembalian_spp_up');
+        Storage::makeDirectory('/surat_penolakan_spj_gu');
+        Storage::makeDirectory('/surat_penolakan_spp_gu');
+        Storage::makeDirectory('/surat_penolakan_spp_ls');
+        Storage::makeDirectory('/surat_penolakan_spp_tu');
+        Storage::makeDirectory('/surat_penolakan_spp_up');
         Storage::makeDirectory('/tanda_tangan');
+        Storage::makeDirectory('/tentang');
 
         File::copyDirectory(
             public_path('file_dummy'),

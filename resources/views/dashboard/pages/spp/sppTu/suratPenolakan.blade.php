@@ -76,12 +76,13 @@
         <tr>
             <td width="20%">
                 <p>- SPP-TU Nomor</p>
+                <p>- Periode</p>
                 <p>- Tanggal</p>
                 <p>- SPP Kegiatan</p>
-                {{-- <p>- Jumlah Anggaran : Rp. {{ number_format($riwayatSppTu->anggaran_digunakan, 0, ',', '.') }}</p> --}}
             </td>
             <td width="50%">
                 <p> : {{ $sppTu->nomor_surat }}</p>
+                <p> : {{ $sppTu->bulan . ', ' . $sppTu->tahun->tahun }}</p>
                 <p> : {{ \Carbon\Carbon::parse($sppTu->created_at)->translatedFormat('d F Y') }}</p>
                 <p> : </p>
             </td>

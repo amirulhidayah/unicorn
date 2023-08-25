@@ -16,11 +16,9 @@ class CreateSppUpTable extends Migration
         Schema::create('spp_up', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('tahun_id');
-            $table->uuid('kegiatan_id');
-            $table->bigInteger('jumlah_anggaran');
             $table->uuid('sekretariat_daerah_id');
-            $table->string('nomor_surat');
             $table->integer('tahap_riwayat')->default(1);
+            $table->string('nomor_surat');
             $table->uuid('user_id');
             $table->text('surat_penolakan')->nullable();
             $table->text('surat_pengembalian')->nullable();

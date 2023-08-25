@@ -306,7 +306,7 @@
 
         $('#btn-tambah-program-kegiatan').click(function() {
             $.ajax({
-                url: "{{ url('append/spp-tu') }}",
+                url: "{{ url('append/spp-up-tu') }}",
                 type: "GET",
                 data: {
                     '_token': '{{ csrf_token() }}',

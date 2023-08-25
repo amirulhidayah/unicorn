@@ -23,7 +23,6 @@ class SppUp extends Model
         return $this->hasMany(DokumenSppUp::class, 'spp_up_id', 'id')->orderBy('created_at', 'asc');
     }
 
-
     public function kegiatan()
     {
         return $this->belongsTo(Kegiatan::class, 'kegiatan_id', 'id')->withTrashed();
@@ -37,5 +36,10 @@ class SppUp extends Model
     public function sekretariatDaerah()
     {
         return $this->belongsTo(SekretariatDaerah::class, 'sekretariat_daerah_id', 'id')->withTrashed();
+    }
+
+    public function kegiatanSppUp()
+    {
+        return $this->hasMany(KegiatanSppUp::class);
     }
 }

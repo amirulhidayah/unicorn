@@ -73,116 +73,114 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-head-row">
-                            <div class="card-title">Tambah SPP UP</div>
+                            <div class="card-title">Buat SPP UP</div>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-6">
-                                @if (Auth::user()->role == 'Admin')
-                                    <div class="col-12">
-                                        @component('dashboard.components.formElements.select', [
-                                            'label' => 'Sekretariat Daerah',
-                                            'id' => 'sekretariat_daerah',
-                                            'name' => 'sekretariat_daerah',
-                                            'class' => 'select2',
-                                            'wajib' => '<sup class="text-danger">*</sup>',
-                                        ])
-                                            @slot('options')
-                                                @foreach ($daftarSekretariatDaerah as $SekretariatDaerah)
-                                                    <option value="{{ $SekretariatDaerah->id }}">{{ $SekretariatDaerah->nama }}
-                                                    </option>
-                                                @endforeach
-                                            @endslot
-                                        @endcomponent
-                                    </div>
-                                @else
-                                    <div class="col-12">
-                                        <label for="exampleFormControlInput1">Sekretariat Daerah</label>
-                                        <br>
-                                        <label for="exampleFormControlInput1"
-                                            class="badge badge-primary text-light my-2">{{ Auth::user()->profil->SekretariatDaerah->nama }}</label>
-                                        <br>
-                                    </div>
-                                @endif
-
-                                <div class="col-12">
-                                    @component('dashboard.components.formElements.input', [
-                                        'label' => 'Nomor Surat Permintaan Pembayaran (SPP)',
-                                        'type' => 'text',
-                                        'id' => 'nomor_surat',
-                                        'class' => '',
-                                        'name' => 'nomor_surat',
-                                        'wajib' => '<sup class="text-danger">*</sup>',
-                                        'placeholder' => 'Masukkan Nomor Surat Permintaan Pembayaran (SPP)',
-                                    ])
-                                    @endcomponent
-                                </div>
-
+                            <div class="col-12">
+                                @component('dashboard.components.formElements.input', [
+                                    'label' => 'Nomor Surat Permintaan Pembayaran (SPP)',
+                                    'type' => 'text',
+                                    'id' => 'nomor_surat',
+                                    'class' => '',
+                                    'name' => 'nomor_surat',
+                                    'wajib' => '<sup class="text-danger">*</sup>',
+                                    'placeholder' => 'Masukkan Nomor Surat Permintaan Pembayaran (SPP)',
+                                ])
+                                @endcomponent
+                            </div>
+                            @if (Auth::user()->role == 'Admin')
                                 <div class="col-12">
                                     @component('dashboard.components.formElements.select', [
-                                        'label' => 'Tahun',
-                                        'id' => 'tahun',
-                                        'name' => 'tahun',
+                                        'label' => 'Sekretariat Daerah',
+                                        'id' => 'sekretariat_daerah',
+                                        'name' => 'sekretariat_daerah',
                                         'class' => 'select2',
                                         'wajib' => '<sup class="text-danger">*</sup>',
                                     ])
                                         @slot('options')
-                                            @foreach ($daftarTahun as $tahun)
-                                                <option value="{{ $tahun->id }}">{{ $tahun->tahun }}</option>
+                                            @foreach ($daftarSekretariatDaerah as $SekretariatDaerah)
+                                                <option value="{{ $SekretariatDaerah->id }}">{{ $SekretariatDaerah->nama }}
+                                                </option>
                                             @endforeach
                                         @endslot
                                     @endcomponent
                                 </div>
-
-                                <div class="col-12 my-2">
-                                    @component('dashboard.components.formElements.select', [
-                                        'label' => 'Program',
-                                        'id' => 'program',
-                                        'name' => 'program',
-                                        'class' => 'select2 program',
-                                        'attribute' => 'disabled',
-                                        'wajib' => '<sup class="text-danger">*</sup>',
-                                        'btnId' => 'tambahProgram',
-                                    ])
-                                    @endcomponent
-                                </div>
-
-                                <div class="col-12 my-2">
-                                    @component('dashboard.components.formElements.select', [
-                                        'label' => 'Kegiatan',
-                                        'id' => 'kegiatan',
-                                        'name' => 'kegiatan',
-                                        'class' => 'select2',
-                                        'attribute' => 'disabled',
-                                        'wajib' => '<sup class="text-danger">*</sup>',
-                                        'btnId' => 'tambahKegiatan',
-                                    ])
-                                    @endcomponent
-                                </div>
+                            @else
                                 <div class="col-12">
-                                    @component('dashboard.components.formElements.input', [
-                                        'label' => 'Jumlah Anggaran (Rp)',
-                                        'type' => 'text',
-                                        'id' => 'jumlah_anggaran',
-                                        'class' => 'uang',
-                                        'name' => 'jumlah_anggaran',
-                                        'wajib' => '<sup class="text-danger">*</sup>',
-                                        'attribute' => 'disabled',
-                                        'value' => '0',
-                                    ])
-                                    @endcomponent
+                                    <label class="form-label my-2 fw-bold">Sekretariat Daerah</label>
+                                    <br>
+                                    <label for="exampleFormControlInput1"
+                                        class="badge badge-primary text-light mb-2">{{ Auth::user()->profil->SekretariatDaerah->nama }}</label>
+                                    <br>
                                 </div>
-
+                            @endif
+                            <div class="col-12">
+                                @component('dashboard.components.formElements.select', [
+                                    'label' => 'Tahun',
+                                    'id' => 'tahun',
+                                    'name' => 'tahun',
+                                    'class' => 'select2',
+                                    'wajib' => '<sup class="text-danger">*</sup>',
+                                ])
+                                    @slot('options')
+                                        @foreach ($daftarTahun as $tahun)
+                                            <option value="{{ $tahun->id }}">{{ $tahun->tahun }}</option>
+                                        @endforeach
+                                    @endslot
+                                @endcomponent
                             </div>
-                            <div class="col-md-6">
-                                <div id="list-upload">
-                                    <small class="text-danger error-text dokumenFileHitung-error"
-                                        id="dokumenFileHitung-error"></small>
+                            <div class="col-md-12">
+                                <label for="TextInput" class="form-label mt-2 mb-3 fw-bold">Program dan Kegiatan<sup
+                                        class="text-danger">*</sup></label>
+                                <br>
+                                <small class="text-danger error-text programDanKegiatanHitung-error"
+                                    id="programDanKegiatanHitung-error"></small>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Program</th>
+                                                <th scope="col">Kegiatan</th>
+                                                <th scope="col">Jumlah Anggaran</th>
+                                                <th scope="col" class="text-center">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="body-program">
+
+                                        </tbody>
+                                        <tfoot>
+                                            <tr id="jumlah">
+                                                <td colspan="2" class="fw-bold text-center">Total</td>
+                                                <td id="total-jumlah-anggaran">-</td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="6" style="padding: 0px 10px !important">
+                                                    <button class="btn btn-light fw-bold col-12" type="button"
+                                                        id="btn-tambah-program-kegiatan"><i class="fas fa-plus-circle"></i>
+                                                        Tambah Program &
+                                                        Kegiatan</button>
+                                                </td>
+                                            </tr>
+
+                                        </tfoot>
+                                    </table>
+
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="TextInput" class="form-label mt-2 mb-3 fw-bold">Dokumen Pendukung<sup
+                                        class="text-danger">*</sup></label>
+                                <small class="text-danger error-text dokumenFileHitung-error"
+                                    id="dokumenFileHitung-error"></small>
+                                <div id="list-upload" class="row">
                                     @forelse ($daftarDokumenSppUp as $dokumen)
                                         @component('dashboard.components.dynamicForm.spp', [
                                             'labelNama' => $dokumen->nama,
                                             'nameFileDokumen' => substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), 0, 10),
+                                            'class' => 'col-4',
                                             'classNama' => 'nama_file',
                                             'classDokumen' => 'file_dokumen',
                                         ])
@@ -191,6 +189,7 @@
                                         @component('dashboard.components.dynamicForm.spp', [
                                             'nameFileDokumen' => substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), 0, 10),
                                             'classNama' => 'nama_file',
+                                            'class' => 'col-4',
                                             'classDokumen' => 'file_dokumen',
                                         ])
                                         @endcomponent
@@ -215,136 +214,113 @@
             </div>
         </div>
     </form>
-
-    <div class="modal" tabindex="-1" role="dialog" id="modal-tambah-program">
-        <form method="POST" id="form-tambah-program">
-            @csrf
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modal-tambah-title">Tambah Program SPP</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                @component('dashboard.components.formElements.input', [
-                                    'id' => 'nama',
-                                    'type' => 'text',
-                                    'label' => 'Nama Daftar Program SPP',
-                                    'placeholder' => 'Tambah Program SPP',
-                                    'name' => 'nama',
-                                    'required' => true,
-                                ])
-                                @endcomponent
-                            </div>
-                            <div class="col-lg-12">
-                                @component('dashboard.components.formElements.input', [
-                                    'id' => 'no_rek',
-                                    'type' => 'text',
-                                    'label' => 'No. Rekening',
-                                    'placeholder' => 'Tambah Nomor Rekening',
-                                    'class' => 'numerik',
-                                    'name' => 'no_rek',
-                                    'required' => true,
-                                    'wajib' => '<sup class="text-danger">*</sup>',
-                                ])
-                                @endcomponent
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        @component('dashboard.components.buttons.close')
-                        @endcomponent
-                        @component('dashboard.components.buttons.submit', [
-                            'label' => 'Simpan',
-                        ])
-                        @endcomponent
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
-
-    <div class="modal" role="dialog" id="modal-tambah-kegiatan">
-        <form method="POST" id="form-tambah-kegiatan">
-            @csrf
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modal-tambah-title">Tambah Kegiatan SPP</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                @component('dashboard.components.formElements.select', [
-                                    'label' => 'Program',
-                                    'id' => 'programSpp',
-                                    'name' => 'program',
-                                    'class' => 'select2 program',
-                                    'wajib' => '<sup class="text-danger">*</sup>',
-                                ])
-                                @endcomponent
-                            </div>
-                            <div class="col-lg-12">
-                                @component('dashboard.components.formElements.input', [
-                                    'id' => 'nama',
-                                    'type' => 'text',
-                                    'label' => 'Nama Daftar Kegiatan SPP',
-                                    'placeholder' => 'Tambah Kegiatan SPP',
-                                    'name' => 'nama',
-                                    'required' => true,
-                                    'wajib' => '<sup class="text-danger">*</sup>',
-                                ])
-                                @endcomponent
-                            </div>
-                            <div class="col-lg-12">
-                                @component('dashboard.components.formElements.input', [
-                                    'id' => 'no_rek',
-                                    'type' => 'text',
-                                    'label' => 'No. Rekening',
-                                    'placeholder' => 'Tambah Nomor Rekening',
-                                    'class' => 'numerik',
-                                    'name' => 'no_rek',
-                                    'required' => true,
-                                ])
-                                @endcomponent
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        @component('dashboard.components.buttons.close')
-                        @endcomponent
-                        @component('dashboard.components.buttons.submit', [
-                            'label' => 'Simpan',
-                        ])
-                        @endcomponent
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
 @endsection
 
 @push('script')
     <script>
-        var idProgram = '';
+        var totalList = 1;
+        var jumlahAnggaran = 0;
 
         $(document).ready(function() {
             $('#spp-up').addClass('active');
-            getProgram();
+            $('#btn-tambah-program-kegiatan').click();
+            cekProgramKegiatan();
+            hitungTotal();
         })
 
         function hapus(id) {
             $("#box-upload-" + id).remove();
         }
+
+        $('#btn-tambah-program-kegiatan').click(function() {
+            $.ajax({
+                url: "{{ url('append/spp-up-tu') }}",
+                type: "GET",
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                },
+                success: function(response) {
+                    if (response.status == 'success') {
+                        $('#body-program').append(response.html);
+                        $('.select2').select2({
+                            placeholder: "- Pilih Salah Satu -",
+                            theme: "bootstrap",
+                        })
+                        $('.uang').mask('000.000.000.000.000.000.000', {
+                            reverse: true
+                        });
+                        cekProgramKegiatan();
+                    }
+                },
+                error: function(response) {
+                    swal("Gagal", "Terjadi Kesalahan", {
+                        icon: "error",
+                        buttons: false,
+                        timer: 1000,
+                    });
+                },
+            })
+        })
+
+        $(document).on("change", ".program", function() {
+            let value = $(this).val();
+            let key = $(this).attr("data-key");
+            var $kegiatan = $('#kegiatan-' + key);
+            let $jumlahAnggaran = $('#jumlah-anggaran-' + key);
+            $.ajax({
+                url: "{{ url('list/kegiatan') }}",
+                type: "POST",
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    'program': value,
+                },
+                success: function(response) {
+                    if (response.length > 0) {
+                        $kegiatan.html('');
+                        $kegiatan.append('<option value="">Pilih kegiatan</option>');
+                        $.each(response, function(key, value) {
+                            $kegiatan.append('<option value="' + value.id + '">' + value
+                                .nama + " (" + value.no_rek + ")" + '</option>');
+                        })
+                    } else {
+                        $kegiatan.html('');
+                    }
+
+                    $jumlahAnggaran.html(0);
+                    hitungTotal();
+                },
+                error: function(response) {
+                    swal("Gagal", "Terjadi Kesalahan", {
+                        icon: "error",
+                        buttons: false,
+                        timer: 1000,
+                    });
+                },
+            })
+        })
+
+        $(document).on("change", ".kegiatan", function() {
+            let value = $(this).val();
+
+            $('.kegiatan').not(this).each(function() {
+                if ($(this).val() === value) {
+                    $(this).val('').trigger('change.select2');
+                }
+            });
+        })
+
+        $(document).on("keyup", ".jumlah-anggaran", function() {
+            hitungTotal();
+        })
+
+        $(document).on("click", ".btn-delete-program-kegiatan", function() {
+            let key = $(this).attr("data-key");
+            let $targetElement = $('.program-kegiatan[data-key="' + key + '"]');
+
+            $targetElement.remove();
+            cekProgramKegiatan();
+            hitungTotal();
+        })
 
         $('#card-tambah').click(function() {
             $.ajax({
@@ -379,7 +355,23 @@
 
         $('#form-tambah').submit(function(e) {
             e.preventDefault();
+            resetError();
             var formData = new FormData(this);
+
+            $('.program').each(function() {
+                var nama = $(this).attr('name');
+                formData.append('program[]', nama);
+            });
+
+            $('.kegiatan').each(function() {
+                var nama = $(this).attr('name');
+                formData.append('kegiatan[]', nama);
+            });
+
+            $('.jumlah-anggaran').each(function() {
+                var nama = $(this).attr('name');
+                formData.append('jumlahAnggaran[]', nama);
+            });
 
             $('.file_dokumen').each(function() {
                 var nama = $(this).attr('name');
@@ -447,139 +439,52 @@
                     });
                 }
             });
-
         })
 
-        $('#tambahProgram').click(function() {
-            $('#modal-tambah-program').modal('show');
-            $('#form-tambah-program')[0].reset();
-        })
-
-        $('#tambahKegiatan').click(function() {
-            $('#modal-tambah-kegiatan').modal('show');
-        })
-
-        $('#form-tambah-program').submit(function(e) {
-            e.preventDefault();
-            $.ajax({
-                url: "{{ url('master-data/program') }}",
-                type: 'POST',
-                data: $(this).serialize(),
-                success: function(response) {
-                    if (response.status == 'success') {
-                        $('#modal-tambah-program').modal('hide');
-                        getProgram();
-                        swal("Berhasil", "Data Berhasil Tersimpan", {
-                            icon: "success",
-                            buttons: false,
-                            timer: 1000,
-                        });
-                    } else {
-                        printErrorMsg(response.error);
-                    }
-                },
-                error: function(response) {
-                    swal("Gagal", "Data Gagal Ditambahkan", {
-                        icon: "error",
-                        buttons: false,
-                        timer: 1000,
-                    });
-                }
-            })
-        })
-
-        $('#form-tambah-kegiatan').submit(function(e) {
-            e.preventDefault();
-            $.ajax({
-                url: "{{ url('master-data/kegiatan/') }}" + "/" + idProgram,
-                type: 'POST',
-                data: $(this).serialize(),
-                success: function(response) {
-                    if (response.status == 'success') {
-                        $('#program').val('').trigger('change');
-                        $('#kegiatan').val('').trigger('change');
-                        $('#modal-tambah-kegiatan').modal('hide');
-                        swal("Berhasil", "Data Berhasil Tersimpan", {
-                            icon: "success",
-                            buttons: false,
-                            timer: 1000,
-                        });
-                    } else {
-                        printErrorMsg(response.error);
-                    }
-                },
-                error: function(response) {
-                    swal("Gagal", "Data Gagal Ditambahkan", {
-                        icon: "error",
-                        buttons: false,
-                        timer: 1000,
-                    });
-                }
-            })
-        })
-
-        function getProgram() {
-            $.ajax({
-                url: "{{ url('list/program') }}",
-                type: "POST",
-                data: {
-                    '_token': '{{ csrf_token() }}',
-                },
-                success: function(response) {
-                    if (response.length > 0) {
-                        $('.program').html('');
-                        $('.program').append('<option value="">Pilih Program</option>');
-                        $.each(response, function(key, value) {
-                            $('.program').append('<option value="' + value.id + '">' + value
-                                .nama + " (" + value.no_rek + ')</option>');
-                        })
-                    } else {
-                        $('.program').html('');
-                    }
-                }
-            })
+        function resetProgramDanKegiatan() {
+            $('#body-program').html('');
         }
 
-        $('#tahun').on('change', function() {
-            var tahun = $(this).val();
-            $('#program').attr('disabled', false);
-        })
+        function calculateTotalAnggaran() {
+            let totalJumlahAnggaran = 0;
 
-        $('#program').on('change', function() {
-            var program = $('#program').val();
-            var tahun = $('#tahun').val();
-            $.ajax({
-                url: "{{ url('list/kegiatan') }}",
-                type: "POST",
-                data: {
-                    '_token': '{{ csrf_token() }}',
-                    tahun: tahun,
-                    program: program
-                },
-                success: function(response) {
-                    $('#kegiatan').removeAttr('disabled');
-                    $('#programSpp').val(program).select2().trigger('change');
-                    idProgram = program;
-                    if (response.length > 0) {
-                        $('#kegiatan').html('');
-                        $('#kegiatan').append('<option value="">Pilih kegiatan</option>');
-                        $.each(response, function(key, value) {
-                            $('#kegiatan').append('<option value="' + value.id + '">' + value
-                                .nama + " (" + value.no_rek + ')</option>');
-                        })
-                    } else {
-                        $('#kegiatan').html('');
-                    }
+            $('.jumlah-anggaran').each(function() {
+                let value = $(this).val().replace(/\./g, '');
+                totalJumlahAnggaran += parseInt(value, 10);
+            });
+
+            return {
+                totalJumlahAnggaran,
+            };
+        }
+
+        function updateTotalDisplays() {
+            let {
+                totalJumlahAnggaran
+            } = calculateTotalAnggaran();
+
+            function safeFormatRupiah(value) {
+                try {
+                    return formatRupiah(value);
+                } catch (error) {
+                    return '0';
                 }
-            })
-        })
+            }
 
-        $('#programSpp').on('change', function() {
-            idProgram = $(this).val();
-        })
+            $('#total-jumlah-anggaran').html(safeFormatRupiah(totalJumlahAnggaran));
+        }
 
-        $("#kegiatan").on('change', function() {
-            $('#jumlah_anggaran').val('0').attr('disabled', false);
-        })
+        function hitungTotal() {
+            updateTotalDisplays();
+        }
+
+        function cekProgramKegiatan() {
+            let totalProgramKegiatan = $('.program-kegiatan').length;
+
+            if (totalProgramKegiatan == 0) {
+                return $('#jumlah').hide();
+            }
+            return $('#jumlah').show();
+        }
     </script>
 @endpush
