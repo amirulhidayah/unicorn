@@ -92,32 +92,6 @@ class Table extends Component
                 }
             }
 
-            if (isset($kategori) && $kategori != 'Semua') {
-                $query->where('kategori', $kategori);
-            }
-
-
-            if (isset($statusUploadSkm) && $statusUploadSkm != 'Semua') {
-                $query->where('status_validasi_ppk', 1);
-                $query->where('status_validasi_akhir', 1);
-                if ($statusUploadSkm == "Belum Ada") {
-                    $query->whereNull('dokumen_spm');
-                } else {
-                    $query->whereNotNull('dokumen_spm');
-                }
-            }
-
-            if (isset($statusUploadArsipSp2d) && $statusUploadArsipSp2d != 'Semua') {
-                $query->where('status_validasi_ppk', 1);
-                $query->where('status_validasi_akhir', 1);
-                $query->whereNotNull('dokumen_spm');
-                if ($statusUploadArsipSp2d == "Belum Ada") {
-                    $query->whereNull('dokumen_arsip_sp2d');
-                } else {
-                    $query->whereNotNull('dokumen_arsip_sp2d');
-                }
-            }
-
             if (isset($bulan) && $bulan != 'Semua') {
                 $query->where('bulan', $bulan);
             }
@@ -127,12 +101,15 @@ class Table extends Component
             }
 
             if ($cari) {
-                $query->whereHas('kegiatanDpa', function ($query) use ($cari) {
-                    $query->where('nama', 'like', "%" . $cari . "%");
-                    $query->orWhere('no_rek', 'like', "%" . $cari . "%");
-                    $query->orWhereHas('programDpa', function ($query) use ($cari) {
-                        $query->where('nama', 'like', "%" .  $cari . "%");
+                $query->where('nomor_surat', 'like', "%" . $cari . "%");
+                $query->orWhereHas('kegiatanSpjGu', function ($query) use ($cari) {
+                    $query->whereHas('kegiatan', function ($query) use ($cari) {
+                        $query->where('nama', 'like', "%" . $cari . "%");
                         $query->orWhere('no_rek', 'like', "%" . $cari . "%");
+                        $query->orWhereHas('program', function ($query) use ($cari) {
+                            $query->where('nama', 'like', "%" .  $cari . "%");
+                            $query->orWhere('no_rek', 'like', "%" . $cari . "%");
+                        });
                     });
                 });
             }
@@ -156,6 +133,7 @@ class Table extends Component
 
     public function refreshTable()
     {
+        $this->resetPage();
     }
 
     public function render()

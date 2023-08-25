@@ -152,15 +152,11 @@
                     'wajib' => '<sup class="text-danger">*</sup>',
                 ])
                     @slot('options')
-                        <option value="Semua">
-                            Semua
-                        </option>
-                        <option value="Belanja Hibah">
-                            Belanja Hibah
-                        </option>
-                        <option value="Barang dan Jasa">
-                            Barang dan Jasa
-                        </option>
+                        @foreach ($daftarKategori as $kategori)
+                            <option value="{{ $kategori->id }}">
+                                {{ $kategori->nama }}
+                            </option>
+                        @endforeach
                     @endslot
                 @endcomponent
             </div>
@@ -217,9 +213,9 @@
             [
                 'title' => 'Periode',
             ],
-            // [
-            //     'title' => 'Anggaran Digunakan',
-            // ],
+            [
+                'title' => 'Kegiatan',
+            ],
             [
                 'title' => 'Verifikasi ASN Sub Bagian Keuangan',
                 'class' => 'text-center',
@@ -293,15 +289,15 @@
                             {{ $data->bulan . ', ' . $data->tahun->tahun }}
                         </h6>
                     </td>
-                    {{-- <td>
-                        <div class="d-flex">
-                            <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-xs text-nowrap">
-                                    {{ 'Rp. ' . number_format($data->anggaran_digunakan, 0, ',', '.') }}
-                                </h6>
-                            </div>
-                        </div>
-                    </td> --}}
+                    <td class="text-nowrap">
+                        @foreach ($data->kegiatanSppLs as $kegiatanSppLs)
+                            <h6 class="mb-0 text-xs text-nowrap my-2">
+                                - {{ $kegiatanSppLs->kegiatan->nama . ' (' . $kegiatanSppLs->kegiatan->no_rek . ')' }}
+                                <br>
+                                {{ 'Rp.' . number_format($kegiatanSppLs->anggaran_digunakan ?? 0, 0, ',', '.') }}
+                            </h6>
+                        @endforeach
+                    </td>
                     <td>
                         <h6 class="mb-0 text-xs text-center">
                             @if ($data->status_validasi_asn == 0)

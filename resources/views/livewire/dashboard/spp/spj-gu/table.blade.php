@@ -164,6 +164,9 @@
                 'title' => 'Periode',
             ],
             [
+                'title' => 'Kegiatan',
+            ],
+            [
                 'title' => 'Verifikasi ASN Sub Bagian Keuangan',
                 'class' => 'text-center',
             ],
@@ -219,15 +222,15 @@
                             {{ $data->bulan . ', ' . $data->tahun->tahun }}
                         </h6>
                     </td>
-                    {{-- <td>
-                        <div class="d-flex">
-                            <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-xs text-nowrap">
-                                    {{ 'Rp. ' . number_format($data->anggaran_digunakan, 0, ',', '.') }}
-                                </h6>
-                            </div>
-                        </div>
-                    </td> --}}
+                    <td class="text-nowrap">
+                        @foreach ($data->kegiatanSpjGu as $kegiatanSpjGu)
+                            <h6 class="mb-0 text-xs text-nowrap my-2">
+                                - {{ $kegiatanSpjGu->kegiatan->nama . ' (' . $kegiatanSpjGu->kegiatan->no_rek . ')' }}
+                                <br>
+                                {{ 'Rp.' . number_format($kegiatanSpjGu->anggaran_digunakan ?? 0, 0, ',', '.') }}
+                            </h6>
+                        @endforeach
+                    </td>
                     <td>
                         <h6 class="mb-0 text-xs text-center">
                             @if ($data->status_validasi_asn == 0)

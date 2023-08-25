@@ -311,6 +311,7 @@
                     '_token': '{{ csrf_token() }}',
                     'sekretariat_daerah': $('#sekretariat_daerah').val(),
                     'tahun': $('#tahun').val(),
+                    'id': spjGuId
                 },
                 success: function(response) {
                     if (response.length > 0) {

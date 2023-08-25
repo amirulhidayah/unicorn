@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class SppTuController extends Controller
 {
@@ -64,7 +65,9 @@ class SppTuController extends Controller
 
         $rules = [
             'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
-            'nomor_surat' => 'required',
+            'nomor_surat' => ['required', Rule::unique('spp_tu')->where(function ($query) use ($request) {
+                return $query->where('nomor_surat', $request->nomor_surat);
+            })],
             'tahun' => 'required',
             'bulan' => 'required',
         ];
@@ -72,6 +75,7 @@ class SppTuController extends Controller
         $messages = [
             'sekretariat_daerah.required' => 'Biro Organisasi Tidak Boleh Kosong',
             'nomor_surat.required' => 'Nomor Surat Permintaan Pembayaran (SPP) Tidak Boleh Kosong',
+            'nomor_surat.unique' => 'Nomor Surat Permintaan Pembayaran (SPP) Sudah Ada',
             'tahun.required' => 'Tahun Tidak Boleh Kosong',
             'bulan.required' => 'Bulan Tidak Boleh Kosong',
         ];
@@ -263,7 +267,9 @@ class SppTuController extends Controller
         $rules = [
             'surat_pengembalian' => $suratPenolakan . '|mimes:pdf',
             'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
-            'nomor_surat' => 'required',
+            'nomor_surat' => ['required', Rule::unique('spp_tu')->where(function ($query) use ($request) {
+                return $query->where('nomor_surat', $request->nomor_surat);
+            })->ignore($sppTu->id)],
             'tahun' => 'required',
             'bulan' => 'required',
         ];
@@ -273,6 +279,7 @@ class SppTuController extends Controller
             'surat_pengembalian.mimes' => 'Dokumen Harus Berupa File PDF',
             'sekretariat_daerah.required' => 'Biro Organisasi Tidak Boleh Kosong',
             'nomor_surat.required' => 'Nomor Surat Permintaan Pembayaran (SPP) Tidak Boleh Kosong',
+            'nomor_surat.unique' => 'Nomor Surat Permintaan Pembayaran (SPP) Sudah Ada',
             'tahun.required' => 'Tahun Tidak Boleh Kosong',
             'bulan.required' => 'Bulan Tidak Boleh Kosong',
         ];

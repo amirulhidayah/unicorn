@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Dashboard\Spp\SppLs;
 
+use App\Models\KategoriSppLs;
 use App\Models\SekretariatDaerah;
 use App\Models\SppLs;
 use App\Models\Tahun;
@@ -31,11 +32,13 @@ class Table extends Component
 
     public $daftarTahun = null;
     public $daftarSekretariatDaerah = null;
+    public $daftarKategori = null;
 
     public function mount()
     {
         $this->daftarTahun = Tahun::orderBy('tahun', 'asc')->get();
         $this->daftarSekretariatDaerah = SekretariatDaerah::orderBy('nama', 'asc')->get();
+        $this->daftarKategori = KategoriSppLs::orderBy('nama', 'asc')->get();
     }
 
     public function getData($pagination = true)
@@ -93,7 +96,7 @@ class Table extends Component
             }
 
             if (isset($kategori) && $kategori != 'Semua') {
-                $query->where('kategori', $kategori);
+                $query->where('kategori_spp_ls_id', $kategori);
             }
 
 
@@ -127,12 +130,15 @@ class Table extends Component
             }
 
             if ($cari) {
-                $query->whereHas('kegiatanDpa', function ($query) use ($cari) {
-                    $query->where('nama', 'like', "%" . $cari . "%");
-                    $query->orWhere('no_rek', 'like', "%" . $cari . "%");
-                    $query->orWhereHas('programDpa', function ($query) use ($cari) {
-                        $query->where('nama', 'like', "%" .  $cari . "%");
+                $query->where('nomor_surat', 'like', "%" . $cari . "%");
+                $query->orWhereHas('kegiatanSppLs', function ($query) use ($cari) {
+                    $query->whereHas('kegiatan', function ($query) use ($cari) {
+                        $query->where('nama', 'like', "%" . $cari . "%");
                         $query->orWhere('no_rek', 'like', "%" . $cari . "%");
+                        $query->orWhereHas('program', function ($query) use ($cari) {
+                            $query->where('nama', 'like', "%" .  $cari . "%");
+                            $query->orWhere('no_rek', 'like', "%" . $cari . "%");
+                        });
                     });
                 });
             }

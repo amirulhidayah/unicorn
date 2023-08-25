@@ -61,11 +61,11 @@
 </div>
 
 <div class="table-responsive my-0 mx-0">
-    <table class="table table-hover align-items-center mb-0">
+    <table class="table table-hover table-bordered align-items-center mb-0">
         <thead>
             <tr>
                 @foreach ($th as $index => $item)
-                    <th scope="col" class="{{ $item['class'] ?? '' }} text-uppercase  mx-0">
+                    <th scope="col" class="{{ $item['class'] ?? '' }} text-uppercase text-nowrap  mx-0">
                         {{ $item['title'] }}</th>
                 @endforeach
             </tr>

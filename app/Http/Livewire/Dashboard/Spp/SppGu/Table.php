@@ -54,14 +54,18 @@ class Table extends Component
         $datas = SppGu::where(function ($query) use ($cari, $statusVerifikasiAsn, $statusVerifikasiPpk, $statusVerifikasiAkhir, $bulan, $tahun, $sekretariatDaerah, $statusUploadSkm, $statusUploadArsipSp2d, $tahap) {
             if (in_array(Auth::user()->role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) {
                 if (isset($sekretariatDaerah) && $sekretariatDaerah != 'Semua') {
-                    $query->where('sekretariat_daerah_id', $sekretariatDaerah);
+                    $query->whereHas('spjGu', function ($query) use ($sekretariatDaerah) {
+                        $query->where('sekretariat_daerah_id', $sekretariatDaerah);
+                    });
                 }
             } else if (Auth::user()->role == 'Operator SPM') {
                 $query->where('status_validasi_asn', 1);
                 $query->where('status_validasi_ppk', 1);
                 $query->where('status_validasi_akhir', 1);
             } else {
-                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+                $query->whereHas('spjGu', function ($query) use ($sekretariatDaerah) {
+                    $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+                });
             }
 
             if (isset($statusVerifikasiAsn) && $statusVerifikasiAsn != 'Semua') {
@@ -92,11 +96,6 @@ class Table extends Component
                 }
             }
 
-            if (isset($tahap) && $tahap != 'Semua') {
-                $query->where('tahap', $tahap);
-            }
-
-
             if (isset($statusUploadSkm) && $statusUploadSkm != 'Semua') {
                 $query->where('status_validasi_ppk', 1);
                 $query->where('status_validasi_akhir', 1);
@@ -119,20 +118,30 @@ class Table extends Component
             }
 
             if (isset($bulan) && $bulan != 'Semua') {
-                $query->where('bulan', $bulan);
+                $query->whereHas('spjGu', function ($query) use ($bulan) {
+                    $query->where('bulan', $bulan);
+                });
             }
 
             if (isset($tahun) && $tahun != 'Semua') {
-                $query->where('tahun_id', $tahun);
+                $query->whereHas('spjGu', function ($query) use ($tahun) {
+                    $query->where('tahun_id', $tahun);
+                });
             }
 
             if ($cari) {
-                $query->whereHas('kegiatanDpa', function ($query) use ($cari) {
-                    $query->where('nama', 'like', "%" . $cari . "%");
-                    $query->orWhere('no_rek', 'like', "%" . $cari . "%");
-                    $query->orWhereHas('programDpa', function ($query) use ($cari) {
-                        $query->where('nama', 'like', "%" .  $cari . "%");
-                        $query->orWhere('no_rek', 'like', "%" . $cari . "%");
+                $query->where('nomor_surat', 'like', "%" . $cari . "%");
+                $query->orWhereHas('spjGu', function ($query) use ($cari) {
+                    $query->where('nomor_surat', 'like', "%" . $cari . "%");
+                    $query->orWhereHas('kegiatanSpjGu', function ($query) use ($cari) {
+                        $query->whereHas('kegiatan', function ($query) use ($cari) {
+                            $query->where('nama', 'like', "%" . $cari . "%");
+                            $query->orWhere('no_rek', 'like', "%" . $cari . "%");
+                            $query->orWhereHas('program', function ($query) use ($cari) {
+                                $query->where('nama', 'like', "%" .  $cari . "%");
+                                $query->orWhere('no_rek', 'like', "%" . $cari . "%");
+                            });
+                        });
                     });
                 });
             }

@@ -180,6 +180,10 @@
         .sidebar[data-background-color="white"] .nav>.nav-item a p {
             white-space: normal;
         }
+
+        .table-responsive>.table-bordered {
+            border: 1px solid rgb(238, 238, 238);
+        }
     </style>
 
     @stack('style')

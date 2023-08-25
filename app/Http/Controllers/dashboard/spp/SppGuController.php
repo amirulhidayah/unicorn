@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class SppGuController extends Controller
 {
@@ -61,14 +62,18 @@ class SppGuController extends Controller
         $rules = [
             'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
             'tahun' => 'required',
-            'nomor_surat' => 'required',
-            'spj_gu' => 'required',
+            'nomor_surat' => ['required', Rule::unique('spp_gu')->where(function ($query) use ($request) {
+                return $query->where('nomor_surat', $request->nomor_surat);
+            })],
+            'spj_gu' => ['required'],
         ];
 
         $messages = [
             'sekretariat_daerah.required' => 'Biro Organisasi Tidak Boleh Kosong',
             'nomor_surat.required' => 'Nomor Surat Pertanggungjawaban (SPJ) Tidak Boleh Kosong',
+            'nomor_surat.unique' => 'Nomor Surat Pertanggungjawaban (SPJ) Sudah Ada',
             'spj_gu.required' => 'Nomor Surat Permintaan Pembayaran (SPP) Tidak Boleh Kosong',
+            'spj_gu.unique' => 'Nomor Surat Permintaan Pembayaran (SPP) Sudah Ada',
             'tahun.required' => 'Tahun Tidak Boleh Kosong',
         ];
 
@@ -224,7 +229,9 @@ class SppGuController extends Controller
             'surat_pengembalian' => $suratPenolakan . '|mimes:pdf',
             'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
             'tahun' => 'required',
-            'nomor_surat' => 'required',
+            'nomor_surat' => ['required', Rule::unique('spp_gu')->where(function ($query) use ($request) {
+                return $query->where('nomor_surat', $request->nomor_surat);
+            })->ignore($sppGu->id)],
             'spj_gu' => 'required',
         ];
 
@@ -233,6 +240,7 @@ class SppGuController extends Controller
             'surat_pengembalian.required' => 'Surat Pengembalian tidak boleh kosong',
             'surat_pengembalian.mimes' => 'Dokumen Harus Berupa File PDF',
             'nomor_surat.required' => 'Nomor Surat Pertanggungjawaban (SPJ) Tidak Boleh Kosong',
+            'nomor_surat.unique' => 'Nomor Surat Pertanggungjawaban (SPJ) Sudah Ada',
             'spj_gu.required' => 'Nomor Surat Permintaan Pembayaran (SPP) Tidak Boleh Kosong',
             'tahun.required' => 'Tahun Tidak Boleh Kosong',
         ];

@@ -182,16 +182,22 @@
                 'class' => 'text-center',
             ],
             [
+                'title' => 'Nomor Surat Permintaan Pembayaran (SPP)',
+            ],
+            [
                 'title' => 'Tanggal',
+            ],
+            [
+                'title' => 'Sekretariat Daerah',
             ],
             [
                 'title' => 'Nomor Surat Pertanggungjawaban (SPJ)',
             ],
             [
-                'title' => 'Nomor Surat Permintaan Pembayaran (SPP)',
+                'title' => 'Periode (SPJ)',
             ],
             [
-                'title' => 'Sekretariat Daerah',
+                'title' => 'Kegiatan',
             ],
             [
                 'title' => 'Verifikasi ASN Sub Bagian Keuangan',
@@ -230,6 +236,15 @@
                         <div class="d-flex">
                             <div class="d-flex flex-column justify-content-center">
                                 <h6 class="mb-0 text-xs">
+                                    {{ $data->nomor_surat }}
+                                </h6>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex">
+                            <div class="d-flex flex-column justify-content-center">
+                                <h6 class="mb-0 text-xs">
                                     {{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('d F Y') }}</h6>
                             </div>
                         </div>
@@ -238,7 +253,7 @@
                         <div class="d-flex">
                             <div class="d-flex flex-column justify-content-center">
                                 <h6 class="mb-0 text-xs">
-                                    {{ $data->nomor_surat }}
+                                    {{ $data->spjGu->sekretariatDaerah->nama }}
                                 </h6>
                             </div>
                         </div>
@@ -253,13 +268,18 @@
                         </div>
                     </td>
                     <td>
-                        <div class="d-flex">
-                            <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-xs">
-                                    {{ $data->spjGu->sekretariatDaerah->nama }}
-                                </h6>
-                            </div>
-                        </div>
+                        <h6 class="mb-0 text-xs text-nowrap">
+                            {{ $data->spjGu->bulan . ', ' . $data->spjGu->tahun->tahun }}
+                        </h6>
+                    </td>
+                    <td class="text-nowrap">
+                        @foreach ($data->spjGu->kegiatanSpjGu as $kegiatanSpjGu)
+                            <h6 class="mb-0 text-xs text-nowrap my-2">
+                                - {{ $kegiatanSpjGu->kegiatan->nama . ' (' . $kegiatanSpjGu->kegiatan->no_rek . ')' }}
+                                <br>
+                                {{ 'Rp.' . number_format($kegiatanSpjGu->anggaran_digunakan ?? 0, 0, ',', '.') }}
+                            </h6>
+                        @endforeach
                     </td>
                     <td>
                         <h6 class="mb-0 text-xs text-center">

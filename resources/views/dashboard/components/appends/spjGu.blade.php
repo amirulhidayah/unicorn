@@ -55,6 +55,7 @@
                  'placeholder' => 'Masukkan Dokumen',
                  'dataKey' => $dataKey,
                  'value' => '',
+                 'accept' => 'application/pdf',
              ])
              @endcomponent
          </div>

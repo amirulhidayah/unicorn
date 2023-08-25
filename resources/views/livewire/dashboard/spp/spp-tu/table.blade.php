@@ -194,6 +194,9 @@
                 'title' => 'Periode',
             ],
             [
+                'title' => 'Kegiatan',
+            ],
+            [
                 'title' => 'Verifikasi ASN Sub Bagian Keuangan',
                 'class' => 'text-center',
             ],
@@ -256,6 +259,15 @@
                         <h6 class="mb-0 text-xs text-nowrap">
                             {{ $data->bulan . ', ' . $data->tahun->tahun }}
                         </h6>
+                    </td>
+                    <td class="text-nowrap">
+                        @foreach ($data->kegiatanSppTu as $kegiatanSppTu)
+                            <h6 class="mb-0 text-xs text-nowrap my-2">
+                                - {{ $kegiatanSppTu->kegiatan->nama . ' (' . $kegiatanSppTu->kegiatan->no_rek . ')' }}
+                                <br>
+                                {{ 'Rp.' . number_format($kegiatanSppTu->jumlah_anggaran ?? 0, 0, ',', '.') }}
+                            </h6>
+                        @endforeach
                     </td>
                     <td>
                         <h6 class="mb-0 text-xs text-center">

@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\dashboard\spp;
 
 use App\Http\Controllers\Controller;
+use App\Models\DokumenSppGu;
 use App\Models\Kegiatan;
 use App\Models\KegiatanSpjGu;
 use App\Models\Program;
 use App\Models\RiwayatSpjGu;
+use App\Models\RiwayatSppGu;
 use App\Models\SekretariatDaerah;
 use App\Models\Spd;
 use App\Models\SpjGu;
+use App\Models\SppGu;
 use App\Models\Tahun;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -22,6 +25,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class SpjGuController extends Controller
 {
@@ -47,7 +51,9 @@ class SpjGuController extends Controller
 
         $rules = [
             'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
-            'nomor_surat' => 'required',
+            'nomor_surat' => ['required', Rule::unique('spj_gu')->where(function ($query) use ($request) {
+                return $query->where('nomor_surat', $request->nomor_surat);
+            })],
             'tahun' => 'required',
             'bulan' => 'required',
         ];
@@ -55,6 +61,7 @@ class SpjGuController extends Controller
         $messages = [
             'sekretariat_daerah.required' => 'Biro Organisasi Tidak Boleh Kosong',
             'nomor_surat.required' => 'Nomor Surat Permintaan Pembayaran (SPP) Tidak Boleh Kosong',
+            'nomor_surat.unique' => 'Nomor Surat Permintaan Pembayaran (SPP) Sudah Ada',
             'tahun.required' => 'Tahun Tidak Boleh Kosong',
             'bulan.required' => 'Bulan Tidak Boleh Kosong',
         ];
@@ -272,7 +279,9 @@ class SpjGuController extends Controller
         $rules = [
             'surat_pengembalian' => $suratPengembalian . '|mimes:pdf',
             'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
-            'nomor_surat' => 'required',
+            'nomor_surat' => ['required', Rule::unique('spj_gu')->where(function ($query) use ($request) {
+                return $query->where('nomor_surat', $request->nomor_surat);
+            })->ignore($spjGu->id)],
             'tahun' => 'required',
             'bulan' => 'required',
         ];
@@ -282,6 +291,7 @@ class SpjGuController extends Controller
             'surat_pengembalian.mimes' => 'Dokumen Harus Berupa File PDF',
             'sekretariat_daerah.required' => 'Biro Organisasi Tidak Boleh Kosong',
             'nomor_surat.required' => 'Nomor Surat Permintaan Pembayaran (SPP) Tidak Boleh Kosong',
+            'nomor_surat.unique' => 'Nomor Surat Permintaan Pembayaran (SPP) Sudah Ada',
             'tahun.required' => 'Tahun Tidak Boleh Kosong',
             'bulan.required' => 'Bulan Tidak Boleh Kosong',
         ];
@@ -462,6 +472,22 @@ class SpjGuController extends Controller
             return throw new Exception('Gagal Diproses');
         }
 
+        $sppGu = SppGu::where('spj_gu_id', $spjGu->id)->first();
+        $arraySuratPenolakanSppGu = null;
+        $arraySuratPengembalianSppGu = null;
+        if ($sppGu) {
+            $riwayatSppGu = RiwayatSppGu::where('spp_gu_id', $sppGu->id)->get();
+
+            $arrayDokumenSppGu = $sppGu->dokumenSppGu->pluck('dokumen');
+            if ($riwayatSppGu) {
+                $arraySuratPenolakanSppGu = $riwayatSppGu->pluck('surat_penolakan');
+                $arraySuratPengembalianSppGu = $riwayatSppGu->pluck('surat_pengembalian');
+            }
+
+            $spm = $sppGu->dokumen_spm;
+            $sp2d = $sppGu->dokumen_sp2d;
+        }
+
         $riwayatSpjGu = RiwayatSpjGu::where('spj_gu_id', $spjGu->id)->get();
         $kegiatanSpjGu = KegiatanSpjGu::where('spj_gu_id', $spjGu->id)->get();
 
@@ -476,7 +502,11 @@ class SpjGuController extends Controller
 
         try {
             DB::transaction(
-                function () use ($spjGu) {
+                function () use ($spjGu, $sppGu) {
+                    $sppGu->delete();
+                    $riwayatSppGu = RiwayatSppGu::where('spp_gu_id', $sppGu->id)->delete();
+                    $dokumenSppGu = DokumenSppGu::where('spp_gu_id', $sppGu->id)->delete();
+
                     $spjGu->delete();
                     $riwayatSpjGu = RiwayatSpjGu::where('spj_gu_id', $spjGu->id)->delete();
                     $kegiatanSpjGu = KegiatanSpjGu::where('spj_gu_id', $spjGu->id)->delete();
@@ -488,18 +518,59 @@ class SpjGuController extends Controller
 
         if (count($arraySuratPenolakan) > 0) {
             foreach ($arraySuratPenolakan as $suratPenolakan) {
-                Storage::delete('surat_penolakan_spj_gu/' . $suratPenolakan);
+                if (Storage::exists('surat_penolakan_spj_gu/' . $suratPenolakan)) {
+                    Storage::delete('surat_penolakan_spj_gu/' . $suratPenolakan);
+                }
             }
         }
         if (count($arraySuratPengembalian) > 0) {
             foreach ($arraySuratPengembalian as $suratPengembalian) {
-                Storage::delete('surat_pengembalian_spj_gu/' . $suratPengembalian);
+                if (Storage::exists('surat_pengembalian_spj_gu/' . $suratPengembalian)) {
+                    Storage::delete('surat_pengembalian_spj_gu/' . $suratPengembalian);
+                }
             }
         }
 
         if (count($arrayDokumenKegiatan) > 0) {
             foreach ($arrayDokumenKegiatan as $dokumen) {
-                Storage::delete('dokumen_spj_gu/' . $dokumen);
+                if (Storage::exists('dokumen_spj_gu/' . $dokumen)) {
+                    Storage::delete('dokumen_spj_gu/' . $dokumen);
+                }
+            }
+        }
+
+        if (count($arraySuratPenolakanSppGu) > 0) {
+            foreach ($arraySuratPenolakanSppGu as $suratPenolakan) {
+                if (Storage::exists('surat_penolakan_spp_gu/' . $suratPenolakan)) {
+                    Storage::delete('surat_penolakan_spp_gu/' . $suratPenolakan);
+                }
+            }
+        }
+        if (count($arraySuratPengembalianSppGu) > 0) {
+            foreach ($arraySuratPengembalianSppGu as $suratPengembalian) {
+                if (Storage::exists('surat_pengembalian_spp_gu/' . $suratPengembalian)) {
+                    Storage::delete('surat_pengembalian_spp_gu/' . $suratPengembalian);
+                }
+            }
+        }
+
+        if (count($arrayDokumenSppGu) > 0) {
+            foreach ($arrayDokumenSppGu as $dokumen) {
+                if (Storage::exists('dokumen_spp_gu/' . $dokumen)) {
+                    Storage::delete('dokumen_spp_gu/' . $dokumen);
+                }
+            }
+        }
+
+        if ($spm) {
+            if (Storage::exists('dokumen_spm_spp_gu/' . $spm)) {
+                Storage::delete('dokumen_spm_spp_gu/' . $spm);
+            }
+        }
+
+        if ($sp2d) {
+            if (Storage::exists('dokumen_arsip_sp2d_spp_gu/' . $sp2d)) {
+                Storage::delete('dokumen_arsip_sp2d_spp_gu/' . $sp2d);
             }
         }
 

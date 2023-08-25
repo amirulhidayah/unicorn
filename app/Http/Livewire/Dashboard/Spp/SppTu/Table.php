@@ -121,12 +121,15 @@ class Table extends Component
             }
 
             if ($cari) {
-                $query->whereHas('kegiatan', function ($query) use ($cari) {
-                    $query->where('nama', 'like', "%" . $cari . "%");
-                    $query->orWhere('no_rek', 'like', "%" . $cari . "%");
-                    $query->orWhereHas('programSpp', function ($query) use ($cari) {
-                        $query->where('nama', 'like', "%" .  $cari . "%");
+                $query->where('nomor_surat', 'like', "%" . $cari . "%");
+                $query->orWhereHas('kegiatanSppTu', function ($query) use ($cari) {
+                    $query->whereHas('kegiatan', function ($query) use ($cari) {
+                        $query->where('nama', 'like', "%" . $cari . "%");
                         $query->orWhere('no_rek', 'like', "%" . $cari . "%");
+                        $query->orWhereHas('program', function ($query) use ($cari) {
+                            $query->where('nama', 'like', "%" .  $cari . "%");
+                            $query->orWhere('no_rek', 'like', "%" . $cari . "%");
+                        });
                     });
                 });
             }

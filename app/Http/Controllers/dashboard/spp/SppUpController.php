@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class SppUpController extends Controller
 {
@@ -61,13 +62,16 @@ class SppUpController extends Controller
 
         $rules = [
             'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
-            'nomor_surat' => 'required',
+            'nomor_surat' => ['required', Rule::unique('spp_up')->where(function ($query) use ($request) {
+                return $query->where('nomor_surat', $request->nomor_surat);
+            })],
             'tahun' => 'required',
         ];
 
         $messages = [
             'sekretariat_daerah.required' => 'Biro Organisasi Tidak Boleh Kosong',
             'nomor_surat.required' => 'Nomor Surat Permintaan Pembayaran (SPP) Tidak Boleh Kosong',
+            'nomor_surat.unique' => 'Nomor Surat Permintaan Pembayaran (SPP) Sudah Ada',
             'tahun.required' => 'Tahun Tidak Boleh Kosong',
         ];
 
@@ -257,7 +261,9 @@ class SppUpController extends Controller
         $rules = [
             'surat_pengembalian' => $suratPenolakan . '|mimes:pdf',
             'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
-            'nomor_surat' => 'required',
+            'nomor_surat' => ['required', Rule::unique('spp_up')->where(function ($query) use ($request) {
+                return $query->where('nomor_surat', $request->nomor_surat);
+            })->ignore($sppUp->id)],
             'tahun' => 'required',
         ];
 
@@ -266,6 +272,7 @@ class SppUpController extends Controller
             'surat_pengembalian.mimes' => 'Dokumen Harus Berupa File PDF',
             'sekretariat_daerah.required' => 'Biro Organisasi Tidak Boleh Kosong',
             'nomor_surat.required' => 'Nomor Surat Permintaan Pembayaran (SPP) Tidak Boleh Kosong',
+            'nomor_surat.unique' => 'Nomor Surat Permintaan Pembayaran (SPP) Sudah Ada',
             'tahun.required' => 'Tahun Tidak Boleh Kosong',
         ];
 
