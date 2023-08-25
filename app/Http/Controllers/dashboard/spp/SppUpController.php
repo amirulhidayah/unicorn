@@ -31,7 +31,7 @@ class SppUpController extends Controller
     public function index(Request $request)
     {
         $totalSpp = SppUp::where(function ($query) {
-            if (Auth::user()->role != 'Admin') {
+            if (!in_array(Auth::user()->role, ['Admin', 'Operator SPM'])) {
                 $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
             }
         })->where('status_validasi_ppk', 1)->where('status_validasi_asn', 1)->where('status_validasi_akhir', 1)->whereNotNull('dokumen_spm')->whereNull('dokumen_arsip_sp2d')->count();

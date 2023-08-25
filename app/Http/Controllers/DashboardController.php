@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SpjGu;
 use App\Models\SppGu;
 use App\Models\SppLs;
 use App\Models\SppTu;
@@ -16,8 +17,9 @@ class DashboardController extends Controller
         $sppUp = $this->sppUp();
         $sppTu = $this->sppTu();
         $sppLs = $this->sppLs();
+        $spjGu = $this->spjGu();
         $sppGu = $this->sppGu();
-        return view('dashboard.pages.dashboard', compact(['sppUp', 'sppTu', 'sppLs', 'sppGu']));
+        return view('dashboard.pages.dashboard', compact(['sppUp', 'sppTu', 'sppLs', 'spjGu', 'sppGu']));
     }
 
     private function sppUp()
@@ -25,6 +27,10 @@ class DashboardController extends Controller
         $totalDokumen = SppUp::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
                 $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+            } else if (Auth::user()->role == 'Operator SPM') {
+                $query->where('status_validasi_asn', 1);
+                $query->where('status_validasi_ppk', 1);
+                $query->where('status_validasi_akhir', 1);
             }
         })->count();
 
@@ -37,8 +43,13 @@ class DashboardController extends Controller
                 $query->where('status_validasi_asn', 0);
             } else if (Auth::user()->role == "PPK") {
                 $query->where('status_validasi_ppk', 0);
+            } else if (Auth::user()->role == "Operator SPM") {
+                $query->where('status_validasi_asn', 1);
+                $query->where('status_validasi_ppk', 1);
+                $query->where('status_validasi_akhir', 1);
+                $query->whereNull('dokumen_spm');
             } else {
-                $query->where('status_validasi_asn', 0)->where('status_validasi_ppk', 0);
+                $query->where('status_validasi_asn', 0)->orWhere('status_validasi_ppk', 0);
             }
         })->count();
 
@@ -61,7 +72,13 @@ class DashboardController extends Controller
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
                 $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
             }
-        })->where('status_validasi_akhir', 1)->count();
+
+            if (Auth::user()->role == "Operator SPM") {
+                $query->whereNotNull('dokumen_spm');
+            }
+
+            $query->where('status_validasi_akhir', 1);
+        })->count();
 
         return [
             'totalDokumen' => $totalDokumen,
@@ -76,6 +93,10 @@ class DashboardController extends Controller
         $totalDokumen = SppTu::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
                 $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+            } else if (Auth::user()->role == 'Operator SPM') {
+                $query->where('status_validasi_asn', 1);
+                $query->where('status_validasi_ppk', 1);
+                $query->where('status_validasi_akhir', 1);
             }
         })->count();
 
@@ -88,8 +109,13 @@ class DashboardController extends Controller
                 $query->where('status_validasi_asn', 0);
             } else if (Auth::user()->role == "PPK") {
                 $query->where('status_validasi_ppk', 0);
+            } else if (Auth::user()->role == "Operator SPM") {
+                $query->where('status_validasi_asn', 1);
+                $query->where('status_validasi_ppk', 1);
+                $query->where('status_validasi_akhir', 1);
+                $query->whereNull('dokumen_spm');
             } else {
-                $query->where('status_validasi_asn', 0)->where('status_validasi_ppk', 0);
+                $query->where('status_validasi_asn', 0)->orWhere('status_validasi_ppk', 0);
             }
         })->count();
 
@@ -112,7 +138,13 @@ class DashboardController extends Controller
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
                 $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
             }
-        })->where('status_validasi_akhir', 1)->count();
+
+            if (Auth::user()->role == "Operator SPM") {
+                $query->whereNotNull('dokumen_spm');
+            }
+
+            $query->where('status_validasi_akhir', 1);
+        })->count();
 
         return [
             'totalDokumen' => $totalDokumen,
@@ -127,6 +159,10 @@ class DashboardController extends Controller
         $totalDokumen = SppLs::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
                 $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+            } else if (Auth::user()->role == 'Operator SPM') {
+                $query->where('status_validasi_asn', 1);
+                $query->where('status_validasi_ppk', 1);
+                $query->where('status_validasi_akhir', 1);
             }
         })->count();
 
@@ -139,8 +175,13 @@ class DashboardController extends Controller
                 $query->where('status_validasi_asn', 0);
             } else if (Auth::user()->role == "PPK") {
                 $query->where('status_validasi_ppk', 0);
+            } else if (Auth::user()->role == "Operator SPM") {
+                $query->where('status_validasi_asn', 1);
+                $query->where('status_validasi_ppk', 1);
+                $query->where('status_validasi_akhir', 1);
+                $query->whereNull('dokumen_spm');
             } else {
-                $query->where('status_validasi_asn', 0)->where('status_validasi_ppk', 0);
+                $query->where('status_validasi_asn', 0)->orWhere('status_validasi_ppk', 0);
             }
         })->count();
 
@@ -163,6 +204,63 @@ class DashboardController extends Controller
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
                 $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
             }
+
+            if (Auth::user()->role == "Operator SPM") {
+                $query->whereNotNull('dokumen_spm');
+            }
+
+            $query->where('status_validasi_akhir', 1);
+        })->count();
+
+        return [
+            'totalDokumen' => $totalDokumen,
+            'belumProses' => $belumProses,
+            'ditolak' => $ditolak,
+            'selesai' => $selesai
+        ];
+    }
+
+    private function spjGu()
+    {
+        $totalDokumen = SpjGu::where(function ($query) {
+            if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
+                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+            }
+        })->count();
+
+        $belumProses = SpjGu::where(function ($query) {
+            if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
+                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+            }
+
+            if (Auth::user()->role == "ASN Sub Bagian Keuangan") {
+                $query->where('status_validasi_asn', 0);
+            } else if (Auth::user()->role == "PPK") {
+                $query->where('status_validasi_ppk', 0);
+            } else {
+                $query->where('status_validasi_asn', 0)->orWhere('status_validasi_ppk', 0);
+            }
+        })->count();
+
+        $ditolak = SpjGu::where(function ($query) {
+            if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
+                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+            }
+
+            if (Auth::user()->role == "ASN Sub Bagian Keuangan") {
+                $query->where('status_validasi_asn', 2);
+            } else if (Auth::user()->role == "PPK") {
+                $query->where('status_validasi_ppk', 2);
+            } else {
+                $query->where('status_validasi_asn', 2);
+                $query->orWhere('status_validasi_ppk', 2);
+            }
+        })->count();
+
+        $selesai = SpjGu::where(function ($query) {
+            if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
+                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+            }
         })->where('status_validasi_akhir', 1)->count();
 
         return [
@@ -178,6 +276,10 @@ class DashboardController extends Controller
         $totalDokumen = SppGu::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
                 $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+            } else if (Auth::user()->role == 'Operator SPM') {
+                $query->where('status_validasi_asn', 1);
+                $query->where('status_validasi_ppk', 1);
+                $query->where('status_validasi_akhir', 1);
             }
         })->count();
 
@@ -190,8 +292,13 @@ class DashboardController extends Controller
                 $query->where('status_validasi_asn', 0);
             } else if (Auth::user()->role == "PPK") {
                 $query->where('status_validasi_ppk', 0);
+            } else if (Auth::user()->role == "Operator SPM") {
+                $query->where('status_validasi_asn', 1);
+                $query->where('status_validasi_ppk', 1);
+                $query->where('status_validasi_akhir', 1);
+                $query->whereNull('dokumen_spm');
             } else {
-                $query->where('status_validasi_asn', 0)->where('status_validasi_ppk', 0);
+                $query->where('status_validasi_asn', 0)->orWhere('status_validasi_ppk', 0);
             }
         })->count();
 
@@ -214,7 +321,13 @@ class DashboardController extends Controller
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
                 $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
             }
-        })->where('status_validasi_akhir', 1)->count();
+
+            if (Auth::user()->role == "Operator SPM") {
+                $query->whereNotNull('dokumen_spm');
+            }
+
+            $query->where('status_validasi_akhir', 1);
+        })->count();
 
         return [
             'totalDokumen' => $totalDokumen,

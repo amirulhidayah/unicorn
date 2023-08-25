@@ -41,10 +41,12 @@
                                 <p class="mb-1"><span class="badge badge-primary">Belum Diproses</span></p>
                                 <p class="text-muted mb-0">{{ $sppUp['belumProses'] }}</p>
                             </div>
-                            <div class="d-flex justify-content-between">
-                                <p class="mb-1"><span class="badge badge-danger">Ditolak</span></p>
-                                <p class="text-muted mb-0">{{ $sppUp['ditolak'] }}</p>
-                            </div>
+                            @if (Auth::user()->role != 'Operator SPM')
+                                <div class="d-flex justify-content-between">
+                                    <p class="mb-1"><span class="badge badge-danger">Ditolak</span></p>
+                                    <p class="text-muted mb-0">{{ $sppUp['ditolak'] }}</p>
+                                </div>
+                            @endif
                             <div class="d-flex justify-content-between">
                                 <p class="mb-1"><span class="badge badge-success">Selesai</span></p>
                                 <p class="text-muted mb-0">{{ $sppUp['selesai'] }}</p>
@@ -66,10 +68,12 @@
                                 <p class="mb-1"><span class="badge badge-primary">Belum Diproses</span></p>
                                 <p class="text-muted mb-0">{{ $sppTu['belumProses'] }}</p>
                             </div>
-                            <div class="d-flex justify-content-between">
-                                <p class="mb-1"><span class="badge badge-danger">Ditolak</span></p>
-                                <p class="text-muted mb-0">{{ $sppTu['ditolak'] }}</p>
-                            </div>
+                            @if (Auth::user()->role != 'Operator SPM')
+                                <div class="d-flex justify-content-between">
+                                    <p class="mb-1"><span class="badge badge-danger">Ditolak</span></p>
+                                    <p class="text-muted mb-0">{{ $sppTu['ditolak'] }}</p>
+                                </div>
+                            @endif
                             <div class="d-flex justify-content-between">
                                 <p class="mb-1"><span class="badge badge-success">Selesai</span></p>
                                 <p class="text-muted mb-0">{{ $sppTu['selesai'] }}</p>
@@ -91,10 +95,12 @@
                                 <p class="mb-1"><span class="badge badge-primary">Belum Diproses</span></p>
                                 <p class="text-muted mb-0">{{ $sppLs['belumProses'] }}</p>
                             </div>
-                            <div class="d-flex justify-content-between">
-                                <p class="mb-1"><span class="badge badge-danger">Ditolak</span></p>
-                                <p class="text-muted mb-0">{{ $sppLs['ditolak'] }}</p>
-                            </div>
+                            @if (Auth::user()->role != 'Operator SPM')
+                                <div class="d-flex justify-content-between">
+                                    <p class="mb-1"><span class="badge badge-danger">Ditolak</span></p>
+                                    <p class="text-muted mb-0">{{ $sppLs['ditolak'] }}</p>
+                                </div>
+                            @endif
                             <div class="d-flex justify-content-between">
                                 <p class="mb-1"><span class="badge badge-success">Selesai</span></p>
                                 <p class="text-muted mb-0">{{ $sppLs['selesai'] }}</p>
@@ -102,6 +108,33 @@
                         </div>
                     </div>
                 </div>
+                @if (Auth::user()->role != 'Operator SPM')
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h5><b>Dokumen SPJ GU</b></h5>
+                                    </div>
+                                    <h3 class="text-success fw-bold">{{ $spjGu['totalDokumen'] }}</h3>
+                                </div>
+                                <hr class="mt-0 mb-2">
+                                <div class="d-flex justify-content-between">
+                                    <p class="mb-1"><span class="badge badge-primary">Belum Diproses</span></p>
+                                    <p class="text-muted mb-0">{{ $spjGu['belumProses'] }}</p>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <p class="mb-1"><span class="badge badge-danger">Ditolak</span></p>
+                                    <p class="text-muted mb-0">{{ $spjGu['ditolak'] }}</p>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <p class="mb-1"><span class="badge badge-success">Selesai</span></p>
+                                    <p class="text-muted mb-0">{{ $spjGu['selesai'] }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
                 <div class="col-12 col-sm-6 col-md-3">
                     <div class="card">
                         <div class="card-body">
@@ -116,10 +149,12 @@
                                 <p class="mb-1"><span class="badge badge-primary">Belum Diproses</span></p>
                                 <p class="text-muted mb-0">{{ $sppGu['belumProses'] }}</p>
                             </div>
-                            <div class="d-flex justify-content-between">
-                                <p class="mb-1"><span class="badge badge-danger">Ditolak</span></p>
-                                <p class="text-muted mb-0">{{ $sppGu['ditolak'] }}</p>
-                            </div>
+                            @if (Auth::user()->role != 'Operator SPM')
+                                <div class="d-flex justify-content-between">
+                                    <p class="mb-1"><span class="badge badge-danger">Ditolak</span></p>
+                                    <p class="text-muted mb-0">{{ $sppGu['ditolak'] }}</p>
+                                </div>
+                            @endif
                             <div class="d-flex justify-content-between">
                                 <p class="mb-1"><span class="badge badge-success">Selesai</span></p>
                                 <p class="text-muted mb-0">{{ $sppGu['selesai'] }}</p>

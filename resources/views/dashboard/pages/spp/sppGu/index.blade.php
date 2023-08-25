@@ -71,7 +71,7 @@
 @endsection
 
 @push('script')
-    @if ($totalSpp)
+    @if ($totalSpp && Auth::user()->role != 'Operator SPM')
         <script>
             const totalSpp = {{ $totalSpp }};
             swal("Pemberitahuan", 'Terdapat ' + totalSpp + ' arsip SP2D SPP-GU yang belum diupload', {

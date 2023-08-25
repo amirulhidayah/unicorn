@@ -71,11 +71,13 @@
                     </a>
                     <div class="collapse" id="menu-spp-gu">
                         <ul class="nav nav-collapse">
-                            <li id="spp-gu-spj">
-                                <a href="{{ url('spj-gu') }}">
-                                    <span class="sub-item">SPJ</span>
-                                </a>
-                            </li>
+                            @if (Auth::user()->role != 'Operator SPM')
+                                <li id="spp-gu-spj">
+                                    <a href="{{ url('spj-gu') }}">
+                                        <span class="sub-item">SPJ</span>
+                                    </a>
+                                </li>
+                            @endif
                             <li id="spp-gu-spp">
                                 <a href="{{ url('spp-gu') }}">
                                     <span class="sub-item">SPP</span>
