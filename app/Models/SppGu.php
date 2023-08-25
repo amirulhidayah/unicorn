@@ -13,11 +13,6 @@ class SppGu extends Model
 
     protected $table = 'spp_gu';
 
-    public function kegiatanDpa()
-    {
-        return $this->belongsTo(KegiatanDpa::class)->withTrashed();
-    }
-
     public function tahun()
     {
         return $this->belongsTo(Tahun::class)->withTrashed();

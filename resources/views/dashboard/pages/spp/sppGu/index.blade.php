@@ -71,6 +71,17 @@
 @endsection
 
 @push('script')
+    @if ($totalSpp)
+        <script>
+            const totalSpp = {{ $totalSpp }};
+            swal("Pemberitahuan", 'Terdapat ' + totalSpp + ' arsip SP2D SPP-GU yang belum diupload', {
+                icon: "warning",
+                buttons: false,
+                timer: 5000,
+            });
+        </script>
+    @endif
+
     <script>
         $(document).on('click', '#btn-delete', function() {
             let id = $(this).val();

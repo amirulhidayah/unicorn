@@ -70,6 +70,17 @@
 @endsection
 
 @push('script')
+    @if ($totalSpp)
+        <script>
+            const totalSpp = {{ $totalSpp }};
+            swal("Pemberitahuan", 'Terdapat ' + totalSpp + ' arsip SP2D SPP-LS yang belum diupload', {
+                icon: "warning",
+                buttons: false,
+                timer: 5000,
+            });
+        </script>
+    @endif
+
     <script>
         $('#btn-tambah').click(function() {
             $.ajax({

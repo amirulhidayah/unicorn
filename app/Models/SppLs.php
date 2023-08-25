@@ -40,7 +40,7 @@ class SppLs extends Model
 
     public function kategoriSppLs()
     {
-        return $this->belongsTo(KategoriSppLs::class);
+        return $this->belongsTo(KategoriSppLs::class)->withTrashed();
     }
 
     public function kegiatanSppLs()

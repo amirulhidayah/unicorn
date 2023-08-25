@@ -19,7 +19,7 @@ class Spd extends Model
         return $this->belongsTo(Kegiatan::class, 'kegiatan_id')->withTrashed();
     }
 
-    public function SekretariatDaerah()
+    public function sekretariatDaerah()
     {
         return $this->belongsTo(SekretariatDaerah::class, 'sekretariat_daerah_id')->withTrashed();
     }

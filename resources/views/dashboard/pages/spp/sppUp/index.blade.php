@@ -70,10 +70,11 @@
 @endsection
 
 @push('script')
-    @if (Session::has('error'))
+    @if ($totalSpp)
         <script>
-            swal("Selesaikan Terlebih Dahulu Arsip SP2D", 'Terdapat arsip SP2D yang belum diupload', {
-                icon: "error",
+            const totalSpp = {{ $totalSpp }};
+            swal("Pemberitahuan", 'Terdapat ' + totalSpp + ' arsip SP2D SPP-UP yang belum diupload', {
+                icon: "warning",
                 buttons: false,
                 timer: 5000,
             });

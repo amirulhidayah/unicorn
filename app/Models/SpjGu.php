@@ -11,11 +11,6 @@ class SpjGu extends Model
     use HasFactory, TraitUuid;
     protected $table = 'spj_gu';
 
-    public function kegiatanDpa()
-    {
-        return $this->belongsTo(KegiatanDpa::class)->withTrashed();
-    }
-
     public function tahun()
     {
         return $this->belongsTo(Tahun::class)->withTrashed();

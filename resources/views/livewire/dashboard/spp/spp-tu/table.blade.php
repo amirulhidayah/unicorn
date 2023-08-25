@@ -250,7 +250,7 @@
                         <div class="d-flex">
                             <div class="d-flex flex-column justify-content-center">
                                 <h6 class="mb-0 text-xs">
-                                    {{ $data->SekretariatDaerah->nama }}
+                                    {{ $data->sekretariatDaerah->nama }}
                                 </h6>
                             </div>
                         </div>

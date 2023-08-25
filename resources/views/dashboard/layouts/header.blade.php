@@ -52,7 +52,7 @@
                                                             'ASN Sub Bagian Keuangan',
                                                             'Kuasa Pengguna Anggaran',
                                                         ]))
-                                                        {{ Auth::user()->profil->SekretariatDaerah->nama }}
+                                                        {{ Auth::user()->profil->sekretariatDaerah->nama }}
                                                     @else
                                                         {{ Auth::user()->role }}
                                                     @endif

@@ -138,7 +138,7 @@
                                     <label class="form-label my-2 fw-bold">Sekretariat Daerah</label>
                                     <br>
                                     <label for="exampleFormControlInput1"
-                                        class="badge badge-primary text-light mb-2">{{ Auth::user()->profil->SekretariatDaerah->nama }}</label>
+                                        class="badge badge-primary text-light mb-2">{{ Auth::user()->profil->sekretariatDaerah->nama }}</label>
                                     <br>
                                 </div>
                             @endif

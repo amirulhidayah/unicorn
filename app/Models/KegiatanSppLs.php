@@ -13,7 +13,7 @@ class KegiatanSppLs extends Model
 
     public function kegiatan()
     {
-        return $this->belongsTo(Kegiatan::class);
+        return $this->belongsTo(Kegiatan::class)->withTrashed();
     }
 
     public function sppLs()

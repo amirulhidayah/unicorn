@@ -1,7 +1,7 @@
 <div class="col-lg-6">
     @component('dashboard.components.widgets.info', [
         'judul' => 'Sekretariat Daerah',
-        'isi' => $sppGu->SekretariatDaerah->nama,
+        'isi' => $sppGu->sekretariatDaerah->nama,
     ])
     @endcomponent
     @component('dashboard.components.widgets.info', [

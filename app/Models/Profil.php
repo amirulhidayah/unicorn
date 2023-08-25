@@ -14,7 +14,7 @@ class Profil extends Model
     use SoftDeletes;
     protected $table = 'profil';
 
-    public function SekretariatDaerah()
+    public function sekretariatDaerah()
     {
         return $this->belongsTo(SekretariatDaerah::class, 'sekretariat_daerah_id', 'id')->withTrashed();
     }

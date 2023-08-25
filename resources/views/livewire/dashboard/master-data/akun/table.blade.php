@@ -76,7 +76,7 @@
                     <td>
                         <div class="d-flex">
                             <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-xs">{{ $data->profil->SekretariatDaerah->nama ?? '' }}</h6>
+                                <h6 class="mb-0 text-xs">{{ $data->profil->sekretariatDaerah->nama ?? '' }}</h6>
                             </div>
                         </div>
                     </td>

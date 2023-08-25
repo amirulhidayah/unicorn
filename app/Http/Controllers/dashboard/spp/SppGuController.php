@@ -29,18 +29,16 @@ class SppGuController extends Controller
 {
     public function index()
     {
-        return view('dashboard.pages.spp.sppGu.index');
+        $totalSpp = SppGu::where(function ($query) {
+            if (Auth::user()->role != 'Admin') {
+                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+            }
+        })->where('status_validasi_ppk', 1)->where('status_validasi_asn', 1)->where('status_validasi_akhir', 1)->whereNotNull('dokumen_spm')->whereNull('dokumen_arsip_sp2d')->count();
+        return view('dashboard.pages.spp.sppGu.index', compact(['totalSpp']));
     }
 
     public function create()
     {
-        if (Auth::user()->role != "Admin") {
-            $totalSpp = SppGu::where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id)->where('status_validasi_ppk', 1)->where('status_validasi_asn', 1)->where('status_validasi_akhir', 1)->where('tahap', 'Selesai')->whereNotNull('dokumen_spm')->whereNull('dokumen_arsip_sp2d')->count();
-            if ($totalSpp > 0) {
-                return redirect(url('spp-gu'))->with('error', 'Selesaikan Terlebih Dahulu Arsip SP2D');
-            }
-        }
-
         $daftarTahun = Tahun::orderBy('tahun', 'asc')->get();
         $daftarDokumenSppGu = DaftarDokumenSppGu::get();
         $daftarSekretariatDaerah = SekretariatDaerah::orderBy('nama', 'asc')->get();
