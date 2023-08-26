@@ -7,7 +7,8 @@
 @push('style')
     <style>
         #qr-reader {
-            height: 200px;
+            /* height: 300px; */
+            /* width: 300px; */
         }
 
         .media {
@@ -76,14 +77,15 @@
                             </div>
                         </div>
                     </div>
-                    <div id="qr-reader" style="width: 100%" class="mx-3"></div>
+                    <div class="col-12 text-center d-flex justify-content-center align-items-center">
+                        <div id="qr-reader" class="mx-3"></div>
+                    </div>
                 </div>
                 <div class="row" id="data">
 
                 </div>
             </div>
         </div>
-    </div>
     </div>
 @endsection
 

@@ -274,10 +274,6 @@
                                 }
                             }
 
-                            if ($data->status_validasi_akhir == 1) {
-                                $actionBtn .= '<a href="' . url('/surat-pernyataan/spp-ls/' . $data->id) . '" class="btn btn-success btn-sm mr-1 my-1"><i class="fas fa-envelope"></i> Surat Pernyataan</a>';
-                            }
-
                             if (in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
                                 $actionBtn .= '<a class="btn btn-primary text-light btn-sm mr-1 my-1" href="' . url('spj-gu/' . $data->id) . '"><i class="far fa-check-circle"></i> Lihat</a>';
                             }
