@@ -186,6 +186,7 @@
             ],
             [
                 'title' => 'Tanggal',
+                'class' => 'text-center',
             ],
             [
                 'title' => 'Sekretariat Daerah',
@@ -239,21 +240,13 @@
                         </div>
                     </td>
                     <td>
-                        <div class="d-flex">
-                            <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-xs">
-                                    {{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('d F Y') }}</h6>
-                            </div>
-                        </div>
+                        <h6 class="mb-0 text-xs text-center text-nowrap">
+                            {{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('d F Y | h.i') }}</h6>
                     </td>
                     <td>
-                        <div class="d-flex">
-                            <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-xs">
-                                    {{ $data->sekretariatDaerah->nama }}
-                                </h6>
-                            </div>
-                        </div>
+                        <h6 class="mb-0 text-xs text-center">
+                            {{ $data->sekretariatDaerah->nama }}
+                        </h6>
                     </td>
                     <td>
                         <h6 class="mb-0 text-xs text-nowrap">

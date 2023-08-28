@@ -54,7 +54,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LandingController::class, 'index']);
 Route::get('/tentang', [LandingController::class, 'tentang']);
-// Master Data
+
 Route::group(['middleware' => ['auth']], function () {
     Route::get('spp-up/cek-sp2d', [SppUpController::class, 'cekSp2d']);
     Route::get('spp-tu/cek-sp2d', [SppTuController::class, 'cekSp2d']);
@@ -92,10 +92,16 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/master-data/tentang', [TentangController::class, 'index']);
         Route::put('/master-data/tentang/{tentang}', [TentangController::class, 'update']);
-
         Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {
             \UniSharp\LaravelFilemanager\Lfm::routes();
         });
+
+        Route::resource('/surat-penyediaan-dana', SuratPenyediaanDanaController::class)->parameters([
+            'surat-penyediaan-dana' => 'spd'
+        ])->except(
+            'index',
+            'show'
+        );
     });
 
     Route::group(['middleware' => ['role:Admin|Bendahara Pengeluaran|Bendahara Pengeluaran Pembantu|Bendahara Pengeluaran Pembantu Belanja Hibah']], function () {
@@ -125,11 +131,45 @@ Route::group(['middleware' => ['auth']], function () {
             'index',
             'show'
         );
+        Route::put('spp-up/sp2d/{sppUp}', [SppUpController::class, 'storeSp2d']);
+        Route::put('spp-tu/sp2d/{sppTu}', [SppTuController::class, 'storeSp2d']);
+        Route::put('spp-ls/sp2d/{sppLs}', [SppLsController::class, 'storeSp2d']);
+        Route::put('spp-gu/sp2d/{sppGu}', [SppGuController::class, 'storeSp2d']);
     });
 
-    // SPP UP
     Route::group(['middleware' => ['role:Admin|PPK|ASN Sub Bagian Keuangan|Kuasa Pengguna Anggaran|Operator SPM']], function () {
+        Route::group(['middleware' => ['role:PPK|ASN Sub Bagian Keuangan']], function () {
+            Route::put('/spp-up/verifikasi/{sppUp}', [SppUpController::class, 'verifikasi']);
+            Route::put('/spp-tu/verifikasi/{sppTu}', [SppTuController::class, 'verifikasi']);
+            Route::put('/spp-ls/verifikasi/{sppLs}', [SppLsController::class, 'verifikasi']);
+            Route::put('/spj-gu/verifikasi/{spjGu}', [SpjGuController::class, 'verifikasi']);
+            Route::put('/spp-gu/verifikasi/{sppGu}', [SppGuController::class, 'verifikasi']);
+        });
+
+        Route::group(['middleware' => ['role:PPK']], function () {
+            Route::put('/spp-up/verifikasi-akhir/{sppUp}', [SppUpController::class, 'verifikasiAkhir']);
+            Route::put('/spp-tu/verifikasi-akhir/{sppTu}', [SppTuController::class, 'verifikasiAkhir']);
+            Route::put('/spp-ls/verifikasi-akhir/{sppLs}', [SppLsController::class, 'verifikasiAkhir']);
+            Route::put('/spj-gu/verifikasi-akhir/{spjGu}', [SpjGuController::class, 'verifikasiAkhir']);
+            Route::put('/spp-gu/verifikasi-akhir/{sppGu}', [SppGuController::class, 'verifikasiAkhir']);
+        });
+
+        Route::group(['middleware' => ['role:Admin|Operator SPM']], function () {
+            Route::put('spp-up/spm/{sppUp}', [SppUpController::class, 'storeSpm']);
+            Route::put('spp-tu/spm/{sppTu}', [SppTuController::class, 'storeSpm']);
+            Route::put('spp-ls/spm/{sppLs}', [SppLsController::class, 'storeSpm']);
+            Route::put('spp-gu/spm/{sppGu}', [SppGuController::class, 'storeSpm']);
+        });
     });
+
+    Route::post('/surat-penyediaan-dana/tabel', [SuratPenyediaanDanaController::class, 'getTabel']);
+    Route::resource('/surat-penyediaan-dana', SuratPenyediaanDanaController::class)->parameters([
+        'surat-penyediaan-dana' => 'spd'
+    ])->only(
+        'index',
+        'show'
+    );
+
     Route::get('/spp-up/riwayat/{sppUp}', [SppUpController::class, 'riwayat']);
     Route::get('/spp-tu/riwayat/{sppTu}', [SppTuController::class, 'riwayat']);
     Route::get('/spp-ls/riwayat/{sppLs}', [SppLsController::class, 'riwayat']);
@@ -140,49 +180,10 @@ Route::group(['middleware' => ['auth']], function () {
         'index',
         'show'
     );
-
-    Route::group(['middleware' => ['role:PPK|ASN Sub Bagian Keuangan']], function () {
-        Route::put('/spp-up/verifikasi/{sppUp}', [SppUpController::class, 'verifikasi']);
-        Route::put('/spp-tu/verifikasi/{sppTu}', [SppTuController::class, 'verifikasi']);
-        Route::put('/spp-ls/verifikasi/{sppLs}', [SppLsController::class, 'verifikasi']);
-        Route::put('/spj-gu/verifikasi/{spjGu}', [SpjGuController::class, 'verifikasi']);
-        Route::put('/spp-gu/verifikasi/{sppGu}', [SppGuController::class, 'verifikasi']);
-    });
-    Route::group(['middleware' => ['role:PPK']], function () {
-        Route::put('/spp-up/verifikasi-akhir/{sppUp}', [SppUpController::class, 'verifikasiAkhir']);
-        Route::put('/spp-tu/verifikasi-akhir/{sppTu}', [SppTuController::class, 'verifikasiAkhir']);
-        Route::put('/spp-ls/verifikasi-akhir/{sppLs}', [SppLsController::class, 'verifikasiAkhir']);
-        Route::put('/spj-gu/verifikasi-akhir/{spjGu}', [SpjGuController::class, 'verifikasiAkhir']);
-        Route::put('/spp-gu/verifikasi-akhir/{sppGu}', [SppGuController::class, 'verifikasiAkhir']);
-    });
-
-    Route::group(['middleware' => ['role:Admin|Operator SPM']], function () {
-        Route::put('spp-up/spm/{sppUp}', [SppUpController::class, 'storeSpm']);
-        Route::put('spp-tu/spm/{sppTu}', [SppTuController::class, 'storeSpm']);
-        Route::put('spp-ls/spm/{sppLs}', [SppLsController::class, 'storeSpm']);
-        Route::put('spp-gu/spm/{sppGu}', [SppGuController::class, 'storeSpm']);
-    });
-
-    Route::group(['middleware' => ['role:Admin|Bendahara Pengeluaran|Bendahara Pengeluaran Pembantu|Bendahara Pengeluaran Pembantu Belanja Hibah']], function () {
-        Route::put('spp-up/sp2d/{sppUp}', [SppUpController::class, 'storeSp2d']);
-        Route::put('spp-tu/sp2d/{sppTu}', [SppTuController::class, 'storeSp2d']);
-        Route::put('spp-ls/sp2d/{sppLs}', [SppLsController::class, 'storeSp2d']);
-        Route::put('spp-gu/sp2d/{sppGu}', [SppGuController::class, 'storeSp2d']);
-    });
-
-    Route::get('/surat-penolakan/spp-up/{sppUp}/{tahapRiwayat}', [UnduhController::class, 'suratPenolakanSppUp']);
-    Route::get('/surat-pernyataan/spp-up/{sppUp}', [UnduhController::class, 'suratPernyataanSppUp']);
-
-    // SPP TU
     Route::resource('/spp-tu', SppTuController::class)->only(
         'index',
         'show'
     );
-
-    Route::get('/surat-penolakan/spp-tu/{sppTu}/{tahapRiwayat}', [UnduhController::class, 'suratPenolakanSppTu']);
-    Route::get('/surat-pernyataan/spp-tu/{sppTu}', [UnduhController::class, 'suratPernyataanSppTu']);
-
-    // SPP LS
     Route::resource('/spp-ls', SppLsController::class)->parameters([
         'spp-ls' => 'spp-ls'
     ])->only(
@@ -195,27 +196,14 @@ Route::group(['middleware' => ['auth']], function () {
         'index',
         'show'
     );
-
-    Route::get('/surat-penolakan/spp-ls/{sppLs}/{tahapRiwayat}', [UnduhController::class, 'suratPenolakanSppLs']);
-    Route::get('/surat-pernyataan/spp-ls/{sppLs}', [UnduhController::class, 'suratPernyataanSppLs']);
-
-    // SPP GU
     Route::resource('/spp-gu', SppGuController::class)->only(
         'index',
         'show'
     );
 
-    Route::get('/surat-penolakan/spp-gu/{sppGu}/{tahapRiwayat}', [UnduhController::class, 'suratPenolakanSppGu']);
-    Route::get('/surat-pernyataan/spp-gu/{sppGu}', [UnduhController::class, 'suratPernyataanSppGu']);
-
     Route::get('tabel-pelaksanaan-anggaran', [TabelPelaksanaanAnggaranController::class, 'index']);
     Route::post('tabel-pelaksanaan-anggaran/tabel', [TabelPelaksanaanAnggaranController::class, 'getTable']);
     Route::post('tabel-pelaksanaan-anggaran/export', [TabelPelaksanaanAnggaranController::class, 'export']);
-
-    Route::post('/surat-penyediaan-dana/tabel', [SuratPenyediaanDanaController::class, 'getTabel']);
-    Route::resource('/surat-penyediaan-dana', SuratPenyediaanDanaController::class)->parameters([
-        'surat-penyediaan-dana' => 'spd'
-    ]);
 
     Route::get('/statistik-pelaksanaan-anggaran', [StatistikPelaksanaanAnggaranController::class, 'index']);
     Route::post('/statistik-pelaksanaan-anggaran/get-data', [StatistikPelaksanaanAnggaranController::class, 'getData']);
@@ -277,7 +265,5 @@ Route::group(['middleware' => ['auth']], function () {
     });
 });
 
-
-// Auth
 Route::get('/login', [AuthController::class, 'index']);
 Route::post('/login', [AuthController::class, 'login']);

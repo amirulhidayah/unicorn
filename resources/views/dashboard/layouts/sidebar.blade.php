@@ -133,20 +133,13 @@
                         </ul>
                     </div>
                 </li>
-                @if (in_array(Auth::user()->role, [
-                        'Admin',
-                        'Bendahara Pengeluaran',
-                        'Bendahara Pengeluaran Pembantu',
-                        'Bendahara Pengeluaran Pembantu Belanja Hibah',
-                    ]))
+                @if (Auth::user()->role == 'Admin')
                     <li class="nav-section">
                         <span class="sidebar-mini-icon">
                             <i class="fa fa-ellipsis-h"></i>
                         </span>
                         <h4 class="text-section">Master Data</h4>
                     </li>
-                @endif
-                @if (Auth::user()->role == 'Admin')
                     <li class="nav-item" id="master-daftar-dokumen-spp-up">
                         <a href="{{ url('/master-data/daftar-dokumen-spp-up') }}">
                             <i class="far fa-file-pdf"></i>

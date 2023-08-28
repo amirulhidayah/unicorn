@@ -49,19 +49,13 @@ class SppUpController extends Controller
 
     public function store(Request $request)
     {
-        if (Auth::user()->role != "Admin") {
-            $totalSpp = SppUp::where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id)->where('status_validasi_ppk', 1)->where('status_validasi_asn', 1)->whereNotNull('dokumen_spm')->whereNull('dokumen_arsip_sp2d')->count();
-            if ($totalSpp > 0) {
-                return throw new Exception('Terjadi Kesalahan');
-            }
-        }
-
         $role = Auth::user()->role;
 
         $rules = [
             'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
-            'nomor_surat' => ['required', Rule::unique('spp_up')->where(function ($query) use ($request) {
-                return $query->where('nomor_surat', $request->nomor_surat);
+            'nomor_surat' => ['required', Rule::unique('spp_up')->where(function ($query) use ($request, $role) {
+                $sekretariatDaerah = $role == "Admin" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
+                $query->where('nomor_surat', $request->nomor_surat)->where('sekretariat_daerah_id', $sekretariatDaerah);
             })],
             'tahun' => 'required',
         ];
@@ -215,7 +209,7 @@ class SppUpController extends Controller
     public function edit(SppUp $sppUp, Request $request)
     {
         $role = Auth::user()->role;
-        if (!($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppUp->sekretariat_daerah_id) && ($sppUp->status_validasi_asn == 2 || $sppUp->status_validasi_ppk == 2)) {
+        if (!($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppUp->sekretariat_daerah_id) && (($sppUp->status_validasi_asn == 0 && $sppUp->status_validasi_ppk == 0) || ($sppUp->status_validasi_asn == 2 || $sppUp->status_validasi_ppk == 2))) {
             abort(403, 'Anda tidak memiliki akses halaman tersebut!');
         }
 
@@ -259,8 +253,9 @@ class SppUpController extends Controller
         $rules = [
             'surat_pengembalian' => $suratPenolakan . '|mimes:pdf',
             'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
-            'nomor_surat' => ['required', Rule::unique('spp_up')->where(function ($query) use ($request) {
-                return $query->where('nomor_surat', $request->nomor_surat);
+            'nomor_surat' => ['required', Rule::unique('spp_up')->where(function ($query) use ($request, $role) {
+                $sekretariatDaerah = $role == "Admin" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
+                $query->where('nomor_surat', $request->nomor_surat)->where('sekretariat_daerah_id', $sekretariatDaerah);
             })->ignore($sppUp->id)],
             'tahun' => 'required',
         ];
@@ -409,7 +404,7 @@ class SppUpController extends Controller
                     }
                 }
 
-                if (($sppUp->status_validasi_asn == 2 || $sppUp->status_validasi_ppk == 2)) {
+                if (($sppUp->status_validasi_asn == 2 || $sppUp->status_validasi_ppk == 2) && ($sppUp->status_validasi_asn != 0 && $sppUp->status_validasi_ppk != 0)) {
                     $riwayatSppUp = new RiwayatSppUp();
 
                     if ($request->file('surat_pengembalian')) {
@@ -482,7 +477,8 @@ class SppUpController extends Controller
 
     public function destroy(SppUp $sppUp)
     {
-        if (!(Auth::user()->role == "Admin" || ($sppUp->status_validasi_asn == 0 && $sppUp->status_validasi_ppk == 0))) {
+        $role = Auth::user()->role;
+        if (!($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppUp->sekretariat_daerah_id)) {
             return throw new Exception('Gagal Diproses');
         }
 

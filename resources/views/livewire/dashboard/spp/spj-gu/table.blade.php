@@ -278,7 +278,7 @@
                                 $actionBtn .= '<a class="btn btn-primary text-light btn-sm mr-1 my-1" href="' . url('spj-gu/' . $data->id) . '"><i class="far fa-check-circle"></i> Lihat</a>';
                             }
 
-                            if (($data->sekretariat_daerah_id == Auth::user()->profil->sekretariat_daerah_id && in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']) && count($data->riwayatSppLs) > 1) || Auth::user()->role == 'Admin') {
+                            if (($data->sekretariat_daerah_id == Auth::user()->profil->sekretariat_daerah_id && in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']) && count($data->riwayatSpjGu) > 1) || Auth::user()->role == 'Admin') {
                                 if ($data->status_validasi_asn == 0 && $data->status_validasi_ppk == 0) {
                                     $actionBtn .= '<a href="' . url('spj-gu/' . $data->id . '/edit') . '" class="btn btn-primary btn-sm my-1 mr-1"><i class="fas fa-pen"></i> Ubah</a></div>';
                                 }

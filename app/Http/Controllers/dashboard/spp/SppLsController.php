@@ -66,8 +66,9 @@ class SppLsController extends Controller
         $rules = [
             'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
             'kategori' => 'required',
-            'nomor_surat' => ['required', Rule::unique('spp_ls')->where(function ($query) use ($request) {
-                return $query->where('nomor_surat', $request->nomor_surat);
+            'nomor_surat' => ['required', Rule::unique('spp_ls')->where(function ($query) use ($request, $role) {
+                $sekretariatDaerah = $role == "Admin" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
+                $query->where('nomor_surat', $request->nomor_surat)->where('sekretariat_daerah_id', $sekretariatDaerah);
             })],
             'tahun' => 'required',
             'bulan' => 'required',
@@ -253,7 +254,7 @@ class SppLsController extends Controller
     public function edit(SppLs $sppLs, Request $request)
     {
         $role = Auth::user()->role;
-        if (!($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppLs->sekretariat_daerah_id) && ($sppLs->status_validasi_asn == 2 || $sppLs->status_validasi_ppk == 2)) {
+        if (!($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppLs->sekretariat_daerah_id) && (($sppLs->status_validasi_asn == 0 && $sppLs->status_validasi_ppk == 0) || ($sppLs->status_validasi_asn == 2 || $sppLs->status_validasi_ppk == 2))) {
             abort(403, 'Anda tidak memiliki akses halaman tersebut!');
         }
 
@@ -307,8 +308,9 @@ class SppLsController extends Controller
             'surat_pengembalian' => $suratPenolakan . '|mimes:pdf',
             'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
             'kategori' => 'required',
-            'nomor_surat' => ['required', Rule::unique('spp_ls')->where(function ($query) use ($request) {
-                return $query->where('nomor_surat', $request->nomor_surat);
+            'nomor_surat' => ['required', Rule::unique('spp_ls')->where(function ($query) use ($request, $role) {
+                $sekretariatDaerah = $role == "Admin" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
+                $query->where('nomor_surat', $request->nomor_surat)->where('sekretariat_daerah_id', $sekretariatDaerah);
             })->ignore($sppLs->id)],
             'tahun' => 'required',
             'bulan' => 'required',

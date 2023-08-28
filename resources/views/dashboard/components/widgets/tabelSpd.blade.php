@@ -7,7 +7,9 @@
                     <th scope="col">NAMA SUB OPD, PROGRAM DAN KEGIATAN</th>
                     <th scope="col">NO. REK. KEG. SKPD</th>
                     <th scope="col">Jumlah Anggaran</th>
-                    <th>Aksi</th>
+                    @if (Auth::user()->role == 'Admin')
+                        <th>Aksi</th>
+                    @endif
                 </tr>
             </thead>
             <tbody>
@@ -30,13 +32,16 @@
                                 <td>
                                     {{ 'Rp. ' . number_format($kegiatan['jumlah_anggaran'], 0, ',', '.') }}
                                 </td>
-                                <td class="text-center">
-                                    <button id="btn-edit" class="btn btn-warning btn-sm mr-1"
-                                        value="{{ $kegiatan['id'] }}"><i class="fas fa-edit"></i> Ubah</button>
-                                    <button id="btn-delete" class="btn btn-danger btn-sm mr-1"
-                                        value="{{ $kegiatan['id'] }}"> <i class="fas fa-trash-alt"></i>
-                                        Hapus</button>
-                                </td>
+                                @if (Auth::user()->role == 'Admin')
+                                    <td class="text-center">
+                                        <button id="btn-edit" class="btn btn-warning btn-sm mr-1"
+                                            value="{{ $kegiatan['id'] }}"><i class="fas fa-edit"></i> Ubah</button>
+                                        <button id="btn-delete" class="btn btn-danger btn-sm mr-1"
+                                            value="{{ $kegiatan['id'] }}"> <i class="fas fa-trash-alt"></i>
+                                            Hapus</button>
+                                    </td>
+                                @endif
+
                             </tr>
                         @endforeach
                     @endforeach

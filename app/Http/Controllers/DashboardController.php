@@ -275,7 +275,9 @@ class DashboardController extends Controller
     {
         $totalDokumen = SppGu::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
-                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+                $query->whereHas('spjGu', function ($query) {
+                    $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+                });
             } else if (Auth::user()->role == 'Operator SPM') {
                 $query->where('status_validasi_asn', 1);
                 $query->where('status_validasi_ppk', 1);
@@ -285,7 +287,9 @@ class DashboardController extends Controller
 
         $belumProses = SppGu::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
-                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+                $query->whereHas('spjGu', function ($query) {
+                    $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+                });
             }
 
             if (Auth::user()->role == "ASN Sub Bagian Keuangan") {
@@ -304,7 +308,9 @@ class DashboardController extends Controller
 
         $ditolak = SppGu::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
-                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+                $query->whereHas('spjGu', function ($query) {
+                    $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+                });
             }
 
             if (Auth::user()->role == "ASN Sub Bagian Keuangan") {
@@ -319,7 +325,9 @@ class DashboardController extends Controller
 
         $selesai = SppGu::where(function ($query) {
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
-                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+                $query->whereHas('spjGu', function ($query) {
+                    $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+                });
             }
 
             if (Auth::user()->role == "Operator SPM") {

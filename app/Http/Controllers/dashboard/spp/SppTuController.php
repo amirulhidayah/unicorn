@@ -50,19 +50,13 @@ class SppTuController extends Controller
 
     public function store(Request $request)
     {
-        if (Auth::user()->role != "Admin") {
-            $totalSpp = SppTu::where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id)->where('status_validasi_ppk', 1)->where('status_validasi_asn', 1)->whereNotNull('dokumen_spm')->whereNull('dokumen_arsip_sp2d')->count();
-            if ($totalSpp > 0) {
-                return throw new Exception('Terjadi Kesalahan');
-            }
-        }
-
         $role = Auth::user()->role;
 
         $rules = [
             'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
-            'nomor_surat' => ['required', Rule::unique('spp_tu')->where(function ($query) use ($request) {
-                return $query->where('nomor_surat', $request->nomor_surat);
+            'nomor_surat' => ['required', Rule::unique('spp_tu')->where(function ($query) use ($request, $role) {
+                $sekretariatDaerah = $role == "Admin" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
+                $query->where('nomor_surat', $request->nomor_surat)->where('sekretariat_daerah_id', $sekretariatDaerah);
             })],
             'tahun' => 'required',
             'bulan' => 'required',
@@ -219,7 +213,7 @@ class SppTuController extends Controller
     public function edit(SppTu $sppTu, Request $request)
     {
         $role = Auth::user()->role;
-        if (!($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppTu->sekretariat_daerah_id) && ($sppTu->status_validasi_asn == 2 || $sppTu->status_validasi_ppk == 2)) {
+        if (!($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppTu->sekretariat_daerah_id) && (($sppTu->status_validasi_asn == 0 && $sppTu->status_validasi_ppk == 0) || ($sppTu->status_validasi_asn == 2 || $sppTu->status_validasi_ppk == 2))) {
             abort(403, 'Anda tidak memiliki akses halaman tersebut!');
         }
 
@@ -263,8 +257,9 @@ class SppTuController extends Controller
         $rules = [
             'surat_pengembalian' => $suratPenolakan . '|mimes:pdf',
             'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
-            'nomor_surat' => ['required', Rule::unique('spp_tu')->where(function ($query) use ($request) {
-                return $query->where('nomor_surat', $request->nomor_surat);
+            'nomor_surat' => ['required', Rule::unique('spp_tu')->where(function ($query) use ($request, $role) {
+                $sekretariatDaerah = $role == "Admin" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
+                $query->where('nomor_surat', $request->nomor_surat)->where('sekretariat_daerah_id', $sekretariatDaerah);
             })->ignore($sppTu->id)],
             'tahun' => 'required',
             'bulan' => 'required',

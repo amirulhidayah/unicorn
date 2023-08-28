@@ -228,7 +228,7 @@ class SpjGuController extends Controller
     public function edit(SpjGu $spjGu)
     {
         $role = Auth::user()->role;
-        if (!($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $spjGu->sekretariat_daerah_id) && ($spjGu->status_validasi_asn == 2 || $spjGu->status_validasi_ppk == 2)) {
+        if (!($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $spjGu->sekretariat_daerah_id) && (($spjGu->status_validasi_asn == 0 && $spjGu->status_validasi_ppk == 0) || ($spjGu->status_validasi_asn == 2 || $spjGu->status_validasi_ppk == 2))) {
             abort(403, 'Anda tidak memiliki akses halaman tersebut!');
         }
 
