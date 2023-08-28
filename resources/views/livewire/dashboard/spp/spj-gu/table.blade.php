@@ -156,9 +156,11 @@
             ],
             [
                 'title' => 'Tanggal',
+                'class' => 'text-center',
             ],
             [
                 'title' => 'Sekretariat Daerah',
+                'class' => 'text-center',
             ],
             [
                 'title' => 'Periode',
@@ -201,21 +203,13 @@
                         </div>
                     </td>
                     <td>
-                        <div class="d-flex">
-                            <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-xs">
-                                    {{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('d F Y') }}</h6>
-                            </div>
-                        </div>
+                        <h6 class="mb-0 text-xs text-center text-nowrap">
+                            {{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('d F Y | h.i') }}</h6>
                     </td>
                     <td>
-                        <div class="d-flex">
-                            <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-xs">
-                                    {{ $data->sekretariatDaerah->nama }}
-                                </h6>
-                            </div>
-                        </div>
+                        <h6 class="mb-0 text-xs text-center">
+                            {{ $data->sekretariatDaerah->nama }}
+                        </h6>
                     </td>
                     <td>
                         <h6 class="mb-0 text-xs text-nowrap">
@@ -267,38 +261,32 @@
                             $actionBtn = '';
 
                             if (($data->sekretariat_daerah_id == Auth::user()->profil->sekretariat_daerah_id && in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) || Auth::user()->role == 'Admin') {
+                                if (($data->status_validasi_asn == 0 && $data->status_validasi_ppk == 0) || (Auth::user()->role == 'Admin' && $data->status_validasi_akhir == 1)) {
+                                    $actionBtn .= '<a href="' . url('spj-gu/' . $data->id . '/edit') . '" class="btn btn-primary btn-sm mb-1 mr-1"><i class="fas fa-pen"></i> Ubah</a></div>';
+                                }
                                 if ($data->status_validasi_asn != 0 && $data->status_validasi_ppk != 0 && ($data->status_validasi_asn == 2 || $data->status_validasi_ppk == 2)) {
-                                    $actionBtn .= '<a target="_blank" href="' . Storage::url('surat_penolakan_spj_gu/' . $data->surat_penolakan) . '" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i> Surat Penolakan</a>';
-
-                                    $actionBtn .= '<a href="' . url('spj-gu/' . $data->id . '/edit') . '" class="btn btn-primary btn-sm mt-1 ml-1"><i class="fas fa-file-pdf"></i> Perbaiki</a></div>';
+                                    $actionBtn .= '<a target="_blank" href="' . Storage::url('surat_penolakan_spj_gu/' . $data->surat_penolakan) . '" class="btn btn-primary btn-sm mr-1 mb-1"><i class="fas fa-file-pdf"></i> Surat Penolakan</a>';
+                                    $actionBtn .= '<a href="' . url('spj-gu/' . $data->id . '/edit') . '" class="btn btn-primary btn-sm mb-1 mr-1"><i class="fas fa-file-pdf"></i> Perbaiki</a></div>';
                                 }
-                            }
-
-                            if (in_array(Auth::user()->role, ['Admin', 'Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
-                                $actionBtn .= '<a class="btn btn-primary text-light btn-sm mr-1 my-1" href="' . url('spj-gu/' . $data->id) . '"><i class="far fa-check-circle"></i> Lihat</a>';
-                            }
-
-                            if (($data->sekretariat_daerah_id == Auth::user()->profil->sekretariat_daerah_id && in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']) && count($data->riwayatSpjGu) > 1) || Auth::user()->role == 'Admin') {
-                                if ($data->status_validasi_asn == 0 && $data->status_validasi_ppk == 0) {
-                                    $actionBtn .= '<a href="' . url('spj-gu/' . $data->id . '/edit') . '" class="btn btn-primary btn-sm my-1 mr-1"><i class="fas fa-pen"></i> Ubah</a></div>';
-                                }
-                            }
-
-                            if ((in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']) && $data->sekretariat_daerah_id == Auth::user()->profil->sekretariat_daerah_id && $data->status_validasi_asn == 0 && $data->status_validasi_ppk == 0) || Auth::user()->role == 'Admin') {
-                                $actionBtn .= '<button id="btn-delete" class="btn btn-danger btn-sm mr-1 my-1" value="' . $data->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
                             }
 
                             if (Auth::user()->role == 'PPK') {
                                 if ($data->status_validasi_ppk == 1 && $data->status_validasi_akhir == 0 && $data->status_validasi_asn == 1 && Auth::user()->is_aktif == 1) {
-                                    $actionBtn .= '<button id="btn-verifikasi" class="btn btn-success btn-sm mr-1 my-1" value="' . $data->id . '" > <i class="far fa-check-circle"></i> Selesai</button>';
+                                    $actionBtn .= '<button id="btn-verifikasi" class="btn btn-success btn-sm mr-1 mb-1" value="' . $data->id . '" > <i class="far fa-check-circle"></i> Selesai</button>';
                                 }
                             }
 
                             if (in_array(Auth::user()->role, ['ASN Sub Bagian Keuangan', 'PPK']) && $data->status_validasi_akhir == 0 && Auth::user()->is_aktif == 1) {
-                                $actionBtn .= '<a class="btn btn-primary text-light btn-sm mr-1 my-1" href="' . url('spj-gu/' . $data->id) . '"><i class="far fa-check-circle"></i> Proses Validasi</a>';
+                                $actionBtn .= '<a class="btn btn-primary text-light btn-sm mr-1 mb-1" href="' . url('spj-gu/' . $data->id) . '"><i class="far fa-check-circle"></i> Proses Validasi</a>';
+                            } else {
+                                $actionBtn .= '<a class="btn btn-primary text-light btn-sm mr-1 mb-1" href="' . url('spj-gu/' . $data->id) . '"><i class="far fa-check-circle"></i> Lihat</a>';
                             }
 
-                            $actionBtn .= '<a href="' . url('spj-gu/riwayat/' . $data->id) . '" class="btn btn-primary btn-sm my-1"><i class="fas fa-history"></i> Riwayat</a>';
+                            $actionBtn .= '<a href="' . url('spj-gu/riwayat/' . $data->id) . '" class="btn btn-primary btn-sm mb-1"><i class="fas fa-history"></i> Riwayat</a>';
+
+                            if ((in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah']) && $data->sekretariat_daerah_id == Auth::user()->profil->sekretariat_daerah_id && $data->status_validasi_ppk == 0 && $data->status_validasi_asn == 0) || Auth::user()->role == 'Admin') {
+                                $actionBtn .= '<button id="btn-delete" class="btn btn-danger btn-sm mr-1 mb-1" value="' . $data->id . '" > <i class="fas fa-trash-alt"></i> Hapus</button>';
+                            }
 
                         @endphp
                         {!! $actionBtn !!}

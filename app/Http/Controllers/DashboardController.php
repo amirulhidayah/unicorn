@@ -38,7 +38,6 @@ class DashboardController extends Controller
             if (in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
                 $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
             }
-
             if (Auth::user()->role == "ASN Sub Bagian Keuangan") {
                 $query->where('status_validasi_asn', 0);
             } else if (Auth::user()->role == "PPK") {
@@ -49,7 +48,9 @@ class DashboardController extends Controller
                 $query->where('status_validasi_akhir', 1);
                 $query->whereNull('dokumen_spm');
             } else {
-                $query->where('status_validasi_asn', 0)->orWhere('status_validasi_ppk', 0);
+                $query->where(function ($query) {
+                    $query->where('status_validasi_asn', 0)->orWhere('status_validasi_ppk', 0)->orWhere('status_validasi_akhir', 0)->orWhere('dokumen_spm', null)->orWhere('dokumen_arsip_sp2d', null);
+                });
             }
         })->count();
 
@@ -63,8 +64,10 @@ class DashboardController extends Controller
             } else if (Auth::user()->role == "PPK") {
                 $query->where('status_validasi_ppk', 2);
             } else {
-                $query->where('status_validasi_asn', 2);
-                $query->orWhere('status_validasi_ppk', 2);
+                $query->where(function ($query) {
+                    $query->where('status_validasi_asn', 2);
+                    $query->orWhere('status_validasi_ppk', 2);
+                });
             }
         })->count();
 
@@ -115,7 +118,9 @@ class DashboardController extends Controller
                 $query->where('status_validasi_akhir', 1);
                 $query->whereNull('dokumen_spm');
             } else {
-                $query->where('status_validasi_asn', 0)->orWhere('status_validasi_ppk', 0);
+                $query->where(function ($query) {
+                    $query->where('status_validasi_asn', 0)->orWhere('status_validasi_ppk', 0)->orWhere('status_validasi_akhir', 0)->orWhere('dokumen_spm', null)->orWhere('dokumen_arsip_sp2d', null);
+                });
             }
         })->count();
 
@@ -129,8 +134,10 @@ class DashboardController extends Controller
             } else if (Auth::user()->role == "PPK") {
                 $query->where('status_validasi_ppk', 2);
             } else {
-                $query->where('status_validasi_asn', 2);
-                $query->orWhere('status_validasi_ppk', 2);
+                $query->where(function ($query) {
+                    $query->where('status_validasi_asn', 2);
+                    $query->orWhere('status_validasi_ppk', 2);
+                });
             }
         })->count();
 
@@ -181,7 +188,9 @@ class DashboardController extends Controller
                 $query->where('status_validasi_akhir', 1);
                 $query->whereNull('dokumen_spm');
             } else {
-                $query->where('status_validasi_asn', 0)->orWhere('status_validasi_ppk', 0);
+                $query->where(function ($query) {
+                    $query->where('status_validasi_asn', 0)->orWhere('status_validasi_ppk', 0)->orWhere('status_validasi_akhir', 0)->orWhere('dokumen_spm', null)->orWhere('dokumen_arsip_sp2d', null);
+                });
             }
         })->count();
 
@@ -195,8 +204,10 @@ class DashboardController extends Controller
             } else if (Auth::user()->role == "PPK") {
                 $query->where('status_validasi_ppk', 2);
             } else {
-                $query->where('status_validasi_asn', 2);
-                $query->orWhere('status_validasi_ppk', 2);
+                $query->where(function ($query) {
+                    $query->where('status_validasi_asn', 2);
+                    $query->orWhere('status_validasi_ppk', 2);
+                });
             }
         })->count();
 
@@ -238,7 +249,9 @@ class DashboardController extends Controller
             } else if (Auth::user()->role == "PPK") {
                 $query->where('status_validasi_ppk', 0);
             } else {
-                $query->where('status_validasi_asn', 0)->orWhere('status_validasi_ppk', 0);
+                $query->where(function ($query) {
+                    $query->where('status_validasi_asn', 0)->orWhere('status_validasi_ppk', 0)->orWhere('status_validasi_akhir', 0);
+                });
             }
         })->count();
 
@@ -252,8 +265,10 @@ class DashboardController extends Controller
             } else if (Auth::user()->role == "PPK") {
                 $query->where('status_validasi_ppk', 2);
             } else {
-                $query->where('status_validasi_asn', 2);
-                $query->orWhere('status_validasi_ppk', 2);
+                $query->where(function ($query) {
+                    $query->where('status_validasi_asn', 2);
+                    $query->orWhere('status_validasi_ppk', 2);
+                });
             }
         })->count();
 
@@ -302,7 +317,9 @@ class DashboardController extends Controller
                 $query->where('status_validasi_akhir', 1);
                 $query->whereNull('dokumen_spm');
             } else {
-                $query->where('status_validasi_asn', 0)->orWhere('status_validasi_ppk', 0);
+                $query->where(function ($query) {
+                    $query->where('status_validasi_asn', 0)->orWhere('status_validasi_ppk', 0)->orWhere('status_validasi_akhir', 0)->orWhere('dokumen_spm', null)->orWhere('dokumen_arsip_sp2d', null);
+                });
             }
         })->count();
 
@@ -318,8 +335,10 @@ class DashboardController extends Controller
             } else if (Auth::user()->role == "PPK") {
                 $query->where('status_validasi_ppk', 2);
             } else {
-                $query->where('status_validasi_asn', 2);
-                $query->orWhere('status_validasi_ppk', 2);
+                $query->where(function ($query) {
+                    $query->where('status_validasi_asn', 2);
+                    $query->orWhere('status_validasi_ppk', 2);
+                });
             }
         })->count();
 

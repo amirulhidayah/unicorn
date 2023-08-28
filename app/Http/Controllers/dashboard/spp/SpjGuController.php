@@ -51,8 +51,9 @@ class SpjGuController extends Controller
 
         $rules = [
             'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
-            'nomor_surat' => ['required', Rule::unique('spj_gu')->where(function ($query) use ($request) {
-                return $query->where('nomor_surat', $request->nomor_surat);
+            'nomor_surat' => ['required', Rule::unique('spj_gu')->where(function ($query) use ($request, $role) {
+                $sekretariatDaerah = $role == "Admin" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
+                $query->where('nomor_surat', $request->nomor_surat)->where('sekretariat_daerah_id', $sekretariatDaerah);
             })],
             'tahun' => 'required',
             'bulan' => 'required',
@@ -228,7 +229,17 @@ class SpjGuController extends Controller
     public function edit(SpjGu $spjGu)
     {
         $role = Auth::user()->role;
-        if (!($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $spjGu->sekretariat_daerah_id) && (($spjGu->status_validasi_asn == 0 && $spjGu->status_validasi_ppk == 0) || ($spjGu->status_validasi_asn == 2 || $spjGu->status_validasi_ppk == 2))) {
+        if (!(
+            ($role == "Admin" && (
+                ($spjGu->status_validasi_asn == 0 && $spjGu->status_validasi_ppk == 0) ||
+                (($spjGu->status_validasi_asn == 2 && $spjGu->status_validasi_ppk != 0) || ($spjGu->status_validasi_asn != 0 && $spjGu->status_validasi_ppk == 2)) ||
+                ($spjGu->status_validasi_akhir == 1)
+            )) ||
+            (Auth::user()->profil->sekretariat_daerah_id == $spjGu->sekretariat_daerah_id) && (
+                ($spjGu->status_validasi_asn == 0 && $spjGu->status_validasi_ppk == 0) ||
+                (($spjGu->status_validasi_asn == 2 && $spjGu->status_validasi_ppk != 0) || ($spjGu->status_validasi_asn != 0 && $spjGu->status_validasi_ppk == 2))
+            )
+        )) {
             abort(403, 'Anda tidak memiliki akses halaman tersebut!');
         }
 
@@ -266,7 +277,17 @@ class SpjGuController extends Controller
     public function update(Request $request, SpjGu $spjGu)
     {
         $role = Auth::user()->role;
-        if (!($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $spjGu->sekretariat_daerah_id) && (($spjGu->status_validasi_asn == 0 && $spjGu->status_validasi_ppk == 0) || ($spjGu->status_validasi_asn == 2 || $spjGu->status_validasi_ppk == 2))) {
+        if (!(
+            ($role == "Admin" && (
+                ($spjGu->status_validasi_asn == 0 && $spjGu->status_validasi_ppk == 0) ||
+                (($spjGu->status_validasi_asn == 2 && $spjGu->status_validasi_ppk != 0) || ($spjGu->status_validasi_asn != 0 && $spjGu->status_validasi_ppk == 2)) ||
+                ($spjGu->status_validasi_akhir == 1)
+            )) ||
+            (Auth::user()->profil->sekretariat_daerah_id == $spjGu->sekretariat_daerah_id) && (
+                ($spjGu->status_validasi_asn == 0 && $spjGu->status_validasi_ppk == 0) ||
+                (($spjGu->status_validasi_asn == 2 && $spjGu->status_validasi_ppk != 0) || ($spjGu->status_validasi_asn != 0 && $spjGu->status_validasi_ppk == 2))
+            )
+        )) {
             return throw new Exception('Terjadi Kesalahan');
         }
 
@@ -279,8 +300,9 @@ class SpjGuController extends Controller
         $rules = [
             'surat_pengembalian' => $suratPengembalian . '|mimes:pdf',
             'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
-            'nomor_surat' => ['required', Rule::unique('spj_gu')->where(function ($query) use ($request) {
-                return $query->where('nomor_surat', $request->nomor_surat);
+            'nomor_surat' => ['required', Rule::unique('spj_gu')->where(function ($query) use ($request, $role) {
+                $sekretariatDaerah = $role == "Admin" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
+                $query->where('nomor_surat', $request->nomor_surat)->where('sekretariat_daerah_id', $sekretariatDaerah);
             })->ignore($spjGu->id)],
             'tahun' => 'required',
             'bulan' => 'required',
@@ -503,9 +525,11 @@ class SpjGuController extends Controller
         try {
             DB::transaction(
                 function () use ($spjGu, $sppGu) {
-                    $sppGu->delete();
-                    $riwayatSppGu = RiwayatSppGu::where('spp_gu_id', $sppGu->id)->delete();
-                    $dokumenSppGu = DokumenSppGu::where('spp_gu_id', $sppGu->id)->delete();
+                    if ($sppGu) {
+                        $sppGu->delete();
+                        $riwayatSppGu = RiwayatSppGu::where('spp_gu_id', $sppGu->id)->delete();
+                        $dokumenSppGu = DokumenSppGu::where('spp_gu_id', $sppGu->id)->delete();
+                    }
 
                     $spjGu->delete();
                     $riwayatSpjGu = RiwayatSpjGu::where('spj_gu_id', $spjGu->id)->delete();
@@ -539,40 +563,43 @@ class SpjGuController extends Controller
             }
         }
 
-        if (count($arraySuratPenolakanSppGu) > 0) {
-            foreach ($arraySuratPenolakanSppGu as $suratPenolakan) {
-                if (Storage::exists('surat_penolakan_spp_gu/' . $suratPenolakan)) {
-                    Storage::delete('surat_penolakan_spp_gu/' . $suratPenolakan);
+        if ($sppGu) {
+            if (count($arraySuratPenolakanSppGu) > 0) {
+                foreach ($arraySuratPenolakanSppGu as $suratPenolakan) {
+                    if (Storage::exists('surat_penolakan_spp_gu/' . $suratPenolakan)) {
+                        Storage::delete('surat_penolakan_spp_gu/' . $suratPenolakan);
+                    }
                 }
             }
-        }
-        if (count($arraySuratPengembalianSppGu) > 0) {
-            foreach ($arraySuratPengembalianSppGu as $suratPengembalian) {
-                if (Storage::exists('surat_pengembalian_spp_gu/' . $suratPengembalian)) {
-                    Storage::delete('surat_pengembalian_spp_gu/' . $suratPengembalian);
+            if (count($arraySuratPengembalianSppGu) > 0) {
+                foreach ($arraySuratPengembalianSppGu as $suratPengembalian) {
+                    if (Storage::exists('surat_pengembalian_spp_gu/' . $suratPengembalian)) {
+                        Storage::delete('surat_pengembalian_spp_gu/' . $suratPengembalian);
+                    }
+                }
+            }
+
+            if (count($arrayDokumenSppGu) > 0) {
+                foreach ($arrayDokumenSppGu as $dokumen) {
+                    if (Storage::exists('dokumen_spp_gu/' . $dokumen)) {
+                        Storage::delete('dokumen_spp_gu/' . $dokumen);
+                    }
+                }
+            }
+
+            if ($spm) {
+                if (Storage::exists('dokumen_spm_spp_gu/' . $spm)) {
+                    Storage::delete('dokumen_spm_spp_gu/' . $spm);
+                }
+            }
+
+            if ($sp2d) {
+                if (Storage::exists('dokumen_arsip_sp2d_spp_gu/' . $sp2d)) {
+                    Storage::delete('dokumen_arsip_sp2d_spp_gu/' . $sp2d);
                 }
             }
         }
 
-        if (count($arrayDokumenSppGu) > 0) {
-            foreach ($arrayDokumenSppGu as $dokumen) {
-                if (Storage::exists('dokumen_spp_gu/' . $dokumen)) {
-                    Storage::delete('dokumen_spp_gu/' . $dokumen);
-                }
-            }
-        }
-
-        if ($spm) {
-            if (Storage::exists('dokumen_spm_spp_gu/' . $spm)) {
-                Storage::delete('dokumen_spm_spp_gu/' . $spm);
-            }
-        }
-
-        if ($sp2d) {
-            if (Storage::exists('dokumen_arsip_sp2d_spp_gu/' . $sp2d)) {
-                Storage::delete('dokumen_arsip_sp2d_spp_gu/' . $sp2d);
-            }
-        }
 
         return response()->json(['status' => 'success']);
     }

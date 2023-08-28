@@ -45,13 +45,10 @@ class Table extends Component
         $statusVerifikasiPpk = $this->status_verifikasi_ppk;
         $statusVerifikasiAkhir = $this->status_verifikasi_akhir;
         $sekretariatDaerah = $this->sekretariat_daerah;
-        $statusUploadSkm = $this->status_upload_skm;
-        $statusUploadArsipSp2d = $this->status_upload_arsip_sp2d;
-        $kategori = $this->kategori;
         $tahun = $this->tahun;
         $bulan = $this->bulan;
 
-        $datas = SpjGu::where(function ($query) use ($cari, $statusVerifikasiAsn, $statusVerifikasiPpk, $statusVerifikasiAkhir, $bulan, $tahun, $sekretariatDaerah, $statusUploadSkm, $statusUploadArsipSp2d, $kategori) {
+        $datas = SpjGu::where(function ($query) use ($cari, $statusVerifikasiAsn, $statusVerifikasiPpk, $statusVerifikasiAkhir, $bulan, $tahun, $sekretariatDaerah) {
             if (in_array(Auth::user()->role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) {
                 if (isset($sekretariatDaerah) && $sekretariatDaerah != 'Semua') {
                     $query->where('sekretariat_daerah_id', $sekretariatDaerah);

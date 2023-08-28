@@ -56,10 +56,6 @@ Route::get('/', [LandingController::class, 'index']);
 Route::get('/tentang', [LandingController::class, 'tentang']);
 
 Route::group(['middleware' => ['auth']], function () {
-    Route::get('spp-up/cek-sp2d', [SppUpController::class, 'cekSp2d']);
-    Route::get('spp-tu/cek-sp2d', [SppTuController::class, 'cekSp2d']);
-    Route::get('spp-ls/cek-sp2d', [SppLsController::class, 'cekSp2d']);
-    Route::get('spp-gu/cek-sp2d', [SppGuController::class, 'cekSp2d']);
     Route::get('spp-gu/qrcode-spj/{sppGu}', [SppGuController::class, 'qrcodeSpj']);
 
     Route::group(['middleware' => ['role:Admin']], function () {
@@ -169,6 +165,11 @@ Route::group(['middleware' => ['auth']], function () {
         'index',
         'show'
     );
+
+    Route::get('/surat-pernyataan/spp-up/{sppUp}', [UnduhController::class, 'suratPernyataanSppUp']);
+    Route::get('/surat-pernyataan/spp-tu/{sppTu}', [UnduhController::class, 'suratPernyataanSppTu']);
+    Route::get('/surat-pernyataan/spp-ls/{sppLs}', [UnduhController::class, 'suratPernyataanSppLs']);
+    Route::get('/surat-pernyataan/spp-gu/{sppGu}', [UnduhController::class, 'suratPernyataanSppGu']);
 
     Route::get('/spp-up/riwayat/{sppUp}', [SppUpController::class, 'riwayat']);
     Route::get('/spp-tu/riwayat/{sppTu}', [SppTuController::class, 'riwayat']);

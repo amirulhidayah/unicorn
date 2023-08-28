@@ -100,7 +100,9 @@
                         $timelineBody = $riwayat->profil->nama . ' (' . $riwayat->user->role . ') ' . ' menyelesaikan dokumen';
                         $timelineBadgeBgColor = 'bg-success';
                         $timelineBadgeIcon = 'fas fa-check';
-                        $surat = '<a href="' . url('/surat-pernyataan' . '/' . $tipeSuratPenolakan . '/' . $spp->id) . '" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i>  Surat Pernyataan</a>';
+                        if ($tipeSuratPenolakan != 'spj-gu') {
+                            $surat = '<a href="' . url('/surat-pernyataan' . '/' . $tipeSuratPenolakan . '/' . $spp->id) . '" class="btn btn-primary btn-sm mt-1"><i class="fas fa-file-pdf"></i>  Surat Pernyataan</a>';
+                        }
                     } elseif ($riwayat->status == 'Ditolak') {
                         $timelineTitle = 'Ditolak';
                         $timelineBody = $riwayat->profil->nama . ' (' . $riwayat->user->role . ') ' . ' menolak dokumen';

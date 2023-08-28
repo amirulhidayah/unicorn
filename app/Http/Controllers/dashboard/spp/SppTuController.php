@@ -181,7 +181,7 @@ class SppTuController extends Controller
         $tipe = 'spp_tu';
 
         $role = Auth::user()->role;
-        if ((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) || Auth::user()->profil->sekretariat_daerah_id == $sppTu->sekretariat_daerah_id) {
+        if ((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran', 'Operator SPM'])) || Auth::user()->profil->sekretariat_daerah_id == $sppTu->sekretariat_daerah_id) {
             $totalJumlahAnggaran = 0;
             $programDanKegiatan = [];
             $totalProgramDanKegiatan = [];
@@ -213,7 +213,17 @@ class SppTuController extends Controller
     public function edit(SppTu $sppTu, Request $request)
     {
         $role = Auth::user()->role;
-        if (!($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppTu->sekretariat_daerah_id) && (($sppTu->status_validasi_asn == 0 && $sppTu->status_validasi_ppk == 0) || ($sppTu->status_validasi_asn == 2 || $sppTu->status_validasi_ppk == 2))) {
+        if (!(
+            ($role == "Admin" && (
+                ($sppTu->status_validasi_asn == 0 && $sppTu->status_validasi_ppk == 0) ||
+                (($sppTu->status_validasi_asn == 2 && $sppTu->status_validasi_ppk != 0) || ($sppTu->status_validasi_asn != 0 && $sppTu->status_validasi_ppk == 2)) ||
+                ($sppTu->dokumen_arsip_sp2d != null)
+            )) ||
+            (Auth::user()->profil->sekretariat_daerah_id == $sppTu->sekretariat_daerah_id) && (
+                ($sppTu->status_validasi_asn == 0 && $sppTu->status_validasi_ppk == 0) ||
+                (($sppTu->status_validasi_asn == 2 && $sppTu->status_validasi_ppk != 0) || ($sppTu->status_validasi_asn != 0 && $sppTu->status_validasi_ppk == 2))
+            )
+        )) {
             abort(403, 'Anda tidak memiliki akses halaman tersebut!');
         }
 
@@ -244,7 +254,17 @@ class SppTuController extends Controller
     public function update(Request $request, SppTu $sppTu)
     {
         $role = Auth::user()->role;
-        if (!($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppTu->sekretariat_daerah_id) && (($sppTu->status_validasi_asn == 0 && $sppTu->status_validasi_ppk == 0) || ($sppTu->status_validasi_asn == 2 || $sppTu->status_validasi_ppk == 2))) {
+        if (!(
+            ($role == "Admin" && (
+                ($sppTu->status_validasi_asn == 0 && $sppTu->status_validasi_ppk == 0) ||
+                (($sppTu->status_validasi_asn == 2 && $sppTu->status_validasi_ppk != 0) || ($sppTu->status_validasi_asn != 0 && $sppTu->status_validasi_ppk == 2)) ||
+                ($sppTu->dokumen_arsip_sp2d != null)
+            )) ||
+            (Auth::user()->profil->sekretariat_daerah_id == $sppTu->sekretariat_daerah_id) && (
+                ($sppTu->status_validasi_asn == 0 && $sppTu->status_validasi_ppk == 0) ||
+                (($sppTu->status_validasi_asn == 2 && $sppTu->status_validasi_ppk != 0) || ($sppTu->status_validasi_asn != 0 && $sppTu->status_validasi_ppk == 2))
+            )
+        )) {
             return throw new Exception('Terjadi Kesalahan');
         }
 
@@ -410,7 +430,7 @@ class SppTuController extends Controller
                     }
                 }
 
-                if (($sppTu->status_validasi_asn == 2 || $sppTu->status_validasi_ppk == 2)) {
+                if (($sppTu->status_validasi_asn == 2 || $sppTu->status_validasi_ppk == 2) && ($sppTu->status_validasi_asn != 0 && $sppTu->status_validasi_ppk != 0)) {
                     $riwayatSppTu = new RiwayatSppTu();
 
                     if ($request->file('surat_pengembalian')) {

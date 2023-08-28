@@ -15,6 +15,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade as PDF;
 use Carbon\Carbon;
+use Exception;
 
 class UnduhController extends Controller
 {
@@ -116,6 +117,9 @@ class UnduhController extends Controller
 
     public function suratPernyataanSppUp(SppUp $sppUp)
     {
+        if ($sppUp->status_validasi_akhir != 1) {
+            return throw new Exception('Gagal Diproses');
+        }
         $tipe = "SPP UP";
         $spp = $sppUp;
         $tanggal = Carbon::parse($sppUp->tanggal_validasi_akhir)->translatedFormat('d F Y');
@@ -128,6 +132,9 @@ class UnduhController extends Controller
 
     public function suratPernyataanSppTu(SppTu $sppTu)
     {
+        if ($sppTu->status_validasi_akhir != 1) {
+            return throw new Exception('Gagal Diproses');
+        }
         $tipe = "SPP TU";
         $spp = $sppTu;
         $tanggal = Carbon::parse($sppTu->tanggal_validasi_akhir)->translatedFormat('d F Y');
@@ -140,6 +147,9 @@ class UnduhController extends Controller
 
     public function suratPernyataanSppLs(SppLs $sppLs)
     {
+        if ($sppLs->status_validasi_akhir != 1) {
+            return throw new Exception('Gagal Diproses');
+        }
         $tipe = "SPP LS";
         $spp = $sppLs;
         $tanggal = Carbon::parse($sppLs->tanggal_validasi_akhir)->translatedFormat('d F Y');
@@ -152,6 +162,9 @@ class UnduhController extends Controller
 
     public function suratPernyataanSppGu(SppGu $sppGu)
     {
+        if ($sppGu->status_validasi_akhir != 1) {
+            return throw new Exception('Gagal Diproses');
+        }
         $tipe = "SPP GU";
         $spp = $sppGu;
         $tanggal = Carbon::parse($sppGu->tanggal_validasi_akhir)->translatedFormat('d F Y');

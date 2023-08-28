@@ -225,7 +225,7 @@
                                 <small class="text-danger error-text dokumenFileHitung-error"
                                     id="dokumenFileHitung-error"></small>
                                 <div id="list-upload" class="row">
-                                    @if (!($sppTu->status_validasi_ppk == 0 && $sppTu->status_validasi_asn == 0))
+                                    @if ($sppTu->status_validasi_ppk == 2 || $sppTu->status_validasi_asn == 2)
                                         <div class="col-12">
                                             <div class="card box-upload" class="box-upload">
                                                 <div class="card-body">

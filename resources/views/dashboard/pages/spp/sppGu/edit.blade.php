@@ -181,7 +181,7 @@
                                         class="text-danger">*</sup></label>
                                 <small class="text-danger error-text dokumenFileHitung-error"
                                     id="dokumenFileHitung-error"></small>
-                                @if (!($sppGu->status_validasi_ppk == 0 && $sppGu->status_validasi_asn == 0))
+                                @if ($sppGu->status_validasi_ppk == 2 || $sppGu->status_validasi_asn == 2)
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="card box-upload" class="box-upload">
@@ -233,8 +233,6 @@
                                     </div>
                                 </div>
                             </div>
-
-
 
                             <button type="submit" class="btn btn-success col-12 text-light fw-bold"><i
                                     class="far fa-paper-plane"></i>

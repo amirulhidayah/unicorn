@@ -177,7 +177,7 @@ class SppUpController extends Controller
         $tipe = 'spp_up';
 
         $role = Auth::user()->role;
-        if ((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) || Auth::user()->profil->sekretariat_daerah_id == $sppUp->sekretariat_daerah_id) {
+        if ((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran', 'Operator SPM'])) || Auth::user()->profil->sekretariat_daerah_id == $sppUp->sekretariat_daerah_id) {
             $totalJumlahAnggaran = 0;
             $programDanKegiatan = [];
             $totalProgramDanKegiatan = [];
@@ -209,7 +209,17 @@ class SppUpController extends Controller
     public function edit(SppUp $sppUp, Request $request)
     {
         $role = Auth::user()->role;
-        if (!($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppUp->sekretariat_daerah_id) && (($sppUp->status_validasi_asn == 0 && $sppUp->status_validasi_ppk == 0) || ($sppUp->status_validasi_asn == 2 || $sppUp->status_validasi_ppk == 2))) {
+        if (!(
+            ($role == "Admin" && (
+                ($sppUp->status_validasi_asn == 0 && $sppUp->status_validasi_ppk == 0) ||
+                (($sppUp->status_validasi_asn == 2 && $sppUp->status_validasi_ppk != 0) || ($sppUp->status_validasi_asn != 0 && $sppUp->status_validasi_ppk == 2)) ||
+                ($sppUp->dokumen_arsip_sp2d != null)
+            )) ||
+            (Auth::user()->profil->sekretariat_daerah_id == $sppUp->sekretariat_daerah_id) && (
+                ($sppUp->status_validasi_asn == 0 && $sppUp->status_validasi_ppk == 0) ||
+                (($sppUp->status_validasi_asn == 2 && $sppUp->status_validasi_ppk != 0) || ($sppUp->status_validasi_asn != 0 && $sppUp->status_validasi_ppk == 2))
+            )
+        )) {
             abort(403, 'Anda tidak memiliki akses halaman tersebut!');
         }
 
@@ -240,7 +250,17 @@ class SppUpController extends Controller
     public function update(Request $request, SppUp $sppUp)
     {
         $role = Auth::user()->role;
-        if (!($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppUp->sekretariat_daerah_id) && (($sppUp->status_validasi_asn == 0 && $sppUp->status_validasi_ppk == 0) || ($sppUp->status_validasi_asn == 2 || $sppUp->status_validasi_ppk == 2))) {
+        if (!(
+            ($role == "Admin" && (
+                ($sppUp->status_validasi_asn == 0 && $sppUp->status_validasi_ppk == 0) ||
+                (($sppUp->status_validasi_asn == 2 && $sppUp->status_validasi_ppk != 0) || ($sppUp->status_validasi_asn != 0 && $sppUp->status_validasi_ppk == 2)) ||
+                ($sppUp->dokumen_arsip_sp2d != null)
+            )) ||
+            (Auth::user()->profil->sekretariat_daerah_id == $sppUp->sekretariat_daerah_id) && (
+                ($sppUp->status_validasi_asn == 0 && $sppUp->status_validasi_ppk == 0) ||
+                (($sppUp->status_validasi_asn == 2 && $sppUp->status_validasi_ppk != 0) || ($sppUp->status_validasi_asn != 0 && $sppUp->status_validasi_ppk == 2))
+            )
+        )) {
             return throw new Exception('Terjadi Kesalahan');
         }
 
@@ -478,7 +498,7 @@ class SppUpController extends Controller
     public function destroy(SppUp $sppUp)
     {
         $role = Auth::user()->role;
-        if (!($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppUp->sekretariat_daerah_id)) {
+        if (!($role == "Admin" || (Auth::user()->profil->sekretariat_daerah_id == $sppUp->sekretariat_daerah_id && $sppUp->status_validasi_ppk == 0 && $sppUp->status_validasi_asn == 0))) {
             return throw new Exception('Gagal Diproses');
         }
 
@@ -839,23 +859,6 @@ class SppUpController extends Controller
 
         return response()->json([
             'status' => 'success'
-        ]);
-    }
-
-    public function cekSp2d()
-    {
-        if (Auth::user()->role != "Admin") {
-            $totalSppUp = SppUp::where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id)->where('status_validasi_ppk', 1)->where('status_validasi_asn', 1)->whereNotNull('dokumen_spm')->whereNull('dokumen_arsip_sp2d')->count();
-            if ($totalSppUp > 0) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Terdapat arsip SP2D yang belum diupload'
-                ]);
-            }
-        }
-
-        return response()->json([
-            'status' => 'success',
         ]);
     }
 }

@@ -31,7 +31,9 @@ class SppGuController extends Controller
     {
         $totalSpp = SppGu::where(function ($query) {
             if (!in_array(Auth::user()->role, ['Admin', 'Operator SPM'])) {
-                $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+                $query->whereHas('spjGu', function ($query) {
+                    $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+                });
             }
         })->where('status_validasi_ppk', 1)->where('status_validasi_asn', 1)->where('status_validasi_akhir', 1)->whereNotNull('dokumen_spm')->whereNull('dokumen_arsip_sp2d')->count();
         return view('dashboard.pages.spp.sppGu.index', compact(['totalSpp']));
@@ -48,21 +50,27 @@ class SppGuController extends Controller
 
     public function store(Request $request)
     {
-        if (Auth::user()->role != "Admin") {
-            $totalSpp = SppGu::where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id)->where('status_validasi_ppk', 1)->where('status_validasi_asn', 1)->whereNotNull('dokumen_spm')->whereNull('dokumen_arsip_sp2d')->count();
-            if ($totalSpp > 0) {
-                return throw new Exception('Terjadi Kesalahan');
-            }
-        }
-
         $role = Auth::user()->role;
 
         $rules = [
             'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
             'tahun' => 'required',
-            'nomor_surat' => ['required', Rule::unique('spp_gu')->where(function ($query) use ($request) {
-                return $query->where('nomor_surat', $request->nomor_surat);
-            })],
+            'nomor_surat' => [
+                'required',
+                function ($attribute, $value, $fail) use ($request, $role) {
+                    $sekretariatDaerah = $role == "Admin" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
+
+                    $existingRecord = SppGu::where('nomor_surat', $value)
+                        ->whereHas('spjGu', function ($query) use ($sekretariatDaerah) {
+                            $query->where('sekretariat_daerah_id', $sekretariatDaerah);
+                        })
+                        ->first();
+
+                    if ($existingRecord) {
+                        $fail("Nomor Surat Permintaan Pembayaran (SPP) Sudah Ada");
+                    }
+                },
+            ],
             'spj_gu' => ['required'],
         ];
 
@@ -147,11 +155,6 @@ class SppGuController extends Controller
 
     public function show(SppGu $sppGu)
     {
-        $role = Auth::user()->role;
-        if ($sppGu->sekretariat_daerah_id != Auth::user()->profil->sekretariat_daerah_id  && in_array(Auth::user()->role, ['Bendahara Pengeluaran', 'Bendahara Pengeluaran Pembantu', 'Bendahara Pengeluaran Pembantu Belanja Hibah'])) {
-            abort(403, 'Anda tidak memiliki akses halaman tersebut!');
-        }
-
         $tipe = 'spp_gu';
         $spjGu = SpjGu::where('id', $sppGu->spj_gu_id)->first();
         if ($spjGu) {
@@ -190,7 +193,7 @@ class SppGuController extends Controller
         }
 
         $role = Auth::user()->role;
-        if ((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) || Auth::user()->profil->sekretariat_daerah_id == $sppGu->sekretariat_daerah_id) {
+        if ((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) || Auth::user()->profil->sekretariat_daerah_id == $sppGu->spjGu->sekretariat_daerah_id) {
             return view('dashboard.pages.spp.sppGu.show', compact(['sppGu', 'spjGu', 'totalProgramDanKegiatan', 'tipe', 'programDanKegiatan']));
         } else {
             abort(403, 'Anda tidak memiliki akses halaman tersebut!');
@@ -200,7 +203,17 @@ class SppGuController extends Controller
     public function edit(Request $request, SppGu $sppGu)
     {
         $role = Auth::user()->role;
-        if (!($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppGu->sekretariat_daerah_id) && ($sppGu->status_validasi_asn == 2 || $sppGu->status_validasi_ppk == 2)) {
+        if (!(
+            ($role == "Admin" && (
+                ($sppGu->status_validasi_asn == 0 && $sppGu->status_validasi_ppk == 0) ||
+                (($sppGu->status_validasi_asn == 2 && $sppGu->status_validasi_ppk != 0) || ($sppGu->status_validasi_asn != 0 && $sppGu->status_validasi_ppk == 2)) ||
+                ($sppGu->dokumen_arsip_sp2d != null)
+            )) ||
+            (Auth::user()->profil->sekretariat_daerah_id == $sppGu->spjGu->sekretariat_daerah_id) && (
+                ($sppGu->status_validasi_asn == 0 && $sppGu->status_validasi_ppk == 0) ||
+                (($sppGu->status_validasi_asn == 2 && $sppGu->status_validasi_ppk != 0) || ($sppGu->status_validasi_asn != 0 && $sppGu->status_validasi_ppk == 2))
+            )
+        )) {
             abort(403, 'Anda tidak memiliki akses halaman tersebut!');
         }
 
@@ -213,7 +226,17 @@ class SppGuController extends Controller
     public function update(Request $request, SppGu $sppGu)
     {
         $role = Auth::user()->role;
-        if (!($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppGu->sekretariat_daerah_id) && (($sppGu->status_validasi_asn == 0 && $sppGu->status_validasi_ppk == 0) || ($sppGu->status_validasi_asn == 2 || $sppGu->status_validasi_ppk == 2))) {
+        if (!(
+            ($role == "Admin" && (
+                ($sppGu->status_validasi_asn == 0 && $sppGu->status_validasi_ppk == 0) ||
+                (($sppGu->status_validasi_asn == 2 && $sppGu->status_validasi_ppk != 0) || ($sppGu->status_validasi_asn != 0 && $sppGu->status_validasi_ppk == 2)) ||
+                ($sppGu->dokumen_arsip_sp2d != null)
+            )) ||
+            (Auth::user()->profil->sekretariat_daerah_id == $sppGu->spjGu->sekretariat_daerah_id) && (
+                ($sppGu->status_validasi_asn == 0 && $sppGu->status_validasi_ppk == 0) ||
+                (($sppGu->status_validasi_asn == 2 && $sppGu->status_validasi_ppk != 0) || ($sppGu->status_validasi_asn != 0 && $sppGu->status_validasi_ppk == 2))
+            )
+        )) {
             return throw new Exception('Terjadi Kesalahan');
         }
 
@@ -227,9 +250,23 @@ class SppGuController extends Controller
             'surat_pengembalian' => $suratPenolakan . '|mimes:pdf',
             'sekretariat_daerah' => $role == "Admin" ? 'required' : 'nullable',
             'tahun' => 'required',
-            'nomor_surat' => ['required', Rule::unique('spp_gu')->where(function ($query) use ($request) {
-                return $query->where('nomor_surat', $request->nomor_surat);
-            })->ignore($sppGu->id)],
+            'nomor_surat' => [
+                'required',
+                function ($attribute, $value, $fail) use ($request, $role, $sppGu) {
+                    $sekretariatDaerah = $role == "Admin" ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
+
+                    $existingRecord = SppGu::where('nomor_surat', $value)
+                        ->whereHas('spjGu', function ($query) use ($sekretariatDaerah) {
+                            $query->where('sekretariat_daerah_id', $sekretariatDaerah);
+                        })
+                        ->where('id', '!=', $sppGu->id)
+                        ->first();
+
+                    if ($existingRecord) {
+                        $fail("Nomor Surat Permintaan Pembayaran (SPP) Sudah Ada");
+                    }
+                },
+            ],
             'spj_gu' => 'required',
         ];
 
@@ -353,7 +390,7 @@ class SppGuController extends Controller
                     }
                 }
 
-                if (($sppGu->status_validasi_asn == 2 || $sppGu->status_validasi_ppk == 2)) {
+                if (($sppGu->status_validasi_asn == 2 || $sppGu->status_validasi_ppk == 2) && ($sppGu->status_validasi_asn != 0 && $sppGu->status_validasi_ppk != 0)) {
                     $riwayatSppGu = new RiwayatSppGu();
 
                     if ($request->file('surat_pengembalian')) {
@@ -660,7 +697,7 @@ class SppGuController extends Controller
         $tipeSuratPengembalian = 'spp_gu';
 
         $role = Auth::user()->role;
-        if ((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) || Auth::user()->profil->sekretariat_daerah_id == $sppGu->sekretariat_daerah_id) {
+        if ((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) || Auth::user()->profil->sekretariat_daerah_id == $sppGu->spjGu->sekretariat_daerah_id) {
             return view('dashboard.pages.spp.sppGu.riwayat', compact(['sppGu', 'tipeSuratPenolakan', 'tipeSuratPengembalian']));
         } else {
             abort(403, 'Anda tidak memiliki akses halaman tersebut!');
@@ -737,7 +774,7 @@ class SppGuController extends Controller
 
     public function storeSp2d(Request $request, SppGu $sppGu)
     {
-        if (!((Auth::user()->role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppGu->sekretariat_daerah_id) && ($sppGu->status_validasi_ppk == 1 && $sppGu->status_validasi_asn == 1 && $sppGu->status_validasi_akhir == 1 && $sppGu->dokumen_spm))) {
+        if (!((Auth::user()->role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppGu->spjGu->sekretariat_daerah_id) && ($sppGu->status_validasi_ppk == 1 && $sppGu->status_validasi_asn == 1 && $sppGu->status_validasi_akhir == 1 && $sppGu->dokumen_spm))) {
             return throw new Exception('Gagal Diproses');
         }
         $validator = Validator::make(

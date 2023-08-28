@@ -75,7 +75,7 @@
     <table width="100%">
         <tr>
             <td width="20%">
-                <p>- SPP-TU Nomor</p>
+                <p>- SPP-UP Nomor</p>
                 <p>- Periode</p>
                 <p>- Tanggal</p>
                 <p>- SPP Kegiatan</p>
@@ -149,13 +149,16 @@
         <tr>
             <td width="50%" style="text-align: center">
                 <p>&nbsp;</p>
-                <p>PPK Biro</p>
+                <p>Pejabat Penatausahaan Keuangan
+                </p>
+                <p>Sekretariat Daerah Prov. Sulteng,</p>
                 <img src="{{ storage_path('app/public/tanda_tangan/' . $ppk->profil->tanda_tangan) }}" alt=""
                     class="tanda-tangan">
                 <p class="nama-ttd"><u>{{ $ppk->profil->nama }}</u></p>
                 <p class="nip-ttd">NIP. {{ $ppk->profil->nip }}</p>
             </td>
             <td width="50%" style="text-align: center">
+                <p>&nbsp;</p>
                 <p>Palu, {{ $hariIni }}</p>
                 <p>Kuasa Pengguna Anggaran</p>
                 <img src="{{ storage_path('app/public/tanda_tangan/' . $kuasaPenggunaAnggaran->profil->tanda_tangan) }}"

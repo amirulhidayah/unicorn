@@ -205,9 +205,6 @@
             $('#menu-spp-gu').collapse('show');
             $('#spp-gu').addClass('active');
             $('#spp-gu-spp').addClass('active');
-            $('#btn-tambah-program-kegiatan').click();
-            cekProgramKegiatan();
-            hitungTotal();
         })
 
         function hapus(id) {

@@ -104,6 +104,7 @@
             <td width="50%" class="text-center">
                 <br>
                 <br>
+                <p>&nbsp;</p>
                 <p>Palu, {{ $hariIni }}</p>
                 <br>
                 <p>Pejabat Penatausahaan Keuangan

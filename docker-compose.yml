@@ -61,6 +61,11 @@ services:
             - mysql
         networks:
             - sail
+    ghostscript:
+        image: debian:bullseye-slim
+        command: bash -c "apt-get update && apt-get install -y ghostscript && tail -f /dev/null"
+        networks:
+            - sail
 networks:
     sail:
         driver: bridge

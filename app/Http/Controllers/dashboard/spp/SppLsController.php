@@ -254,7 +254,17 @@ class SppLsController extends Controller
     public function edit(SppLs $sppLs, Request $request)
     {
         $role = Auth::user()->role;
-        if (!($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppLs->sekretariat_daerah_id) && (($sppLs->status_validasi_asn == 0 && $sppLs->status_validasi_ppk == 0) || ($sppLs->status_validasi_asn == 2 || $sppLs->status_validasi_ppk == 2))) {
+        if (!(
+            ($role == "Admin" && (
+                ($sppLs->status_validasi_asn == 0 && $sppLs->status_validasi_ppk == 0) ||
+                (($sppLs->status_validasi_asn == 2 && $sppLs->status_validasi_ppk != 0) || ($sppLs->status_validasi_asn != 0 && $sppLs->status_validasi_ppk == 2)) ||
+                ($sppLs->dokumen_arsip_sp2d != null)
+            )) ||
+            (Auth::user()->profil->sekretariat_daerah_id == $sppLs->sekretariat_daerah_id) && (
+                ($sppLs->status_validasi_asn == 0 && $sppLs->status_validasi_ppk == 0) ||
+                (($sppLs->status_validasi_asn == 2 && $sppLs->status_validasi_ppk != 0) || ($sppLs->status_validasi_asn != 0 && $sppLs->status_validasi_ppk == 2))
+            )
+        )) {
             abort(403, 'Anda tidak memiliki akses halaman tersebut!');
         }
 
@@ -294,7 +304,17 @@ class SppLsController extends Controller
     public function update(Request $request, SppLs $sppLs)
     {
         $role = Auth::user()->role;
-        if (!($role == "Admin" || Auth::user()->profil->sekretariat_daerah_id == $sppLs->sekretariat_daerah_id) && (($sppLs->status_validasi_asn == 0 && $sppLs->status_validasi_ppk == 0) || ($sppLs->status_validasi_asn == 2 || $sppLs->status_validasi_ppk == 2))) {
+        if (!(
+            ($role == "Admin" && (
+                ($sppLs->status_validasi_asn == 0 && $sppLs->status_validasi_ppk == 0) ||
+                (($sppLs->status_validasi_asn == 2 && $sppLs->status_validasi_ppk != 0) || ($sppLs->status_validasi_asn != 0 && $sppLs->status_validasi_ppk == 2)) ||
+                ($sppLs->dokumen_arsip_sp2d != null)
+            )) ||
+            (Auth::user()->profil->sekretariat_daerah_id == $sppLs->sekretariat_daerah_id) && (
+                ($sppLs->status_validasi_asn == 0 && $sppLs->status_validasi_ppk == 0) ||
+                (($sppLs->status_validasi_asn == 2 && $sppLs->status_validasi_ppk != 0) || ($sppLs->status_validasi_asn != 0 && $sppLs->status_validasi_ppk == 2))
+            )
+        )) {
             return throw new Exception('Terjadi Kesalahan');
         }
 
@@ -477,7 +497,7 @@ class SppLsController extends Controller
                     }
                 }
 
-                if (($sppLs->status_validasi_asn == 2 || $sppLs->status_validasi_ppk == 2)) {
+                if (($sppLs->status_validasi_asn == 2 || $sppLs->status_validasi_ppk == 2) && ($sppLs->status_validasi_asn != 0 && $sppLs->status_validasi_ppk != 0)) {
                     $riwayatSppLs = new RiwayatSppLs();
 
                     if ($request->file('surat_pengembalian')) {

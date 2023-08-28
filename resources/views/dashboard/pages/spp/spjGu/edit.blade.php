@@ -227,12 +227,12 @@
                             </div>
                             <div class="col-md-12">
                                 <div id="list-upload" class="row">
-                                    @if (!($spjGu->status_validasi_ppk == 0 && $spjGu->status_validasi_asn == 0))
-                                        <label for="TextInput" class="form-label mt-2 mb-3 fw-bold">Dokumen Pendukung<sup
-                                                class="text-danger">*</sup></label>
-                                        <small class="text-danger error-text dokumenFileHitung-error"
-                                            id="dokumenFileHitung-error"></small>
+                                    @if ($spjGu->status_validasi_ppk == 2 || $spjGu->status_validasi_asn == 2)
                                         <div class="col-12">
+                                            <label for="TextInput" class="form-label mt-2 mb-3 fw-bold">Dokumen
+                                                Pendukung<sup class="text-danger">*</sup></label>
+                                            <small class="text-danger error-text dokumenFileHitung-error"
+                                                id="dokumenFileHitung-error"></small>
                                             <div class="card box-upload" class="box-upload">
                                                 <div class="card-body">
                                                     <div class="row">
