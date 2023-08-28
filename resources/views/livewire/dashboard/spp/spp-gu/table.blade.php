@@ -326,8 +326,7 @@
                             @if (in_array(Auth::user()->role, ['Admin', 'Operator SPM']) &&
                                     $data->status_validasi_ppk == 1 &&
                                     $data->status_validasi_asn == 1 &&
-                                    $data->status_validasi_akhir == 1 &&
-                                    !$data->dokumen_arsip_sp2d)
+                                    $data->status_validasi_akhir == 1)
                                 <button id="btn-upload-spm" class="btn btn-primary btn-sm mr-1 my-1"
                                     value="{{ $data->id }}">
 

@@ -86,6 +86,53 @@
                         </ul>
                     </div>
                 </li>
+                <li class="nav-section">
+                    <span class="sidebar-mini-icon">
+                        <i class="fa fa-ellipsis-h"></i>
+                    </span>
+                    <h4 class="text-section">Repositori</h4>
+                </li>
+                <li class="nav-item" id="repositori-spp-up">
+                    <a href="{{ url('repositori/spp-up') }}">
+                        <i class="far fa-envelope"></i>
+                        <p>SPP UP</p>
+                    </a>
+                </li>
+                <li class="nav-item" id="repositori-spp-tu">
+                    <a href="{{ url('repositori/spp-tu') }}">
+                        <i class="far fa-envelope"></i>
+                        <p>SPP TU</p>
+                    </a>
+                </li>
+                <li class="nav-item" id="repositori-spp-ls">
+                    <a href="{{ url('repositori/spp-ls') }}">
+                        <i class="far fa-envelope"></i>
+                        <p>SPP LS</p>
+                    </a>
+                </li>
+                <li class="nav-item" id="repositori-spp-gu">
+                    <a data-toggle="collapse" href="#menu-repositori-spp-gu">
+                        <i class="far fa-envelope"></i>
+                        <p>SPP GU</p>
+                        <span class="caret"></span>
+                    </a>
+                    <div class="collapse" id="menu-repositori-spp-gu">
+                        <ul class="nav nav-collapse">
+                            @if (Auth::user()->role != 'Operator SPM')
+                                <li id="repositori-spp-gu-spj">
+                                    <a href="{{ url('repositori/spj-gu') }}">
+                                        <span class="sub-item">SPJ</span>
+                                    </a>
+                                </li>
+                            @endif
+                            <li id="repositori-spp-gu-spp">
+                                <a href="{{ url('repositori/spp-gu') }}">
+                                    <span class="sub-item">SPP</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
                 @if (in_array(Auth::user()->role, [
                         'Admin',
                         'Bendahara Pengeluaran',

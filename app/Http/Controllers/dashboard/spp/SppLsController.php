@@ -792,7 +792,7 @@ class SppLsController extends Controller
 
     public function storeSpm(Request $request, SppLs $sppLs)
     {
-        if (!(($sppLs->status_validasi_ppk == 1 && $sppLs->status_validasi_asn == 1 && $sppLs->status_validasi_akhir == 1 && !$sppLs->dokumen_arsip_sp2d))) {
+        if (!(($sppLs->status_validasi_ppk == 1 && $sppLs->status_validasi_asn == 1 && $sppLs->status_validasi_akhir == 1))) {
             return throw new Exception('Gagal Diproses');
         }
 

@@ -33,8 +33,8 @@ class ProfilController extends Controller
                 'alamat' => 'required',
                 'nomor_hp' => 'required',
                 'nip' => 'nullable',
-                'foto' => $request->foto ? 'required|image|mimes:jpeg,png,jpg,gif,svg|max:1024' : 'nullable',
-                'tanda_tangan' => $request->tanda_tangan ? 'required|image|mimes:png|max:1024' : 'nullable',
+                'foto' => $request->foto ? 'required|image|mimes:jpeg,png,jpg,gif,svg' : 'nullable',
+                'tanda_tangan' => $request->tanda_tangan ? 'required|image|mimes:png' : 'nullable',
             ],
             [
                 'username.required' => 'Username tidak boleh kosong',
@@ -51,7 +51,7 @@ class ProfilController extends Controller
                 'foto.max' => 'Foto tidak boleh lebih dari 1 MB',
                 'tanda_tangan.required' => 'Tanda Tangan tidak boleh kosong',
                 'tanda_tangan.image' => 'Tanda Tangan harus berupa gambar',
-                'tanda_tangan.mimes' => 'Tanda Tangan harus berupa gambar',
+                'tanda_tangan.mimes' => 'Tanda Tangan harus berupa PNG',
                 'tanda_tangan.max' => 'Tanda Tangan tidak boleh lebih dari 1 MB',
             ]
         );

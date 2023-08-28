@@ -120,13 +120,6 @@
 
         })
 
-        function printErrorMsg(msg) {
-            $.each(msg, function(key, value) {
-                $('.' + key + '-error').removeClass('d-none');
-                $('.' + key + '-error').text(value);
-            });
-        }
-
         $(document).ready(function() {
             $('#master-tentang').addClass('active');
         })

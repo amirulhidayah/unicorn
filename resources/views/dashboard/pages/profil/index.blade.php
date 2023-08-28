@@ -160,7 +160,6 @@
                                         <label id="label-foto" class="custom-file-label" for="foto">Tambah Foto</label>
                                     </div>
                                 </div>
-                                <small class="form-text text-muted">Ukuran Foto Harus Dibawah 1 Mb</small>
                                 <span class="text-danger error-text foto-error"></span>
                             </div>
                             <div class="col-sm-12 col-lg-6 mt-3">
@@ -177,7 +176,7 @@
                                             Tangan</label>
                                     </div>
                                 </div>
-                                <small class="form-text text-muted">Ukuran Tanda Tangan Harus Dibawah 1 Mb dan berformat
+                                <small class="form-text text-muted">Tanda Tangan harus berformat
                                     PNG</small>
                                 <span class="text-danger error-text tanda_tangan-error"></span>
                             </div>
