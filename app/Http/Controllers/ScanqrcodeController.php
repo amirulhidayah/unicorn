@@ -9,6 +9,7 @@ use App\Models\SppLs;
 use App\Models\SppTu;
 use App\Models\SppUp;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ScanqrcodeController extends Controller
 {
@@ -26,7 +27,15 @@ class ScanqrcodeController extends Controller
             $dokumen = $kode[0];
             $id = substr_replace($request->kode, '', 0,  strlen($dokumen) + 1);
             if ($dokumen == "SPP UP") {
-                $sppUp = SppUp::where('id', $id)->where('status_validasi_akhir', 1)->first();
+                $sppUp = SppUp::where('id', $id)->where(function ($query) {
+                    if (!in_array(Auth::user()->role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) {
+                        $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+                    } else if (Auth::user()->role == 'Operator SPM') {
+                        $query->where('status_validasi_asn', 1);
+                        $query->where('status_validasi_ppk', 1);
+                        $query->where('status_validasi_akhir', 1);
+                    }
+                })->where('status_validasi_akhir', 1)->first();
                 if ($sppUp) {
                     return response()->json([
                         'status' => 'success',
@@ -36,7 +45,15 @@ class ScanqrcodeController extends Controller
             }
 
             if ($dokumen == "SPP TU") {
-                $sppTu = SppTu::where('id', $id)->where('status_validasi_akhir', 1)->first();
+                $sppTu = SppTu::where('id', $id)->where(function ($query) {
+                    if (!in_array(Auth::user()->role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) {
+                        $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+                    } else if (Auth::user()->role == 'Operator SPM') {
+                        $query->where('status_validasi_asn', 1);
+                        $query->where('status_validasi_ppk', 1);
+                        $query->where('status_validasi_akhir', 1);
+                    }
+                })->where('status_validasi_akhir', 1)->first();
                 if ($sppTu) {
                     return response()->json([
                         'status' => 'success',
@@ -46,7 +63,15 @@ class ScanqrcodeController extends Controller
             }
 
             if ($dokumen == "SPP LS") {
-                $sppLs = SppLs::where('id', $id)->where('status_validasi_akhir', 1)->first();
+                $sppLs = SppLs::where('id', $id)->where(function ($query) {
+                    if (!in_array(Auth::user()->role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) {
+                        $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+                    } else if (Auth::user()->role == 'Operator SPM') {
+                        $query->where('status_validasi_asn', 1);
+                        $query->where('status_validasi_ppk', 1);
+                        $query->where('status_validasi_akhir', 1);
+                    }
+                })->where('status_validasi_akhir', 1)->first();
                 if ($sppLs) {
                     return response()->json([
                         'status' => 'success',
@@ -56,7 +81,17 @@ class ScanqrcodeController extends Controller
             }
 
             if ($dokumen == "SPP GU") {
-                $sppGu = SppGu::where('id', $id)->where('status_validasi_akhir', 1)->first();
+                $sppGu = SppGu::where('id', $id)->whereHas('spjGu', function ($query) {
+                    $query->where(function ($query) {
+                        if (!in_array(Auth::user()->role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran'])) {
+                            $query->where('sekretariat_daerah_id', Auth::user()->profil->sekretariat_daerah_id);
+                        } else if (Auth::user()->role == 'Operator SPM') {
+                            $query->where('status_validasi_asn', 1);
+                            $query->where('status_validasi_ppk', 1);
+                            $query->where('status_validasi_akhir', 1);
+                        }
+                    });
+                })->where('status_validasi_akhir', 1)->first();
                 if ($sppGu) {
                     return response()->json([
                         'status' => 'success',

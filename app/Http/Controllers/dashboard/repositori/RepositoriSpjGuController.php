@@ -5,6 +5,7 @@ namespace App\Http\Controllers\dashboard\repositori;
 use App\Http\Controllers\Controller;
 use App\Models\SpjGu;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Webklex\PDFMerger\Facades\PDFMergerFacade;
 
@@ -17,6 +18,11 @@ class RepositoriSpjGuController extends Controller
 
     public function show(SpjGu $spjGu)
     {
+        $role = Auth::user()->role;
+        if (!(((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran', 'Operator SPM'])) || Auth::user()->profil->sekretariat_daerah_id == $spjGu->sekretariat_daerah_id) && $spjGu->status_validasi_akhir == 1)) {
+            return redirect('repositori/spj-gu');
+        }
+
         $tipe = 'spj_gu';
 
         $totalJumlahAnggaran = 0;
@@ -49,6 +55,11 @@ class RepositoriSpjGuController extends Controller
 
     public function downloadSemuaBerkas(SpjGu $spjGu)
     {
+        $role = Auth::user()->role;
+        if (!(((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran', 'Operator SPM'])) || Auth::user()->profil->sekretariat_daerah_id == $spjGu->sekretariat_daerah_id) && $spjGu->status_validasi_akhir == 1)) {
+            return redirect('repositori/spj-gu');
+        }
+
         $pdfMerger = PDFMergerFacade::init();
 
         foreach ($spjGu->kegiatanSpjGu as $dokumen) {

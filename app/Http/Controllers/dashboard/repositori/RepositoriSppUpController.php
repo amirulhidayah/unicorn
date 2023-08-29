@@ -18,6 +18,11 @@ class RepositoriSppUpController extends Controller
 
     public function show(SppUp $sppUp)
     {
+        $role = Auth::user()->role;
+        if (!(((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran', 'Operator SPM'])) || Auth::user()->profil->sekretariat_daerah_id == $sppUp->sekretariat_daerah_id) && $sppUp->dokumen_arsip_sp2d)) {
+            return redirect('repositori/spp-up');
+        }
+
         $tipe = 'spp_up';
 
         $role = Auth::user()->role;
@@ -52,6 +57,11 @@ class RepositoriSppUpController extends Controller
 
     public function downloadSemuaBerkas(SppUp $sppUp)
     {
+        $role = Auth::user()->role;
+        if (!(((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran', 'Operator SPM'])) || Auth::user()->profil->sekretariat_daerah_id == $sppUp->sekretariat_daerah_id) && $sppUp->dokumen_arsip_sp2d)) {
+            return redirect('repositori/spp-up');
+        }
+
         $pdfMerger = PDFMergerFacade::init();
 
         foreach ($sppUp->dokumenSppUp as $dokumen) {

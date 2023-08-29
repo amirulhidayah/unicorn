@@ -69,7 +69,7 @@ class TabelPelaksanaanAnggaranController extends Controller
         $listBulan = array_slice($arrayBulan, $bulanDariIndex, $bulanSampaiIndex - $bulanDariIndex + 1);
 
         $tahun = $request->tahun;
-        $sekretariatDaerahId = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
+        $sekretariatDaerahId = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran', 'Operator SPM']) ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
         $jenisSpp = $request->jenis_spp;
 
         $array = [];

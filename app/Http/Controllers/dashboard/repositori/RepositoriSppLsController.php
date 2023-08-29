@@ -5,6 +5,7 @@ namespace App\Http\Controllers\dashboard\repositori;
 use App\Http\Controllers\Controller;
 use App\Models\SppLs;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Webklex\PDFMerger\Facades\PDFMergerFacade;
 
@@ -17,6 +18,11 @@ class RepositoriSppLsController extends Controller
 
     public function show(SppLs $sppLs)
     {
+        $role = Auth::user()->role;
+        if (!(((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran', 'Operator SPM'])) || Auth::user()->profil->sekretariat_daerah_id == $sppLs->sekretariat_daerah_id) && $sppLs->dokumen_arsip_sp2d)) {
+            return redirect('repositori/spp-ls');
+        }
+
         $tipe = 'spp_ls';
 
         $totalJumlahAnggaran = 0;
@@ -48,6 +54,11 @@ class RepositoriSppLsController extends Controller
 
     public function downloadSemuaBerkas(SppLs $sppLs)
     {
+        $role = Auth::user()->role;
+        if (!(((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran', 'Operator SPM'])) || Auth::user()->profil->sekretariat_daerah_id == $sppLs->sekretariat_daerah_id) && $sppLs->dokumen_arsip_sp2d)) {
+            return redirect('repositori/spp-ls');
+        }
+
         $pdfMerger = PDFMergerFacade::init();
 
         foreach ($sppLs->dokumenSppLs as $dokumen) {

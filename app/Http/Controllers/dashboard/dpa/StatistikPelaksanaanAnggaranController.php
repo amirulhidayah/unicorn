@@ -45,7 +45,7 @@ class StatistikPelaksanaanAnggaranController extends Controller
         $role = Auth::user()->role;
         $tahun = $request->tahun_id;
         $kegiatanId = $request->kegiatan_id;
-        $sekretariatDaerahId = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->sekretariat_daerah_id : Auth::user()->profil->sekretariat_daerah_id;
+        $sekretariatDaerahId = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran', 'Operator SPM']) ? $request->sekretariat_daerah_id : Auth::user()->profil->sekretariat_daerah_id;
 
         $arrayBulan = [
             'Januari',

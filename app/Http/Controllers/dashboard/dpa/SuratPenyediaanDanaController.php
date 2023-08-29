@@ -154,7 +154,7 @@ class SuratPenyediaanDanaController extends Controller
         $role = Auth::user()->role;
 
         $tahun = $request->tahun;
-        $sekretariatDaerahId = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran']) ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
+        $sekretariatDaerahId = in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran', 'Operator SPM']) ? $request->sekretariat_daerah : Auth::user()->profil->sekretariat_daerah_id;
 
         $array = $this->_dataSpd($sekretariatDaerahId, $tahun);
         return view('dashboard.components.widgets.tabelSpd', compact(['array']))->render();

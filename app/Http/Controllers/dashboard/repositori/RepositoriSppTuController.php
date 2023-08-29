@@ -18,6 +18,10 @@ class RepositoriSppTuController extends Controller
 
     public function show(SppTu $sppTu)
     {
+        $role = Auth::user()->role;
+        if (!(((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran', 'Operator SPM'])) || Auth::user()->profil->sekretariat_daerah_id == $sppTu->sekretariat_daerah_id) && $sppTu->dokumen_arsip_sp2d)) {
+            return redirect('repositori/spp-tu');
+        }
         $tipe = 'spp_tu';
 
         $role = Auth::user()->role;
@@ -52,6 +56,10 @@ class RepositoriSppTuController extends Controller
 
     public function downloadSemuaBerkas(SppTu $sppTu)
     {
+        $role = Auth::user()->role;
+        if (!(((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran', 'Operator SPM'])) || Auth::user()->profil->sekretariat_daerah_id == $sppTu->sekretariat_daerah_id) && $sppTu->dokumen_arsip_sp2d)) {
+            return redirect('repositori/spp-tu');
+        }
         $pdfMerger = PDFMergerFacade::init();
 
         foreach ($sppTu->dokumenSppTu as $dokumen) {

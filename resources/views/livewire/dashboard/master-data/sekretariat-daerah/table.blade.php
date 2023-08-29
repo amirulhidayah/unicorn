@@ -16,7 +16,7 @@
     ])
         @slot('tbody')
             @foreach ($datas as $key => $data)
-                <tr>
+                <tr wire:key="sekretariat-daerah-{{ Str::random() }}">
                     <td>
                         <p class="text-xs mb-0 text-center">{{ $datas->firstItem() + $key }}</p>
                     </td>

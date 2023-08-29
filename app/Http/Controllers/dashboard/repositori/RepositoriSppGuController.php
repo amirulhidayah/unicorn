@@ -19,6 +19,11 @@ class RepositoriSppGuController extends Controller
 
     public function show(SppGu $sppGu)
     {
+        $role = Auth::user()->role;
+        if (!(((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran', 'Operator SPM'])) || Auth::user()->profil->sekretariat_daerah_id == $sppGu->spjGu->sekretariat_daerah_id) && $sppGu->dokumen_arsip_sp2d)) {
+            return redirect('repositori/spp-gu');
+        }
+
         $tipe = 'spp_gu';
         $spjGu = SpjGu::where('id', $sppGu->spj_gu_id)->first();
         if ($spjGu) {
@@ -53,6 +58,11 @@ class RepositoriSppGuController extends Controller
 
     public function downloadSemuaBerkas(SppGu $sppGu)
     {
+        $role = Auth::user()->role;
+        if (!(((in_array($role, ['Admin', 'PPK', 'ASN Sub Bagian Keuangan', 'Kuasa Pengguna Anggaran', 'Operator SPM'])) || Auth::user()->profil->sekretariat_daerah_id == $sppGu->spjGu->sekretariat_daerah_id) && $sppGu->dokumen_arsip_sp2d)) {
+            return redirect('repositori/spp-gu');
+        }
+
         $pdfMerger = PDFMergerFacade::init();
 
         foreach ($sppGu->dokumenSppGu as $dokumen) {
